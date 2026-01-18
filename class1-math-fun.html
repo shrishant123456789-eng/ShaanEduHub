@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShanEduHub - Fun with All Chapters</title>
+    <meta name="description" content="Premium Math Learning for Class 1 - Stories, Puzzles & Games">
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            --primary: #FF6B6B; /* Soft Red */
+            --secondary: #4ECDC4; /* Teal/Green */
+            --accent: #FFE66D; /* Yellow */
+            --dark: #292F36; /* Black/Dark Blue */
+            --light: #F7FFF7; /* Off White */
+            --blue: #1A535C;
+            --orange: #FF9F1C;
+            --success: #2ecc71;
+            --card-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: var(--font-main);
+            background-color: #f0f4f8;
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-5px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-5px); } 100% { transform: translateX(0); } }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+
+        /* --- UI COMPONENTS --- */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1, h2, h3 { color: var(--blue); text-align: center; }
+        
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 0 #c0392b;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn:active { transform: translateY(4px); box-shadow: none; }
+        .btn:hover { filter: brightness(1.1); }
+        .btn-secondary { background: var(--secondary); box-shadow: 0 4px 0 #2a9d8f; }
+        .btn-accent { background: var(--orange); box-shadow: 0 4px 0 #e67e22; }
+
+        /* --- DASHBOARD --- */
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            animation: fadeIn 0.8s ease;
+        }
+        .header h1 { font-size: 2.2rem; margin-bottom: 10px; }
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            background: white;
+            padding: 15px;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+        .stat-item span { display: block; font-size: 0.8rem; color: #888; }
+        .stat-item strong { font-size: 1.2rem; color: var(--blue); }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            animation: fadeIn 1s ease;
+        }
+
+        .mode-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 160px;
+            border: 2px solid transparent;
+        }
+
+        .mode-card:hover { transform: translateY(-5px); border-color: var(--secondary); }
+        .mode-card .icon { font-size: 3rem; margin-bottom: 10px; animation: float 3s infinite ease-in-out; }
+        .mode-card h3 { font-size: 1rem; color: var(--dark); }
+
+        /* --- GAME SCREEN --- */
+        .game-screen {
+            display: none; /* Hidden by default */
+            background: white;
+            border-radius: 25px;
+            padding: 25px;
+            box-shadow: var(--card-shadow);
+            animation: fadeIn 0.5s ease;
+            position: relative;
+            min-height: 400px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #eee;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+            color: #555;
+            border: none;
+        }
+
+        .question-area { text-align: center; margin: 20px 0; }
+        .visual-container { font-size: 4rem; margin: 20px 0; min-height: 80px; }
+        .question-text { font-size: 1.5rem; color: var(--dark); margin-bottom: 20px; }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .option-btn {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--dark);
+        }
+
+        .option-btn:hover { background: #e3f2fd; border-color: var(--secondary); }
+        .option-btn.correct { background: #d4edda; border-color: #28a745; color: #155724; animation: pop 0.3s; }
+        .option-btn.wrong { background: #f8d7da; border-color: #dc3545; color: #721c24; animation: shake 0.4s; }
+
+        /* --- SPECIFIC MODES STYLES --- */
+        /* Drawing Mode */
+        #drawing-canvas { border: 2px dashed #ccc; border-radius: 10px; margin: 0 auto; display: block; max-width: 100%; }
+        /* Mood Mode */
+        .mood-selector { display: flex; justify-content: center; gap: 20px; margin-top: 50px; }
+        .mood-btn { font-size: 3rem; background: none; border: none; cursor: pointer; transition: transform 0.2s; }
+        .mood-btn:hover { transform: scale(1.2); }
+        /* Builder Mode */
+        .builder-controls { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
+        .builder-input { font-size: 1.5rem; padding: 10px; width: 80px; text-align: center; border-radius: 10px; border: 2px solid #ddd; }
+
+        /* --- FOOTER --- */
+        footer {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0f2027 100%);
+            color: white;
+            padding: 40px 20px 20px;
+            margin-top: auto;
+            border-top-left-radius: 30px;
+            border-top-right-radius: 30px;
+            text-align: center;
+        }
+        .footer-brand h2 { color: white; margin-bottom: 5px; }
+        .footer-tagline { color: var(--accent); font-size: 0.9rem; margin-bottom: 20px; display: block;}
+        .footer-links { margin: 20px 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; }
+        .footer-links a { color: #ccc; text-decoration: none; font-size: 0.9rem; transition: color 0.3s; }
+        .footer-links a:hover { color: var(--secondary); }
+        .trust-line { font-size: 0.8rem; color: #666; margin-top: 20px; border-top: 1px solid #333; padding-top: 20px; }
+
+        /* --- CONFETTI CANVAS --- */
+        #confetti-canvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 999; }
+
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.8rem; }
+            .options-grid { grid-template-columns: 1fr; }
+            .mood-selector { gap: 10px; }
+            .builder-controls { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="container">
+        
+        <header class="header">
+            <h1>Fun With All Chapters</h1>
+            <p>Mega Game Zone</p>
+        </header>
+
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span>Total Score</span>
+                <strong id="score-display">0</strong>
+            </div>
+            <div class="stat-item">
+                <span>Accuracy</span>
+                <strong id="accuracy-display">100%</strong>
+            </div>
+            <div class="stat-item">
+                <span>Stars</span>
+                <strong id="star-display">⭐ 0</strong>
+            </div>
+        </div>
+
+        <div class="game-grid" id="main-menu">
+            <div class="mode-card" onclick="game.startMode('story')">
+                <div class="icon">📖</div>
+                <h3>Math Story Adventure</h3>
+            </div>
+            <div class="mode-card" onclick="game.startMode('mistake')">
+                <div class="icon">🕵️‍♂️</div>
+                <h3>Mistake Detective</h3>
+            </div>
+            <div class="mode-card" onclick="game.startMode('mega')">
+                <div class="icon">🎮</div>
+                <h3>Mega Play Zone</h3>
+            </div>
+            <div class="mode-card" onclick="game.startMode('visual')">
+                <div class="icon">🧠</div>
+                <h3>Math No Numbers</h3>
+            </div>
+            <div class="mode-card" onclick="game.startMode('daily')">
+                <div class="icon">🏆</div>
+                <h3>Daily Challenge</h3>
+            </div>
+            <div class="mode-card" onclick="game.startMode('mood')">
+                <div class="icon">🎭</div>
+                <h3>Mood Math</h3>
+            </div>
+            <div class="mode-card" onclick="game.startMode('draw')">
+                <div class="icon">🎨</div>
+                <h3>Draw with Math</h3>
+            </div>
+            <div class="mode-card" onclick="game.startMode('builder')">
+                <div class="icon">🛠️</div>
+                <h3>Build Question</h3>
+            </div>
+        </div>
+
+        <div id="game-area" class="game-screen">
+            <button class="close-btn" onclick="game.showMenu()">✕</button>
+            <h2 id="game-title">Game Title</h2>
+            <div id="game-content">
+                </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <div class="footer-brand">
+            <h2>ShanEduHub</h2>
+            <span class="footer-tagline">Learning Made Fun • From School to Skills</span>
+        </div>
+        <div class="footer-links">
+            <a href="#" onclick="game.showMenu()">Home</a>
+            <a href="#" onclick="game.startMode('story')">Stories</a>
+            <a href="#" onclick="game.startMode('mega')">Mega Zone</a>
+            <a href="#">Parent Guide</a>
+        </div>
+        <p style="font-size: 0.9rem; margin-top:10px;">Designed & Created by Shrishant Yadav</p>
+        <div class="trust-line">
+            Made with ❤️ for young learners in India
+        </div>
+    </footer>
+
+    <script>
+        /* --- GAME LOGIC & DATA --- */
+
+        // Confetti Effect
+        const confettiCanvas = document.getElementById('confetti-canvas');
+        const ctx = confettiCanvas.getContext('2d');
+        confettiCanvas.width = window.innerWidth;
+        confettiCanvas.height = window.innerHeight;
+        let confettiPieces = [];
+
+        function launchConfetti() {
+            confettiPieces = [];
+            for(let i=0; i<50; i++) {
+                confettiPieces.push({
+                    x: window.innerWidth / 2,
+                    y: window.innerHeight / 2,
+                    w: Math.random() * 10 + 5,
+                    h: Math.random() * 10 + 5,
+                    vx: (Math.random() - 0.5) * 20,
+                    vy: (Math.random() - 0.5) * 20,
+                    color: `hsl(${Math.random() * 360}, 100%, 50%)`
+                });
+            }
+            animateConfetti();
+        }
+
+        function animateConfetti() {
+            ctx.clearRect(0,0, confettiCanvas.width, confettiCanvas.height);
+            let active = false;
+            confettiPieces.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.5; // gravity
+                ctx.fillStyle = p.color;
+                ctx.fillRect(p.x, p.y, p.w, p.h);
+                if(p.y < window.innerHeight) active = true;
+            });
+            if(active) requestAnimationFrame(animateConfetti);
+        }
+
+        // Math Generators
+        const Generators = {
+            add: (max=10) => {
+                let a = Math.floor(Math.random() * max);
+                let b = Math.floor(Math.random() * (max - a));
+                return { q: `${a} + ${b} = ?`, a: a+b, type: 'text' };
+            },
+            sub: (max=10) => {
+                let a = Math.floor(Math.random() * max) + 1;
+                let b = Math.floor(Math.random() * a);
+                return { q: `${a} - ${b} = ?`, a: a-b, type: 'text' };
+            },
+            shape: () => {
+                const shapes = ['🔴', '🟦', '🔺', '⭐'];
+                const names = ['Circle', 'Square', 'Triangle', 'Star'];
+                let idx = Math.floor(Math.random() * 4);
+                return { q: `Which one is a ${names[idx]}?`, a: idx, type: 'visual_select', options: shapes };
+            },
+            compare: () => {
+                let a = Math.floor(Math.random() * 20);
+                let b = Math.floor(Math.random() * 20);
+                if(a === b) b++;
+                let bigger = a > b;
+                return { q: `Which number is ${bigger ? 'BIGGER' : 'SMALLER'}?`, a: bigger ? a : b, type: 'compare', options: [a, b] };
+            },
+            time: () => {
+                let h = Math.floor(Math.random() * 12) + 1;
+                return { q: `The small hand is on ${h}. What time is it?`, a: `${h}:00`, type: 'mcq', options: [`${h}:00`, `${h==12?1:h+1}:00`, `${h==1?12:h-1}:00`] };
+            }
+        };
+
+        // Story Data
+        const Stories = [
+            {
+                title: "Jungle Adventure 🦁",
+                steps: [
+                    { text: "Simba the lion is hungry! He finds 3 apples.", q: "Simba finds 2 more apples. How many now?", a: 5, options: [4, 5, 6] },
+                    { text: "He sees a river. There are 4 stepping stones.", q: "One stone sinks! How many are left?", a: 3, options: [2, 3, 5] },
+                    { text: "Simba meets a Monkey. Monkey wants 10 bananas.", q: "Monkey has 6. How many more does he need?", a: 4, options: [3, 4, 1] }
+                ]
+            },
+            {
+                title: "Space Mission 🚀",
+                steps: [
+                    { text: "Blast off! The rocket needs fuel.", q: "Tank has 50%. Add 20%. Total?", a: 70, options: [60, 70, 80] },
+                    { text: "We see 3 Green Aliens and 4 Blue Aliens.", q: "How many aliens in total?", a: 7, options: [6, 7, 8] }
+                ]
+            }
+        ];
+
+        // Game Engine
+        const game = {
+            score: 0,
+            totalPlayed: 0,
+            wrong: 0,
+            currentMode: null,
+            currentData: null,
+            currentIndex: 0,
+            drawStage: 0,
+
+            init: function() {
+                this.updateStats();
+            },
+
+            showMenu: function() {
+                document.getElementById('main-menu').style.display = 'grid';
+                document.getElementById('game-area').style.display = 'none';
+                document.querySelector('.header').style.display = 'block';
+                this.currentMode = null;
+            },
+
+            updateStats: function() {
+                document.getElementById('score-display').innerText = this.score;
+                let acc = this.totalPlayed === 0 ? 100 : Math.round(((this.totalPlayed - this.wrong) / this.totalPlayed) * 100);
+                document.getElementById('accuracy-display').innerText = acc + "%";
+                document.getElementById('star-display').innerText = "⭐ " + Math.floor(this.score / 5);
+            },
+
+            startMode: function(mode) {
+                this.currentMode = mode;
+                document.getElementById('main-menu').style.display = 'none';
+                document.querySelector('.header').style.display = 'none';
+                const area = document.getElementById('game-area');
+                area.style.display = 'block';
+                
+                const titles = {
+                    'story': 'Math Story Adventure 📖',
+                    'mistake': 'Mistake Detective 🕵️‍♂️',
+                    'mega': 'Mega Play Zone 🎮',
+                    'visual': 'Math Without Numbers 🧠',
+                    'daily': 'Daily Challenge 🏆',
+                    'mood': 'How do you feel? 🎭',
+                    'draw': 'Draw With Math ✏️',
+                    'builder': 'Build Your Question 🛠️'
+                };
+                document.getElementById('game-title').innerText = titles[mode];
+                this.loadContent(mode);
+            },
+
+            loadContent: function(mode) {
+                const content = document.getElementById('game-content');
+                content.innerHTML = ''; // Clear previous
+
+                if (mode === 'story') {
+                    this.currentIndex = 0;
+                    this.currentData = Stories[Math.floor(Math.random() * Stories.length)]; // Pick random story
+                    this.renderStoryStep();
+                } else if (mode === 'mega' || mode === 'daily') {
+                    this.renderMegaQuestion();
+                } else if (mode === 'mistake') {
+                    this.renderMistake();
+                } else if (mode === 'visual') {
+                    this.renderVisual();
+                } else if (mode === 'draw') {
+                    this.drawStage = 0;
+                    this.renderDrawing();
+                } else if (mode === 'mood') {
+                    this.renderMoodSelector();
+                } else if (mode === 'builder') {
+                    this.renderBuilder();
+                }
+            },
+
+            // --- RENDERERS ---
+
+            renderStoryStep: function() {
+                if(this.currentIndex >= this.currentData.steps.length) {
+                    this.endGame("Story Complete! You are a hero! 🌟");
+                    return;
+                }
+                const step = this.currentData.steps[this.currentIndex];
+                const content = document.getElementById('game-content');
+                
+                let html = `<div class="question-text" style="font-size:1.2rem; color:#555;">${step.text}</div>`;
+                html += `<div class="visual-container">${step.q}</div>`;
+                html += `<div class="options-grid">`;
+                
+                // Shuffle options
+                let opts = [...step.options].sort(() => Math.random() - 0.5);
+                opts.forEach(opt => {
+                    html += `<button class="option-btn" onclick="game.checkAnswer(this, ${opt}, ${step.a})">${opt}</button>`;
+                });
+                html += `</div>`;
+                content.innerHTML = html;
+            },
+
+            renderMegaQuestion: function() {
+                const types = ['add', 'sub', 'shape', 'time', 'compare'];
+                const type = types[Math.floor(Math.random() * types.length)];
+                const data = Generators[type]();
+                
+                const content = document.getElementById('game-content');
+                let html = `<div class="visual-container">${data.q}</div>`;
+                html += `<div class="options-grid">`;
+                
+                let opts;
+                if(data.options) {
+                    opts = data.options; // Pre-defined options (shapes/time)
+                    if (type === 'shape') {
+                        // Special handling for shape index answer
+                         data.options.forEach((opt, idx) => {
+                            html += `<button class="option-btn" onclick="game.checkAnswer(this, ${idx}, ${data.a})">${opt}</button>`;
+                        });
+                    } else {
+                        // Standard Options
+                        let correctVal = data.a;
+                         opts.forEach(opt => {
+                            html += `<button class="option-btn" onclick="game.checkAnswer(this, '${opt}', '${correctVal}')">${opt}</button>`;
+                        });
+                    }
+                } else {
+                    // Generate numeric options
+                    opts = [data.a, data.a + 1 + Math.floor(Math.random()*3), data.a - 1 - Math.floor(Math.random()*2)].sort(() => Math.random() - 0.5);
+                    opts.forEach(opt => {
+                        html += `<button class="option-btn" onclick="game.checkAnswer(this, ${opt}, ${data.a})">${opt}</button>`;
+                    });
+                }
+                
+                if(!data.options && type !== 'shape') html += `</div>`; // Close grid if not closed inside
+                else if(data.options && type !== 'shape') html += `</div>`;
+                else if(type === 'shape') html += `</div>`;
+                
+                content.innerHTML = html;
+            },
+
+            renderMistake: function() {
+                let a = Math.floor(Math.random() * 10);
+                let b = Math.floor(Math.random() * 10);
+                let trueSum = a + b;
+                let fakeSum = trueSum + (Math.random() > 0.5 ? 1 : -1);
+                
+                const content = document.getElementById('game-content');
+                content.innerHTML = `
+                    <div class="question-text">Detective, is this correct?</div>
+                    <div class="visual-container" style="color:#d63031; font-weight:bold;">${a} + ${b} = ${fakeSum}</div>
+                    <div class="options-grid">
+                        <button class="option-btn" onclick="game.checkAnswer(this, 'yes', 'no')">Yes, it's right</button>
+                        <button class="option-btn" onclick="game.checkAnswer(this, 'no', 'no')">No, it's wrong!</button>
+                    </div>
+                `;
+            },
+
+            renderVisual: function() {
+                let count = Math.floor(Math.random() * 8) + 1;
+                let emoji = ['🍎','🚙','🐱','🎈'][Math.floor(Math.random()*4)];
+                let str = "";
+                for(let i=0; i<count; i++) str += emoji + " ";
+                
+                const content = document.getElementById('game-content');
+                content.innerHTML = `
+                    <div class="question-text">Count visually (No Numbers!)</div>
+                    <div class="visual-container">${str}</div>
+                    <div class="options-grid">
+                        <button class="option-btn" onclick="game.checkAnswer(this, ${count}, ${count})">This Many</button>
+                        <button class="option-btn" onclick="game.checkAnswer(this, ${count+1}, ${count})">One More</button>
+                    </div>
+                    <p style="text-align:center; margin-top:10px; color:#888;">(Hint: Count the items)</p>
+                `;
+            },
+
+            renderDrawing: function() {
+                const content = document.getElementById('game-content');
+                // Simple SVG House that draws line by line
+                const paths = [
+                    "M 50 150 L 50 50", // Left Wall
+                    "M 50 50 L 150 50", // Roof base (ceiling)
+                    "M 150 50 L 150 150", // Right Wall
+                    "M 50 150 L 150 150", // Floor
+                    "M 50 50 L 100 10", // Roof Left
+                    "M 100 10 L 150 50" // Roof Right
+                ];
+
+                let svgContent = `<svg width="200" height="160" viewBox="0 0 200 200" style="margin:0 auto; display:block;">`;
+                for(let i=0; i<=this.drawStage; i++) {
+                    if(i < paths.length) {
+                        svgContent += `<path d="${paths[i]}" stroke="#2c3e50" stroke-width="5" fill="none" />`;
+                    }
+                }
+                svgContent += `</svg>`;
+
+                if (this.drawStage >= paths.length) {
+                    content.innerHTML = `
+                        ${svgContent}
+                        <h2 style="text-align:center; color:green; margin-top:20px;">Masterpiece Complete! 🎨</h2>
+                        <button class="btn" style="margin:20px auto; display:block;" onclick="game.startMode('draw')">Draw Again</button>
+                    `;
+                    return;
+                }
+
+                // Gen math question for next stroke
+                let qData = Generators.add(10);
+
+                content.innerHTML = `
+                    ${svgContent}
+                    <div class="question-text" style="margin-top:20px;">Solve to draw the next line!</div>
+                    <div class="visual-container" style="font-size:2rem;">${qData.q}</div>
+                    <div class="options-grid">
+                         <button class="option-btn" onclick="game.checkDrawing(this, ${qData.a}, ${qData.a+1})">${qData.a+1}</button>
+                         <button class="option-btn" onclick="game.checkDrawing(this, ${qData.a}, ${qData.a})">${qData.a}</button>
+                    </div>
+                `;
+            },
+
+            renderMoodSelector: function() {
+                document.getElementById('game-content').innerHTML = `
+                    <div class="mood-selector">
+                        <button class="mood-btn" onclick="game.setMood('happy')">😊</button>
+                        <button class="mood-btn" onclick="game.setMood('lazy')">😴</button>
+                        <button class="mood-btn" onclick="game.setMood('active')">🚀</button>
+                    </div>
+                    <p style="text-align:center; margin-top:20px;">How are you feeling today?</p>
+                `;
+            },
+            
+            setMood: function(mood) {
+                // Just redirects to Mega Zone for now, but in a real app would filter difficulty
+                this.renderMegaQuestion(); 
+            },
+
+            renderBuilder: function() {
+                document.getElementById('game-content').innerHTML = `
+                    <div class="question-text">Make your own math!</div>
+                    <div class="builder-controls">
+                        <input type="number" id="b-n1" class="builder-input" value="5">
+                        <span style="font-size:2rem;">+</span>
+                        <input type="number" id="b-n2" class="builder-input" value="3">
+                    </div>
+                    <button class="btn btn-accent" style="width:100%;" onclick="game.solveBuilder()">Solve This!</button>
+                    <div id="builder-result" style="margin-top:20px; font-size:2rem; font-weight:bold; text-align:center;"></div>
+                `;
+            },
+
+            solveBuilder: function() {
+                let n1 = parseInt(document.getElementById('b-n1').value) || 0;
+                let n2 = parseInt(document.getElementById('b-n2').value) || 0;
+                let sum = n1 + n2;
+                
+                let resDiv = document.getElementById('builder-result');
+                resDiv.innerHTML = `<span style="color:var(--primary)">?</span>`;
+                
+                setTimeout(() => {
+                    resDiv.innerHTML = `${n1} + ${n2} = <span style="color:green; animation: pop 0.5s;">${sum}</span>`;
+                    launchConfetti();
+                }, 500);
+            },
+
+            // --- CHECKING LOGIC ---
+
+            checkAnswer: function(btn, val, correctVal) {
+                this.totalPlayed++;
+                if (val == correctVal) {
+                    btn.classList.add('correct');
+                    this.score += 10;
+                    launchConfetti();
+                    setTimeout(() => {
+                        if(this.currentMode === 'story') {
+                            this.currentIndex++;
+                            this.renderStoryStep();
+                        } else {
+                            // Reload same mode to get new question
+                            this.loadContent(this.currentMode); 
+                        }
+                    }, 1000);
+                } else {
+                    btn.classList.add('wrong');
+                    this.wrong++;
+                    // Don't advance, let them try again or offer hint logic
+                }
+                this.updateStats();
+            },
+
+            checkDrawing: function(btn, correct, userVal) {
+                if(userVal === correct) {
+                    this.score += 10;
+                    btn.classList.add('correct');
+                    this.drawStage++;
+                    setTimeout(() => this.renderDrawing(), 800);
+                } else {
+                    btn.classList.add('wrong');
+                    this.wrong++;
+                }
+                this.updateStats();
+            },
+
+            endGame: function(msg) {
+                document.getElementById('game-content').innerHTML = `
+                    <div style="text-align:center; padding:40px;">
+                        <div style="font-size:5rem;">🏆</div>
+                        <h2>${msg}</h2>
+                        <p>Total Score: ${this.score}</p>
+                        <button class="btn" style="margin-top:20px;" onclick="game.showMenu()">Play More</button>
+                    </div>
+                `;
+            }
+        };
+
+        // Start App
+        game.init();
+
+    </script>
+</body>
+</html>
