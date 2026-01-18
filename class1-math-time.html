@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 1 Math: Time & Money</title>
+    <style>
+        /* 🎨 THEME & FONTS */
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Comic+Neue:wght@700&display=swap');
+
+        :root {
+            --primary-yellow: #FFEB3B;
+            --primary-orange: #FF9800;
+            --primary-green: #4CAF50;
+            --primary-blue: #2196F3;
+            --soft-bg: #E3F2FD;
+            --card-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background-color: var(--soft-bg);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            text-align: center;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Comic Neue', cursive;
+            margin-bottom: 10px;
+        }
+
+        /* 📦 CONTAINER */
+        .app-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 25px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            border: 4px solid var(--primary-orange);
+        }
+
+        /* 🔘 BUTTONS */
+        .btn {
+            background: linear-gradient(to bottom, var(--primary-blue), #1976D2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Comic Neue', cursive;
+            margin: 10px;
+            box-shadow: 0 4px 0 #0D47A1;
+            transition: transform 0.1s;
+        }
+
+        .btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        .btn-green { background: linear-gradient(to bottom, var(--primary-green), #388E3C); box-shadow: 0 4px 0 #2E7D32; }
+        .btn-orange { background: linear-gradient(to bottom, var(--primary-orange), #F57C00); box-shadow: 0 4px 0 #E65100; }
+
+        /* 📖 SECTIONS */
+        .section {
+            display: none;
+            padding: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .active-section {
+            display: block;
+        }
+
+        /* 📝 NOTES CARDS */
+        .note-card {
+            background: #FFFDE7; /* Light Yellow */
+            border: 3px dashed var(--primary-orange);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+            position: relative;
+        }
+        
+        .icon-large { font-size: 3rem; vertical-align: middle; margin-right: 15px; }
+        .highlight { color: var(--primary-blue); font-weight: bold; }
+
+        /* 💰 MONEY STYLES (CSS ART) */
+        .coin-visual {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 50px;
+            height: 50px;
+            background: gold;
+            border: 3px solid #DAA520;
+            border-radius: 50%;
+            font-weight: bold;
+            color: #555;
+            margin: 5px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .note-visual {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 80px;
+            height: 40px;
+            background: #C8E6C9; /* Generic Note Color */
+            border: 2px solid #388E3C;
+            border-radius: 5px;
+            font-weight: bold;
+            color: #2E7D32;
+            margin: 5px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* ❓ QUIZ STYLES */
+        .quiz-header {
+            background: var(--primary-orange);
+            color: white;
+            padding: 15px;
+            border-radius: 15px 15px 0 0;
+            font-size: 1.1rem;
+        }
+
+        .question-box {
+            font-size: 1.5rem;
+            margin: 30px 0;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 15px;
+            border: 2px solid #ddd;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .option-btn {
+            background: white;
+            border: 3px solid var(--primary-green);
+            color: #333;
+            padding: 20px;
+            font-size: 1.2rem;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover { background: #E8F5E9; transform: scale(1.02); }
+        .option-btn.correct { background: #C8E6C9; border-color: #2E7D32; color: #2E7D32; }
+        .option-btn.wrong { background: #FFCDD2; border-color: #C62828; color: #C62828; }
+
+        /* 📊 SCOREBOARD */
+        .scoreboard {
+            display: flex;
+            justify-content: space-around;
+            background: #333;
+            color: white;
+            padding: 10px;
+            margin-top: 20px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        /* 🎉 FEEDBACK */
+        .feedback-msg {
+            font-size: 1.5rem;
+            font-weight: bold;
+            height: 40px;
+            margin: 10px 0;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .options-grid { grid-template-columns: 1fr; }
+            .note-card { text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <div id="home-section" class="section active-section">
+        <h1>⏰ Time & Money 💰</h1>
+        <p style="font-size: 1.2rem;">Class 1 • Mathematics</p>
+        <div style="font-size: 4rem; margin: 20px;">🕛 ☀️ 🪙 💵</div>
+        <p>Let's learn how to tell time and count money!</p>
+        <br>
+        <button class="btn btn-blue" onclick="showSection('learn-section')">📖 Learn (Padhai)</button>
+        <button class="btn btn-green" onclick="startQuiz()">🎮 Practice (70 Q)</button>
+    </div>
+
+    <div id="learn-section" class="section">
+        <button class="btn" onclick="showSection('home-section')">🏠 Home</button>
+        
+        <h2>⏰ Part 1: Time (Samay)</h2>
+        <p>Time hume batata hai kab kaam karna hai aur kab rest.</p>
+
+        <div class="note-card">
+            <span class="icon-large">☀️</span>
+            <strong>Day (Din)</strong><br>
+            When the Sun is out, it is Day.<br>
+            <em>Morning: Wake up & School 🏫<br>
+            Afternoon: Lunch 🍱<br>
+            Evening: Play 🏏</em>
+        </div>
+
+        <div class="note-card">
+            <span class="icon-large">🌙</span>
+            <strong>Night (Raat)</strong><br>
+            When Moon and Stars come out, it is Night.<br>
+            <em>We sleep at night. 😴</em>
+        </div>
+
+        <div class="note-card">
+            <span class="icon-large">🕛</span>
+            <strong>The Clock (Ghadi)</strong><br>
+            • <strong>Short Hand:</strong> Hour Hand (Ghante ki sui)<br>
+            • <strong>Long Hand:</strong> Minute Hand (Minute ki sui)<br>
+            When Long hand is on 12, it is a full hour.<br>
+            <em>Example: Short hand on 3, Long on 12 = 3 o'clock.</em>
+        </div>
+
+        <hr style="border: 2px dashed #ccc;">
+
+        <h2>💰 Part 2: Money (Paisa)</h2>
+        <p>Money se hum pencil, chocolate, aur books kharidte hain.</p>
+
+        <div class="note-card">
+            <strong>Indian Coins (Sikke)</strong><br>
+            Small metal money.<br>
+            <span class="coin-visual">₹1</span>
+            <span class="coin-visual">₹2</span>
+            <span class="coin-visual">₹5</span>
+            <span class="coin-visual">₹10</span>
+        </div>
+
+        <div class="note-card">
+            <strong>Indian Notes</strong><br>
+            Paper money.<br>
+            <span class="note-visual" style="background:#ef9a9a;">₹10</span>
+            <span class="note-visual" style="background:#FFF176;">₹20</span>
+            <span class="note-visual" style="background:#81D4FA;">₹50</span>
+            <span class="note-visual" style="background:#CE93D8;">₹100</span>
+        </div>
+
+        <div class="note-card">
+            <strong>Usage</strong><br>
+            Shopkeeper ko hum money dete hain to buy things. 🛍️
+        </div>
+
+        <button class="btn btn-green" onclick="startQuiz()">Start Practice Quiz 🚀</button>
+    </div>
+
+    <div id="quiz-section" class="section">
+        <div class="quiz-header">
+            Question <span id="q-number">1</span> / 70
+        </div>
+
+        <div class="question-box" id="question-text">
+            Loading...
+        </div>
+
+        <div class="feedback-msg" id="feedback"></div>
+
+        <div class="options-grid" id="options-container">
+            </div>
+
+        <button id="next-btn" class="btn btn-orange" style="display:none;" onclick="nextQuestion()">Next ➡️</button>
+
+        <div class="scoreboard">
+            <span style="color:#4CAF50">✅ Correct: <span id="score-correct">0</span></span>
+            <span style="color:#F44336">❌ Wrong: <span id="score-wrong">0</span></span>
+            <span style="color:#FFEB3B">⭐ Score: <span id="score-pct">0%</span></span>
+        </div>
+    </div>
+
+    <div id="result-section" class="section">
+        <h1>🎉 Quiz Completed! 🎉</h1>
+        <div style="font-size: 5rem;">🏆</div>
+        <h2>You are a Time & Money Star! ⭐</h2>
+        
+        <div style="font-size: 1.5rem; margin: 20px; padding: 20px; background: #fff; border-radius: 10px;">
+            <p>Final Score: <span id="final-score" style="color:var(--primary-blue); font-weight:bold;">0%</span></p>
+            <p>Correct Answers: <span id="final-correct">0</span> / 70</p>
+        </div>
+
+        <button class="btn btn-green" onclick="location.reload()">🔄 Play Again</button>
+    </div>
+
+</div>
+
+<script>
+    // 🧠 QUESTION DATABASE (70 UNIQUE QUESTIONS)
+    const questions = [
+        // --- TIME QUESTIONS (35) ---
+        { q: "What time is this? 🕒", o: ["3 o'clock", "4 o'clock", "12 o'clock"], a: 0 },
+        { q: "What time is this? 🕘", o: ["9 o'clock", "6 o'clock", "12 o'clock"], a: 0 },
+        { q: "What time is this? 🕛", o: ["1 o'clock", "6 o'clock", "12 o'clock"], a: 2 },
+        { q: "What time is this? 🕕", o: ["12 o'clock", "6 o'clock", "9 o'clock"], a: 1 },
+        { q: "What time is this? 🕐", o: ["1 o'clock", "2 o'clock", "3 o'clock"], a: 0 },
+        { q: "What time is this? 🕗", o: ["9 o'clock", "7 o'clock", "8 o'clock"], a: 2 },
+        { q: "When does the Sun rise? ☀️", o: ["Night", "Morning", "Evening"], a: 1 },
+        { q: "When do we see the Moon? 🌙", o: ["Morning", "Afternoon", "Night"], a: 2 },
+        { q: "We eat Lunch in the...", o: ["Morning", "Afternoon", "Night"], a: 1 },
+        { q: "We go to sleep at...", o: ["Night", "Morning", "Afternoon"], a: 0 },
+        { q: "The SHORT hand on the clock shows...", o: ["Minutes", "Hours", "Seconds"], a: 1 },
+        { q: "The LONG hand on the clock shows...", o: ["Minutes", "Hours", "Days"], a: 0 },
+        { q: "If short hand is on 5 and long hand on 12, time is...", o: ["5 o'clock", "12 o'clock", "6 o'clock"], a: 0 },
+        { q: "We eat Breakfast in the...", o: ["Evening", "Night", "Morning"], a: 2 },
+        { q: "True or False: Afternoon comes after Morning.", o: ["True", "False"], a: 0 },
+        { q: "Which activity is for Evening?", o: ["Playing 🏏", "Sleeping 😴", "School 🏫"], a: 0 },
+        { q: "True or False: We can see stars in the afternoon.", o: ["True", "False"], a: 1 },
+        { q: "What comes after Night?", o: ["Morning", "Evening", "Afternoon"], a: 0 },
+        { q: "What time is this? 🕙", o: ["10 o'clock", "11 o'clock", "12 o'clock"], a: 0 },
+        { q: "What time is this? 🕑", o: ["3 o'clock", "1 o'clock", "2 o'clock"], a: 2 },
+        { q: "What time is this? 🕓", o: ["4 o'clock", "5 o'clock", "6 o'clock"], a: 0 },
+        { q: "What time is this? 🕖", o: ["6 o'clock", "7 o'clock", "8 o'clock"], a: 1 },
+        { q: "What time is this? 🕔", o: ["5 o'clock", "4 o'clock", "6 o'clock"], a: 0 },
+        { q: "What time is this? 🕚", o: ["10 o'clock", "11 o'clock", "12 o'clock"], a: 1 },
+        { q: "True or False: A clock has numbers 1 to 12.", o: ["True", "False"], a: 0 },
+        { q: "When do we see an owl 🦉?", o: ["Day", "Night"], a: 1 },
+        { q: "Which hand moves faster?", o: ["Hour Hand", "Minute Hand"], a: 1 },
+        { q: "Midnight means...", o: ["12 o'clock at night", "12 o'clock in day", "6 o'clock"], a: 0 },
+        { q: "Noon means...", o: ["12 o'clock in day", "12 o'clock at night", "Morning"], a: 0 },
+        { q: "True or False: We go to school at night.", o: ["True", "False"], a: 1 },
+        { q: "Dinner is eaten at...", o: ["Morning", "Afternoon", "Night"], a: 2 },
+        { q: "If both hands are on 12, it is...", o: ["6 o'clock", "12 o'clock", "1 o'clock"], a: 1 },
+        { q: "Which time is for school?", o: ["8 o'clock Morning", "8 o'clock Night"], a: 0 },
+        { q: "Does the sun shine at night?", o: ["Yes", "No"], a: 1 },
+        { q: "A day has Day and...", o: ["Night", "Blue", "Green"], a: 0 },
+
+        // --- MONEY QUESTIONS (35) ---
+        { q: "Identify this coin: [ ₹ 1 ]", o: ["1 Rupee", "2 Rupees", "5 Rupees"], a: 0 },
+        { q: "Identify this coin: [ ₹ 5 ]", o: ["10 Rupees", "5 Rupees", "1 Rupee"], a: 1 },
+        { q: "Identify this coin: [ ₹ 10 ]", o: ["5 Rupees", "2 Rupees", "10 Rupees"], a: 2 },
+        { q: "Identify this coin: [ ₹ 2 ]", o: ["1 Rupee", "2 Rupees", "10 Rupees"], a: 1 },
+        { q: "Identify this note: [ ₹ 10 ]", o: ["10 Rupees", "20 Rupees", "50 Rupees"], a: 0 },
+        { q: "Identify this note: [ ₹ 20 ]", o: ["10 Rupees", "50 Rupees", "20 Rupees"], a: 2 },
+        { q: "Identify this note: [ ₹ 50 ]", o: ["100 Rupees", "50 Rupees", "10 Rupees"], a: 1 },
+        { q: "Identify this note: [ ₹ 100 ]", o: ["50 Rupees", "100 Rupees", "200 Rupees"], a: 1 },
+        { q: "Which is a coin? 🪙", o: ["₹ 500", "₹ 5", "₹ 100"], a: 1 },
+        { q: "Which is a paper note? 💵", o: ["₹ 1", "₹ 2", "₹ 20"], a: 2 },
+        { q: "We use money to...", o: ["Buy things", "Eat", "Sleep"], a: 0 },
+        { q: "To buy a chocolate 🍫, we give...", o: ["Money", "Paper", "Stone"], a: 0 },
+        { q: "True or False: We can buy toys with money.", o: ["True", "False"], a: 0 },
+        { q: "Which value is bigger?", o: ["₹ 1", "₹ 10"], a: 1 },
+        { q: "Which value is bigger?", o: ["₹ 100", "₹ 10"], a: 0 },
+        { q: "Which value is smaller?", o: ["₹ 50", "₹ 5"], a: 1 },
+        { q: "Which value is smaller?", o: ["₹ 20", "₹ 100"], a: 0 },
+        { q: "How many ₹1 coins make ₹2?", o: ["One", "Two", "Three"], a: 1 },
+        { q: "What is the symbol for Indian Rupee?", o: ["$", "₹", "€"], a: 1 },
+        { q: "True or False: Money grows on trees.", o: ["True", "False"], a: 1 },
+        { q: "Is ₹500 a coin or note?", o: ["Coin", "Note"], a: 1 },
+        { q: "Is ₹2 a coin or note?", o: ["Coin", "Note"], a: 0 },
+        { q: "If a pencil costs ₹5, which coin do you give?", o: ["[ ₹ 1 ]", "[ ₹ 2 ]", "[ ₹ 5 ]"], a: 2 },
+        { q: "True or False: Banks keep our money safe.", o: ["True", "False"], a: 0 },
+        { q: "Which is the colour of ₹2000 note (roughly)?", o: ["Pink", "Green", "Blue"], a: 0 },
+        { q: "Which note is green?", o: ["₹ 50 (New)", "₹ 200", "₹ 10"], a: 0 },
+        { q: "Which coin is bigger in size usually?", o: ["₹ 1", "₹ 5 (Thick)"], a: 1 },
+        { q: "Can we eat money?", o: ["Yes", "No"], a: 1 },
+        { q: "Does a shopkeeper take money?", o: ["Yes", "No"], a: 0 },
+        { q: "Find the odd one out.", o: ["₹ 10 Note", "₹ 20 Note", "Apple 🍎"], a: 2 },
+        { q: "₹ 10 + ₹ 0 = ?", o: ["₹ 10", "₹ 0", "₹ 100"], a: 0 },
+        { q: "Which is more money?", o: ["1 coin of ₹5", "1 coin of ₹1"], a: 0 },
+        { q: "We keep money in a...", o: ["Wallet/Purse", "Shoe", "Book"], a: 0 },
+        { q: "True or False: ₹ 100 is bigger than ₹ 50.", o: ["True", "False"], a: 0 },
+        { q: "Identify: [ ₹ 500 ]", o: ["500 Rupees", "50 Rupees", "5 Rupees"], a: 0 }
+    ];
+
+    // 🎮 GAME VARIABLES
+    let currentQIndex = 0;
+    let correctCount = 0;
+    let wrongCount = 0;
+    let isAnswered = false;
+
+    // 🖥️ UI FUNCTIONS
+    function showSection(id) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active-section'));
+        document.getElementById(id).classList.add('active-section');
+    }
+
+    function startQuiz() {
+        // Shuffle questions randomly
+        questions.sort(() => Math.random() - 0.5);
+        currentQIndex = 0;
+        correctCount = 0;
+        wrongCount = 0;
+        updateScoreboard();
+        showSection('quiz-section');
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        isAnswered = false;
+        document.getElementById('next-btn').style.display = 'none';
+        document.getElementById('feedback').innerText = "";
+        
+        let q = questions[currentQIndex];
+        document.getElementById('q-number').innerText = currentQIndex + 1;
+        document.getElementById('question-text').innerText = q.q;
+
+        const container = document.getElementById('options-container');
+        container.innerHTML = '';
+
+        q.o.forEach((opt, index) => {
+            let btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(index, btn);
+            container.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selectedIndex, btnElement) {
+        if (isAnswered) return; // Prevent multiple clicks
+        isAnswered = true;
+
+        let q = questions[currentQIndex];
+        let correctIndex = q.a;
+        let options = document.getElementsByClassName('option-btn');
+        let feedback = document.getElementById('feedback');
+
+        if (selectedIndex === correctIndex) {
+            btnElement.classList.add('correct');
+            feedback.innerText = "🎉 Excellent!";
+            feedback.style.color = "green";
+            correctCount++;
+        } else {
+            btnElement.classList.add('wrong');
+            options[correctIndex].classList.add('correct'); // Show correct one
+            feedback.innerText = "❌ Try Again!";
+            feedback.style.color = "red";
+            wrongCount++;
+        }
+
+        updateScoreboard();
+        document.getElementById('next-btn').style.display = 'inline-block';
+    }
+
+    function nextQuestion() {
+        currentQIndex++;
+        if (currentQIndex < questions.length) {
+            loadQuestion();
+        } else {
+            finishQuiz();
+        }
+    }
+
+    function updateScoreboard() {
+        let total = correctCount + wrongCount;
+        let pct = total === 0 ? 0 : Math.round((correctCount / total) * 100);
+        
+        document.getElementById('score-correct').innerText = correctCount;
+        document.getElementById('score-wrong').innerText = wrongCount;
+        document.getElementById('score-pct').innerText = pct + "%";
+    }
+
+    function finishQuiz() {
+        showSection('result-section');
+        document.getElementById('final-correct').innerText = correctCount;
+        let pct = Math.round((correctCount / 70) * 100);
+        document.getElementById('final-score').innerText = pct + "%";
+    }
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 1 Math: Measurements</title>
+    <style>
+        /* 🎨 THEME & FONTS */
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Comic+Neue:wght@700&display=swap');
+
+        :root {
+            --color-yellow: #FFEB3B;
+            --color-orange: #FF9800;
+            --color-green: #4CAF50;
+            --color-blue: #2196F3;
+            --color-purple: #9C27B0;
+            --bg-soft: #FFF3E0;
+            --card-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background-color: var(--bg-soft);
+            margin: 0;
+            padding: 10px;
+            color: #444;
+            text-align: center;
+            user-select: none;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Comic Neue', cursive;
+            margin-bottom: 10px;
+        }
+
+        /* 📦 APP CONTAINER */
+        .app-container {
+            max-width: 800px;
+            margin: 10px auto;
+            background: white;
+            border-radius: 30px;
+            box-shadow: var(--card-shadow);
+            overflow: hidden;
+            border: 5px solid var(--color-blue);
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 🔘 BUTTONS */
+        .btn {
+            background: linear-gradient(to bottom, var(--color-blue), #1976D2);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            font-size: 1.3rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-family: 'Comic Neue', cursive;
+            margin: 10px;
+            box-shadow: 0 5px 0 #0D47A1;
+            transition: all 0.1s;
+            display: inline-block;
+        }
+
+        .btn:active { transform: translateY(5px); box-shadow: none; }
+        .btn-green { background: linear-gradient(to bottom, var(--color-green), #388E3C); box-shadow: 0 5px 0 #2E7D32; }
+        .btn-orange { background: linear-gradient(to bottom, var(--color-orange), #F57C00); box-shadow: 0 5px 0 #E65100; }
+        .btn-purple { background: linear-gradient(to bottom, var(--color-purple), #7B1FA2); box-shadow: 0 5px 0 #4A148C; }
+
+        /* 📖 SECTIONS */
+        .section { display: none; padding: 20px; flex-grow: 1; animation: fadeIn 0.4s ease; }
+        .active-section { display: block; }
+
+        /* 📝 NOTES CARDS */
+        .note-card {
+            background: #FFFDE7;
+            border: 3px dashed var(--color-orange);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: left;
+            position: relative;
+        }
+        
+        .icon-large { font-size: 3rem; vertical-align: middle; margin-right: 15px; }
+        .highlight { color: var(--color-blue); font-weight: bold; font-size: 1.2rem; }
+
+        /* ❓ QUIZ STYLES */
+        .quiz-header {
+            background: var(--color-purple);
+            color: white;
+            padding: 15px;
+            border-radius: 20px;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .question-box {
+            font-size: 1.6rem;
+            margin: 20px 0;
+            padding: 30px;
+            background: #E3F2FD;
+            border-radius: 20px;
+            border: 3px solid #90CAF9;
+            color: #333;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2 columns */
+            gap: 15px;
+        }
+
+        .option-btn {
+            background: white;
+            border: 3px solid var(--color-green);
+            color: #333;
+            padding: 25px;
+            font-size: 1.3rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .option-btn:hover { background: #E8F5E9; transform: scale(1.03); }
+        .option-btn.correct { background: #C8E6C9; border-color: #2E7D32; color: #2E7D32; }
+        .option-btn.wrong { background: #FFCDD2; border-color: #C62828; color: #C62828; }
+
+        /* 📊 SCOREBOARD */
+        .scoreboard {
+            display: flex;
+            justify-content: space-around;
+            background: #333;
+            color: white;
+            padding: 15px;
+            margin-top: auto; /* Push to bottom */
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        /* 🎉 FEEDBACK */
+        .feedback-msg {
+            font-size: 1.5rem;
+            font-weight: bold;
+            height: 40px;
+            margin: 10px 0;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .options-grid { grid-template-columns: 1fr; } /* 1 column on mobile */
+            .note-card { text-align: center; }
+            .icon-large { display: block; margin: 0 auto 10px auto; }
+            .btn { width: 80%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <div id="home-section" class="section active-section">
+        <h1 style="color:var(--color-orange); font-size: 2.5rem;">📏 Measurements ⚖️</h1>
+        <p style="font-size: 1.3rem;">Class 1 • Mathematics</p>
+        
+        <div style="font-size: 5rem; margin: 30px; animation: bounce 2s infinite;">
+            🦒 🐘 🥛
+        </div>
+
+        <p>Let's learn about Big, Small, Heavy & Light!</p>
+        <br>
+        <button class="btn btn-blue" onclick="showSection('learn-section')">📖 Learn (Padhai)</button>
+        <button class="btn btn-green" onclick="startQuiz()">🎮 Play Quiz (70 Q)</button>
+    </div>
+
+    <div id="learn-section" class="section">
+        <button class="btn btn-orange" onclick="showSection('home-section')" style="padding: 10px 20px; font-size: 1rem;">🏠 Back</button>
+        <h2>Measurement Notes 📝</h2>
+        <p>Measurement hume batata hai cheez kitni lambi, bhari ya bhari hui hai.</p>
+
+        <div class="note-card">
+            <span class="icon-large">📏</span>
+            <span class="highlight">1. LENGTH (Lambai)</span><br>
+            <br>
+            <strong>Tall vs. Short (Lamba aur Chota)</strong><br>
+            🦒 Giraffe is <strong>Tall</strong>.<br>
+            🐱 Cat is <strong>Short</strong>.<br><br>
+            <strong>Long vs. Short</strong><br>
+            ✏️ Pencil is <strong>Long</strong>.<br>
+            🖍️ Crayon is <strong>Short</strong>.
+        </div>
+
+        <div class="note-card">
+            <span class="icon-large">⚖️</span>
+            <span class="highlight">2. WEIGHT (Vajan)</span><br>
+            <br>
+            <strong>Heavy vs. Light (Bhaari aur Halka)</strong><br>
+            🐘 Elephant is very <strong>Heavy</strong>.<br>
+            🪶 Feather is very <strong>Light</strong>.<br><br>
+            🍉 Watermelon is Heavy.<br>
+            🍇 Grape is Light.
+        </div>
+
+        <div class="note-card">
+            <span class="icon-large">🥛</span>
+            <span class="highlight">3. CAPACITY (Matra)</span><br>
+            <br>
+            <strong>Full vs. Empty (Bhara aur Khali)</strong><br>
+            🥛 Glass with milk is <strong>Full</strong>.<br>
+            🥛 Glass with no milk is <strong>Empty</strong>.<br><br>
+            <strong>More vs. Less (Zyada aur Kam)</strong><br>
+            🛁 Bucket holds <strong>More</strong> water.<br>
+            ☕ Cup holds <strong>Less</strong> water.
+        </div>
+
+        <button class="btn btn-green" onclick="startQuiz()">Start Practice 🚀</button>
+    </div>
+
+    <div id="quiz-section" class="section">
+        <div class="quiz-header">
+            Question <span id="q-number">1</span> / 70
+        </div>
+
+        <div class="question-box" id="question-text">
+            Loading...
+        </div>
+
+        <div class="feedback-msg" id="feedback"></div>
+
+        <div class="options-grid" id="options-container">
+            </div>
+
+        <button id="next-btn" class="btn btn-purple" style="display:none;" onclick="nextQuestion()">Next ➡️</button>
+    </div>
+    
+    <div id="quiz-scoreboard" class="scoreboard" style="display:none;">
+        <span style="color:#4CAF50">✅ <span id="score-correct">0</span></span>
+        <span style="color:#F44336">❌ <span id="score-wrong">0</span></span>
+        <span style="color:#FFEB3B">⭐ <span id="score-pct">0%</span></span>
+    </div>
+
+    <div id="result-section" class="section">
+        <h1>🎉 Champion! 🎉</h1>
+        <div style="font-size: 6rem; margin: 20px;">🏆</div>
+        <h2>You are a Measurement Star! ⭐</h2>
+        
+        <div style="font-size: 1.5rem; margin: 20px; padding: 20px; background: #fff; border-radius: 15px; border: 2px solid #ddd;">
+            <p>Score: <span id="final-score" style="color:var(--color-blue); font-weight:bold;">0%</span></p>
+            <p>Correct: <span id="final-correct">0</span> / 70</p>
+        </div>
+
+        <button class="btn btn-green" onclick="location.reload()">🔄 Play Again</button>
+    </div>
+
+</div>
+
+<script>
+    // 🧠 QUESTION DATABASE (70 Unique Questions)
+    const questions = [
+        // --- 📏 LENGTH QUESTIONS (25) ---
+        { q: "Which is TALL? 🦒 vs 🐜", o: ["Giraffe 🦒", "Ant 🐜"], a: 0 },
+        { q: "Which is SHORT? 🌲 vs 🍄", o: ["Tree 🌲", "Mushroom 🍄"], a: 1 },
+        { q: "A snake 🐍 is ______.", o: ["Long", "Short"], a: 0 },
+        { q: "A train 🚂 is ______.", o: ["Long", "Short"], a: 0 },
+        { q: "Which is longer? 📏 vs ✏️", o: ["Ruler", "Eraser"], a: 0 },
+        { q: "A building 🏢 is ______.", o: ["Tall", "Short"], a: 0 },
+        { q: "A finger is ______ than an arm.", o: ["Shorter", "Longer"], a: 0 },
+        { q: "A bus 🚌 is ______ than a car 🚗.", o: ["Longer", "Shorter"], a: 0 },
+        { q: "Which is tall?", o: ["Ladder 🪜", "Stool 🪑"], a: 0 },
+        { q: "Which is short?", o: ["Flower 🌻", "Tree 🌳"], a: 0 },
+        { q: "True or False: A pencil is longer than a bus.", o: ["False", "True"], a: 0 },
+        { q: "True or False: A giraffe is taller than a dog.", o: ["True", "False"], a: 0 },
+        { q: "My thumb is ______.", o: ["Short", "Long"], a: 0 },
+        { q: "A road is very ______.", o: ["Long", "Short"], a: 0 },
+        { q: "Which object is longer?", o: ["Bat 🏏", "Ball ⚾"], a: 0 },
+        { q: "Which is shorter?", o: ["Spoon 🥄", "Walking Stick 🦯"], a: 0 },
+        { q: "A baby is ______ than a man.", o: ["Shorter", "Taller"], a: 0 },
+        { q: "A rope is ______.", o: ["Long", "Tall"], a: 0 },
+        { q: "Comparing height means...", o: ["Tall/Short", "Heavy/Light"], a: 0 },
+        { q: "Comparing length means...", o: ["Long/Short", "Full/Empty"], a: 0 },
+        { q: "A worm 🐛 is ______.", o: ["Long & Thin", "Tall & Big"], a: 0 },
+        { q: "True or False: A mountain is short.", o: ["False", "True"], a: 0 },
+        { q: "Which is tallest?", o: ["Daddy", "Baby"], a: 0 },
+        { q: "Your leg is ______ than your foot.", o: ["Longer", "Shorter"], a: 0 },
+        { q: "A cucumber 🥒 is ______ than a grape 🍇.", o: ["Longer", "Shorter"], a: 0 },
+
+        // --- ⚖️ WEIGHT QUESTIONS (25) ---
+        { q: "Which is HEAVY? 🐘 vs 🐁", o: ["Elephant", "Mouse"], a: 0 },
+        { q: "Which is LIGHT? 🪶 vs 🪨", o: ["Feather", "Stone"], a: 0 },
+        { q: "A car 🚗 is ______.", o: ["Heavy", "Light"], a: 0 },
+        { q: "A balloon 🎈 is ______.", o: ["Light", "Heavy"], a: 0 },
+        { q: "Which is heavier?", o: ["Book 📘", "Paper 📄"], a: 0 },
+        { q: "Which is lighter?", o: ["Pencil ✏️", "School Bag 🎒"], a: 0 },
+        { q: "A pumpkin 🎃 is ______.", o: ["Heavy", "Light"], a: 0 },
+        { q: "A leaf 🍃 is ______.", o: ["Light", "Heavy"], a: 0 },
+        { q: "Which is heavier? 🚌 vs 🚲", o: ["Bus", "Cycle"], a: 0 },
+        { q: "True or False: A stone is lighter than a feather.", o: ["False", "True"], a: 0 },
+        { q: "Which is easiest to lift?", o: ["Cotton", "Iron"], a: 0 },
+        { q: "A watermelon 🍉 is ______ than an apple 🍎.", o: ["Heavier", "Lighter"], a: 0 },
+        { q: "An ant 🐜 is very ______.", o: ["Light", "Heavy"], a: 0 },
+        { q: "A truck 🚛 is very ______.", o: ["Heavy", "Light"], a: 0 },
+        { q: "Which weighs more?", o: ["Gold Brick", "Feather"], a: 0 },
+        { q: "Which weighs less?", o: ["Butterfly 🦋", "Cat 🐱"], a: 0 },
+        { q: "True or False: Air is light.", o: ["True", "False"], a: 0 },
+        { q: "A brick 🧱 is ______.", o: ["Heavy", "Light"], a: 0 },
+        { q: "Comparing weight means checking...", o: ["Heavy/Light", "Tall/Short"], a: 0 },
+        { q: "Can you lift a bus?", o: ["No, too heavy", "Yes, it is light"], a: 0 },
+        { q: "Can you lift a pen?", o: ["Yes", "No"], a: 0 },
+        { q: "Which is heavier?", o: ["Full Bottle", "Empty Bottle"], a: 0 },
+        { q: "A whale 🐋 is ______.", o: ["Heavy", "Light"], a: 0 },
+        { q: "A mobile phone is ______ than a TV.", o: ["Lighter", "Heavier"], a: 0 },
+        { q: "Which is heavy?", o: ["Hammer 🔨", "Nail"], a: 0 },
+
+        // --- 🥛 CAPACITY QUESTIONS (20) ---
+        { q: "Which holds MORE water? 🛁 vs ☕", o: ["Bathtub", "Cup"], a: 0 },
+        { q: "Which holds LESS water? 🥄 vs 🥣", o: ["Spoon", "Bowl"], a: 0 },
+        { q: "A bucket 🪣 has ______ capacity than a mug.", o: ["More", "Less"], a: 0 },
+        { q: "A glass is ______ when there is no water.", o: ["Empty", "Full"], a: 0 },
+        { q: "A glass is ______ when water is to the top.", o: ["Full", "Empty"], a: 0 },
+        { q: "Which can hold more juice?", o: ["Jug", "Glass"], a: 0 },
+        { q: "Which holds less?", o: ["Ink pot", "Water Tank"], a: 0 },
+        { q: "True or False: A spoon holds more than a bucket.", o: ["False", "True"], a: 0 },
+        { q: "Capacity tells us about...", o: ["Liquid/Amount", "Height"], a: 0 },
+        { q: "To fill a pool, we need ______ water.", o: ["More", "Less"], a: 0 },
+        { q: "To drink medicine, we use a ______.", o: ["Spoon", "Bucket"], a: 0 },
+        { q: "A drum holds ______ oil than a bottle.", o: ["More", "Less"], a: 0 },
+        { q: "Which is empty?", o: ["Glass with no water", "Glass with water"], a: 0 },
+        { q: "We measure milk in...", o: ["Capacity (Liters)", "Length (Meters)"], a: 0 },
+        { q: "A teapot holds ______ tea than a cup.", o: ["More", "Less"], a: 0 },
+        { q: "Which is bigger?", o: ["Water Tank", "Water Bottle"], a: 0 },
+        { q: "True or False: A big bottle holds more than a small bottle.", o: ["True", "False"], a: 0 },
+        { q: "If I drink the water, the glass becomes...", o: ["Empty", "Full"], a: 0 },
+        { q: "A swimming pool has ______ capacity.", o: ["Large", "Small"], a: 0 },
+        { q: "Eyedrops bottle has ______ capacity.", o: ["Small", "Large"], a: 0 }
+    ];
+
+    // 🎮 GAME LOGIC
+    let currentQIndex = 0;
+    let correctCount = 0;
+    let wrongCount = 0;
+    let isAnswered = false;
+
+    // Shuffle Function
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    function showSection(id) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active-section'));
+        document.getElementById(id).classList.add('active-section');
+        
+        // Show scoreboard only in quiz section
+        if(id === 'quiz-section') {
+            document.getElementById('quiz-scoreboard').style.display = 'flex';
+        } else {
+            document.getElementById('quiz-scoreboard').style.display = 'none';
+        }
+    }
+
+    function startQuiz() {
+        shuffleArray(questions); // Randomize order
+        currentQIndex = 0;
+        correctCount = 0;
+        wrongCount = 0;
+        updateScoreboard();
+        showSection('quiz-section');
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        isAnswered = false;
+        document.getElementById('next-btn').style.display = 'none';
+        document.getElementById('feedback').innerText = "";
+        
+        let q = questions[currentQIndex];
+        document.getElementById('q-number').innerText = currentQIndex + 1;
+        document.getElementById('question-text').innerText = q.q;
+
+        const container = document.getElementById('options-container');
+        container.innerHTML = '';
+
+        q.o.forEach((opt, index) => {
+            let btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(index, btn);
+            container.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selectedIndex, btnElement) {
+        if (isAnswered) return;
+        isAnswered = true;
+
+        let q = questions[currentQIndex];
+        let correctIndex = q.a;
+        let options = document.getElementsByClassName('option-btn');
+        let feedback = document.getElementById('feedback');
+
+        if (selectedIndex === correctIndex) {
+            btnElement.classList.add('correct');
+            feedback.innerText = "🌟 Great Job! Correct!";
+            feedback.style.color = "#2E7D32";
+            correctCount++;
+        } else {
+            btnElement.classList.add('wrong');
+            options[correctIndex].classList.add('correct');
+            feedback.innerText = "😅 Nice Try!";
+            feedback.style.color = "#EF6C00";
+            wrongCount++;
+        }
+
+        updateScoreboard();
+        document.getElementById('next-btn').style.display = 'inline-block';
+    }
+
+    function nextQuestion() {
+        currentQIndex++;
+        if (currentQIndex < questions.length) {
+            loadQuestion();
+        } else {
+            finishQuiz();
+        }
+    }
+
+    function updateScoreboard() {
+        let total = correctCount + wrongCount;
+        let pct = total === 0 ? 0 : Math.round((correctCount / total) * 100);
+        
+        document.getElementById('score-correct').innerText = correctCount;
+        document.getElementById('score-wrong').innerText = wrongCount;
+        document.getElementById('score-pct').innerText = pct + "%";
+    }
+
+    function finishQuiz() {
+        showSection('result-section');
+        document.getElementById('quiz-scoreboard').style.display = 'none';
+        document.getElementById('final-correct').innerText = correctCount;
+        let pct = Math.round((correctCount / 70) * 100);
+        document.getElementById('final-score').innerText = pct + "%";
+    }
+
+</script>
+
+</body>
+</html>

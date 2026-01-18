@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Fun With Math - Class 1 Adventure</title>
+<style>
+    :root {
+        --color-yellow: #FFD93D;
+        --color-green: #6BCB77;
+        --color-blue: #4D96FF;
+        --color-orange: #FF6B6B;
+        --color-bg: #F0F8FF;
+        --color-text: #2D3436;
+        --color-white: #FFFFFF;
+        --font-main: 'Comic Sans MS', 'Chalkboard SE', 'Fredoka One', sans-serif;
+    }
+
+    * {
+        box-sizing: border-box;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: var(--font-main);
+        background-color: var(--color-bg);
+        color: var(--color-text);
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    /* --- LAYOUTS --- */
+    .screen {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        padding: 20px;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.5s ease;
+    }
+
+    .screen.active {
+        display: flex;
+    }
+
+    /* --- COMPONENTS --- */
+    h1 {
+        font-size: 2.5rem;
+        color: var(--color-blue);
+        text-shadow: 2px 2px 0px white;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .card {
+        background: var(--color-white);
+        border-radius: 25px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        padding: 25px;
+        width: 100%;
+        max-width: 600px;
+        text-align: center;
+        margin: 10px 0;
+        border: 4px solid var(--color-blue);
+    }
+
+    .btn {
+        background: var(--color-white);
+        border: none;
+        border-radius: 20px;
+        padding: 15px 30px;
+        font-size: 1.5rem;
+        font-family: var(--font-main);
+        font-weight: bold;
+        cursor: pointer;
+        transition: transform 0.1s, box-shadow 0.1s;
+        box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+        margin: 10px;
+        width: 100%;
+        max-width: 400px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn:active {
+        transform: translateY(6px);
+        box-shadow: none;
+    }
+
+    .btn-start { background-color: var(--color-green); color: white; font-size: 2rem; }
+    .btn-opt { background-color: var(--color-yellow); color: var(--color-text); border: 2px solid #F0C300; }
+    .btn-opt:hover { filter: brightness(1.05); }
+
+    /* --- SCORE HEADER --- */
+    .header-bar {
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        height: 70px;
+        background: var(--color-white);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        z-index: 100;
+        padding: 0 10px;
+    }
+
+    .score-pill {
+        display: flex;
+        align-items: center;
+        font-size: 1.2rem;
+        font-weight: bold;
+        background: #f1f2f6;
+        padding: 5px 15px;
+        border-radius: 20px;
+    }
+
+    /* --- GAME ELEMENTS --- */
+    .question-box {
+        font-size: 2.2rem;
+        margin-bottom: 20px;
+        color: var(--color-text);
+        line-height: 1.4;
+    }
+
+    .visual-helper {
+        font-size: 4rem;
+        margin: 10px 0;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .options-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        width: 100%;
+        margin-top: 20px;
+    }
+    
+    @media (max-width: 450px) {
+        .options-grid { grid-template-columns: 1fr; }
+    }
+
+    .progress-track {
+        width: 100%;
+        height: 12px;
+        background: #eee;
+        border-radius: 10px;
+        margin-top: 20px;
+        overflow: hidden;
+    }
+    .progress-fill {
+        height: 100%;
+        background: var(--color-green);
+        width: 0%;
+        transition: width 0.3s ease;
+    }
+
+    /* --- FEEDBACK OVERLAY --- */
+    .feedback-modal {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(255, 255, 255, 0.9);
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        animation: popIn 0.3s;
+    }
+    .feedback-emoji { font-size: 6rem; margin-bottom: 20px; }
+    .feedback-text { font-size: 3rem; font-weight: bold; text-align: center; }
+
+    /* --- SHAPE CSS UTILS --- */
+    .shape { display: inline-block; margin: 5px; }
+    .s-circle { width: 50px; height: 50px; background: var(--color-orange); border-radius: 50%; }
+    .s-square { width: 50px; height: 50px; background: var(--color-blue); }
+    .s-triangle { width: 0; height: 0; border-left: 25px solid transparent; border-right: 25px solid transparent; border-bottom: 50px solid var(--color-green); }
+    .s-rect { width: 70px; height: 40px; background: var(--color-yellow); }
+
+    /* --- ANIMATIONS --- */
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes popIn { 0% { transform: scale(0.5); } 80% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+</style>
+</head>
+<body>
+
+    <div id="screen-home" class="screen active">
+        <h1>🌟 Math Fun 🌟<br><span style="font-size:1.5rem; color:#666">Class 1 Complete Mix</span></h1>
+        
+        <div class="card">
+            <p style="font-size: 1.2rem;">Are you ready to become a Math Superstar?</p>
+            <div style="font-size: 4rem; margin: 20px;">🎒 ✏️ 🔢</div>
+            <p>200 Fun Questions!</p>
+            <p>Shapes • Money • Time • Numbers</p>
+        </div>
+
+        <button class="btn btn-start" onclick="game.start()">▶️ PLAY NOW</button>
+    </div>
+
+    <div id="screen-game" class="screen">
+        <div class="header-bar">
+            <div class="score-pill" style="color: var(--color-green)">✅ <span id="score-right">0</span></div>
+            <div class="score-pill" style="color: var(--color-orange)">❌ <span id="score-wrong">0</span></div>
+            <div class="score-pill">📊 <span id="score-pct">0%</span></div>
+        </div>
+
+        <div style="height: 70px;"></div> <div class="card">
+            <div class="question-box" id="q-text">Loading...</div>
+            <div class="visual-helper" id="q-visual"></div>
+            
+            <div class="options-grid" id="q-options">
+                </div>
+
+            <div class="progress-track">
+                <div class="progress-fill" id="progress-bar"></div>
+            </div>
+            <div style="margin-top: 5px; font-size: 0.9rem; color: #999;">Question <span id="q-current">1</span> of 200</div>
+        </div>
+    </div>
+
+    <div id="feedback-overlay" class="feedback-modal">
+        <div class="feedback-emoji" id="fb-emoji">🌟</div>
+        <div class="feedback-text" id="fb-text">Great Job!</div>
+    </div>
+
+    <div id="screen-result" class="screen">
+        <h1>🎉 COURSE COMPLETE 🎉</h1>
+        <div class="card">
+            <div style="font-size: 6rem;" id="res-badge">🥇</div>
+            <h2 id="res-title">Math Superstar!</h2>
+            <div style="font-size: 2rem; margin: 10px;">
+                ⭐ <span id="res-stars">0</span> Stars
+            </div>
+            <hr style="border: 1px dashed #ccc; margin: 20px 0;">
+            <p style="font-size: 1.5rem;">Score: <span id="res-score">0</span>%</p>
+            <p>Correct: <span id="res-c">0</span> | Wrong: <span id="res-w">0</span></p>
+        </div>
+        <button class="btn btn-start" onclick="location.reload()">🔄 Play Again</button>
+    </div>
+
+<script>
+/**
+ * MATH ADVENTURE ENGINE
+ * Designed for Class 1 Syllabus
+ */
+
+const Utils = {
+    rand: (min, max) => Math.floor(Math.random() * (max - min + 1)) + min,
+    pick: (arr) => arr[Math.floor(Math.random() * arr.length)],
+    shuffle: (arr) => arr.sort(() => Math.random() - 0.5)
+};
+
+const Syllabus = {
+    // 1. NUMBERS (1-100)
+    genNumber: () => {
+        const type = Utils.rand(1, 4);
+        let q, a, v, opts;
+        
+        if (type === 1) { // After
+            let n = Utils.rand(1, 99);
+            q = `What comes <b>AFTER</b> ${n}?`;
+            a = n + 1;
+            opts = [n+1, n+2, n-1, n+10];
+            v = `${n} ➡️ ❓`;
+        } else if (type === 2) { // Before
+            let n = Utils.rand(2, 100);
+            q = `What comes <b>BEFORE</b> ${n}?`;
+            a = n - 1;
+            opts = [n-1, n+1, n-2, n+10];
+            v = `❓ ⬅️ ${n}`;
+        } else if (type === 3) { // Number Name
+            const names = ["One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten"];
+            let n = Utils.rand(1, 10);
+            q = `Read the number name: <b>${names[n-1]}</b>`;
+            a = n;
+            opts = [n, n+1, n+2, Utils.rand(1,10)];
+            v = "📝";
+        } else { // Counting
+            let n = Utils.rand(3, 9);
+            const emojis = ['🍎','🚙','🐱','🎈','🍪'];
+            let icon = Utils.pick(emojis);
+            v = "";
+            for(let i=0; i<n; i++) v += icon + " ";
+            q = "Count the objects!";
+            a = n;
+            opts = [n, n+1, n-1, n+2];
+        }
+        return { q, a, v, opts, type: 'Numbers' };
+    },
+
+    // 2. ADDITION
+    genAddition: () => {
+        let n1 = Utils.rand(1, 10);
+        let n2 = Utils.rand(1, 9);
+        let ans = n1 + n2;
+        return {
+            q: `${n1} + ${n2} = ?`,
+            v: "➕",
+            a: ans,
+            opts: [ans, ans+1, ans-1, ans+2],
+            type: 'Addition'
+        };
+    },
+
+    // 3. SUBTRACTION
+    genSubtraction: () => {
+        let n1 = Utils.rand(5, 15);
+        let n2 = Utils.rand(1, 5);
+        let ans = n1 - n2;
+        return {
+            q: `${n1} - ${n2} = ?`,
+            v: "➖",
+            a: ans,
+            opts: [ans, ans+1, ans-1, ans+2],
+            type: 'Subtraction'
+        };
+    },
+
+    // 4. SHAPES
+    genShapes: () => {
+        const shapes = [
+            { name: "Circle", css: "s-circle" },
+            { name: "Square", css: "s-square" },
+            { name: "Triangle", css: "s-triangle" },
+            { name: "Rectangle", css: "s-rect" }
+        ];
+        let target = Utils.pick(shapes);
+        return {
+            q: `Which shape is a <b>${target.name}</b>?`,
+            v: "📐",
+            a: `<div class='shape ${target.css}'></div>`, // Answer is the HTML representation
+            opts: Utils.shuffle(shapes.map(s => `<div class='shape ${s.css}'></div>`)),
+            type: 'Shapes',
+            isHtmlOpt: true
+        };
+    },
+
+    // 5. PATTERNS
+    genPattern: () => {
+        const set = [['🔴','🔵'], ['⭐','🌙'], ['🐶','🐱'], ['A','B']];
+        const p = Utils.pick(set);
+        return {
+            q: "Complete the pattern:",
+            v: `${p[0]} ${p[1]} ${p[0]} ${p[1]} ❓`,
+            a: p[0],
+            opts: [p[0], p[1], '❌', 'End'],
+            type: 'Patterns'
+        };
+    },
+
+    // 6. TIME
+    genTime: () => {
+        let h = Utils.rand(1, 12);
+        let isOclock = Math.random() > 0.3;
+        let m = isOclock ? "00" : "30";
+        let timeStr = `${h}:${m}`;
+        
+        // CSS Clock construction visually or text description
+        // For Class 1, simple text or emoji clocks are safest without images
+        let clockEmoji = isOclock ? (h===12 ? '🕛' : h===1?'🕐':h===2?'🕑':h===3?'🕒':h===4?'🕓':h===5?'🕔':h===6?'🕕':h===7?'🕖':h===8?'🕗':h===9?'🕘':h===10?'🕙':'🕚') : '⏰';
+        
+        let qStr = isOclock 
+            ? `The small hand is on ${h}. The big hand is on 12.` 
+            : `The time is <b>${h} : 30</b>`;
+            
+        if(isOclock) {
+            return {
+                q: "What time is it?",
+                v: `<div style='font-size:5rem'>${clockEmoji}</div><small>Small hand on ${h}, Big on 12</small>`,
+                a: `${h}:00`,
+                opts: [`${h}:00`, `${h}:30`, `${h+1}:00`, `12:00`],
+                type: 'Time'
+            };
+        } else {
+             return {
+                q: "Which clock shows half past?",
+                v: timeStr,
+                a: timeStr,
+                opts: [timeStr, `${h}:00`, `${h+1}:00`, `12:00`],
+                type: 'Time'
+            };
+        }
+    },
+
+    // 7. MONEY
+    genMoney: () => {
+        let amt = Utils.pick([1, 2, 5, 10, 20]);
+        let qType = Utils.rand(1,2);
+        if(qType === 1) {
+            return {
+                q: `Identify this coin/note:`,
+                v: `<div style='border:2px solid #333; padding:10px; display:inline-block; border-radius:50%; width:60px; height:60px; line-height:35px; background:#ffd700'>${amt}</div>`,
+                a: amt,
+                opts: [1, 2, 5, 10, 20].sort(() => Math.random() - 0.5).slice(0,4),
+                type: 'Money'
+            };
+        } else {
+            let a = 5, b = Utils.pick([1, 2, 5]);
+            return {
+                q: "How much money total?",
+                v: `💰 ${a} + 💰 ${b}`,
+                a: a+b,
+                opts: [a+b, a+b+1, a+b-1, 20],
+                type: 'Money'
+            };
+        }
+    },
+
+    // 8. COMPARISON
+    genCompare: () => {
+        let n1 = Utils.rand(1, 50);
+        let n2 = Utils.rand(1, 50);
+        while(n1 === n2) n2 = Utils.rand(1, 50);
+        
+        let type = Utils.rand(1, 2); // 1 = Find Bigger, 2 = Find Smaller
+        let label = type === 1 ? "BIGGER" : "SMALLER";
+        let ans = type === 1 ? Math.max(n1, n2) : Math.min(n1, n2);
+        
+        return {
+            q: `Which number is <b>${label}</b>?`,
+            v: `${n1} &nbsp; vs &nbsp; ${n2}`,
+            a: ans,
+            opts: [n1, n2],
+            type: 'Comparison'
+        };
+    },
+
+    // 9. LOGIC
+    genLogic: () => {
+        let type = Utils.rand(1,2);
+        if(type === 1) {
+            // Odd one out
+            return {
+                q: "Find the odd one out:",
+                v: "🤔",
+                a: "🚗", // Car vs Fruits
+                opts: ["🍎", "🍌", "🚗", "🍇"],
+                type: 'Logic'
+            };
+        } else {
+            // Tall/Short logic
+            return {
+                q: "Which object is usually TALLER?",
+                v: "🦒 vs 🐜",
+                a: "Giraffe",
+                opts: ["Giraffe", "Ant"],
+                type: 'Logic'
+            };
+        }
+    }
+};
+
+const Game = {
+    totalQuestions: 200,
+    currentIdx: 0,
+    score: 0,
+    wrong: 0,
+    questions: [],
+
+    init: () => {
+        // Generate 200 questions based on distribution
+        let qList = [];
+        const addQ = (fn, count) => { for(let i=0; i<count; i++) qList.push(fn()); };
+        
+        addQ(Syllabus.genNumber, 30);
+        addQ(Syllabus.genAddition, 30);
+        addQ(Syllabus.genSubtraction, 30);
+        addQ(Syllabus.genShapes, 20);
+        addQ(Syllabus.genPattern, 20);
+        addQ(Syllabus.genTime, 20);
+        addQ(Syllabus.genMoney, 20);
+        addQ(Syllabus.genCompare, 20);
+        addQ(Syllabus.genLogic, 10); // Fill remaining
+        
+        Game.questions = Utils.shuffle(qList);
+        // Ensure exact 200 if needed, but list is approx 200 now.
+        // Cap at 200
+        Game.questions = Game.questions.slice(0, 200);
+    },
+
+    start: () => {
+        Game.init();
+        Game.score = 0;
+        Game.wrong = 0;
+        Game.currentIdx = 0;
+        
+        document.getElementById('screen-home').classList.remove('active');
+        document.getElementById('screen-result').classList.remove('active');
+        document.getElementById('screen-game').classList.add('active');
+        
+        Game.updateStats();
+        Game.renderQuestion();
+    },
+
+    renderQuestion: () => {
+        if(Game.currentIdx >= Game.questions.length) {
+            Game.end();
+            return;
+        }
+
+        const q = Game.questions[Game.currentIdx];
+        const elText = document.getElementById('q-text');
+        const elVisual = document.getElementById('q-visual');
+        const elOpts = document.getElementById('q-options');
+        const elCount = document.getElementById('q-current');
+        const elBar = document.getElementById('progress-bar');
+
+        // Animation reset
+        elText.parentElement.style.animation = 'none';
+        elText.parentElement.offsetHeight; /* trigger reflow */
+        elText.parentElement.style.animation = 'fadeIn 0.5s';
+
+        elText.innerHTML = q.q;
+        elVisual.innerHTML = q.v;
+        elOpts.innerHTML = '';
+        elCount.innerText = Game.currentIdx + 1;
+        elBar.style.width = ((Game.currentIdx / Game.totalQuestions) * 100) + '%';
+
+        // Shuffle options to ensure randomness
+        let finalOpts = Utils.shuffle([...q.opts]);
+        // Remove duplicates if any (rare edge case in random generation)
+        finalOpts = [...new Set(finalOpts)]; 
+        // Ensure 4 options mostly, sometimes 2 for True/False logic
+        
+        finalOpts.forEach(opt => {
+            let btn = document.createElement('button');
+            btn.className = 'btn btn-opt';
+            btn.innerHTML = opt; // InnerHTML allows shapes to render
+            btn.onclick = () => Game.handleAnswer(opt, q.a);
+            elOpts.appendChild(btn);
+        });
+    },
+
+    handleAnswer: (selected, correct) => {
+        // Loose comparison for numbers vs strings
+        let isRight = (selected == correct);
+        
+        // HTML comparison check
+        if(typeof correct === 'string' && correct.includes('<')) {
+             // For shape HTML strings, exact match needed
+             isRight = (selected === correct);
+        }
+
+        Game.showFeedback(isRight);
+
+        if(isRight) Game.score++; else Game.wrong++;
+        
+        Game.updateStats();
+        Game.currentIdx++;
+
+        setTimeout(() => {
+            Game.renderQuestion();
+        }, 1200);
+    },
+
+    showFeedback: (isRight) => {
+        const modal = document.getElementById('feedback-overlay');
+        const emoji = document.getElementById('fb-emoji');
+        const text = document.getElementById('fb-text');
+        
+        modal.style.display = 'flex';
+        
+        if(isRight) {
+            emoji.innerHTML = Utils.pick(['🌟','🎉','🏆','🦄','🎈']);
+            text.innerHTML = Utils.pick(["Great Job!", "Awesome!", "Super!", "Correct!"]);
+            text.style.color = "var(--color-green)";
+        } else {
+            emoji.innerHTML = "💪";
+            text.innerHTML = Utils.pick(["Nice Try!", "Keep Going!", "You can do it!"]);
+            text.style.color = "var(--color-orange)";
+        }
+
+        setTimeout(() => {
+            modal.style.display = 'none';
+        }, 1000);
+    },
+
+    updateStats: () => {
+        document.getElementById('score-right').innerText = Game.score;
+        document.getElementById('score-wrong').innerText = Game.wrong;
+        let total = Game.score + Game.wrong;
+        let pct = total === 0 ? 0 : Math.round((Game.score / total) * 100);
+        document.getElementById('score-pct').innerText = pct + "%";
+    },
+
+    end: () => {
+        document.getElementById('screen-game').classList.remove('active');
+        document.getElementById('screen-result').classList.add('active');
+        
+        let total = Game.score + Game.wrong;
+        let pct = Math.round((Game.score / total) * 100);
+        
+        document.getElementById('res-score').innerText = pct;
+        document.getElementById('res-c').innerText = Game.score;
+        document.getElementById('res-w').innerText = Game.wrong;
+        
+        let stars = 0;
+        let badge = "🥉";
+        let title = "Math Learner";
+
+        if(pct >= 90) { stars = 3; badge = "🥇"; title = "Math Superstar!"; }
+        else if(pct >= 70) { stars = 2; badge = "🥈"; title = "Math Champion!"; }
+        else { stars = 1; badge = "🥉"; title = "Good Start!"; }
+
+        document.getElementById('res-badge').innerText = badge;
+        document.getElementById('res-title').innerText = title;
+        document.getElementById('res-stars').innerText = stars;
+    }
+};
+
+const game = Game; // Alias
+
+</script>
+</body>
+</html>
