@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Super Star Show & Tell 🌟</title>
+    <style>
+        /* --- 1. THEME & VARS --- */
+        :root {
+            --primary: #FF9F1C; /* Happy Orange */
+            --secondary: #4CC9F0; /* Sky Blue */
+            --accent: #F72585; /* Pop Pink */
+            --success: #2EC4B6; /* Green */
+            --bg: #FFF8E1; /* Warm White */
+            --text: #2B2D42;
+            --font: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+        }
+
+        * { box-sizing: border-box; touch-action: manipulation; -webkit-tap-highlight-color: transparent; user-select: none; }
+        
+        body {
+            margin: 0; padding: 0;
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            padding-bottom: 80px; /* Footer space */
+            overflow-x: hidden;
+        }
+
+        /* --- 2. HEADER & METERS --- */
+        header {
+            background: #fff; padding: 10px 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            position: sticky; top: 0; z-index: 100;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .meter-box {
+            background: #f0f0f0; width: 100px; height: 12px;
+            border-radius: 10px; overflow: hidden; position: relative;
+        }
+        
+        .meter-fill {
+            height: 100%; width: 0%; background: linear-gradient(90deg, #FF9F1C, #F72585);
+            transition: width 0.3s ease;
+        }
+
+        .badge {
+            background: #fff; border: 2px solid var(--accent); color: var(--accent);
+            padding: 5px 12px; border-radius: 20px; font-weight: bold;
+            display: flex; align-items: center; gap: 5px;
+        }
+
+        /* --- 3. MAIN STAGE --- */
+        .stage-container {
+            max-width: 600px; margin: 0 auto; padding: 15px;
+            min-height: 85vh; display: flex; flex-direction: column;
+        }
+
+        .spotlight {
+            background: #fff; border-radius: 30px; padding: 20px;
+            text-align: center; border: 4px solid var(--secondary);
+            box-shadow: 0 10px 0 rgba(0,0,0,0.05); position: relative;
+            margin-bottom: 20px; overflow: hidden;
+        }
+
+        .object-display { font-size: 6rem; animation: float 3s infinite ease-in-out; display: block; }
+        
+        .think-bubble {
+            background: #E0F7FA; padding: 10px 15px; border-radius: 20px;
+            display: inline-block; margin-top: 10px; color: #006064;
+            font-size: 1.1rem; border: 2px dashed #00BCD4;
+        }
+
+        /* --- 4. PROMPTS & CONTROLS --- */
+        .prompts-box {
+            background: #fff; border-radius: 20px; padding: 15px;
+            margin-bottom: 20px; border-left: 5px solid var(--primary);
+        }
+        
+        .prompt-line {
+            font-size: 1.3rem; margin: 10px 0; display: flex; gap: 10px; align-items: center;
+            opacity: 0.5; transition: 0.3s;
+        }
+        .prompt-line.active { opacity: 1; transform: translateX(5px); font-weight: bold; color: var(--primary); }
+
+        .control-panel {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: #fff; padding: 15px; border-top-left-radius: 25px; border-top-right-radius: 25px;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.1); display: flex;
+            justify-content: space-around; align-items: center; z-index: 150;
+        }
+
+        .mic-btn {
+            width: 70px; height: 70px; border-radius: 50%;
+            background: var(--accent); color: white; border: none;
+            font-size: 2rem; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 0 0 rgba(247, 37, 133, 0.7); transition: 0.2s;
+        }
+        .mic-btn.active { animation: pulse 1.5s infinite; transform: scale(1.1); }
+
+        .btn-secondary {
+            background: var(--secondary); color: white; border: none;
+            padding: 10px 20px; border-radius: 15px; font-weight: bold;
+            box-shadow: 0 4px 0 #2899bd;
+        }
+        .btn-secondary:active { transform: translateY(4px); box-shadow: none; }
+
+        /* --- 5. OBJECT PICKER --- */
+        .grid-picker {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;
+            padding: 10px;
+        }
+        .pick-card {
+            background: white; padding: 15px; border-radius: 20px;
+            text-align: center; border: 2px solid #eee; cursor: pointer;
+            transition: 0.2s;
+        }
+        .pick-card:hover { border-color: var(--primary); transform: translateY(-3px); }
+
+        /* --- 6. DRAWING CANVAS --- */
+        canvas {
+            background: white; border: 2px dashed #ccc; border-radius: 15px;
+            cursor: crosshair; touch-action: none;
+        }
+
+        /* --- 7. FOOTER --- */
+        .footer-legal {
+            text-align: center; font-size: 0.7rem; color: #888;
+            margin-top: 50px; padding: 20px; background: #eee;
+        }
+
+        /* --- UTILS --- */
+        .hidden { display: none !important; }
+        .anim-pop { animation: pop 0.3s; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(247, 37, 133, 0.7); } 70% { box-shadow: 0 0 0 20px rgba(247, 37, 133, 0); } 100% { box-shadow: 0 0 0 0 rgba(247, 37, 133, 0); } }
+        @keyframes pop { 50% { transform: scale(1.1); } }
+
+        /* CONFETTI */
+        .confetti { position: fixed; width: 10px; height: 10px; top: -10px; z-index: 999; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="badge" onclick="goHome()">🏠 Home</div>
+        <div style="text-align: right;">
+            <small style="font-size: 0.7rem; color:#888;">CONFIDENCE METER</small>
+            <div class="meter-box"><div class="meter-fill" id="confBar"></div></div>
+        </div>
+        <div class="badge">⭐ <span id="starCount">0</span></div>
+    </header>
+
+    <div id="screen-home" class="stage-container">
+        <h1 style="text-align: center; color: var(--primary);">It's Show & Tell Time! 🎤</h1>
+        <p style="text-align: center;">What do you want to show today?</p>
+        
+        <div class="grid-picker">
+            <div class="pick-card" onclick="startStage('toy')">
+                <span style="font-size: 3rem;">🧸</span><br><b>My Toy</b>
+            </div>
+            <div class="pick-card" onclick="startStage('fruit')">
+                <span style="font-size: 3rem;">🍎</span><br><b>Fruit</b>
+            </div>
+            <div class="pick-card" onclick="startStage('pet')">
+                <span style="font-size: 3rem;">🐶</span><br><b>Animal</b>
+            </div>
+            <div class="pick-card" onclick="startStage('book')">
+                <span style="font-size: 3rem;">📘</span><br><b>My Book</b>
+            </div>
+            <div class="pick-card" onclick="startDrawMode()">
+                <span style="font-size: 3rem;">🎨</span><br><b>I will Draw!</b>
+            </div>
+            <div class="pick-card" onclick="startStage('random')">
+                <span style="font-size: 3rem;">🎲</span><br><b>Surprise Me</b>
+            </div>
+        </div>
+
+        <div style="text-align:center; margin-top:20px;">
+            <button class="btn-secondary" onclick="toggleParent()" style="background:#eee; color:#555; box-shadow:none;">👨‍👩‍👧 Parent Dashboard</button>
+            <div id="parentDash" class="hidden" style="background:white; padding:15px; margin-top:10px; border-radius:10px; text-align:left;">
+                <h4>📊 Performance Summary</h4>
+                <ul id="parentStats" style="font-size:0.9rem;">
+                    <li>Attempts: 0</li>
+                    <li>Confidence: --</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-draw" class="stage-container hidden">
+        <h2 style="text-align: center;">Draw your Object! ✏️</h2>
+        <canvas id="myCanvas" width="300" height="300" style="margin: 0 auto;"></canvas>
+        <div style="text-align: center; margin-top: 15px; display:flex; gap:10px; justify-content:center;">
+            <button class="btn-secondary" style="background:#efefef; color:black;" onclick="clearCanvas()">Erase</button>
+            <button class="btn-secondary" onclick="saveDrawing()">Done ✅</button>
+        </div>
+    </div>
+
+    <div id="screen-stage" class="stage-container hidden">
+        
+        <div class="spotlight">
+            <span id="stageObject" class="object-display">🧸</span>
+            <div id="drawnImageContainer" class="hidden"></div> <div id="thinkBubble" class="think-bubble">🤔 What color is it?</div>
+        </div>
+
+        <div class="prompts-box" id="promptContainer">
+            </div>
+
+        <div style="text-align: center; margin-bottom: 80px;">
+            <button class="btn-secondary" id="actionBtn" onclick="doAction()">🤸 Do Action!</button>
+        </div>
+        
+        <div class="control-panel">
+            <div style="font-size:0.8rem; text-align:center; width: 60px;">
+                Hold to<br>Speak
+            </div>
+            <button class="mic-btn" id="micBtn" 
+                onmousedown="startSpeaking()" onmouseup="stopSpeaking()" 
+                ontouchstart="startSpeaking()" ontouchend="stopSpeaking()">
+                🎤
+            </button>
+            <button class="btn-secondary" onclick="nextPrompt()">Next ➡</button>
+        </div>
+    </div>
+
+    <div id="screen-summary" class="stage-container hidden">
+        <div style="text-align: center; margin-top: 50px;">
+            <span style="font-size: 5rem;">🏆</span>
+            <h1 style="color: var(--primary);">Amazing Show & Tell!</h1>
+            <div style="background: white; padding: 20px; border-radius: 20px; margin: 20px;">
+                <h2>You earned: <span id="finalStars">0</span> ⭐</h2>
+                <p>You spoke for: <span id="finalTime">0</span> seconds</p>
+                <p>Confidence Level: <b style="color:green">HIGH</b></p>
+            </div>
+            <button class="btn-secondary" onclick="goHome()">Play Again 🔄</button>
+        </div>
+    </div>
+
+    <div class="footer-legal">
+        <h3>Design & Created by SHRISHANT YADAV</h3>
+        <p>Offline Mode | Child Safe | Made for India 🇮🇳</p>
+        <div style="margin-top:10px; display:flex; justify-content:center; gap:10px;">
+            <span>🛡️ Safe</span>
+            <span>🎓 Educational</span>
+            <span>❤️ Fun</span>
+        </div>
+    </div>
+
+    <script>
+        /* --- 1. DATA DATABASE (Indian Context) --- */
+        const DB = {
+            toy: { e: "🧸", n: "Teddy", color: "Brown", action: "Hug your Teddy" },
+            fruit: { e: "🍎", n: "Apple", color: "Red", action: "Eat the Apple" },
+            pet: { e: "🐶", n: "Doggy", color: "White", action: "Bark like a dog" },
+            book: { e: "📘", n: "Story Book", color: "Blue", action: "Read the book" },
+            car: { e: "🚗", n: "Car", color: "Red", action: "Drive the car" },
+            cricket: { e: "🏏", n: "Bat", color: "Brown", action: "Hit a six!" },
+            roti: { e: "🫓", n: "Roti", color: "Round", action: "Eat Roti" }
+        };
+
+        const QUESTIONS = [
+            "What color is it?",
+            "Is it big or small?",
+            "Who gave it to you?",
+            "Do you play with it?",
+            "Where do you keep it?"
+        ];
+
+        /* --- 2. STATE --- */
+        let state = {
+            stars: 0,
+            confidence: 10,
+            currentObj: null,
+            promptIdx: 0,
+            speakTimer: null,
+            speakDuration: 0,
+            isDrawing: false
+        };
+
+        const synth = window.speechSynthesis;
+
+        /* --- 3. CORE FUNCTIONS --- */
+        function goHome() {
+            hideAll();
+            document.getElementById('screen-home').classList.remove('hidden');
+            speak("Welcome back! Pick an object.");
+        }
+
+        function hideAll() {
+            ['screen-home', 'screen-stage', 'screen-draw', 'screen-summary'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+        }
+
+        function startStage(type) {
+            hideAll();
+            document.getElementById('screen-stage').classList.remove('hidden');
+            
+            // Logic for Selection
+            if(type === 'random') {
+                const keys = Object.keys(DB);
+                type = keys[Math.floor(Math.random() * keys.length)];
+            }
+
+            state.currentObj = DB[type];
+            state.promptIdx = 0;
+            state.speakDuration = 0;
+            state.isDrawing = false;
+
+            // Render Stage
+            document.getElementById('stageObject').innerText = state.currentObj.e;
+            document.getElementById('stageObject').classList.remove('hidden');
+            document.getElementById('drawnImageContainer').classList.add('hidden');
+            
+            renderPrompts();
+            updateThinkBubble();
+            speak("Let's talk about the " + state.currentObj.n);
+        }
+
+        /* --- 4. DRAWING MODE --- */
+        let canvas, ctx, painting = false;
+
+        function startDrawMode() {
+            hideAll();
+            document.getElementById('screen-draw').classList.remove('hidden');
+            canvas = document.getElementById('myCanvas');
+            ctx = canvas.getContext('2d');
+            ctx.lineCap = 'round';
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = '#FF9F1C';
+            
+            // Events
+            const start = (e) => { painting = true; draw(e); };
+            const end = () => { painting = false; ctx.beginPath(); };
+            canvas.addEventListener('mousedown', start);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', end);
+            canvas.addEventListener('touchstart', (e) => start(e.touches[0]));
+            canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e.touches[0]); });
+            canvas.addEventListener('touchend', end);
+        }
+
+        function draw(e) {
+            if(!painting) return;
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX || e.touches[0].clientX) - rect.left;
+            const y = (e.clientY || e.touches[0].clientY) - rect.top;
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+        }
+
+        function clearCanvas() { ctx.clearRect(0,0, canvas.width, canvas.height); }
+
+        function saveDrawing() {
+            state.isDrawing = true;
+            state.currentObj = { n: "Drawing", color: "Colorful", action: "Show your drawing", e: "🎨" };
+            
+            hideAll();
+            document.getElementById('screen-stage').classList.remove('hidden');
+            
+            const img = document.createElement('img');
+            img.src = canvas.toDataURL();
+            img.style.width = "150px";
+            
+            const container = document.getElementById('drawnImageContainer');
+            container.innerHTML = '';
+            container.appendChild(img);
+            container.classList.remove('hidden');
+            document.getElementById('stageObject').classList.add('hidden');
+            
+            renderPrompts();
+            updateThinkBubble();
+        }
+
+        /* --- 5. INTERACTION LOGIC --- */
+        function renderPrompts() {
+            const name = state.currentObj.n;
+            const prompts = [
+                `This is my <b>${name}</b>.`,
+                `It is <b>${state.currentObj.color}</b> in color.`,
+                `I like my <b>${name}</b> very much.`,
+                `It makes me happy!`
+            ];
+            
+            const html = prompts.map((p, i) => 
+                `<div class="prompt-line ${i === 0 ? 'active' : ''}" id="p-${i}">🗣️ ${p}</div>`
+            ).join('');
+            
+            document.getElementById('promptContainer').innerHTML = html;
+            document.getElementById('actionBtn').innerText = "Action: " + state.currentObj.action;
+        }
+
+        function nextPrompt() {
+            state.promptIdx++;
+            if(state.promptIdx > 3) {
+                finishSession();
+                return;
+            }
+            
+            // Highlight next line
+            document.querySelectorAll('.prompt-line').forEach(el => el.classList.remove('active'));
+            const el = document.getElementById(`p-${state.promptIdx}`);
+            if(el) {
+                el.classList.add('active');
+                speak("Next, say: " + el.innerText.replace("🗣️", ""));
+                updateThinkBubble();
+            }
+        }
+
+        function updateThinkBubble() {
+            const q = QUESTIONS[Math.floor(Math.random() * QUESTIONS.length)];
+            document.getElementById('thinkBubble').innerText = "🤔 " + q;
+        }
+
+        function doAction() {
+            // Action trigger
+            document.getElementById('actionBtn').classList.add('anim-pop');
+            state.stars += 5;
+            updateStats();
+            createConfetti();
+            speak("Wow! Good action!");
+            setTimeout(() => document.getElementById('actionBtn').classList.remove('anim-pop'), 500);
+        }
+
+        /* --- 6. VOICE / MIC SIMULATION --- */
+        function startSpeaking() {
+            document.getElementById('micBtn').classList.add('active');
+            
+            // Increase confidence meter live
+            state.speakTimer = setInterval(() => {
+                state.confidence = Math.min(100, state.confidence + 2);
+                state.speakDuration += 0.1;
+                document.getElementById('confBar').style.width = state.confidence + "%";
+            }, 100);
+        }
+
+        function stopSpeaking() {
+            clearInterval(state.speakTimer);
+            document.getElementById('micBtn').classList.remove('active');
+            
+            // Success Logic
+            state.stars += 10;
+            updateStats();
+            createConfetti();
+            speak("Good job! Keep going.");
+        }
+
+        function updateStats() {
+            document.getElementById('starCount').innerText = state.stars;
+        }
+
+        function finishSession() {
+            hideAll();
+            document.getElementById('screen-summary').classList.remove('hidden');
+            document.getElementById('finalStars').innerText = state.stars;
+            document.getElementById('finalTime').innerText = Math.floor(state.speakDuration);
+            
+            // Update Parent Dash
+            document.getElementById('parentStats').innerHTML = `
+                <li>Last Object: ${state.currentObj.n}</li>
+                <li>Stars Earned: ${state.stars} ⭐</li>
+                <li>Speaking Time: ${Math.floor(state.speakDuration)}s</li>
+            `;
+            
+            speak("Amazing! You are a star speaker!");
+        }
+
+        function toggleParent() {
+            document.getElementById('parentDash').classList.toggle('hidden');
+        }
+
+        /* --- 7. UTILS --- */
+        function speak(text) {
+            synth.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.rate = 0.9;
+            u.pitch = 1.1;
+            synth.speak(u);
+        }
+
+        function createConfetti() {
+            for(let i=0; i<30; i++) {
+                const c = document.createElement('div');
+                c.className = 'confetti';
+                c.style.left = Math.random() * 100 + 'vw';
+                c.style.backgroundColor = ['#f00','#0f0','#00f','#ff0'][Math.floor(Math.random()*4)];
+                c.style.animation = `float ${Math.random()+1}s ease-out`;
+                document.body.appendChild(c);
+                setTimeout(() => c.remove(), 1000);
+            }
+        }
+    </script>
+</body>
+</html>

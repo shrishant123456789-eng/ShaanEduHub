@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Fun Rhymes & Poems – Class 1</title>
+<style>
+    /* 🎨 GLOBAL VARIABLES & THEME */
+    :root {
+        --yellow: #FFD93D;
+        --red: #FF6B6B;
+        --green: #6BCB77;
+        --blue: #4D96FF;
+        --orange: #FF9F43;
+        --white: #ffffff;
+        --dark: #2C3E50;
+        --bg-gradient: linear-gradient(135deg, #FFF3E0 0%, #E3F2FD 100%);
+        --shadow: 0 8px 15px rgba(0,0,0,0.1);
+        --font-main: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+    }
+
+    * {
+        box-sizing: border-box;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+        font-family: var(--font-main);
+        background: var(--bg-gradient);
+        margin: 0;
+        padding: 0;
+        color: var(--dark);
+        overflow-x: hidden;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* 🟦 HEADER */
+    header {
+        background: var(--white);
+        padding: 15px;
+        text-align: center;
+        border-bottom-left-radius: 30px;
+        border-bottom-right-radius: 30px;
+        box-shadow: var(--shadow);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        border-top: 5px solid var(--blue);
+    }
+
+    h1 {
+        margin: 0;
+        color: var(--blue);
+        font-size: 1.5rem;
+        text-shadow: 2px 2px 0px #eee;
+    }
+
+    .subtitle {
+        font-size: 0.9rem;
+        color: var(--orange);
+        font-weight: bold;
+    }
+
+    /* 🏠 HOME SCREEN GRID */
+    .container {
+        padding: 20px;
+        flex: 1;
+        max-width: 600px;
+        margin: 0 auto;
+        width: 100%;
+        display: none; /* Controlled by JS */
+    }
+
+    .container.active {
+        display: block;
+        animation: fadeIn 0.5s ease;
+    }
+
+    .card-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-top: 10px;
+    }
+
+    .menu-card {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: var(--shadow);
+        cursor: pointer;
+        transition: transform 0.2s;
+        border-bottom: 5px solid #ddd;
+    }
+
+    .menu-card:active { transform: scale(0.95); border-bottom: 0px; }
+    
+    .c-alpha { border-color: var(--red); color: var(--red); }
+    .c-num { border-color: var(--blue); color: var(--blue); }
+    .c-anim { border-color: var(--green); color: var(--green); }
+    .c-act { border-color: var(--orange); color: var(--orange); }
+    .c-bonus { border-color: var(--yellow); color: #d4ac0d; grid-column: span 2; }
+
+    .emoji-icon { font-size: 3rem; display: block; margin-bottom: 10px; }
+    .card-title { font-weight: bold; font-size: 1.1rem; }
+
+    /* 📖 RHYME & ACTION VIEW */
+    .rhyme-box {
+        background: var(--white);
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        text-align: center;
+        margin-bottom: 20px;
+        border: 4px dashed var(--blue);
+    }
+
+    .rhyme-text { font-size: 1.2rem; line-height: 1.6; margin-bottom: 15px; white-space: pre-wrap; }
+    
+    .action-btn {
+        background: var(--green);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 30px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 4px 0 #3e8e41;
+        margin: 5px;
+    }
+    .action-btn:active { transform: translateY(4px); box-shadow: none; }
+
+    /* 🎮 GAME UI */
+    .scoreboard {
+        display: flex;
+        justify-content: space-between;
+        background: var(--dark);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 50px;
+        margin-bottom: 20px;
+        font-weight: bold;
+        position: sticky;
+        top: 80px;
+        z-index: 90;
+        box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    }
+
+    .q-box {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    
+    .q-text { font-size: 1.5rem; font-weight: bold; color: var(--dark); margin-bottom: 15px; }
+    .q-img { font-size: 4rem; animation: bounce 2s infinite; display: block; margin: 10px auto; }
+
+    .options-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .opt-btn {
+        background: var(--white);
+        border: 3px solid #eee;
+        padding: 15px;
+        border-radius: 15px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--dark);
+        cursor: pointer;
+        transition: 0.2s;
+        box-shadow: 0 4px 0 #ddd;
+    }
+
+    .opt-btn:active { transform: translateY(4px); box-shadow: none; }
+
+    /* FEEDBACK CLASSES */
+    .correct { background: var(--green) !important; color: white !important; border-color: var(--green) !important; animation: pop 0.3s; }
+    .wrong { background: var(--red) !important; color: white !important; border-color: var(--red) !important; animation: shake 0.4s; }
+
+    /* 🎉 RESULT SCREEN */
+    .result-box {
+        text-align: center;
+        background: white;
+        padding: 30px;
+        border-radius: 30px;
+        box-shadow: var(--shadow);
+        animation: slideUp 0.5s;
+    }
+    .big-star { font-size: 5rem; margin: 10px 0; display: block; }
+    .score-detail { font-size: 1.2rem; margin: 10px 0; color: #555; }
+
+    /* 🦶 FOOTER */
+    footer {
+        background: linear-gradient(90deg, #FF9966, #FF5E62);
+        color: white;
+        text-align: center;
+        padding: 15px;
+        font-size: 0.8rem;
+        margin-top: auto;
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes pop { 50% { transform: scale(1.1); } }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+    /* UTILS */
+    .hidden { display: none !important; }
+    .nav-btn {
+        background: var(--blue);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 20px;
+        margin-bottom: 10px;
+        font-weight: bold;
+        box-shadow: 0 4px 0 #2a80b9;
+    }
+    .nav-btn:active { transform: translateY(4px); box-shadow: none; }
+
+</style>
+</head>
+<body>
+
+<header>
+    <h1>📖 Fun Rhymes & Poems</h1>
+    <div class="subtitle">Class 1 • Learning Game</div>
+</header>
+
+<div id="home-view" class="container active">
+    <div class="card-grid">
+        <div class="menu-card c-alpha" onclick="startSection('alphabet')">
+            <span class="emoji-icon">🔤</span>
+            <div class="card-title">Alphabet Rhyme</div>
+        </div>
+        <div class="menu-card c-num" onclick="startSection('number')">
+            <span class="emoji-icon">🔢</span>
+            <div class="card-title">Number Rhyme</div>
+        </div>
+        <div class="menu-card c-anim" onclick="startSection('animal')">
+            <span class="emoji-icon">🐾</span>
+            <div class="card-title">Animal Rhyme</div>
+        </div>
+        <div class="menu-card c-act" onclick="startSection('action')">
+            <span class="emoji-icon">🤸</span>
+            <div class="card-title">Action Rhyme</div>
+        </div>
+        <div class="menu-card c-bonus" onclick="startSection('bonus')">
+            <span class="emoji-icon">🌟</span>
+            <div class="card-title">Bonus Fun Zone</div>
+        </div>
+    </div>
+</div>
+
+<div id="section-view" class="container">
+    <button class="nav-btn" onclick="goHome()">🏠 Home</button>
+    
+    <div id="rhyme-display" class="rhyme-box">
+        <h2 id="section-title" style="margin-top:0; color:var(--dark);">Title</h2>
+        <div id="rhyme-content" class="rhyme-text"></div>
+        <div id="action-area">
+            <button class="action-btn" onclick="speakRhyme()">🔊 Listen</button>
+            <button class="action-btn" onclick="playGame()">🎮 Play Game</button>
+        </div>
+    </div>
+
+    <div id="game-area" class="hidden">
+        <div class="scoreboard">
+            <span>⭐ <span id="stars">0</span></span>
+            <span>✅ <span id="score">0</span></span>
+        </div>
+
+        <div class="q-box">
+            <div id="q-image" class="q-img"></div>
+            <div id="q-text" class="q-text"></div>
+        </div>
+
+        <div id="options-box" class="options-grid"></div>
+    </div>
+</div>
+
+<div id="result-view" class="container">
+    <div class="result-box">
+        <span class="big-star">🌟</span>
+        <h2 style="color:var(--green);">Great Job!</h2>
+        <p class="score-detail">You are a Rhyme Star!</p>
+        <p class="score-detail">Score: <span id="final-score">0</span></p>
+        <br>
+        <button class="nav-btn" style="background:var(--orange);" onclick="replaySection()">🔁 Play Again</button>
+        <button class="nav-btn" onclick="goHome()">🏠 Home</button>
+    </div>
+</div>
+
+<footer>
+    Design & Created by SHRISHANT YADAV
+</footer>
+
+<script>
+    // 🧠 DATA: RHYMES
+    const rhymeData = {
+        alphabet: {
+            title: "The ABC Song",
+            text: "A B C D E F G,\nH I J K L M N O P,\nQ R S T U V,\nW X Y and Z.\nNow I know my ABCs,\nNext time won't you sing with me! 🍎⚽🐱🐶",
+            emoji: "🔤"
+        },
+        number: {
+            title: "One, Two, Buckle My Shoe",
+            text: "One, two, buckle my shoe,\nThree, four, shut the door,\nFive, six, pick up sticks,\nSeven, eight, lay them straight,\nNine, ten, a big fat hen! 👟🚪🐓",
+            emoji: "🔢"
+        },
+        animal: {
+            title: "Old MacDonald",
+            text: "Old MacDonald had a farm,\nE-I-E-I-O!\nAnd on his farm he had a cow,\nE-I-E-I-O!\nWith a moo-moo here,\nAnd a moo-moo there,\nHere a moo, there a moo,\nEverywhere a moo-moo! 🐮🚜",
+            emoji: "🐾"
+        },
+        action: {
+            title: "Hop a Little",
+            text: "Hop a little, jump a little,\nOne, two, three.\nRun a little, skip a little,\nTap your knee.\nBend a little, stretch a little,\nNod your head.\nYawn a little, sleep a little,\nIn your bed. 🛏️😴",
+            emoji: "🤸"
+        },
+        bonus: {
+            title: "Twinkle Twinkle",
+            text: "Twinkle, twinkle, little star,\nHow I wonder what you are!\nUp above the world so high,\nLike a diamond in the sky. ✨🌌",
+            emoji: "🌟"
+        }
+    };
+
+    // 🧠 DATA: QUESTION BANK (70+ Unique Questions)
+    // Generating questions dynamically to ensure variety and volume
+    const generateQuestions = () => {
+        let q = [];
+
+        // 1. ALPHABET SECTION (20 Qs)
+        const alphaItems = [
+            {l:'A', i:'🍎', w:'Apple'}, {l:'B', i:'⚽', w:'Ball'}, {l:'C', i:'🐱', w:'Cat'}, {l:'D', i:'🐶', w:'Dog'},
+            {l:'E', i:'🐘', w:'Elephant'}, {l:'F', i:'🐟', w:'Fish'}, {l:'G', i:'🍇', w:'Grapes'}, {l:'H', i:'🏠', w:'House'},
+            {l:'I', i:'🍦', w:'Ice Cream'}, {l:'J', i:'🧃', w:'Juice'}, {l:'K', i:'🪁', w:'Kite'}, {l:'L', i:'🦁', w:'Lion'},
+            {l:'M', i:'🐒', w:'Monkey'}, {l:'N', i:'👃', w:'Nose'}, {l:'O', i:'🍊', w:'Orange'}, {l:'P', i:'🖊️', w:'Pen'},
+            {l:'Q', i:'👸', w:'Queen'}, {l:'R', i:'🐀', w:'Rat'}, {l:'S', i:'☀️', w:'Sun'}, {l:'T', i:'🐅', w:'Tiger'}
+        ];
+        
+        alphaItems.forEach(item => {
+            q.push({
+                section: 'alphabet',
+                q: `What starts with ${item.l}?`,
+                img: item.l,
+                correct: item.i,
+                options: [item.i, '🚗', '🍌', '🎩'].sort(() => 0.5 - Math.random()) // Simplified randomizer
+            });
+        });
+
+        // 2. NUMBER SECTION (15 Qs)
+        for(let i=1; i<=10; i++) {
+            let stars = "⭐".repeat(i);
+            q.push({
+                section: 'number',
+                q: "Count the stars!",
+                img: stars,
+                correct: i.toString(),
+                options: [i.toString(), (i+1).toString(), (i+2).toString(), (i-1>0?i-1:11).toString()].sort(() => 0.5 - Math.random())
+            });
+        }
+        q.push({ section: 'number', q: "What comes after 5?", img: "5 ➡️ ?", correct: "6", options: ["4", "6", "7", "8"] });
+        q.push({ section: 'number', q: "What comes before 10?", img: "? ⬅️ 10", correct: "9", options: ["8", "9", "7", "1"] });
+        q.push({ section: 'number', q: "One, Two, Buckle my...?", img: "👟", correct: "Shoe", options: ["Shoe", "Door", "Sticks", "Hen"] });
+        q.push({ section: 'number', q: "Five, Six, Pick up...?", img: "🪵", correct: "Sticks", options: ["Sticks", "Bricks", "Chicks", "Kicks"] });
+        q.push({ section: 'number', q: "Nine, Ten, a big fat...?", img: "🐓", correct: "Hen", options: ["Hen", "Pen", "Men", "Den"] });
+
+        // 3. ANIMAL SECTION (15 Qs)
+        const animals = [
+            {n:'Cow', s:'Moo', i:'🐮'}, {n:'Cat', s:'Meow', i:'🐱'}, {n:'Dog', s:'Woof', i:'🐶'}, 
+            {n:'Duck', s:'Quack', i:'🦆'}, {n:'Pig', s:'Oink', i:'🐷'}, {n:'Lion', s:'Roar', i:'🦁'},
+            {n:'Sheep', s:'Baa', i:'🐑'}, {n:'Bee', s:'Buzz', i:'🐝'}
+        ];
+        animals.forEach(a => {
+            q.push({
+                section: 'animal',
+                q: `Who says "${a.s}"?`,
+                img: "🔊",
+                correct: a.i,
+                options: [a.i, '🐸', '🐔', '🐴'].sort(() => 0.5 - Math.random())
+            });
+        });
+        q.push({ section: 'animal', q: "Identify the Pig", img: "❓", correct: "🐷", options: ["🐷", "🐮", "🦁", "🐵"] });
+        q.push({ section: 'animal', q: "Identify the Lion", img: "❓", correct: "🦁", options: ["🦁", "🐱", "🐶", "🐑"] });
+        q.push({ section: 'animal', q: "A Cow lives on a...?", img: "🚜", correct: "Farm", options: ["Farm", "Moon", "Sea", "Sky"] });
+        q.push({ section: 'animal', q: "Old MacDonald had a...", img: "👴", correct: "Farm", options: ["Farm", "Car", "Bike", "Plane"] });
+        q.push({ section: 'animal', q: "Is a Cat a pet?", img: "🐱", correct: "Yes", options: ["Yes", "No", "Maybe", "Ask Mom"] });
+        q.push({ section: 'animal', q: "Is a Lion a pet?", img: "🦁", correct: "No", options: ["Yes", "No", "Maybe", "Ask Dad"] });
+
+        // 4. ACTION SECTION (10 Qs)
+        const actions = [
+            {w:'Jump', i:'🦘'}, {w:'Sleep', i:'😴'}, {w:'Run', i:'🏃'}, {w:'Clap', i:'👏'},
+            {w:'Cry', i:'😢'}, {w:'Laugh', i:'😂'}, {w:'Eat', i:'🍽️'}, {w:'Dance', i:'💃'}
+        ];
+        actions.forEach(a => {
+            q.push({
+                section: 'action',
+                q: `Tap the "${a.w}" emoji`,
+                img: a.w,
+                correct: a.i,
+                options: [a.i, '🧍', '🧘', '🛌'].sort(() => 0.5 - Math.random())
+            });
+        });
+        q.push({ section: 'action', q: "Hop a little, ___ a little?", img: "🦘", correct: "Jump", options: ["Jump", "Sleep", "Eat", "Sit"] });
+        q.push({ section: 'action', q: "Yawn a little, ___ a little?", img: "😴", correct: "Sleep", options: ["Sleep", "Run", "Hop", "Clap"] });
+
+        // 5. BONUS SECTION (10+ Qs)
+        q.push({ section: 'bonus', q: "Twinkle Twinkle Little...?", img: "✨", correct: "Star", options: ["Star", "Car", "Jar", "Far"] });
+        q.push({ section: 'bonus', q: "Up above the world so...?", img: "☝️", correct: "High", options: ["High", "Low", "Slow", "Go"] });
+        q.push({ section: 'bonus', q: "Like a diamond in the...?", img: "💎", correct: "Sky", options: ["Sky", "Pie", "Tie", "Eye"] });
+        q.push({ section: 'bonus', q: "Tap the Red color", img: "🎨", correct: "🔴", options: ["🔴", "🔵", "🟢", "🟡"] });
+        q.push({ section: 'bonus', q: "Tap the Happy face", img: "😊", correct: "😊", options: ["😊", "😢", "😠", "😴"] });
+        q.push({ section: 'bonus', q: "2 + 2 = ?", img: "➕", correct: "4", options: ["4", "2", "6", "1"] });
+        q.push({ section: 'bonus', q: "Sun is...", img: "☀️", correct: "Hot", options: ["Hot", "Cold", "Wet", "Blue"] });
+        q.push({ section: 'bonus', q: "Ice is...", img: "🧊", correct: "Cold", options: ["Cold", "Hot", "Dry", "Red"] });
+        q.push({ section: 'bonus', q: "What color is a leaf?", img: "🍃", correct: "Green", options: ["Green", "Blue", "Red", "Pink"] });
+        q.push({ section: 'bonus', q: "What color is the sky?", img: "☁️", correct: "Blue", options: ["Blue", "Green", "Orange", "Black"] });
+
+        return q;
+    };
+
+    const questionBank = generateQuestions();
+
+    // 🧠 APP STATE
+    let currentSection = '';
+    let currentQuestions = [];
+    let qIndex = 0;
+    let score = 0;
+    let stars = 0;
+
+    // 🔊 AUDIO FUNCTION
+    const synth = window.speechSynthesis;
+    function speakRhyme() {
+        if(synth.speaking) {
+            synth.cancel();
+            return;
+        }
+        const text = rhymeData[currentSection].text;
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.rate = 0.9;
+        utter.pitch = 1.2;
+        utter.lang = 'en-US';
+        synth.speak(utter);
+    }
+
+    // 🧭 NAVIGATION
+    function goHome() {
+        document.querySelectorAll('.container').forEach(d => d.classList.remove('active'));
+        document.getElementById('home-view').classList.add('active');
+        synth.cancel();
+        stopGame();
+    }
+
+    function startSection(sectionId) {
+        currentSection = sectionId;
+        const data = rhymeData[sectionId];
+        
+        // Setup Rhyme View
+        document.getElementById('section-title').innerText = data.emoji + " " + data.title;
+        document.getElementById('rhyme-content').innerText = data.text;
+        
+        // Show Section View
+        document.querySelectorAll('.container').forEach(d => d.classList.remove('active'));
+        document.getElementById('section-view').classList.add('active');
+        document.getElementById('rhyme-display').classList.remove('hidden');
+        document.getElementById('game-area').classList.add('hidden');
+    }
+
+    function stopGame() {
+        document.getElementById('game-area').classList.add('hidden');
+        document.getElementById('rhyme-display').classList.remove('hidden');
+    }
+
+    function replaySection() {
+        playGame();
+    }
+
+    // 🎮 GAME LOGIC
+    function playGame() {
+        // Filter questions for this section
+        let sectionQs = questionBank.filter(q => q.section === currentSection);
+        
+        // Shuffle and pick 10
+        currentQuestions = sectionQs.sort(() => 0.5 - Math.random()).slice(0, 10);
+        
+        // If not enough questions (safety), take all
+        if(currentQuestions.length === 0) currentQuestions = sectionQs;
+
+        qIndex = 0;
+        score = 0;
+        stars = 0;
+        
+        // Switch UI
+        document.getElementById('rhyme-display').classList.add('hidden');
+        document.getElementById('game-area').classList.remove('hidden');
+        
+        updateScoreboard();
+        loadQuestion();
+    }
+
+    function updateScoreboard() {
+        document.getElementById('score').innerText = score;
+        document.getElementById('stars').innerText = stars;
+    }
+
+    function loadQuestion() {
+        if(qIndex >= currentQuestions.length) {
+            showResult();
+            return;
+        }
+
+        const q = currentQuestions[qIndex];
+        
+        document.getElementById('q-text').innerText = q.q;
+        document.getElementById('q-image').innerText = q.img;
+        
+        const optBox = document.getElementById('options-box');
+        optBox.innerHTML = '';
+        
+        // Ensure unique options if randomized list had duplicates
+        let uniqueOpts = [...new Set(q.options)];
+        // Fill if < 4
+        while(uniqueOpts.length < 4) uniqueOpts.push('❓');
+        
+        uniqueOpts.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'opt-btn';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(btn, opt, q.correct);
+            optBox.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(btn, selected, correct) {
+        // Disable all buttons
+        const allBtns = document.querySelectorAll('.opt-btn');
+        allBtns.forEach(b => b.disabled = true);
+
+        if(selected === correct) {
+            btn.classList.add('correct');
+            score++;
+            stars += 3;
+            // Confetti effect logic could go here
+        } else {
+            btn.classList.add('wrong');
+            // Highlight correct answer
+            allBtns.forEach(b => {
+                if(b.innerText === correct) b.classList.add('correct');
+            });
+        }
+
+        updateScoreboard();
+
+        setTimeout(() => {
+            qIndex++;
+            loadQuestion();
+        }, 1500);
+    }
+
+    function showResult() {
+        document.querySelectorAll('.container').forEach(d => d.classList.remove('active'));
+        document.getElementById('result-view').classList.add('active');
+        document.getElementById('final-score').innerText = score + " / " + currentQuestions.length;
+    }
+
+</script>
+</body>
+</html>

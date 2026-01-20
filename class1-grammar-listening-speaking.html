@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 1: Listening & Speaking</title>
+    <style>
+        /* 🎨 GLOBAL THEME & VARIABLES */
+        :root {
+            --primary: #FFD93D; /* Sunny Yellow */
+            --secondary: #6BCB77; /* Grass Green */
+            --accent: #FF6B6B; /* Soft Red */
+            --blue: #4D96FF; /* Sky Blue */
+            --purple: #9B59B6;
+            --dark: #2C3E50;
+            --white: #FFFFFF;
+            --bg-gradient: linear-gradient(135deg, #E3F2FD 0%, #FFF3E0 100%);
+            --card-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            --font-main: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background: var(--bg-gradient);
+            margin: 0;
+            padding: 0;
+            color: var(--dark);
+            padding-bottom: 80px;
+            overflow-x: hidden;
+        }
+
+        /* 1️⃣ HEADER SECTION */
+        header {
+            background: var(--white);
+            padding: 15px;
+            text-align: center;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            margin: 0;
+            color: var(--blue);
+            font-size: 1.8rem;
+            text-shadow: 2px 2px 0px #CDE0F8;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: var(--secondary);
+            margin-top: 5px;
+            font-weight: bold;
+        }
+
+        /* 2️⃣ NOTES SECTION */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .notes-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .note-card {
+            background: var(--white);
+            padding: 15px;
+            border-radius: 20px;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.05);
+            border-top: 6px solid #ccc;
+            text-align: center;
+        }
+
+        .note-card.listen { border-top-color: var(--blue); }
+        .note-card.speak { border-top-color: var(--accent); }
+
+        .note-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 5px; }
+        .hinglish { font-size: 0.9rem; color: #666; font-style: italic; background: #f0f0f0; padding: 5px; border-radius: 8px; display: block; margin-top: 5px; }
+
+        /* 🎯 GAME AREA */
+        .game-area {
+            background: var(--white);
+            border-radius: 30px;
+            box-shadow: var(--card-shadow);
+            padding: 25px;
+            position: relative;
+            min-height: 450px;
+            text-align: center;
+            animation: slideUp 0.6s ease;
+        }
+
+        /* STICKY SCOREBOARD */
+        .scoreboard {
+            display: flex;
+            justify-content: space-around;
+            background: var(--dark);
+            color: white;
+            padding: 12px;
+            border-radius: 50px;
+            margin-bottom: 25px;
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        /* AUDIO BUTTON */
+        .audio-btn {
+            background: var(--blue);
+            color: white;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: none;
+            font-size: 2.5rem;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #2962FF;
+            transition: transform 0.2s;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 2s infinite;
+        }
+
+        .audio-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #2962FF; }
+
+        .speak-btn {
+            background: var(--accent);
+            box-shadow: 0 6px 0 #D32F2F;
+            animation: none; /* No pulse for speak button usually */
+        }
+        .speak-btn:active { box-shadow: 0 2px 0 #D32F2F; }
+
+        .q-text { font-size: 1.4rem; font-weight: bold; margin: 15px 0; color: var(--dark); }
+        .q-image { font-size: 5rem; margin: 10px 0; display: block; animation: bounce 2s infinite; }
+
+        /* OPTIONS */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn-opt {
+            background: #F0F4F8;
+            border: 3px solid #E1E8ED;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: 0.2s;
+            color: var(--dark);
+            font-weight: bold;
+        }
+
+        .btn-opt:active { transform: scale(0.95); }
+        .btn-opt:hover { border-color: var(--blue); background: white; }
+
+        /* FEEDBACK STATES */
+        .correct { background: #C8E6C9 !important; border-color: var(--secondary) !important; color: #1B5E20; animation: successPop 0.5s; }
+        .wrong { background: #FFCDD2 !important; border-color: var(--accent) !important; color: #B71C1C; animation: shake 0.4s; }
+
+        /* MODE SWITCHER */
+        .mode-switch {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .mode-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: bold;
+            background: #e0e0e0;
+            color: #555;
+            transition: 0.3s;
+        }
+        .mode-btn.active {
+            background: var(--primary);
+            color: var(--dark);
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 217, 61, 0.4);
+        }
+
+        /* RESULT OVERLAY */
+        .overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.98);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            display: none;
+            text-align: center;
+            border-radius: 30px;
+        }
+
+        /* START OVERLAY (For Audio Permissions) */
+        #start-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(44, 62, 80, 0.95);
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        /* FOOTER */
+        footer {
+            background: linear-gradient(90deg, #2C3E50, #4CA1AF);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            font-size: 0.9rem;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            z-index: 200;
+        }
+
+        /* ANIMATIONS */
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(77, 150, 255, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(77, 150, 255, 0); } 100% { box-shadow: 0 0 0 0 rgba(77, 150, 255, 0); } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+        @keyframes successPop { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    </style>
+</head>
+<body>
+
+    <div id="start-overlay">
+        <h1 style="font-size: 4rem; margin: 0;">🎧</h1>
+        <h2>Ready to Learn?</h2>
+        <p>Turn up your volume!</p>
+        <button class="mode-btn active" style="font-size: 1.5rem; padding: 15px 40px;" onclick="startApp()">Start ▶️</button>
+    </div>
+
+    <header>
+        <h1>Listening & Speaking 🎧🗣️</h1>
+        <div class="subtitle">Listen 👂 Speak 🗣️ Learn 🌟</div>
+    </header>
+
+    <div class="container">
+        
+        <div class="notes-grid">
+            <div class="note-card listen">
+                <div class="note-title">👂 Listening</div>
+                <div class="hinglish">Listening means <b>Dhyaan se sunna</b>.</div>
+                <div style="margin-top:5px; font-size:0.8rem;">Listen carefully to the sound 🔊</div>
+            </div>
+            <div class="note-card speak">
+                <div class="note-title">🗣️ Speaking</div>
+                <div class="hinglish">Speaking means <b>Zor se bolna</b>.</div>
+                <div style="margin-top:5px; font-size:0.8rem;">Speak clearly and loudly 🎤</div>
+            </div>
+        </div>
+
+        <div class="mode-switch">
+            <button class="mode-btn active" onclick="switchMode('practice')">📝 Practice</button>
+            <button class="mode-btn" onclick="switchMode('game')">🌟 Star Game</button>
+        </div>
+
+        <div id="quiz-panel" class="game-area">
+            <div class="scoreboard">
+                <span>⭐ <span id="stars">0</span></span>
+                <span>✔ <span id="correct">0</span></span>
+                <span>❌ <span id="wrong">0</span></span>
+            </div>
+
+            <div id="question-content">
+                </div>
+
+            <div style="text-align: center; margin-top: 20px; color: #888;">
+                Question: <span id="q-current">1</span> / 50+
+            </div>
+
+            <div id="result-overlay" class="overlay">
+                <div style="font-size: 5rem;">🎉</div>
+                <h2 style="color: var(--secondary);">Excellent!</h2>
+                <p>You are a Speaking Star! 🌟</p>
+                <p>Score: <span id="final-score">0</span>%</p>
+                <button class="mode-btn active" style="margin-top: 20px;" onclick="initSession()">🔁 Play Again</button>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        Design & Created by SHRISHANT YADAV
+    </footer>
+
+    <script>
+        // 🛠️ DATA ENGINE: 50+ ACTIVITIES
+        // Types: 
+        // 1: Listen & Choose (MCQ)
+        // 2: Listen & Identify (Action/Verb)
+        // 3: Speak the Word (Flashcard)
+        // 4: Repeat Sentence
+        // 5: Look & Speak (Desc)
+        // 6: True/False
+
+        const activityBank = [
+            // --- TYPE 1: LISTEN & CHOOSE (NOUNS) ---
+            {t:1, text:"This is a cat.", q:"What did you hear?", a:"Cat", o:["Cat", "Dog", "Cow"]},
+            {t:1, text:"I see a big bus.", q:"What vehicle is it?", a:"Bus", o:["Bus", "Car", "Bike"]},
+            {t:1, text:"The apple is red.", q:"Which fruit?", a:"Apple", o:["Apple", "Banana", "Grapes"]},
+            {t:1, text:"Look at the moon.", q:"What object?", a:"Moon", o:["Moon", "Sun", "Star"]},
+            {t:1, text:"I have a pencil.", q:"What object?", a:"Pencil", o:["Pencil", "Book", "Bag"]},
+            {t:1, text:"The dog says woof.", q:"Which animal?", a:"Dog", o:["Dog", "Cat", "Lion"]},
+            {t:1, text:"It is a sunny day.", q:"What is in the sky?", a:"Sun", o:["Sun", "Rain", "Cloud"]},
+            {t:1, text:"Drink your milk.", q:"What to drink?", a:"Milk", o:["Milk", "Water", "Juice"]},
+            {t:1, text:"My shoes are blue.", q:"What object?", a:"Shoes", o:["Shoes", "Shirt", "Cap"]},
+            {t:1, text:"Open the door.", q:"What to open?", a:"Door", o:["Door", "Window", "Box"]},
+
+            // --- TYPE 2: LISTEN & ACTION (VERBS) ---
+            {t:2, text:"The boy is running.", q:"What is the boy doing?", a:"Running", o:["Running", "Sleeping", "Eating"]},
+            {t:2, text:"She is sleeping.", q:"What is she doing?", a:"Sleeping", o:["Sleeping", "Dancing", "Reading"]},
+            {t:2, text:"The bird is flying.", q:"What is the bird doing?", a:"Flying", o:["Flying", "Swimming", "Walking"]},
+            {t:2, text:"He is eating an apple.", q:"Action?", a:"Eating", o:["Eating", "Drinking", "Playing"]},
+            {t:2, text:"The fish is swimming.", q:"Action?", a:"Swimming", o:["Swimming", "Flying", " jumping"]},
+            {t:2, text:"Baby is crying.", q:"Action?", a:"Crying", o:["Crying", "Laughing", "Singing"]},
+            {t:2, text:"Mother is cooking.", q:"Action?", a:"Cooking", o:["Cooking", "Driving", "Reading"]},
+            {t:2, text:"They are playing football.", q:"Action?", a:"Playing", o:["Playing", "Sleeping", "Writing"]},
+
+            // --- TYPE 3: SPEAK THE WORD (VOCAB) ---
+            {t:3, img:"🍎", word:"Apple"},
+            {t:3, img:"🐱", word:"Cat"},
+            {t:3, img:"🐶", word:"Dog"},
+            {t:3, img:"🚗", word:"Car"},
+            {t:3, img:"🚌", word:"Bus"},
+            {t:3, img:"☀️", word:"Sun"},
+            {t:3, img:"🌲", word:"Tree"},
+            {t:3, img:"📖", word:"Book"},
+            {t:3, img:"⚽", word:"Ball"},
+            {t:3, img:"🏠", word:"House"},
+            
+            // --- TYPE 4: REPEAT AFTER ME ---
+            {t:4, text:"Good Morning"},
+            {t:4, text:"Thank You"},
+            {t:4, text:"How are you?"},
+            {t:4, text:"I like ice cream"},
+            {t:4, text:"My name is..."},
+            {t:4, text:"Big Blue Sky"},
+            {t:4, text:"I am happy"},
+            {t:4, text:"Please help me"},
+            {t:4, text:"One two three"},
+            {t:4, text:"Good Night"},
+
+            // --- TYPE 5: LOOK & SPEAK (DESCRIBE) ---
+            {t:5, img:"👧📖", prompt:"The girl is... (Reading)"},
+            {t:5, img:"🌧️☔", prompt:"It is... (Raining)"},
+            {t:5, img:"👦🚲", prompt:"The boy is... (Cycling)"},
+            {t:5, img:"🦁👑", prompt:"The lion is... (King)"},
+            {t:5, img:"🎂🕯️", prompt:"It is a... (Birthday)"},
+
+            // --- TYPE 6: LISTEN & TRUE/FALSE ---
+            {t:6, text:"This is a red ball.", img:"🔵", a:"False", o:["True", "False"]}, // Show blue, say red
+            {t:6, text:"A cow says Moo.", img:"🐄", a:"True", o:["True", "False"]},
+            {t:6, text:"We see stars at night.", img:"⭐", a:"True", o:["True", "False"]},
+            {t:6, text:"Fish live in trees.", img:"🐟", a:"False", o:["True", "False"]},
+            {t:6, text:"Ice cream is hot.", img:"🍦", a:"False", o:["True", "False"]},
+            {t:6, text:"Birds have wings.", img:"🐦", a:"True", o:["True", "False"]},
+            {t:6, text:"An elephant is small.", img:"🐘", a:"False", o:["True", "False"]},
+            {t:6, text:"Lemons are yellow.", img:"🍋", a:"True", o:["True", "False"]}
+        ];
+
+        // 🧠 STATE MANAGEMENT
+        let currentQIndex = 0;
+        let scoreCorrect = 0;
+        let scoreWrong = 0;
+        let stars = 0;
+        let shuffledQ = [];
+        let isGameMode = false;
+        let synth = window.speechSynthesis;
+
+        function startApp() {
+            document.getElementById('start-overlay').style.display = 'none';
+            // Prime the synth
+            speakText("");
+            initSession();
+        }
+
+        function speakText(text) {
+            if (synth.speaking) synth.cancel();
+            if (text === "") return;
+            const utterThis = new SpeechSynthesisUtterance(text);
+            utterThis.rate = 0.85; // Slower for kids
+            utterThis.pitch = 1.1; // Slightly higher pitch
+            utterThis.lang = 'en-US';
+            synth.speak(utterThis);
+        }
+
+        function switchMode(mode) {
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+            if(mode === 'practice') {
+                document.querySelector('button[onclick="switchMode(\'practice\')"]').classList.add('active');
+                isGameMode = false;
+            } else {
+                document.querySelector('button[onclick="switchMode(\'game\')"]').classList.add('active');
+                isGameMode = true;
+            }
+            initSession();
+        }
+
+        function initSession() {
+            // Mix questions
+            shuffledQ = [...activityBank].sort(() => Math.random() - 0.5);
+            // Limit for game mode
+            if(isGameMode) shuffledQ = shuffledQ.slice(0, 20);
+            
+            currentQIndex = 0;
+            scoreCorrect = 0;
+            scoreWrong = 0;
+            stars = 0;
+            updateScoreUI();
+            document.getElementById('result-overlay').style.display = 'none';
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentQIndex >= shuffledQ.length) {
+                showResults();
+                return;
+            }
+
+            const q = shuffledQ[currentQIndex];
+            const contentDiv = document.getElementById('question-content');
+            contentDiv.innerHTML = ''; // Clear previous
+            document.getElementById('q-current').innerText = currentQIndex + 1;
+
+            // RENDER BASED ON TYPE
+            if (q.t === 1 || q.t === 2) { // MCQ Audio
+                contentDiv.innerHTML = `
+                    <button class="audio-btn" onclick="speakText('${q.text.replace(/'/g, "\\'")}')">🔊</button>
+                    <div class="q-text">👉 Click Speaker & Listen</div>
+                    <div class="q-text" style="font-size:1.1rem">${q.q}</div>
+                    <div class="options-grid" id="opts"></div>
+                `;
+                renderOptions(q.o, q.a);
+                // Auto play audio once
+                setTimeout(() => speakText(q.text), 500);
+
+            } else if (q.t === 3) { // Speak Word
+                contentDiv.innerHTML = `
+                    <div class="q-image">${q.img}</div>
+                    <div class="q-text">👉 Say loudly: <br><span style="color:var(--blue); font-size:2rem;">${q.word}</span></div>
+                    <button class="mode-btn active speak-btn" style="padding:15px 30px; margin-top:20px;" onclick="handleSpeakingTask()">🎤 I Said It!</button>
+                `;
+
+            } else if (q.t === 4) { // Repeat
+                contentDiv.innerHTML = `
+                    <button class="audio-btn" onclick="speakText('${q.text.replace(/'/g, "\\'")}')">🔊</button>
+                    <div class="q-text">👉 Listen & Repeat:</div>
+                    <div style="font-size:1.5rem; font-weight:bold; color:var(--dark); margin:10px;">"${q.text}"</div>
+                    <button class="mode-btn active speak-btn" style="padding:15px 30px; margin-top:20px;" onclick="handleSpeakingTask()">🎤 I Repeated It!</button>
+                `;
+                setTimeout(() => speakText(q.text), 500);
+
+            } else if (q.t === 5) { // Look & Speak
+                contentDiv.innerHTML = `
+                    <div class="q-image">${q.img}</div>
+                    <div class="q-text">👉 Describe the picture</div>
+                    <div style="color:#666; font-style:italic; margin-bottom:15px;">Hint: ${q.prompt}</div>
+                    <button class="mode-btn active speak-btn" style="padding:15px 30px;" onclick="handleSpeakingTask()">🎤 Done Speaking</button>
+                `;
+
+            } else if (q.t === 6) { // True/False
+                contentDiv.innerHTML = `
+                    <button class="audio-btn" onclick="speakText('${q.text.replace(/'/g, "\\'")}')">🔊</button>
+                    <div class="q-image" style="font-size:3rem;">${q.img}</div>
+                    <div class="q-text">👉 Is this correct?</div>
+                    <div class="options-grid" id="opts"></div>
+                `;
+                renderOptions(q.o, q.a);
+                setTimeout(() => speakText(q.text), 500);
+            }
+        }
+
+        function renderOptions(options, answer) {
+            const optsDiv = document.getElementById('opts');
+            // Shuffle options
+            let shuffledOpts = [...options].sort(() => Math.random() - 0.5);
+            
+            shuffledOpts.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-opt';
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(btn, opt, answer);
+                optsDiv.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(btn, selected, correct) {
+            // Disable all buttons
+            const allBtns = document.querySelectorAll('.btn-opt');
+            allBtns.forEach(b => b.disabled = true);
+
+            if (selected === correct) {
+                btn.classList.add('correct');
+                speakText("Good job!");
+                scoreCorrect++;
+                stars++;
+            } else {
+                btn.classList.add('wrong');
+                speakText("Try again");
+                scoreWrong++;
+                // Highlight correct
+                allBtns.forEach(b => {
+                    if(b.innerText === correct) b.classList.add('correct');
+                });
+            }
+            updateScoreUI();
+            setTimeout(nextQuestion, 1500);
+        }
+
+        function handleSpeakingTask() {
+            // Simulate verifying speech (Positive Reinforcement)
+            speakText("Great speaking!");
+            scoreCorrect++; // Give point for effort
+            stars++;
+            
+            // Visual feedback
+            const btn = document.querySelector('.speak-btn');
+            btn.style.background = "#6BCB77";
+            btn.innerHTML = "🌟 Awesome!";
+            
+            updateScoreUI();
+            setTimeout(nextQuestion, 1500);
+        }
+
+        function nextQuestion() {
+            currentQIndex++;
+            loadQuestion();
+        }
+
+        function updateScoreUI() {
+            document.getElementById('correct').innerText = scoreCorrect;
+            document.getElementById('wrong').innerText = scoreWrong;
+            document.getElementById('stars').innerText = stars;
+        }
+
+        function showResults() {
+            const total = isGameMode ? 20 : 50; // Approximation for %
+            const pct = Math.round((scoreCorrect / shuffledQ.length) * 100);
+            document.getElementById('final-score').innerText = pct;
+            document.getElementById('result-overlay').style.display = 'flex';
+            speakText("You are a super star!");
+        }
+
+    </script>
+</body>
+</html>

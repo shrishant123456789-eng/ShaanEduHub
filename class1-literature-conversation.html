@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>English Buddy - Class 1 Conversation</title>
+    <style>
+        /* --- 1. THEME & VARIABLES --- */
+        :root {
+            --primary: #FF9F1C; /* Happy Orange */
+            --secondary: #4CC9F0; /* Sky Blue */
+            --accent: #F72585; /* Playful Pink */
+            --success: #2EC4B6; /* Calm Green */
+            --bg: #F0F4F8;
+            --text: #2B2D42;
+            --font: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+        }
+
+        * { box-sizing: border-box; touch-action: manipulation; -webkit-tap-highlight-color: transparent; user-select: none; }
+        
+        body {
+            margin: 0; padding: 0;
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            padding-bottom: 70px; /* Footer space */
+            overflow-x: hidden;
+        }
+
+        /* --- 2. HEADER & STATS --- */
+        .header {
+            background: #fff; padding: 10px 15px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            position: sticky; top: 0; z-index: 100;
+        }
+        
+        .pill-badge {
+            background: #fff; border: 2px solid var(--primary);
+            padding: 5px 15px; border-radius: 20px;
+            font-weight: bold; display: flex; align-items: center; gap: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* --- 3. MENU GRID --- */
+        .menu-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
+            padding: 20px; max-width: 600px; margin: 0 auto;
+        }
+
+        .menu-card {
+            background: #fff; border-radius: 20px; padding: 15px;
+            text-align: center; border-bottom: 5px solid #ddd;
+            transition: transform 0.1s; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+        }
+        
+        .menu-card:active { transform: translateY(4px); border-bottom-width: 0; }
+        .icon-large { font-size: 3.5rem; }
+        .card-title { font-weight: bold; color: var(--text); font-size: 1.1rem; }
+
+        /* --- 4. CONVERSATION UI --- */
+        .chat-container {
+            max-width: 600px; margin: 0 auto; padding: 15px;
+            display: flex; flex-direction: column; gap: 20px;
+            min-height: 60vh;
+        }
+
+        .character-area {
+            text-align: center; margin-bottom: 10px;
+            animation: bounce 2s infinite ease-in-out;
+        }
+        
+        .char-avatar { font-size: 5rem; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1)); }
+
+        .bubble {
+            background: #fff; padding: 15px 20px; border-radius: 20px;
+            position: relative; font-size: 1.2rem; line-height: 1.5;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: 2px solid transparent;
+            margin: 0 10px;
+        }
+        
+        .bubble.npc { border-color: var(--secondary); border-top-left-radius: 0; }
+        .bubble.player { border-color: var(--primary); border-top-right-radius: 0; background: #FFF8E1; text-align: right;}
+
+        /* --- 5. MIC INTERFACE --- */
+        .interaction-area {
+            position: fixed; bottom: 60px; left: 0; width: 100%;
+            background: #fff; padding: 15px;
+            border-top-left-radius: 25px; border-top-right-radius: 25px;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
+            text-align: center; display: flex; flex-direction: column; align-items: center;
+        }
+
+        .mic-btn {
+            width: 80px; height: 80px; border-radius: 50%;
+            background: var(--accent); color: white; border: none;
+            font-size: 2.5rem; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 0 0 rgba(247, 37, 133, 0.7);
+            cursor: pointer; transition: 0.2s;
+        }
+
+        .mic-btn.listening { animation: pulse-red 1.5s infinite; }
+        
+        .hint-text { color: #888; margin-bottom: 10px; font-size: 0.9rem; }
+        .player-line { font-size: 1.3rem; font-weight: bold; margin-bottom: 15px; color: var(--primary); }
+
+        /* --- 6. ANIMATIONS --- */
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(247, 37, 133, 0.7); } 70% { box-shadow: 0 0 0 20px rgba(247, 37, 133, 0); } 100% { box-shadow: 0 0 0 0 rgba(247, 37, 133, 0); } }
+        @keyframes pop { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+        /* --- 7. UTILS & MODALS --- */
+        .hidden { display: none !important; }
+        .confetti { position: fixed; top: -10px; width: 10px; height: 10px; background: red; z-index: 200; animation: fall linear forwards; }
+        @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
+        
+        .tone-btn {
+            background: #eee; border: none; padding: 8px 15px; border-radius: 15px;
+            font-size: 1rem; margin: 5px; cursor: pointer; border: 2px solid transparent;
+        }
+        .tone-btn.selected { border-color: var(--primary); background: #FFF8E1; }
+
+        /* --- 8. FOOTER --- */
+        .footer {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: linear-gradient(90deg, #2B2D42, #1A1C29);
+            color: white; text-align: center; padding: 8px;
+            font-size: 0.8rem; border-top: 3px solid var(--primary); z-index: 200;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="pill-badge" onclick="goHome()">🏠 Home</div>
+        <div class="pill-badge">⭐ <span id="score">0</span></div>
+    </header>
+
+    <div id="app">
+        
+        <div id="home-screen">
+            <div style="text-align: center; padding: 20px;">
+                <h1 style="color: var(--primary); margin-bottom: 5px;">English Buddy 🇮🇳</h1>
+                <p style="color: #666;">Learn to speak with confidence!</p>
+            </div>
+
+            <div class="menu-grid">
+                <div class="menu-card" onclick="startModule('roleplay')">
+                    <span class="icon-large">🎭</span>
+                    <span class="card-title">Role Play</span>
+                    <small>Be a Shopkeeper!</small>
+                </div>
+                
+                <div class="menu-card" onclick="startModule('school')">
+                    <span class="icon-large">🎒</span>
+                    <span class="card-title">School Talk</span>
+                    <small>New Friend</small>
+                </div>
+
+                <div class="menu-card" onclick="startModule('games')">
+                    <span class="icon-large">🧩</span>
+                    <span class="card-title">Fun Games</span>
+                    <small>Fix the sentence</small>
+                </div>
+
+                <div class="menu-card" onclick="startModule('builder')">
+                    <span class="icon-large">🏗️</span>
+                    <span class="card-title">Make Story</span>
+                    <small>You choose!</small>
+                </div>
+                
+                <div class="menu-card" style="grid-column: span 2; background: #FFF3E0; border-color: var(--primary);" onclick="startModule('challenge')">
+                    <span class="icon-large">🔥</span>
+                    <span class="card-title">Daily Challenge</span>
+                    <small>Speak 3 lines today</small>
+                </div>
+            </div>
+            
+             <div style="text-align:center; margin-top:10px;">
+                <small onclick="toggleParent()" style="color:#aaa; cursor:pointer;">👨‍👩‍👧 Parent Dashboard</small>
+                <div id="parentDash" class="hidden" style="background:#fff; margin:10px; padding:10px; border-radius:10px; border:1px dashed #ccc;">
+                    <p><strong>Progress:</strong> <span id="pWords">0</span> words spoken</p>
+                    <p><strong>Confidence:</strong> ⭐ High (Fear-free mode active)</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="conv-screen" class="hidden">
+            <div class="chat-container">
+                <div class="character-area">
+                    <div class="char-avatar" id="npcAvatar">🐰</div>
+                    <div style="font-weight:bold; color:#666;" id="npcName">Bunny</div>
+                </div>
+                
+                <div class="bubble npc" id="npcBubble">
+                    Hello! I am Bunny.
+                </div>
+            </div>
+
+            <div class="interaction-area">
+                <div id="playerTurn" class="hidden">
+                    <div class="hint-text">Read & Speak:</div>
+                    <div class="player-line" id="playerTargetText">Hello Bunny!</div>
+                    
+                    <div style="margin-bottom:10px;">
+                        <span class="hint-text" style="font-size:0.8rem">Tone:</span>
+                        <button class="tone-btn selected" onclick="setTone('Happy')">😊 Happy</button>
+                        <button class="tone-btn" onclick="setTone('Loud')">📢 Loud</button>
+                    </div>
+
+                    <button class="mic-btn" id="micBtn" onmousedown="startListening()" onmouseup="stopListening()" ontouchstart="startListening()" ontouchend="stopListening()">🎤</button>
+                    <div class="hint-text" style="margin-top:5px">Hold & Speak</div>
+                </div>
+
+                <div id="npcTurn" class="hidden">
+                    <button class="pill-badge" onclick="nextDialogue()" style="background:var(--success); color:white; border:none; padding:15px 30px; font-size:1.2rem;">Next ➡</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="game-screen" class="hidden">
+            <div class="chat-container" style="text-align:center;">
+                <h2>Fix the Sentence 🔧</h2>
+                <div class="char-avatar">🐱</div>
+                <div class="bubble npc" style="margin-top:20px;">
+                    Cat says: "I ____ milk."
+                </div>
+                
+                <div style="margin-top:30px; display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <button class="menu-card" onclick="checkGame(true)">LOVE ❤️</button>
+                    <button class="menu-card" onclick="checkGame(false)">FLY ✈️</button>
+                </div>
+                <p id="gameFeedback" style="font-size:1.5rem; margin-top:20px;"></p>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        Design & Created by SHRISHANT YADAV
+    </div>
+
+    <script>
+        /* --- 1. DATA (CONVERSATIONS) --- */
+        const SCRIPTS = {
+            roleplay: {
+                title: "Shopkeeper",
+                npc: { name: "Mr. Bear", avatar: "🐻" },
+                lines: [
+                    { s: "npc", t: "Welcome! What do you want?" },
+                    { s: "player", t: "I want a red apple please.", act: "🍎" },
+                    { s: "npc", t: "Here is your apple. That is 10 rupees." },
+                    { s: "player", t: "Here is the money. Thank you!", act: "💵" },
+                    { s: "npc", t: "Thank you! Come again!" }
+                ]
+            },
+            school: {
+                title: "New Friend",
+                npc: { name: "Riya", avatar: "👧" },
+                lines: [
+                    { s: "npc", t: "Hi! My name is Riya." },
+                    { s: "player", t: "Hello Riya! I am [Name].", act: "👋" },
+                    { s: "npc", t: "Do you want to play?" },
+                    { s: "player", t: "Yes! Let's play football.", act: "⚽" },
+                    { s: "npc", t: "Yay! Let's go!" }
+                ]
+            }
+        };
+
+        /* --- 2. STATE --- */
+        let state = {
+            score: 0,
+            currentModule: null,
+            lineIdx: 0,
+            wordsSpoken: 0,
+            tone: 'Happy'
+        };
+
+        const synth = window.speechSynthesis;
+
+        /* --- 3. NAVIGATION --- */
+        function goHome() {
+            document.querySelectorAll('#app > div').forEach(d => d.classList.add('hidden'));
+            document.getElementById('home-screen').classList.remove('hidden');
+            cancelSpeech();
+        }
+
+        function toggleParent() {
+            const p = document.getElementById('parentDash');
+            p.classList.toggle('hidden');
+        }
+
+        function startModule(modId) {
+            document.getElementById('home-screen').classList.add('hidden');
+            
+            if(modId === 'games') {
+                document.getElementById('game-screen').classList.remove('hidden');
+                return;
+            }
+            if(modId === 'challenge') {
+                // Simplified for demo: Route to School
+                modId = 'school';
+            }
+            if(modId === 'builder') {
+                // Simplified for demo: Route to Roleplay
+                modId = 'roleplay';
+            }
+
+            // Load Conversation
+            state.currentModule = SCRIPTS[modId];
+            state.lineIdx = 0;
+            document.getElementById('conv-screen').classList.remove('hidden');
+            
+            // Setup NPC
+            document.getElementById('npcAvatar').innerText = state.currentModule.npc.avatar;
+            document.getElementById('npcName').innerText = state.currentModule.npc.name;
+            
+            runDialogueStep();
+        }
+
+        /* --- 4. DIALOGUE ENGINE --- */
+        function runDialogueStep() {
+            const line = state.currentModule.lines[state.lineIdx];
+            
+            // Safety Check
+            if(!line) {
+                alert("Conversation Complete! Great Job! ⭐⭐⭐");
+                addScore(10);
+                goHome();
+                return;
+            }
+
+            if(line.s === 'npc') {
+                // NPC Turn
+                document.getElementById('npcBubble').innerText = line.t;
+                document.getElementById('npcBubble').style.opacity = 1;
+                document.getElementById('playerTurn').classList.add('hidden');
+                document.getElementById('npcTurn').classList.remove('hidden');
+                
+                // Auto Speak
+                speak(line.t);
+
+            } else {
+                // Player Turn
+                document.getElementById('npcBubble').style.opacity = 0.5; // Dim NPC
+                document.getElementById('npcTurn').classList.add('hidden');
+                document.getElementById('playerTurn').classList.remove('hidden');
+                
+                // Show target text with Action Icon
+                const actionIcon = line.act ? line.act + " " : "";
+                document.getElementById('playerTargetText').innerHTML = actionIcon + line.t;
+                
+                // Hint audio
+                speak("Say: " + line.t, 0.5); // Fast whisper hint
+            }
+        }
+
+        function nextDialogue() {
+            state.lineIdx++;
+            runDialogueStep();
+        }
+
+        /* --- 5. MICROPHONE SIMULATION (FEAR-FREE) --- */
+        let micTimer;
+        
+        function startListening() {
+            const btn = document.getElementById('micBtn');
+            btn.classList.add('listening');
+            
+            // Simulate "listening" logic
+            micTimer = setTimeout(() => {
+                // SUCCESS!
+                stopListening(true);
+            }, 2000); // 2 seconds hold required
+        }
+
+        function stopListening(success = false) {
+            clearTimeout(micTimer);
+            document.getElementById('micBtn').classList.remove('listening');
+            
+            if(success) {
+                // Reward
+                addScore(5);
+                state.wordsSpoken += 3;
+                document.getElementById('pWords').innerText = state.wordsSpoken;
+                
+                // Reaction
+                createConfetti();
+                speak("Great " + state.tone + " voice!");
+                
+                // Move next
+                setTimeout(nextDialogue, 1500);
+            }
+        }
+
+        function setTone(tone) {
+            state.tone = tone;
+            document.querySelectorAll('.tone-btn').forEach(b => b.classList.remove('selected'));
+            event.target.classList.add('selected');
+        }
+
+        /* --- 6. GAME LOGIC --- */
+        function checkGame(isCorrect) {
+            const fb = document.getElementById('gameFeedback');
+            if(isCorrect) {
+                fb.innerText = "✅ Correct! I LOVE milk!";
+                fb.style.color = "green";
+                speak("Correct! I love milk.");
+                addScore(5);
+                createConfetti();
+                setTimeout(goHome, 2000);
+            } else {
+                fb.innerText = "❌ Cats don't fly! Try again.";
+                fb.style.color = "red";
+                speak("Try again.");
+            }
+        }
+
+        /* --- 7. UTILS --- */
+        function addScore(num) {
+            state.score += num;
+            document.getElementById('score').innerText = state.score;
+            document.querySelector('.pill-badge:nth-child(2)').style.transform = "scale(1.2)";
+            setTimeout(() => document.querySelector('.pill-badge:nth-child(2)').style.transform = "scale(1)", 200);
+        }
+
+        function speak(text, rate = 0.9) {
+            cancelSpeech();
+            const u = new SpeechSynthesisUtterance(text);
+            u.rate = rate; // Slower for kids
+            u.pitch = 1.1; // Cheerful
+            synth.speak(u);
+        }
+
+        function cancelSpeech() {
+            synth.cancel();
+        }
+
+        function createConfetti() {
+            for(let i=0; i<30; i++) {
+                const c = document.createElement('div');
+                c.className = 'confetti';
+                c.style.left = Math.random() * 100 + 'vw';
+                c.style.backgroundColor = ['#f00','#0f0','#00f','#ff0'][Math.floor(Math.random()*4)];
+                c.style.animationDuration = Math.random() * 2 + 1 + 's';
+                document.body.appendChild(c);
+                setTimeout(() => c.remove(), 2000);
+            }
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Class 1 Vocab Master</title>
+    <style>
+        /* --- CSS VARIABLES & THEME --- */
+        :root {
+            --primary: #4361EE; /* Blue */
+            --success: #06D6A0; /* Green */
+            --warning: #FFD166; /* Yellow */
+            --danger: #EF476F; /* Red/Pink */
+            --info: #118AB2;    /* Cyan */
+            --bg: #F8F9FA;      /* White-ish */
+            --text: #2B2D42;
+            --font: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+        }
+
+        * { box-sizing: border-box; touch-action: manipulation; user-select: none; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            margin: 0; padding: 0;
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            padding-bottom: 70px; /* Footer space */
+        }
+
+        /* --- STICKY HEADER --- */
+        .header {
+            position: sticky; top: 0; z-index: 100;
+            background: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            padding: 10px 15px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .score-pill {
+            background: var(--warning); padding: 5px 15px; border-radius: 20px;
+            font-weight: bold; border: 2px solid #FFF; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex; align-items: center; gap: 5px; animation: pop 0.5s;
+        }
+
+        /* --- NAVIGATION GRID --- */
+        .grid-container {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 15px;
+        }
+        .cat-card {
+            background: #fff; border-radius: 20px; padding: 15px;
+            text-align: center; box-shadow: 0 5px 0 #ddd; border: 2px solid #eee;
+            transition: transform 0.1s; cursor: pointer;
+        }
+        .cat-card:active { transform: translateY(4px); box-shadow: 0 1px 0 #ddd; }
+        .cat-icon { font-size: 3rem; margin-bottom: 5px; display: block; }
+        .cat-title { font-weight: bold; color: var(--primary); }
+
+        /* --- LEARNING CARD (THE CORE) --- */
+        .flashcard-container {
+            perspective: 1000px; padding: 20px; max-width: 400px; margin: 0 auto;
+        }
+        .flashcard {
+            background: #fff; border-radius: 25px; padding: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-align: center;
+            border: 4px solid var(--primary); position: relative;
+        }
+        .word-image { font-size: 6rem; display: block; margin: 10px 0; animation: float 3s infinite ease-in-out; }
+        .word-text { font-size: 2.5rem; color: var(--text); margin: 10px 0; font-weight: 900; letter-spacing: 2px; }
+        
+        /* --- ACTION BUTTONS --- */
+        .action-bar { display: flex; gap: 10px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+        .btn {
+            border: none; padding: 10px 20px; border-radius: 50px; font-size: 1.2rem;
+            font-family: inherit; font-weight: bold; cursor: pointer; color: #fff;
+            display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+            transition: transform 0.1s;
+        }
+        .btn:active { transform: translateY(4px); box-shadow: none; }
+        .btn-speak { background: var(--success); }
+        .btn-mic { background: var(--danger); }
+        .btn-trace { background: var(--info); }
+        .btn-nav { background: var(--primary); width: 100%; justify-content: center; margin-top: 15px; }
+
+        /* --- MIC SIMULATION --- */
+        .mic-overlay {
+            position: absolute; top:0; left:0; width:100%; height:100%;
+            background: rgba(255,255,255,0.95); border-radius: 20px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 10;
+        }
+        .sound-wave { display: flex; gap: 5px; height: 30px; align-items: flex-end; }
+        .bar { width: 6px; background: var(--danger); animation: wave 0.5s infinite; }
+        
+        /* --- TRACING CANVAS --- */
+        canvas {
+            border: 3px dashed var(--info); border-radius: 15px; background: #fff;
+            touch-action: none; cursor: crosshair; margin: 10px auto; display: block;
+        }
+
+        /* --- GAME MODES --- */
+        .game-area { padding: 15px; text-align: center; }
+        .draggable { 
+            font-size: 2rem; background: #fff; padding: 10px; border-radius: 10px; 
+            border: 2px solid var(--primary); display: inline-block; margin: 5px; 
+        }
+        .drop-zone {
+            height: 150px; border: 3px dashed #ccc; border-radius: 15px; margin-top: 20px;
+            display: flex; align-items: center; justify-content: center; background: #f0f0f0;
+            font-size: 1.2rem; color: #888;
+        }
+
+        /* --- FOOTER --- */
+        .footer {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: linear-gradient(90deg, #1A237E, #283593);
+            color: white; text-align: center; padding: 12px;
+            font-size: 0.8rem; letter-spacing: 1px;
+            border-top: 4px solid var(--warning); z-index: 200;
+        }
+
+        /* --- UTILS --- */
+        .hidden { display: none !important; }
+        .buddy { position: fixed; bottom: 80px; right: 10px; font-size: 3rem; z-index: 90; cursor: pointer; }
+        .bubble { 
+            position: fixed; bottom: 140px; right: 20px; background: #fff; padding: 10px; 
+            border-radius: 15px; border: 2px solid var(--text); font-size: 0.9rem; width: 150px;
+            animation: pop 0.3s;
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes pop { 0% { transform: scale(0.5); } 80% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes wave { 0%, 100% { height: 10px; } 50% { height: 30px; } }
+        
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="score-pill" onclick="goHome()">🏠 Home</div>
+        <div class="score-pill">🌟 <span id="starDisplay">0</span></div>
+    </header>
+
+    <div id="app">
+        
+        <div id="screen-home">
+            <h2 style="text-align:center; color: var(--primary);">My World of Words 🌍</h2>
+            <div class="grid-container" id="catGrid">
+                </div>
+            <div style="text-align:center; margin-top:20px;">
+                <button class="btn btn-trace" onclick="openAlbum()" style="width:90%; justify-content:center; margin:auto;">🏆 My Sticker Album</button>
+            </div>
+        </div>
+
+        <div id="screen-learn" class="hidden">
+            <div class="flashcard-container">
+                <div class="flashcard">
+                    <div id="wordContext" style="position:absolute; top:10px; right:10px; font-size:1.5rem;"></div>
+                    <span id="wordImg" class="word-image" onclick="playSound()">🍎</span>
+                    <div id="wordTxt" class="word-text">APPLE</div>
+                    
+                    <div style="margin-top:10px; font-size:0.9rem; color:#666;">
+                        Used at: <span id="usageIcons">🏠 🏫</span>
+                    </div>
+
+                    <div class="action-bar">
+                        <button class="btn btn-speak" onclick="playSound()">🔊 Hear</button>
+                        <button class="btn btn-mic" onmousedown="startMic()" onmouseup="stopMic()" ontouchstart="startMic()" ontouchend="stopMic()">🎤 Say</button>
+                        <button class="btn btn-trace" onclick="startTrace()">✏️ Trace</button>
+                    </div>
+
+                    <div id="micOverlay" class="mic-overlay hidden">
+                        <h2>Speak Loudly!</h2>
+                        <div class="sound-wave">
+                            <div class="bar" style="animation-delay:0s"></div>
+                            <div class="bar" style="animation-delay:0.1s"></div>
+                            <div class="bar" style="animation-delay:0.2s"></div>
+                            <div class="bar" style="animation-delay:0.3s"></div>
+                            <div class="bar" style="animation-delay:0.1s"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-bar">
+                    <button class="btn btn-nav" style="background:var(--warning); color:#000;" onclick="startGameMode()">🎮 Play Game</button>
+                    <button class="btn btn-nav" onclick="nextWord()">Next Word ➡</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="screen-trace" class="hidden">
+            <h2 style="text-align:center">Trace: <span id="traceTarget" style="color:var(--primary)">APPLE</span></h2>
+            <canvas id="traceCanvas" width="300" height="150"></canvas>
+            <div class="action-bar">
+                <button class="btn" onclick="clearCanvas()" style="background:#ccc; color:#000">Clear</button>
+                <button class="btn btn-success" onclick="finishTrace()" style="background:var(--success)">Done ✅</button>
+            </div>
+            <button class="btn btn-nav" onclick="backToLearn()">⬅ Back</button>
+        </div>
+
+        <div id="screen-game" class="hidden">
+            <div class="game-area">
+                <h2 id="gameTitle">Find the Object!</h2>
+                <div id="gameContent"></div>
+                <div id="gameFeedback" style="font-size: 2rem; height: 50px;"></div>
+                <button class="btn btn-nav" onclick="backToLearn()">⬅ Back to Learn</button>
+            </div>
+        </div>
+
+        <div id="screen-album" class="hidden">
+            <h2 style="text-align:center">My Stickers 🏆</h2>
+            <div class="grid-container" id="stickerGrid"></div>
+            <button class="btn btn-nav" onclick="goHome()">⬅ Home</button>
+        </div>
+
+    </div>
+
+    <div class="buddy" onclick="buddyTalk()">🐘</div>
+    <div id="buddyBubble" class="bubble hidden">Hi! I am Jumbo. Let's learn!</div>
+
+    <div class="footer">
+        Design & Created by SHRISHANT YADAV
+    </div>
+
+    <script>
+        /* --- 1. DATA (Simulated 200 Words Structure - Showing subset for Demo) --- */
+        const DB = {
+            animals: [
+                { id: 'a1', w: 'CAT', e: '🐱', a: 'Meow like a cat', c: '🏠' },
+                { id: 'a2', w: 'DOG', e: '🐶', a: 'Bark like a dog', c: '🏠' },
+                { id: 'a3', w: 'ELEPHANT', e: '🐘', a: 'Swing your trunk', c: '🌳' },
+                { id: 'a4', w: 'LION', e: '🦁', a: 'Roar loudly', c: '🌳' }
+            ],
+            fruits: [
+                { id: 'f1', w: 'APPLE', e: '🍎', a: 'Pretend to eat', c: '🏠' },
+                { id: 'f2', w: 'MANGO', e: '🥭', a: 'Squeeze the juice', c: '🏠' },
+                { id: 'f3', w: 'BANANA', e: '🍌', a: 'Peel the banana', c: '🏠' }
+            ],
+            actions: [
+                { id: 'ac1', w: 'JUMP', e: '🏃', a: 'Jump high!', c: '🏫' },
+                { id: 'ac2', w: 'CLAP', e: '👏', a: 'Clap your hands', c: '🏫' },
+                { id: 'ac3', w: 'SLEEP', e: '😴', a: 'Close your eyes', c: '🏠' }
+            ],
+            body: [
+                { id: 'b1', w: 'NOSE', e: '👃', a: 'Touch your nose', c: '🏠' },
+                { id: 'b2', w: 'EYES', e: '👀', a: 'Blink your eyes', c: '🏠' }
+            ],
+            transport: [
+                { id: 't1', w: 'CAR', e: '🚗', a: 'Drive the car', c: '🛣️' },
+                { id: 't2', w: 'BUS', e: '🚌', a: 'Honk the horn', c: '🏫' }
+            ]
+        };
+
+        const CATEGORIES = [
+            { id: 'animals', t: 'Animals', i: '🦁' },
+            { id: 'fruits', t: 'Fruits', i: '🍎' },
+            { id: 'actions', t: 'Actions', i: '🏃' },
+            { id: 'body', t: 'Body', i: '👀' },
+            { id: 'transport', t: 'Travel', i: '🚗' }
+        ];
+
+        /* --- 2. STATE MANAGEMENT --- */
+        let state = {
+            stars: 0,
+            currentCat: null,
+            currentWordIdx: 0,
+            unlocked: [], // IDs of words learned
+            currentWord: null
+        };
+
+        const synth = window.speechSynthesis;
+
+        /* --- 3. INITIALIZATION --- */
+        function init() {
+            renderHome();
+            loadState();
+        }
+
+        function loadState() {
+            const saved = localStorage.getItem('vocabState');
+            if(saved) {
+                const parsed = JSON.parse(saved);
+                state.stars = parsed.stars || 0;
+                state.unlocked = parsed.unlocked || [];
+                document.getElementById('starDisplay').innerText = state.stars;
+            }
+        }
+
+        function saveState() {
+            localStorage.setItem('vocabState', JSON.stringify({
+                stars: state.stars,
+                unlocked: state.unlocked
+            }));
+        }
+
+        /* --- 4. NAVIGATION & RENDERING --- */
+        function hideAll() {
+            ['screen-home', 'screen-learn', 'screen-trace', 'screen-game', 'screen-album'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+        }
+
+        function goHome() {
+            hideAll();
+            renderHome();
+            document.getElementById('screen-home').classList.remove('hidden');
+            buddySay("Pick a category!");
+        }
+
+        function renderHome() {
+            const grid = document.getElementById('catGrid');
+            grid.innerHTML = '';
+            CATEGORIES.forEach(cat => {
+                grid.innerHTML += `
+                    <div class="cat-card" onclick="startCategory('${cat.id}')">
+                        <span class="cat-icon">${cat.i}</span>
+                        <div class="cat-title">${cat.t}</div>
+                    </div>
+                `;
+            });
+        }
+
+        function startCategory(catId) {
+            state.currentCat = DB[catId];
+            state.currentWordIdx = 0;
+            loadLearnScreen();
+        }
+
+        function loadLearnScreen() {
+            hideAll();
+            document.getElementById('screen-learn').classList.remove('hidden');
+            renderWord();
+        }
+
+        function renderWord() {
+            const word = state.currentCat[state.currentWordIdx];
+            state.currentWord = word;
+            
+            // Animation reset
+            const card = document.querySelector('.flashcard');
+            card.style.animation = 'none';
+            card.offsetHeight; /* trigger reflow */
+            card.style.animation = 'pop 0.5s';
+
+            document.getElementById('wordImg').innerText = word.e;
+            document.getElementById('wordTxt').innerText = word.w;
+            document.getElementById('usageIcons').innerText = word.c + " " + (word.c === '🏠' ? 'Home' : 'Outside');
+            
+            // Auto Audio
+            setTimeout(playSound, 500);
+            
+            // Unlock word
+            if(!state.unlocked.includes(word.id)) {
+                state.unlocked.push(word.id);
+                saveState();
+            }
+        }
+
+        function nextWord() {
+            state.currentWordIdx = (state.currentWordIdx + 1) % state.currentCat.length;
+            renderWord();
+        }
+
+        /* --- 5. AUDIO & MIC FEATURES --- */
+        function playSound() {
+            synth.cancel();
+            const utter = new SpeechSynthesisUtterance(state.currentWord.w);
+            utter.rate = 0.8; // Slow for kids
+            utter.pitch = 1.2; // Cheerful
+            synth.speak(utter);
+        }
+
+        let micTimer;
+        function startMic() {
+            document.getElementById('micOverlay').classList.remove('hidden');
+            // Simulate listening
+            micTimer = setTimeout(() => {
+                // Success logic
+                stopMic();
+                addStar();
+                buddySay("Great Speaking! 🌟");
+                confetti();
+            }, 2500);
+        }
+
+        function stopMic() {
+            clearTimeout(micTimer);
+            document.getElementById('micOverlay').classList.add('hidden');
+        }
+
+        /* --- 6. TRACE FEATURE --- */
+        let canvas, ctx, isDrawing = false;
+
+        function startTrace() {
+            hideAll();
+            document.getElementById('screen-trace').classList.remove('hidden');
+            document.getElementById('traceTarget').innerText = state.currentWord.w;
+            
+            canvas = document.getElementById('traceCanvas');
+            ctx = canvas.getContext('2d');
+            ctx.clearRect(0,0, canvas.width, canvas.height);
+            
+            // Draw Guide
+            ctx.font = "60px Arial";
+            ctx.fillStyle = "#eee";
+            ctx.textAlign = "center";
+            ctx.fillText(state.currentWord.w, 150, 100);
+            
+            // Events
+            canvas.addEventListener('mousedown', startDraw);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', endDraw);
+            canvas.addEventListener('touchstart', (e) => startDraw(e.touches[0]));
+            canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e.touches[0]); });
+            canvas.addEventListener('touchend', endDraw);
+        }
+        
+        function startDraw(e) { isDrawing = true; draw(e); }
+        function endDraw() { isDrawing = false; ctx.beginPath(); }
+        function draw(e) {
+            if(!isDrawing) return;
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            ctx.lineWidth = 5;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = '#4361EE';
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+        }
+        
+        function clearCanvas() { startTrace(); }
+        function finishTrace() {
+            addStar();
+            playSound();
+            buddySay("Good Writing!");
+            backToLearn();
+        }
+        function backToLearn() {
+            hideAll();
+            document.getElementById('screen-learn').classList.remove('hidden');
+        }
+
+        /* --- 7. GAME ENGINE --- */
+        function startGameMode() {
+            hideAll();
+            document.getElementById('screen-game').classList.remove('hidden');
+            
+            // Simple Game: Pick the correct Image
+            const correct = state.currentWord;
+            // Get 2 random wrong options
+            const allWords = Object.values(DB).flat();
+            const wrong = allWords.filter(w => w.id !== correct.id).sort(() => 0.5 - Math.random()).slice(0, 2);
+            
+            const options = [correct, ...wrong].sort(() => 0.5 - Math.random());
+            
+            const html = `
+                <div style="font-size:2rem; margin-bottom:20px;">Find: <b>${correct.w}</b></div>
+                <div style="display:flex; justify-content:center; gap:15px;">
+                    ${options.map(opt => `
+                        <div class="cat-card" onclick="checkGame('${opt.id}', '${correct.id}')" style="font-size:4rem;">
+                            ${opt.e}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            document.getElementById('gameContent').innerHTML = html;
+            document.getElementById('gameFeedback').innerHTML = '';
+            speakText("Find " + correct.w);
+        }
+
+        function checkGame(selectedId, correctId) {
+            if(selectedId === correctId) {
+                document.getElementById('gameFeedback').innerHTML = '✅ Correct!';
+                addStar();
+                confetti();
+                setTimeout(() => {
+                    nextWord();
+                    loadLearnScreen();
+                }, 1500);
+            } else {
+                document.getElementById('gameFeedback').innerHTML = '❌ Try Again';
+                speakText("Try again");
+            }
+        }
+
+        function speakText(txt) {
+            const u = new SpeechSynthesisUtterance(txt);
+            synth.speak(u);
+        }
+
+        /* --- 8. ALBUM MODE --- */
+        function openAlbum() {
+            hideAll();
+            document.getElementById('screen-album').classList.remove('hidden');
+            const grid = document.getElementById('stickerGrid');
+            grid.innerHTML = '';
+            
+            // Flatten all words
+            const allWords = Object.values(DB).flat();
+            
+            allWords.forEach(w => {
+                const isUnlocked = state.unlocked.includes(w.id);
+                grid.innerHTML += `
+                    <div class="cat-card" style="opacity: ${isUnlocked ? 1 : 0.3}">
+                        <div style="font-size:2.5rem">${w.e}</div>
+                        <small>${w.w}</small>
+                        ${isUnlocked ? '⭐' : '🔒'}
+                    </div>
+                `;
+            });
+        }
+
+        /* --- 9. HELPERS --- */
+        function addStar() {
+            state.stars++;
+            document.getElementById('starDisplay').innerText = state.stars;
+            saveState();
+        }
+
+        function buddyTalk() {
+            const msgs = ["You are doing great!", "Tap the mic to speak!", "Collect more stickers!", "I love learning!"];
+            buddySay(msgs[Math.floor(Math.random() * msgs.length)]);
+        }
+
+        function buddySay(text) {
+            const b = document.getElementById('buddyBubble');
+            b.innerText = text;
+            b.classList.remove('hidden');
+            setTimeout(() => b.classList.add('hidden'), 3000);
+        }
+
+        function confetti() {
+            for(let i=0; i<30; i++) {
+                const c = document.createElement('div');
+                c.style.position = 'fixed';
+                c.style.left = Math.random() * 100 + 'vw';
+                c.style.top = '-10px';
+                c.style.width = '10px'; c.style.height = '10px';
+                c.style.background = ['red','blue','green','yellow'][Math.floor(Math.random()*4)];
+                c.style.transition = 'top 1s ease-in, transform 1s';
+                c.style.zIndex = 1000;
+                document.body.appendChild(c);
+                setTimeout(() => {
+                    c.style.top = '100vh';
+                    c.style.transform = `rotate(${Math.random()*360}deg)`;
+                }, 10);
+                setTimeout(() => c.remove(), 1000);
+            }
+        }
+
+        // START
+        init();
+    </script>
+</body>
+</html>

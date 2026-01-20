@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Class 1 Smart Comprehension</title>
+    <style>
+        /* --- CSS VARIABLES & THEME --- */
+        :root {
+            --primary: #FF9F1C; /* Orange */
+            --secondary: #2EC4B6; /* Teal/Green */
+            --accent: #E71D36; /* Red (Joyful) */
+            --highlight: #FFD166; /* Yellow */
+            --dark: #011627; /* Navy */
+            --light: #FDFFFC; /* White */
+            --font-stack: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+        }
+
+        * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            margin: 0; padding: 0;
+            font-family: var(--font-stack);
+            background-color: #E0F7FA;
+            color: var(--dark);
+            overflow-x: hidden;
+            padding-bottom: 60px; /* Footer space */
+        }
+
+        /* --- STICKY HEADER --- */
+        header {
+            background: #fff;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .stats-pill {
+            background: var(--light);
+            border: 2px solid var(--primary);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 1.1rem;
+        }
+
+        /* --- SKILL METER --- */
+        .skill-board {
+            display: flex; gap: 5px; font-size: 0.7rem; flex-direction: column; width: 100px;
+        }
+        .bar-container { background: #eee; height: 6px; border-radius: 3px; overflow: hidden; }
+        .bar-fill { height: 100%; transition: width 0.5s ease; }
+        .bar-u { background: var(--secondary); } /* Understanding */
+        .bar-t { background: var(--primary); }   /* Thinking */
+        .bar-e { background: var(--accent); }    /* Expression */
+
+        /* --- MAIN CONTAINER --- */
+        .app-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 15px;
+            min-height: 80vh;
+        }
+
+        /* --- CARD STYLES --- */
+        .card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 0 rgba(0,0,0,0.05);
+            border: 2px solid #fff;
+            animation: slideUp 0.5s ease;
+        }
+
+        .picture-frame {
+            width: 100%;
+            height: 200px;
+            background: #f0f8ff;
+            border-radius: 15px;
+            border: 3px dashed var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            margin-bottom: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .story-text {
+            font-size: 1.4rem;
+            line-height: 1.6;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .highlight-word { background: var(--highlight); padding: 0 5px; border-radius: 5px; }
+
+        /* --- INTERACTION BUTTONS --- */
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
+        
+        .btn {
+            background: #fff;
+            border: 2px solid #ddd;
+            border-bottom: 5px solid #ddd;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: transform 0.1s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn:active { transform: translateY(4px); border-bottom-width: 2px; }
+        .btn-primary { background: var(--secondary); color: white; border-color: #249d92; }
+        .btn-mic { background: var(--accent); color: white; border-radius: 50%; width: 70px; height: 70px; margin: 0 auto; display: flex; justify-content: center; align-items: center; font-size: 2rem; border-color: #b01529; }
+
+        /* --- DRAWING CANVAS --- */
+        canvas {
+            border: 2px solid var(--dark);
+            border-radius: 10px;
+            background: #fff;
+            touch-action: none;
+            width: 100%;
+            height: 200px;
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pop { 50% { transform: scale(1.1); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        
+        .correct-anim { animation: pop 0.3s ease; background: #C8E6C9 !important; border-color: #4CAF50 !important; }
+        .wrong-anim { animation: shake 0.4s ease; border-color: #FFCDD2 !important; }
+
+        /* --- FOOTER --- */
+        .footer {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: linear-gradient(90deg, #011627, #243B55);
+            color: white; text-align: center; padding: 10px;
+            font-size: 0.8rem; letter-spacing: 1px;
+            border-top: 4px solid var(--primary);
+            z-index: 200;
+        }
+
+        /* --- SCREENS --- */
+        .hidden { display: none !important; }
+        
+        /* --- EMOJI REACTIONS --- */
+        .emoji-reaction { position: fixed; font-size: 4rem; pointer-events: none; animation: floatUp 1.5s ease-out forwards; z-index: 999; }
+        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(0.5); } 100% { opacity: 0; transform: translateY(-200px) scale(1.5); } }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="stats-pill" onclick="goHome()">🏠</div>
+        <div class="stats-pill">⭐ <span id="starCount">0</span></div>
+        <div class="skill-board">
+            <div class="bar-container"><div id="skillU" class="bar-fill bar-u" style="width: 10%"></div></div> <div class="bar-container"><div id="skillT" class="bar-fill bar-t" style="width: 10%"></div></div> <div class="bar-container"><div id="skillE" class="bar-fill bar-e" style="width: 10%"></div></div> </div>
+    </header>
+
+    <div class="app-container">
+        
+        <div id="screen-home">
+            <h1 style="text-align: center; color: var(--accent);">Happy Readers 🇮🇳</h1>
+            <p style="text-align: center;">Choose a Story:</p>
+            <div class="btn-grid" style="grid-template-columns: 1fr;">
+                <button class="btn" onclick="startStory(0)">
+                    <span style="font-size: 3rem;">🥭</span>
+                    <b>Riya & The Mango</b>
+                    <small>Level: Easy</small>
+                </button>
+                <button class="btn" onclick="startStory(1)">
+                    <span style="font-size: 3rem;">🐕</span>
+                    <b>The Helpful Dog</b>
+                    <small>Level: Think</small>
+                </button>
+                <button class="btn" onclick="startStory(2)">
+                    <span style="font-size: 3rem;">🎈</span>
+                    <b>The Red Balloon</b>
+                    <small>Level: Fun</small>
+                </button>
+            </div>
+            
+             <div class="card" style="margin-top: 20px; background: #FFF3E0;">
+                <h3>👨‍👩‍👧 For Parents</h3>
+                <p style="font-size: 0.9rem;">This app uses "Read-Pause-Think". Please encourage your child to speak loudly when the Mic appears.</p>
+            </div>
+        </div>
+
+        <div id="screen-game" class="hidden">
+            <div id="game-content"></div>
+        </div>
+
+    </div>
+
+    <div class="footer">
+        Design & Created by SHRISHANT YADAV
+    </div>
+
+    <script>
+        /* --- 1. DATA STRUCTURE (INDIAN CONTEXT) --- */
+        const DB = [
+            {
+                title: "Riya and the Mango",
+                emoji: "🥭",
+                scene: "🌳👧🥭", 
+                lines: [
+                    "This is Riya.",
+                    "Riya sees a big yellow mango.",
+                    "The mango is on the tree.",
+                    "Riya is happy."
+                ],
+                questions: [
+                    {
+                        type: "tap",
+                        level: "see", // Level 1
+                        q: "Tap the Mango!",
+                        options: ["🍎", "🥭", "🍇", "🍌"],
+                        answer: "🥭"
+                    },
+                    {
+                        type: "emoji",
+                        level: "think", // Level 2
+                        q: "How does Riya feel?",
+                        options: ["😢", "😡", "😊", "😴"],
+                        answer: "😊"
+                    },
+                    {
+                        type: "mic",
+                        level: "express", // Level 3
+                        q: "Say 'Yummy Mango'!",
+                        answer: "any" // Any sound is accepted for encouragement
+                    },
+                    {
+                        type: "draw",
+                        level: "express",
+                        q: "Draw a round Mango below",
+                        answer: "canvas"
+                    }
+                ]
+            },
+            {
+                title: "The Helpful Dog",
+                emoji: "🐕",
+                scene: "🐕👵👜",
+                lines: [
+                    "Grandma drops her bag.",
+                    "The dog sees the bag.",
+                    "The dog picks it up.",
+                    "Grandma says thank you."
+                ],
+                questions: [
+                    {
+                        type: "tap",
+                        level: "see",
+                        q: "Who helped Grandma?",
+                        options: ["🐈", "🐕", "🦜", "🐄"],
+                        answer: "🐕"
+                    },
+                    {
+                        type: "life", // Life Link
+                        level: "think",
+                        q: "Is helping others good?",
+                        options: ["✅ Yes", "❌ No"],
+                        answer: "✅ Yes"
+                    },
+                    {
+                        type: "mic",
+                        level: "express",
+                        q: "What do you say when someone helps? (Say: Thank You)",
+                        answer: "any"
+                    }
+                ]
+            },
+            {
+                title: "The Red Balloon",
+                emoji: "🎈",
+                scene: "☁️🎈🦅",
+                lines: [
+                    "Rahul has a red balloon.",
+                    "The wind blows strongly.",
+                    "The balloon flies away.",
+                    "A bird catches it."
+                ],
+                questions: [
+                    {
+                        type: "tap",
+                        level: "see",
+                        q: "What color is the balloon?",
+                        options: ["🔵", "🔴", "🟢", "🟡"],
+                        answer: "🔴"
+                    },
+                    {
+                        type: "emoji",
+                        level: "think",
+                        q: "Rahul lost his balloon. He is...",
+                        options: ["😂", "😢", "😴", "😋"],
+                        answer: "😢"
+                    },
+                    {
+                        type: "draw",
+                        level: "express",
+                        q: "Draw the balloon flying!",
+                        answer: "canvas"
+                    }
+                ]
+            }
+        ];
+
+        /* --- 2. STATE MANAGEMENT --- */
+        let state = {
+            stars: 0,
+            storyIdx: 0,
+            lineIdx: 0,
+            qIdx: 0,
+            skills: { u: 10, t: 10, e: 10 } // Start with 10%
+        };
+
+        const synth = window.speechSynthesis;
+
+        /* --- 3. CORE ENGINE --- */
+        
+        function goHome() {
+            document.getElementById('screen-home').classList.remove('hidden');
+            document.getElementById('screen-game').classList.add('hidden');
+            stopAudio();
+        }
+
+        function startStory(index) {
+            state.storyIdx = index;
+            state.lineIdx = 0;
+            state.qIdx = 0;
+            document.getElementById('screen-home').classList.add('hidden');
+            document.getElementById('screen-game').classList.remove('hidden');
+            renderPicturePhase();
+        }
+
+        // PHASE 1: PICTURE OBSERVATION (Visual Thinking)
+        function renderPicturePhase() {
+            const story = DB[state.storyIdx];
+            const html = `
+                <div class="card">
+                    <h2 style="text-align:center">${story.title}</h2>
+                    <div class="picture-frame">${story.scene}</div>
+                    <p style="text-align:center; color:#666;">Look at the picture carefully! 👀</p>
+                    <button class="btn btn-primary" style="width:100%" onclick="renderReadPhase()">I am ready! ➡</button>
+                </div>
+            `;
+            document.getElementById('game-content').innerHTML = html;
+            speak("Look at the picture carefully.");
+        }
+
+        // PHASE 2: READ & PAUSE
+        function renderReadPhase() {
+            const story = DB[state.storyIdx];
+            
+            // Check if story is done
+            if(state.lineIdx >= story.lines.length) {
+                renderSummary();
+                return;
+            }
+
+            const currentLine = story.lines[state.lineIdx];
+            
+            const html = `
+                <div class="card">
+                    <div class="picture-frame" style="height:100px; font-size:3rem;">${story.scene}</div>
+                    <div class="story-text" id="storyText">${currentLine}</div>
+                    <button id="listenBtn" class="btn btn-primary" style="width:100%" onclick="playLine()">🔊 Listen</button>
+                </div>
+            `;
+            document.getElementById('game-content').innerHTML = html;
+            
+            // Auto play slightly delayed
+            setTimeout(() => playLine(), 500);
+        }
+
+        function playLine() {
+            const story = DB[state.storyIdx];
+            const line = story.lines[state.lineIdx];
+            
+            // Highlight text
+            document.getElementById('storyText').classList.add('highlight-word');
+            document.getElementById('listenBtn').disabled = true;
+
+            speak(line, () => {
+                document.getElementById('storyText').classList.remove('highlight-word');
+                // LOGIC: Randomly trigger a question OR continue
+                // For demo, we alternate: Line 1 -> Continue, Line 2 -> Question
+                if (state.lineIdx % 2 !== 0 && state.qIdx < story.questions.length) {
+                    setTimeout(renderQuestionPhase, 1000);
+                } else {
+                    state.lineIdx++;
+                    setTimeout(renderReadPhase, 1500);
+                }
+            });
+        }
+
+        // PHASE 3: INTERACTIVE QUESTION
+        function renderQuestionPhase() {
+            const story = DB[state.storyIdx];
+            // Safety check
+            if (state.qIdx >= story.questions.length) {
+                state.lineIdx++;
+                renderReadPhase();
+                return;
+            }
+
+            const q = story.questions[state.qIdx];
+            
+            let inputHTML = '';
+            
+            if (q.type === 'tap' || q.type === 'emoji' || q.type === 'life') {
+                inputHTML = `<div class="btn-grid">`;
+                q.options.forEach(opt => {
+                    inputHTML += `<button class="btn" onclick="checkAnswer(this, '${opt}', '${q.answer}', '${q.level}')">${opt}</button>`;
+                });
+                inputHTML += `</div>`;
+            } else if (q.type === 'mic') {
+                inputHTML = `
+                    <div style="text-align:center; margin:20px;">
+                        <button class="btn btn-mic" id="micBtn" onmousedown="startMic()" onmouseup="stopMic()" ontouchstart="startMic()" ontouchend="stopMic()">🎤</button>
+                        <p id="micStatus">Hold and Speak!</p>
+                    </div>
+                `;
+            } else if (q.type === 'draw') {
+                inputHTML = `
+                    <canvas id="drawCanvas"></canvas>
+                    <div class="btn-grid">
+                        <button class="btn" onclick="clearCanvas()">❌ Clear</button>
+                        <button class="btn btn-primary" onclick="submitDrawing('${q.level}')">✅ Done</button>
+                    </div>
+                `;
+            }
+
+            const html = `
+                <div class="card" style="border-color: var(--primary);">
+                    <h3 style="text-align:center; color: var(--primary);">Question Time! 🤔</h3>
+                    <p style="text-align:center; font-size: 1.2rem;">${q.q}</p>
+                    ${inputHTML}
+                </div>
+            `;
+            document.getElementById('game-content').innerHTML = html;
+            speak(q.q);
+
+            if(q.type === 'draw') initCanvas();
+        }
+
+        /* --- 4. ANSWER LOGIC --- */
+
+        function checkAnswer(btn, selected, correct, level) {
+            if (selected === correct) {
+                // Correct
+                btn.classList.add('correct-anim');
+                playRewardSound();
+                showReaction("🌟");
+                updateStats(level);
+                
+                setTimeout(() => {
+                    nextStep();
+                }, 1500);
+            } else {
+                // Hint (No Negative)
+                btn.classList.add('wrong-anim');
+                speak("Try again!");
+                setTimeout(() => btn.classList.remove('wrong-anim'), 500);
+            }
+        }
+
+        // Simulated Mic Logic (Positive Reinforcement)
+        let micTimer;
+        function startMic() {
+            document.getElementById('micBtn').style.transform = "scale(1.2)";
+            document.getElementById('micStatus').innerText = "Listening...";
+            // Simulate processing
+            micTimer = setTimeout(() => {
+                stopMic(true);
+            }, 2000);
+        }
+
+        function stopMic(forceSuccess = false) {
+            clearTimeout(micTimer);
+            document.getElementById('micBtn').style.transform = "scale(1)";
+            
+            if(forceSuccess) {
+                document.getElementById('micStatus').innerText = "Great job!";
+                playRewardSound();
+                showReaction("👏");
+                updateStats('express');
+                setTimeout(nextStep, 1500);
+            } else {
+                document.getElementById('micStatus').innerText = "Hold button to speak";
+            }
+        }
+
+        // Canvas Logic
+        let canvas, ctx, painting = false;
+        function initCanvas() {
+            canvas = document.getElementById('drawCanvas');
+            ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            
+            const start = (e) => { painting = true; draw(e); };
+            const end = () => { painting = false; ctx.beginPath(); };
+            
+            canvas.addEventListener('mousedown', start);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', end);
+            canvas.addEventListener('touchstart', (e) => start(e.touches[0]));
+            canvas.addEventListener('touchmove', (e) => { e.preventDefault(); draw(e.touches[0]); });
+            canvas.addEventListener('touchend', end);
+        }
+        function draw(e) {
+            if(!painting) return;
+            const rect = canvas.getBoundingClientRect();
+            ctx.lineWidth = 4;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = '#E71D36';
+            ctx.lineTo((e.clientX || e.pageX) - rect.left, (e.clientY || e.pageY) - rect.top);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo((e.clientX || e.pageX) - rect.left, (e.clientY || e.pageY) - rect.top);
+        }
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        function submitDrawing(level) {
+            playRewardSound();
+            showReaction("🎨");
+            updateStats(level);
+            setTimeout(nextStep, 1000);
+        }
+
+        /* --- 5. PROGRESSION & UTILS --- */
+
+        function nextStep() {
+            state.qIdx++;
+            state.lineIdx++; // Advance story line
+            renderReadPhase();
+        }
+
+        function renderSummary() {
+            const html = `
+                <div class="card" style="text-align:center;">
+                    <h1>🎉 Amazing! 🎉</h1>
+                    <div style="font-size:4rem;">⭐⭐⭐</div>
+                    <p>You read the whole story!</p>
+                    <button class="btn btn-primary" onclick="goHome()">Play Another Story</button>
+                </div>
+            `;
+            document.getElementById('game-content').innerHTML = html;
+            playRewardSound();
+        }
+
+        function updateStats(level) {
+            state.stars += 5;
+            document.getElementById('starCount').innerText = state.stars;
+            
+            // Skill Bars
+            if (level === 'see') state.skills.u = Math.min(100, state.skills.u + 10);
+            if (level === 'think') state.skills.t = Math.min(100, state.skills.t + 10);
+            if (level === 'express') state.skills.e = Math.min(100, state.skills.e + 10);
+            
+            document.getElementById('skillU').style.width = state.skills.u + "%";
+            document.getElementById('skillT').style.width = state.skills.t + "%";
+            document.getElementById('skillE').style.width = state.skills.e + "%";
+        }
+
+        function showReaction(emoji) {
+            const el = document.createElement('div');
+            el.className = 'emoji-reaction';
+            el.innerText = emoji;
+            el.style.left = '50%';
+            el.style.top = '50%';
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 2000);
+        }
+
+        function speak(text, callback) {
+            synth.cancel();
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.rate = 0.9; // Slightly slower for kids
+            utter.pitch = 1.1;
+            
+            // Attempt Indian English voice
+            const voices = synth.getVoices();
+            const indianVoice = voices.find(v => v.lang.includes('IN')) || voices.find(v => v.lang.includes('en'));
+            if(indianVoice) utter.voice = indianVoice;
+
+            utter.onend = callback;
+            synth.speak(utter);
+        }
+
+        function stopAudio() {
+            synth.cancel();
+        }
+
+        function playRewardSound() {
+            // Using Speech synth for sound effect to avoid external assets
+            const utter = new SpeechSynthesisUtterance("Ding!");
+            utter.rate = 2;
+            utter.volume = 0.2;
+            synth.speak(utter);
+        }
+
+        // Init voices
+        window.speechSynthesis.onvoiceschanged = () => {};
+
+    </script>
+</body>
+</html>
