@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Class 1 English – Games & Puzzles Zone</title>
+    <style>
+        /* =========================================
+           1. CORE VARIABLES & RESET
+           ========================================= */
+        :root {
+            --primary: #FF9F1C;   /* Orange */
+            --secondary: #2EC4B6; /* Teal/Green */
+            --accent: #FFBF69;    /* Light Orange */
+            --blue: #4CC9F0;      /* Sky Blue */
+            --white: #FFFFFF;
+            --text: #333333;
+            --bg: #F0F9FF;
+            --success: #70E000;
+            --error: #FF595E;
+            --radius: 20px;
+            --shadow: 0 8px 0 rgba(0,0,0,0.1);
+            --font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-family);
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* =========================================
+           2. ANIMATIONS
+           ========================================= */
+        @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 80% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes float { 0% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-15px) rotate(5deg); } 100% { transform: translateY(0px) rotate(0deg); } }
+        @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } 100% { transform: translateX(0); } }
+        @keyframes starFall { 0% { transform: translateY(-100px) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
+        @keyframes conveyor { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
+
+        /* =========================================
+           3. LAYOUT & HEADER
+           ========================================= */
+        header {
+            background: var(--white);
+            padding: 10px 20px;
+            border-bottom: 5px solid var(--primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mascot { font-size: 2.5rem; animation: float 3s infinite ease-in-out; }
+        
+        h1 { margin: 0; font-size: 1.2rem; color: var(--primary); line-height: 1.1; }
+        h1 span { font-size: 0.8rem; color: var(--secondary); display: block; }
+
+        .score-box {
+            background: var(--accent);
+            padding: 5px 15px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* =========================================
+           4. GAME CONTAINER & MENU
+           ========================================= */
+        #game-stage {
+            flex: 1;
+            position: relative;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .game-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: transform 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .game-card:active { transform: scale(0.95); box-shadow: none; transform: translateY(4px); }
+        .game-card:hover { border-color: var(--blue); }
+
+        .game-icon { font-size: 3rem; margin-bottom: 10px; display: block; }
+        .game-title { font-weight: bold; color: var(--text); font-size: 0.9rem; }
+
+        /* =========================================
+           5. GAME INTERFACE
+           ========================================= */
+        .game-view {
+            display: none;
+            width: 100%;
+            max-width: 600px;
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            animation: popIn 0.3s;
+        }
+
+        .game-view.active { display: flex; }
+
+        .game-header { width: 100%; display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .btn-back { background: var(--text); color: white; border: none; padding: 5px 15px; border-radius: 20px; cursor: pointer; }
+
+        .instruction { font-size: 1.2rem; color: var(--primary); font-weight: bold; text-align: center; margin-bottom: 20px; }
+        
+        .game-area { width: 100%; min-height: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+
+        /* Specific Game Elements */
+        .path-container { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+        .path-step { width: 60px; height: 60px; background: #eee; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; cursor: pointer; border: 3px solid #ccc; }
+        .path-step.active { background: var(--blue); color: white; border-color: #0099cc; }
+        .path-step.correct { background: var(--success); color: white; border-color: #4da800; animation: bounce 0.5s; }
+        
+        .sound-btn { font-size: 5rem; cursor: pointer; animation: bounce 2s infinite; }
+        
+        .word-slot-container { display: flex; gap: 10px; margin-bottom: 20px; }
+        .word-slot { width: 50px; height: 50px; border-bottom: 4px solid var(--text); font-size: 2rem; text-align: center; }
+        .letter-pool { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+        .letter-tile { background: var(--accent); padding: 10px 20px; border-radius: 10px; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.2); }
+        
+        .train-container { display: flex; align-items: center; gap: 2px; flex-wrap: wrap; justify-content: center; }
+        .coach { background: var(--secondary); color: white; padding: 10px; border-radius: 10px; margin: 5px; cursor: pointer; }
+        
+        .prep-scene { width: 100%; height: 200px; background: #e0f7fa; border: 2px dashed #bbb; position: relative; border-radius: 10px; margin-bottom: 10px; }
+        .prep-box { width: 80px; height: 80px; background: #795548; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; color: white; }
+        .prep-toy { font-size: 2.5rem; position: absolute; transition: all 0.5s; }
+
+        .emoji-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        .emoji-btn { font-size: 4rem; cursor: pointer; background: none; border: none; transition: transform 0.2s; }
+        .emoji-btn:hover { transform: scale(1.2); }
+
+        .sky-canvas { background: linear-gradient(to bottom, #87CEEB, #E0F7FA); border-radius: 15px; width: 100%; height: 250px; cursor: crosshair; touch-action: none; position: relative; }
+        .sky-guide { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 150px; color: rgba(255,255,255,0.5); pointer-events: none; font-family: sans-serif; }
+
+        /* =========================================
+           6. FEEDBACK & FOOTER
+           ========================================= */
+        .feedback-overlay {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.95);
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 50; border-radius: var(--radius);
+        }
+        .feedback-overlay.active { display: flex; animation: popIn 0.3s; }
+        .feedback-icon { font-size: 5rem; }
+        .feedback-text { font-size: 2rem; color: var(--primary); font-weight: bold; margin: 10px 0; }
+        
+        .btn-next { background: var(--secondary); color: white; padding: 10px 30px; border-radius: 30px; border: none; font-size: 1.2rem; cursor: pointer; margin-top: 10px; }
+
+        footer {
+            background: var(--text); color: var(--white);
+            text-align: center; padding: 15px; font-size: 0.8rem;
+            margin-top: auto;
+        }
+
+        #star-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
+        .falling-star { position: absolute; color: gold; font-size: 20px; animation: starFall 2s linear forwards; }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-title">
+            <div class="mascot">🐙</div>
+            <h1>Games Zone<span>Class 1 English</span></h1>
+        </div>
+        <div class="score-box">⭐ <span id="score-val">0</span></div>
+    </header>
+
+    <div id="game-stage">
+        
+        <div id="main-menu" class="menu-grid">
+            <div class="game-card" onclick="Game.load('alphabet')">
+                <span class="game-icon">🅰️</span>
+                <div class="game-title">Alphabet Path</div>
+            </div>
+            <div class="game-card" onclick="Game.load('phonics')">
+                <span class="game-icon">🔊</span>
+                <div class="game-title">Phonics Catcher</div>
+            </div>
+            <div class="game-card" onclick="Game.load('wordBuild')">
+                <span class="game-icon">🧩</span>
+                <div class="game-title">Word Factory</div>
+            </div>
+            <div class="game-card" onclick="Game.load('sentence')">
+                <span class="game-icon">🚆</span>
+                <div class="game-title">Sentence Train</div>
+            </div>
+            <div class="game-card" onclick="Game.load('preposition')">
+                <span class="game-icon">📦</span>
+                <div class="game-title">Toy Box</div>
+            </div>
+            <div class="game-card" onclick="Game.load('verbs')">
+                <span class="game-icon">🤸</span>
+                <div class="game-title">Action Freeze</div>
+            </div>
+            <div class="game-card" onclick="Game.load('rhyme')">
+                <span class="game-icon">👏</span>
+                <div class="game-title">Rhyme Time</div>
+            </div>
+            <div class="game-card" onclick="Game.load('story')">
+                <span class="game-icon">📖</span>
+                <div class="game-title">Story Puzzle</div>
+            </div>
+            <div class="game-card" onclick="Game.load('speaking')">
+                <span class="game-icon">🗣️</span>
+                <div class="game-title">Picture Talk</div>
+            </div>
+            <div class="game-card" onclick="Game.load('emotions')">
+                <span class="game-icon">😊</span>
+                <div class="game-title">Emotion Match</div>
+            </div>
+            <div class="game-card" onclick="Game.load('trace')">
+                <span class="game-icon">☁️</span>
+                <div class="game-title">Sky Trace</div>
+            </div>
+            <div class="game-card" onclick="Game.load('hero')">
+                <span class="game-icon">🦸‍♂️</span>
+                <div class="game-title">Hero Quest</div>
+            </div>
+        </div>
+
+        <div id="game-view" class="game-view">
+            <div class="game-header">
+                <button class="btn-back" onclick="Game.exit()">⬅ Menu</button>
+                <div id="level-indicator" style="color:#888;">Level 1</div>
+            </div>
+            <div id="game-instruction" class="instruction">Instruction Text</div>
+            <div id="game-content" class="game-area">
+                </div>
+            
+            <div id="feedback-overlay" class="feedback-overlay">
+                <div class="feedback-icon">🎉</div>
+                <div class="feedback-text" id="feedback-msg">Good Try!</div>
+                <button class="btn-next" onclick="Game.nextLevel()">Next ➡</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="star-container"></div>
+
+    <footer>
+        Designed & Created by<br>
+        <strong>SHRISHANT YADAV</strong><br>
+        © Class 1 English Learning Platform
+    </footer>
+
+    <script>
+        /* =========================================
+           DATA BANK
+           ========================================= */
+        const DB = {
+            alphabet: ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'],
+            phonics: [
+                {s:'/a/', l:'A', w:'Apple'}, {s:'/b/', l:'B', w:'Ball'}, {s:'/c/', l:'C', w:'Cat'}, 
+                {s:'/s/', l:'S', w:'Snake'}, {s:'/m/', l:'M', w:'Mango'}, {s:'/t/', l:'T', w:'Tiger'}
+            ],
+            words: [
+                {w:'CAT', i:'🐱'}, {w:'BAT', i:'🏏'}, {w:'SUN', i:'☀️'}, {w:'DOG', i:'🐶'}, {w:'PEN', i:'🖊️'}
+            ],
+            sentences: [
+                {s:'The sun is hot', p:['The','sun','is','hot']},
+                {s:'I like to play', p:['I','like','to','play']},
+                {s:'The cat is fat', p:['The','cat','is','fat']}
+            ],
+            prepositions: [
+                {q:'Put Teddy ON the box', p:'on'}, {q:'Put Teddy IN the box', p:'in'}, {q:'Put Teddy UNDER the box', p:'under'}
+            ],
+            verbs: [
+                {v:'JUMP', i:'🏃'}, {v:'CLAP', i:'👏'}, {v:'SLEEP', i:'😴'}, {v:'EAT', i:'🍎'}
+            ],
+            rhymes: [
+                {q:'Cat matches with...', o:['Bat','Dog'], a:'Bat'},
+                {q:'Pen matches with...', o:['Hen','Pan'], a:'Hen'},
+                {q:'Sun matches with...', o:['Bun','Sit'], a:'Bun'}
+            ],
+            emotions: [
+                {s:'You got a gift!', e:'😊'}, {s:'You fell down.', e:'😢'}, {s:'Someone broke your toy.', e:'😡'}
+            ]
+        };
+
+        /* =========================================
+           GAME ENGINE
+           ========================================= */
+        const Game = {
+            score: 0,
+            currentGame: null,
+            level: 0,
+            
+            load: function(gameName) {
+                this.currentGame = gameName;
+                this.level = 0;
+                document.getElementById('main-menu').style.display = 'none';
+                document.getElementById('game-view').classList.add('active');
+                this.renderLevel();
+            },
+
+            exit: function() {
+                document.getElementById('game-view').classList.remove('active');
+                document.getElementById('main-menu').style.display = 'grid';
+                document.getElementById('feedback-overlay').classList.remove('active');
+            },
+
+            renderLevel: function() {
+                const area = document.getElementById('game-content');
+                const instr = document.getElementById('game-instruction');
+                area.innerHTML = '';
+                document.getElementById('level-indicator').innerText = `Level ${this.level + 1}`;
+                document.getElementById('feedback-overlay').classList.remove('active');
+
+                // Route to specific game logic
+                switch(this.currentGame) {
+                    case 'alphabet': this.playAlphabet(area, instr); break;
+                    case 'phonics': this.playPhonics(area, instr); break;
+                    case 'wordBuild': this.playWordBuild(area, instr); break;
+                    case 'sentence': this.playSentence(area, instr); break;
+                    case 'preposition': this.playPrep(area, instr); break;
+                    case 'verbs': this.playVerbs(area, instr); break;
+                    case 'rhyme': this.playRhyme(area, instr); break;
+                    case 'story': this.playStory(area, instr); break;
+                    case 'speaking': this.playSpeaking(area, instr); break;
+                    case 'emotions': this.playEmotions(area, instr); break;
+                    case 'trace': this.playTrace(area, instr); break;
+                    case 'hero': this.playHero(area, instr); break;
+                }
+            },
+
+            success: function() {
+                this.score += 10;
+                document.getElementById('score-val').innerText = this.score;
+                this.showFeedback(true);
+                this.spawnStars();
+            },
+
+            fail: function() {
+                this.showFeedback(false);
+            },
+
+            showFeedback: function(isSuccess) {
+                const overlay = document.getElementById('feedback-overlay');
+                const msg = document.getElementById('feedback-msg');
+                const icon = overlay.querySelector('.feedback-icon');
+                
+                if(isSuccess) {
+                    icon.innerText = '🌟';
+                    msg.innerText = ['Awesome!', 'Superb!', 'Great Job!', 'Hero!'][Math.floor(Math.random()*4)];
+                    msg.style.color = 'var(--success)';
+                } else {
+                    icon.innerText = '💡';
+                    msg.innerText = 'Try Again!';
+                    msg.style.color = 'var(--primary)';
+                }
+                overlay.classList.add('active');
+            },
+
+            nextLevel: function() {
+                this.level++;
+                this.renderLevel();
+            },
+
+            spawnStars: function() {
+                const container = document.getElementById('star-container');
+                for(let i=0; i<10; i++) {
+                    const star = document.createElement('div');
+                    star.innerText = '⭐';
+                    star.className = 'falling-star';
+                    star.style.left = Math.random() * 100 + 'vw';
+                    star.style.animationDuration = (Math.random() * 2 + 1) + 's';
+                    container.appendChild(star);
+                    setTimeout(() => star.remove(), 3000);
+                }
+            },
+
+            /* --- GAME LOGICS --- */
+
+            playAlphabet: function(area, instr) {
+                instr.innerText = "Tap the letter: " + DB.alphabet[this.level % 26];
+                const target = DB.alphabet[this.level % 26];
+                const pool = [target, ...this.getRandomLetters(3)].sort(() => Math.random() - 0.5);
+                
+                const div = document.createElement('div');
+                div.className = 'path-container';
+                pool.forEach(l => {
+                    const btn = document.createElement('div');
+                    btn.className = 'path-step';
+                    btn.innerText = l;
+                    btn.onclick = () => { if(l===target) this.success(); else this.fail(); };
+                    div.appendChild(btn);
+                });
+                area.appendChild(div);
+            },
+
+            playPhonics: function(area, instr) {
+                const data = DB.phonics[this.level % DB.phonics.length];
+                instr.innerText = `Which letter says "${data.s}"?`; // Simulating sound
+                
+                const btn = document.createElement('div');
+                btn.className = 'sound-btn';
+                btn.innerText = '🔊';
+                btn.onclick = () => alert(`Sound says: ${data.s} as in ${data.w}`); // Mock sound
+                area.appendChild(btn);
+
+                const opts = document.createElement('div');
+                opts.className = 'path-container';
+                opts.style.marginTop = '20px';
+                
+                const pool = [data.l, 'X', 'Z'].sort(()=>Math.random()-0.5);
+                pool.forEach(l => {
+                    const b = document.createElement('div');
+                    b.className = 'path-step';
+                    b.innerText = l;
+                    b.onclick = () => { if(l===data.l) this.success(); else this.fail(); };
+                    opts.appendChild(b);
+                });
+                area.appendChild(opts);
+            },
+
+            playWordBuild: function(area, instr) {
+                const data = DB.words[this.level % DB.words.length];
+                instr.innerText = "Build the Word!";
+                
+                const img = document.createElement('div');
+                img.style.fontSize = '4rem';
+                img.innerText = data.i;
+                area.appendChild(img);
+
+                const slotCont = document.createElement('div');
+                slotCont.className = 'word-slot-container';
+                for(let i=0; i<data.w.length; i++) {
+                    const s = document.createElement('div');
+                    s.className = 'word-slot';
+                    s.id = `slot-${i}`;
+                    slotCont.appendChild(s);
+                }
+                area.appendChild(slotCont);
+
+                const pool = document.createElement('div');
+                pool.className = 'letter-pool';
+                let letters = data.w.split('').sort(()=>Math.random()-0.5);
+                letters.forEach(l => {
+                    const t = document.createElement('div');
+                    t.className = 'letter-tile';
+                    t.innerText = l;
+                    t.onclick = function() {
+                        // Find first empty slot
+                        for(let i=0; i<data.w.length; i++) {
+                            const slot = document.getElementById(`slot-${i}`);
+                            if(!slot.innerText) {
+                                slot.innerText = l;
+                                this.style.display = 'none';
+                                // Check win
+                                let curr = '';
+                                for(let j=0; j<data.w.length; j++) curr += document.getElementById(`slot-${j}`).innerText;
+                                if(curr === data.w) setTimeout(()=>Game.success(), 500);
+                                else if(curr.length === data.w.length) setTimeout(()=>Game.fail(), 500); // Simple wrong logic
+                                break;
+                            }
+                        }
+                    };
+                    pool.appendChild(t);
+                });
+                area.appendChild(pool);
+            },
+
+            playSentence: function(area, instr) {
+                const data = DB.sentences[this.level % DB.sentences.length];
+                instr.innerText = "Fix the Train Order";
+                
+                const con = document.createElement('div');
+                con.className = 'train-container';
+                
+                let shuffled = [...data.p].sort(()=>Math.random()-0.5);
+                let currentOrder = [];
+
+                shuffled.forEach(word => {
+                    const coach = document.createElement('div');
+                    coach.className = 'coach';
+                    coach.innerText = word;
+                    coach.onclick = function() {
+                        if(this.parentNode === con) {
+                            document.getElementById('answer-track').appendChild(this);
+                            currentOrder.push(word);
+                        } else {
+                            con.appendChild(this);
+                            currentOrder = currentOrder.filter(w => w !== word);
+                        }
+                        
+                        if(currentOrder.join(' ') === data.s) Game.success();
+                    }
+                    con.appendChild(coach);
+                });
+
+                const track = document.createElement('div');
+                track.id = 'answer-track';
+                track.className = 'train-container';
+                track.style.borderBottom = '4px solid #333';
+                track.style.minWidth = '200px';
+                track.style.minHeight = '50px';
+                track.style.marginTop = '20px';
+
+                area.appendChild(con);
+                area.appendChild(track);
+            },
+
+            playPrep: function(area, instr) {
+                const data = DB.prepositions[this.level % DB.prepositions.length];
+                instr.innerText = data.q;
+
+                const scene = document.createElement('div');
+                scene.className = 'prep-scene';
+                
+                const box = document.createElement('div');
+                box.className = 'prep-box';
+                box.innerText = 'BOX';
+                scene.appendChild(box);
+
+                const toy = document.createElement('div');
+                toy.className = 'prep-toy';
+                toy.innerText = '🧸';
+                // Initially random pos
+                toy.style.top = '10px'; toy.style.left = '10px';
+                
+                // Click logic simulation (simplified for taps)
+                const opts = document.createElement('div');
+                opts.className = 'path-container';
+                ['IN', 'ON', 'UNDER'].forEach(p => {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn-back'; // re-using style
+                    btn.style.background = 'var(--primary)';
+                    btn.style.margin = '5px';
+                    btn.innerText = p;
+                    btn.onclick = () => {
+                        // Visual Move
+                        if(p === 'ON') { toy.style.top = '20%'; toy.style.left = '50%'; }
+                        if(p === 'IN') { toy.style.display = 'none'; setTimeout(()=>toy.style.display='block', 500); } // hide effect
+                        if(p === 'UNDER') { toy.style.top = '80%'; toy.style.left = '50%'; }
+                        
+                        if(p.toLowerCase() === data.p) setTimeout(()=>this.success(), 800);
+                        else this.fail();
+                    };
+                    opts.appendChild(btn);
+                });
+
+                scene.appendChild(toy);
+                area.appendChild(scene);
+                area.appendChild(opts);
+            },
+
+            playVerbs: function(area, instr) {
+                const data = DB.verbs[this.level % DB.verbs.length];
+                instr.innerText = "Tap the matching action!";
+                
+                const word = document.createElement('h2');
+                word.innerText = data.v;
+                area.appendChild(word);
+
+                const grid = document.createElement('div');
+                grid.className = 'emoji-grid';
+                
+                // Generate wrong option
+                const wrong = DB.verbs[(this.level+1) % DB.verbs.length];
+                const opts = [data, wrong].sort(()=>Math.random()-0.5);
+                
+                opts.forEach(o => {
+                    const b = document.createElement('button');
+                    b.className = 'emoji-btn';
+                    b.innerText = o.i;
+                    b.onclick = () => { if(o.v === data.v) this.success(); else this.fail(); };
+                    grid.appendChild(b);
+                });
+                area.appendChild(grid);
+            },
+
+            playRhyme: function(area, instr) {
+                const data = DB.rhymes[this.level % DB.rhymes.length];
+                instr.innerText = data.q;
+                
+                const grid = document.createElement('div');
+                grid.className = 'path-container';
+                
+                data.o.forEach(opt => {
+                    const btn = document.createElement('div');
+                    btn.className = 'path-step';
+                    btn.style.width = 'auto';
+                    btn.style.padding = '10px 20px';
+                    btn.style.borderRadius = '10px';
+                    btn.innerText = opt;
+                    btn.onclick = () => { if(opt === data.a) this.success(); else this.fail(); };
+                    grid.appendChild(btn);
+                });
+                area.appendChild(grid);
+            },
+
+            playStory: function(area, instr) {
+                instr.innerText = "What happens FIRST?";
+                const seq = ['🌱', '🌿', '🌳']; // Seed -> Plant -> Tree
+                
+                const grid = document.createElement('div');
+                grid.className = 'path-container';
+                
+                let shuffled = [...seq].sort(()=>Math.random()-0.5);
+                
+                shuffled.forEach(s => {
+                    const b = document.createElement('div');
+                    b.className = 'path-step';
+                    b.innerText = s;
+                    b.onclick = () => {
+                        if(s === seq[0]) { // Simplified: just find the first one
+                            this.success();
+                        } else {
+                            this.fail();
+                        }
+                    }
+                    grid.appendChild(b);
+                });
+                area.appendChild(grid);
+            },
+
+            playSpeaking: function(area, instr) {
+                const words = ['Apple', 'Ball', 'Cat', 'Dog'];
+                const w = words[this.level % words.length];
+                instr.innerText = `Tap mic & say: "${w}"`;
+                
+                const icon = document.createElement('div');
+                icon.style.fontSize = '5rem';
+                icon.innerText = ['🍎','⚽','🐱','🐶'][this.level % 4];
+                area.appendChild(icon);
+
+                const mic = document.createElement('div');
+                mic.className = 'sound-btn';
+                mic.innerText = '🎙️';
+                mic.onclick = () => {
+                    mic.style.color = 'red';
+                    setTimeout(() => {
+                        mic.style.color = 'black';
+                        this.success(); // Simulate recognition success
+                    }, 1000);
+                };
+                area.appendChild(mic);
+            },
+
+            playEmotions: function(area, instr) {
+                const data = DB.emotions[this.level % DB.emotions.length];
+                instr.innerText = data.s;
+                
+                const grid = document.createElement('div');
+                grid.className = 'emoji-grid';
+                
+                const opts = ['😊','😢','😡','😮'];
+                opts.forEach(e => {
+                    const b = document.createElement('button');
+                    b.className = 'emoji-btn';
+                    b.innerText = e;
+                    b.onclick = () => { if(e === data.e) this.success(); else this.fail(); };
+                    grid.appendChild(b);
+                });
+                area.appendChild(grid);
+            },
+
+            playTrace: function(area, instr) {
+                const char = DB.alphabet[this.level % 26];
+                instr.innerText = "Trace the Letter in the Sky";
+                
+                const canvas = document.createElement('div');
+                canvas.className = 'sky-canvas';
+                
+                const guide = document.createElement('div');
+                guide.className = 'sky-guide';
+                guide.innerText = char;
+                canvas.appendChild(guide);
+
+                // Simple tracing simulation using mouse/touch events
+                let isDrawing = false;
+                
+                const createDot = (x, y) => {
+                    const dot = document.createElement('div');
+                    dot.style.position = 'absolute';
+                    dot.style.width = '10px'; dot.style.height = '10px';
+                    dot.style.background = 'yellow';
+                    dot.style.borderRadius = '50%';
+                    dot.style.left = x + 'px'; dot.style.top = y + 'px';
+                    dot.style.boxShadow = '0 0 10px gold';
+                    canvas.appendChild(dot);
+                };
+
+                const start = () => isDrawing = true;
+                const end = () => {
+                    if(isDrawing) {
+                        isDrawing = false;
+                        // Auto win after drawing attempts
+                        setTimeout(() => this.success(), 500);
+                    }
+                };
+                const move = (e) => {
+                    if(!isDrawing) return;
+                    const rect = canvas.getBoundingClientRect();
+                    const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+                    const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+                    createDot(x,y);
+                };
+
+                canvas.addEventListener('mousedown', start);
+                canvas.addEventListener('mouseup', end);
+                canvas.addEventListener('mousemove', move);
+                canvas.addEventListener('touchstart', start);
+                canvas.addEventListener('touchend', end);
+                canvas.addEventListener('touchmove', move);
+
+                area.appendChild(canvas);
+            },
+
+            playHero: function(area, instr) {
+                instr.innerText = "Hero Challenge! Find the Vowel";
+                // Simple mix game
+                const vowels = ['A','E','I','O','U'];
+                const letters = ['B','C','D','A'].sort(()=>Math.random()-0.5);
+                
+                const div = document.createElement('div');
+                div.className = 'path-container';
+                letters.forEach(l => {
+                    const btn = document.createElement('div');
+                    btn.className = 'path-step';
+                    btn.innerText = l;
+                    btn.onclick = () => { if(vowels.includes(l)) this.success(); else this.fail(); };
+                    div.appendChild(btn);
+                });
+                area.appendChild(div);
+            },
+
+            getRandomLetters: function(count) {
+                let res = [];
+                for(let i=0; i<count; i++) res.push(DB.alphabet[Math.floor(Math.random()*26)]);
+                return res;
+            }
+        };
+
+    </script>
+</body>
+</html>

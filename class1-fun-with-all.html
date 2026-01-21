@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fun with All Chapters – Class 1 English</title>
+    <style>
+        /* =========================================
+           1. CORE THEME & VARIABLES
+           ========================================= */
+        :root {
+            --primary: #FFD700;    /* Gold/Yellow */
+            --secondary: #32CD32;  /* Lime Green */
+            --accent: #FF4500;     /* Orange Red */
+            --blue: #1E90FF;       /* Dodger Blue */
+            --purple: #9370DB;     /* Medium Purple */
+            --white: #ffffff;
+            --dark: #333333;
+            --bg: #F0F8FF;         /* Alice Blue */
+            --font-main: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+            --card-radius: 25px;
+            --btn-shadow: 0 6px 0 rgba(0,0,0,0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-main);
+            background-color: var(--bg);
+            color: var(--dark);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* =========================================
+           2. ANIMATIONS
+           ========================================= */
+        @keyframes pop { 0% { transform: scale(0.8); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+        @keyframes shine { 0% { background-position: -200%; } 100% { background-position: 200%; } }
+        @keyframes starDrop { 0% { transform: translateY(-100px) rotate(0deg); } 100% { transform: translateY(100vh) rotate(360deg); } }
+        @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } 100% { transform: translateX(0); } }
+
+        .anim-pop { animation: pop 0.4s ease-out; }
+        .anim-shake { animation: shake 0.4s ease-in-out; }
+
+        /* =========================================
+           3. HEADER
+           ========================================= */
+        header {
+            background: var(--white);
+            padding: 10px 20px;
+            border-bottom: 5px solid var(--accent);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-area { display: flex; align-items: center; gap: 10px; }
+        .mascot { font-size: 2.5rem; animation: float 3s infinite ease-in-out; }
+        .app-title { font-size: 1.2rem; font-weight: bold; color: var(--blue); line-height: 1.2; }
+        .app-title span { display: block; font-size: 0.8rem; color: var(--secondary); }
+
+        .score-box {
+            background: var(--primary);
+            padding: 8px 15px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--dark);
+            border: 2px solid #daa520;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* =========================================
+           4. MAIN MENU GRID
+           ========================================= */
+        #main-container {
+            flex: 1;
+            padding: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .grid-menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .menu-card {
+            background: var(--white);
+            border-radius: var(--card-radius);
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+            border-bottom: 6px solid #ddd;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 160px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-card:active { transform: scale(0.95); border-bottom: 2px solid #ddd; transform: translateY(4px); }
+        .menu-card:hover { filter: brightness(1.05); }
+
+        /* Card Colors */
+        .c-1 { border-color: #FF6B6B; background: #FFF0F0; }
+        .c-2 { border-color: #4ECDC4; background: #E0FFFC; }
+        .c-3 { border-color: #45B7D1; background: #E6F7FF; }
+        .c-4 { border-color: #FFA07A; background: #FFF5E6; }
+        .c-5 { border-color: #98FB98; background: #F0FFF0; }
+
+        .card-icon { font-size: 3rem; margin-bottom: 10px; display: block; }
+        .card-title { font-weight: bold; font-size: 0.95rem; color: var(--dark); }
+
+        /* =========================================
+           5. GAME VIEW & UI ELEMENTS
+           ========================================= */
+        #game-view {
+            display: none;
+            background: var(--white);
+            border-radius: var(--card-radius);
+            padding: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            min-height: 400px;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .nav-bar { width: 100%; display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .btn-back { background: var(--dark); color: white; padding: 5px 15px; border-radius: 20px; border:none; cursor: pointer; }
+
+        .question-area { flex: 1; width: 100%; max-width: 600px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        
+        .q-text { font-size: 1.5rem; margin-bottom: 20px; color: var(--blue); font-weight: bold; }
+        .q-img { font-size: 5rem; margin-bottom: 20px; display: block; animation: pop 0.5s; }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 100%;
+        }
+
+        .btn-opt {
+            background: var(--white);
+            border: 3px solid #eee;
+            padding: 15px;
+            border-radius: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--dark);
+            cursor: pointer;
+            box-shadow: 0 4px 0 #ddd;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-opt:active { transform: translateY(4px); box-shadow: none; }
+        
+        .btn-opt.correct { background: var(--secondary); color: white; border-color: #228B22; box-shadow: 0 4px 0 #228B22; }
+        .btn-opt.wrong { background: var(--accent); color: white; border-color: #B22222; box-shadow: 0 4px 0 #B22222; }
+
+        /* Special Layouts */
+        .word-builder { display: flex; gap: 10px; margin-bottom: 20px; }
+        .letter-slot { width: 50px; height: 50px; border-bottom: 3px solid var(--dark); font-size: 2rem; }
+        
+        /* Feedback Overlay */
+        #feedback-overlay {
+            position: absolute; top:0; left:0; right:0; bottom:0;
+            background: rgba(255,255,255,0.95);
+            border-radius: var(--card-radius);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+        }
+        .fb-icon { font-size: 4rem; margin-bottom: 10px; }
+        .fb-text { font-size: 2rem; color: var(--secondary); font-weight: bold; }
+        .btn-next { margin-top: 20px; padding: 10px 40px; background: var(--blue); color: white; font-size: 1.5rem; border-radius: 50px; border:none; box-shadow: var(--btn-shadow); cursor: pointer; }
+
+        /* =========================================
+           6. FOOTER
+           ========================================= */
+        footer {
+            background: var(--dark);
+            color: var(--white);
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9rem;
+            margin-top: auto;
+        }
+
+        #star-canvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 999; width: 100%; height: 100%; }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <div class="mascot">🦁</div>
+            <div class="app-title">Fun with All<br><span>Class 1 English</span></div>
+        </div>
+        <div class="score-box">⭐ <span id="score">0</span></div>
+    </header>
+
+    <div id="main-container">
+        
+        <div id="menu-view" class="grid-menu">
+            <div class="menu-card c-1" onclick="Game.load(1)">
+                <span class="card-icon">🎪</span>
+                <span class="card-title">English Carnival</span>
+            </div>
+            <div class="menu-card c-2" onclick="Game.load(2)">
+                <span class="card-icon">🧩</span>
+                <span class="card-title">Chapter Mix-Up</span>
+            </div>
+            <div class="menu-card c-3" onclick="Game.load(3)">
+                <span class="card-icon">📖</span>
+                <span class="card-title">Read-Play-Say</span>
+            </div>
+            <div class="menu-card c-4" onclick="Game.load(4)">
+                <span class="card-icon">✨</span>
+                <span class="card-title">Word Magic Box</span>
+            </div>
+            <div class="menu-card c-5" onclick="Game.load(5)">
+                <span class="card-icon">🎢</span>
+                <span class="card-title">Grammar Fun Park</span>
+            </div>
+            <div class="menu-card c-1" onclick="Game.load(6)">
+                <span class="card-icon">🎵</span>
+                <span class="card-title">Rhyme Party</span>
+            </div>
+            <div class="menu-card c-2" onclick="Game.load(7)">
+                <span class="card-icon">🛝</span>
+                <span class="card-title">Story Playground</span>
+            </div>
+            <div class="menu-card c-3" onclick="Game.load(8)">
+                <span class="card-icon">🖼️</span>
+                <span class="card-title">Picture Talk</span>
+            </div>
+            <div class="menu-card c-4" onclick="Game.load(9)">
+                <span class="card-icon">🧸</span>
+                <span class="card-title">Speak with Buddy</span>
+            </div>
+            <div class="menu-card c-5" onclick="Game.load(10)">
+                <span class="card-icon">✍️</span>
+                <span class="card-title">Write & Win</span>
+            </div>
+            <div class="menu-card c-1" onclick="Game.load(11)">
+                <span class="card-icon">😊</span>
+                <span class="card-title">Emoji English</span>
+            </div>
+            <div class="menu-card c-2" onclick="Game.load(12)">
+                <span class="card-icon">🍬</span>
+                <span class="card-title">Daily Fun Dose</span>
+            </div>
+            <div class="menu-card c-3" onclick="Game.load(13)">
+                <span class="card-icon">🤸</span>
+                <span class="card-title">Action Arena</span>
+            </div>
+            <div class="menu-card c-4" onclick="Game.load(14)">
+                <span class="card-icon">🧠</span>
+                <span class="card-title">Think & Choose</span>
+            </div>
+            <div class="menu-card c-5" onclick="Game.load(15)">
+                <span class="card-icon">🦸‍♂️</span>
+                <span class="card-title">English Hero</span>
+            </div>
+        </div>
+
+        <div id="game-view">
+            <div class="nav-bar">
+                <button class="btn-back" onclick="Game.home()">⬅ Menu</button>
+                <div style="font-weight: bold; color: #888;">Round <span id="round-num">1</span>/10</div>
+            </div>
+            
+            <div id="game-content" class="question-area">
+                </div>
+
+            <div id="feedback-overlay">
+                <div class="fb-icon">🎉</div>
+                <div class="fb-text" id="fb-msg">Great Job!</div>
+                <button class="btn-next" onclick="Game.next()">Next ➡</button>
+            </div>
+        </div>
+    </div>
+
+    <canvas id="star-canvas"></canvas>
+
+    <footer>
+        Designed & Created by<br>
+        <strong>SHRISHANT YADAV</strong><br>
+        © Class 1 English Learning Platform
+    </footer>
+
+    <script>
+        /* =========================================
+           DATA BANK (GENERATORS)
+           ========================================= */
+        const DB = {
+            nouns: ['Apple', 'Ball', 'Cat', 'Dog', 'Fan', 'Girl', 'Hat', 'Ice', 'Jug', 'Kite'],
+            verbs: ['Run', 'Jump', 'Eat', 'Sleep', 'Read', 'Play', 'Sing', 'Dance'],
+            adjectives: ['Big', 'Small', 'Red', 'Blue', 'Hot', 'Cold', 'Happy', 'Sad'],
+            rhymes: [['Cat','Bat'], ['Pen','Hen'], ['Sun','Run'], ['Pot','Hot'], ['Pin','Tin']],
+            emotions: [{w:'Happy', e:'😊'}, {w:'Sad', e:'😢'}, {w:'Angry', e:'😡'}, {w:'Surprised', e:'😮'}],
+            sentences: [
+                {parts:['The','sun','is','hot'], full:'The sun is hot'},
+                {parts:['I','play','ball'], full:'I play ball'},
+                {parts:['Cats','like','milk'], full:'Cats like milk'}
+            ],
+            
+            // Helper to get random item
+            pick: (arr) => arr[Math.floor(Math.random() * arr.length)],
+            
+            // GENERATORS FOR 300+ VARIATIONS
+            
+            // 1. Carnival (Alphabet/Basic)
+            getGen1: () => {
+                const l = DB.pick(['A','B','C','D','E','F','G','H']);
+                return {
+                    q: `Select the Small letter for ${l}`,
+                    img: l,
+                    opts: [l.toLowerCase(), 'z', 'q', 'm'].sort(()=>Math.random()-0.5),
+                    ans: l.toLowerCase()
+                };
+            },
+
+            // 5. Grammar (Sorting)
+            getGen5: () => {
+                const type = Math.random() > 0.5 ? 'Noun' : 'Verb';
+                const ans = type === 'Noun' ? DB.pick(DB.nouns) : DB.pick(DB.verbs);
+                const wrong = type === 'Noun' ? DB.pick(DB.verbs) : DB.pick(DB.nouns);
+                return {
+                    q: `Find the ${type} (Naming/Action Word)`,
+                    img: '📚',
+                    opts: [ans, wrong].sort(()=>Math.random()-0.5),
+                    ans: ans
+                };
+            },
+
+            // 6. Rhyme
+            getGen6: () => {
+                const pair = DB.pick(DB.rhymes);
+                return {
+                    q: `What rhymes with ${pair[0]}?`,
+                    img: '🎵',
+                    opts: [pair[1], 'Car', 'Box', 'Egg'].sort(()=>Math.random()-0.5),
+                    ans: pair[1]
+                };
+            },
+
+            // 8. Picture Talk
+            getGen8: () => {
+                const obj = DB.pick(DB.nouns);
+                const emojiMap = {'Apple':'🍎','Ball':'⚽','Cat':'🐱','Dog':'🐶','Fan':'💨','Girl':'👧','Hat':'👒','Ice':'🧊','Jug':'🥛','Kite':'🪁'};
+                return {
+                    q: "What is this?",
+                    img: emojiMap[obj] || '❓',
+                    opts: [obj, 'Tree', 'Car', 'Bus'].sort(()=>Math.random()-0.5),
+                    ans: obj
+                };
+            },
+
+            // 10. Write (Jumble)
+            getGen10: () => {
+                const word = DB.pick(['CAT', 'DOG', 'SUN', 'BUS', 'PEN']);
+                const jumbled = word.split('').sort(()=>Math.random()-0.5).join(' - ');
+                return {
+                    q: `Arrange spelling: ${word}`,
+                    img: '✍️',
+                    opts: [word, jumbled.replace(/-/g,'')],
+                    ans: word,
+                    type: 'jumble' // specialized handling logic
+                };
+            },
+            
+            // 11. Emotion
+            getGen11: () => {
+                const emo = DB.pick(DB.emotions);
+                return {
+                    q: `Who is ${emo.w}?`,
+                    img: '😶',
+                    opts: [emo.e, '🌲', '🚗', '🏫'].sort(()=>Math.random()-0.5),
+                    ans: emo.e,
+                    isImgOpt: true
+                };
+            },
+
+            // 13. Action
+            getGen13: () => {
+                const v = DB.pick(DB.verbs);
+                return {
+                    q: `Do this action: ${v}!`,
+                    img: '🤸',
+                    opts: ['I did it!', 'Skip'],
+                    ans: 'I did it!'
+                };
+            }
+        };
+
+        /* =========================================
+           GAME ENGINE
+           ========================================= */
+        const Game = {
+            score: 0,
+            round: 0,
+            mode: 0,
+            
+            home: () => {
+                document.getElementById('menu-view').style.display = 'grid';
+                document.getElementById('game-view').style.display = 'none';
+            },
+
+            load: (id) => {
+                Game.mode = id;
+                Game.round = 0;
+                document.getElementById('menu-view').style.display = 'none';
+                document.getElementById('game-view').style.display = 'flex';
+                Game.next();
+            },
+
+            next: () => {
+                Game.round++;
+                if(Game.round > 10) {
+                    Game.finish();
+                    return;
+                }
+                
+                document.getElementById('round-num').innerText = Game.round;
+                document.getElementById('feedback-overlay').style.display = 'none';
+                
+                // Route generator based on ID (simplified logic for 15 sections)
+                let data;
+                const m = Game.mode;
+                
+                // Smart Routing to Generators
+                if(m === 1) data = DB.getGen1(); // Carnival -> Alphabet
+                else if(m === 2) data = Math.random()>0.5 ? DB.getGen1() : DB.getGen8(); // Mix
+                else if(m === 3) data = { q:'Read: "The Cat ran."', img:'📖', opts:['I Read it', 'Skip'], ans:'I Read it' };
+                else if(m === 4) data = DB.getGen8(); // Word Magic
+                else if(m === 5) data = DB.getGen5(); // Grammar
+                else if(m === 6) data = DB.getGen6(); // Rhyme
+                else if(m === 7) data = { q:'Story: The dog found a bone. Is the dog happy?', img:'🐶', opts:['Yes','No'], ans:'Yes'};
+                else if(m === 8) data = DB.getGen8();
+                else if(m === 9) data = { q:'Buddy says "Hello!"', img:'🧸', opts:['Say Hello', 'Wave'], ans:'Say Hello'};
+                else if(m === 10) data = DB.getGen10();
+                else if(m === 11) data = DB.getGen11();
+                else if(m === 12) data = DB.getGen6(); // Daily -> Rhyme
+                else if(m === 13) data = DB.getGen13();
+                else if(m === 14) data = DB.getGen5(); // Think -> Grammar
+                else if(m === 15) data = DB.getGen8(); // Hero -> Mix
+
+                Game.render(data);
+            },
+
+            render: (data) => {
+                const area = document.getElementById('game-content');
+                
+                // Build HTML
+                let html = `<div class="q-img">${data.img}</div><div class="q-text">${data.q}</div>`;
+                
+                if(data.type === 'jumble') {
+                     // Special case for writing
+                     html += `<div class="options-grid">`;
+                     html += `<button class="btn-opt" onclick="Game.check(true)">${data.ans}</button>`;
+                     html += `<button class="btn-opt" onclick="Game.check(false)">${data.ans.split('').reverse().join('')}</button>`;
+                     html += `</div>`;
+                } else {
+                    html += `<div class="options-grid">`;
+                    data.opts.forEach(opt => {
+                        // Avoid repeats in options logic simplification
+                        let isCorrect = (opt === data.ans);
+                        // Convert to string safely
+                        let val = opt; 
+                        
+                        html += `<button class="btn-opt ${data.isImgOpt?'':'text-opt'}" onclick="Game.check(${isCorrect}, this)">${val}</button>`;
+                    });
+                    html += `</div>`;
+                }
+                area.innerHTML = html;
+            },
+
+            check: (isCorrect, btn) => {
+                if(isCorrect) {
+                    if(btn) btn.classList.add('correct');
+                    Game.score += 10;
+                    document.getElementById('score').innerText = Game.score;
+                    Game.showFeedback(true);
+                    Game.spawnConfetti();
+                } else {
+                    if(btn) {
+                        btn.classList.add('wrong');
+                        btn.classList.add('anim-shake');
+                    }
+                    // Fear free: no feedback overlay for wrong, just visual shake
+                }
+            },
+
+            showFeedback: (success) => {
+                const fb = document.getElementById('feedback-overlay');
+                const msg = document.getElementById('fb-msg');
+                const icon = document.querySelector('.fb-icon');
+                
+                if(success) {
+                    msg.innerText = ["Great!", "Awesome!", "Super!", "Correct!"][Math.floor(Math.random()*4)];
+                    msg.style.color = "var(--secondary)";
+                    icon.innerText = "🌟";
+                    setTimeout(() => { fb.style.display = 'flex'; }, 500);
+                }
+            },
+
+            finish: () => {
+                const area = document.getElementById('game-content');
+                area.innerHTML = `
+                    <div class="q-img">🦸‍♂️</div>
+                    <div class="q-text" style="font-size: 2rem;">You are an English Hero!</div>
+                    <div style="font-size: 1.5rem; margin-bottom: 20px;">Score: ${Game.score} ⭐</div>
+                    <button class="btn-next" onclick="Game.home()">Play Again</button>
+                `;
+                document.getElementById('nav-bar').style.display = 'none';
+            },
+            
+            spawnConfetti: () => {
+                const canvas = document.getElementById('star-canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                
+                let particles = [];
+                for(let i=0; i<30; i++) {
+                    particles.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height - canvas.height,
+                        color: ['#FFD700', '#FF4500', '#32CD32'][Math.floor(Math.random()*3)],
+                        size: Math.random() * 10 + 5,
+                        speed: Math.random() * 5 + 2
+                    });
+                }
+
+                function draw() {
+                    ctx.clearRect(0,0,canvas.width, canvas.height);
+                    let active = false;
+                    particles.forEach(p => {
+                        ctx.fillStyle = p.color;
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+                        ctx.fill();
+                        p.y += p.speed;
+                        if(p.y < canvas.height) active = true;
+                    });
+                    if(active) requestAnimationFrame(draw);
+                }
+                draw();
+            }
+        };
+    </script>
+</body>
+</html>

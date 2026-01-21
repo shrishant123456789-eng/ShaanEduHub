@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Shan EduHub - Class 1 EVS Ultimate</title>
+    <style>
+        :root {
+            --primary: #FF6B6B;
+            --secondary: #4ECDC4;
+            --accent: #FFE66D;
+            --dark: #2C3E50;
+            --light: #F7F9FC;
+            --success: #2ecc71;
+            --danger: #FF4757;
+            --font-main: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', sans-serif; /* Kid friendly font */
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+        
+        body {
+            font-family: var(--font-main);
+            background-color: var(--light);
+            margin: 0; padding: 0;
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+
+        /* --- Header --- */
+        header {
+            background: linear-gradient(135deg, var(--primary), #FF8E53);
+            color: white; text-align: center; padding: 15px;
+            border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+            position: relative; z-index: 10;
+        }
+        h1 { margin: 0; font-size: 1.5rem; letter-spacing: 1px; text-shadow: 2px 2px 0px rgba(0,0,0,0.1); }
+        .subtitle { font-size: 0.9rem; opacity: 0.95; margin-top: 5px; }
+
+        /* --- Navigation Tabs --- */
+        .nav-tabs {
+            display: flex; justify-content: center; gap: 15px; margin: 20px 0;
+        }
+        .nav-btn {
+            background: white; border: 3px solid #eee; padding: 10px 25px;
+            border-radius: 25px; font-weight: bold; font-size: 1.1rem;
+            cursor: pointer; transition: 0.3s; color: #888;
+        }
+        .nav-btn.active {
+            background: var(--secondary); color: white; border-color: var(--secondary);
+            transform: scale(1.1); box-shadow: 0 5px 15px rgba(78, 205, 196, 0.4);
+        }
+
+        /* --- Containers --- */
+        .container { max-width: 800px; margin: 0 auto; padding: 0 15px 80px 15px; }
+        .hidden { display: none !important; }
+
+        /* --- STUDY MODE STYLES (Grid & Accordion) --- */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; }
+        .card {
+            background: white; border-radius: 20px; padding: 15px; text-align: center;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.05); border-bottom: 5px solid #eee;
+            cursor: pointer; transition: 0.2s;
+        }
+        .card:active { transform: scale(0.95); border-bottom: 2px solid #eee; margin-top: 3px; }
+        .card-icon { font-size: 3rem; margin-bottom: 5px; }
+        .card-title { font-weight: bold; color: var(--dark); font-size: 1rem; }
+        
+        .accordion-item { background: white; border-radius: 15px; margin-bottom: 15px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .accordion-header { padding: 15px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; background: #fff; cursor: pointer; }
+        .accordion-body { display: none; padding: 20px; background: #fcfcfc; border-top: 2px dashed #eee; }
+        .accordion-body.active { display: block; animation: slideDown 0.3s; }
+        .content-block h3 { color: var(--primary); margin: 0 0 10px 0; }
+        .hinglish { color: #777; font-style: italic; display: block; margin-bottom: 10px; font-size: 0.9rem; }
+
+        /* --- GAME ARENA STYLES --- */
+        .game-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .game-card {
+            background: white; border-radius: 15px; padding: 15px 10px; text-align: center;
+            border: 2px solid #f0f0f0; cursor: pointer; position: relative; overflow: hidden;
+        }
+        .game-card:hover { border-color: var(--secondary); }
+        .game-card .tag { 
+            position: absolute; top: 0; right: 0; background: var(--accent); 
+            font-size: 0.6rem; padding: 3px 8px; border-bottom-left-radius: 10px; font-weight: bold; 
+        }
+
+        /* --- PLAY INTERFACE --- */
+        .score-panel {
+            background: var(--dark); color: white; padding: 10px 15px;
+            border-radius: 15px; display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 15px; font-weight: bold; font-size: 0.9rem;
+            position: sticky; top: 10px; z-index: 100; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .stars { color: gold; letter-spacing: 2px; }
+
+        .question-card {
+            background: white; border-radius: 20px; padding: 20px; text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); margin-bottom: 20px; position: relative;
+        }
+        .q-img { font-size: 5rem; display: block; margin: 10px 0; animation: popIn 0.5s; }
+        .q-text { font-size: 1.3rem; font-weight: bold; color: var(--dark); margin: 15px 0; line-height: 1.4; }
+        .q-sub { color: #666; font-size: 1rem; font-style: italic; margin-bottom: 15px; }
+
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .btn-opt {
+            background: white; border: 3px solid #eee; border-radius: 15px; padding: 15px;
+            font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: 0.2s;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100px;
+        }
+        .btn-opt:active { transform: scale(0.95); }
+        .btn-opt.correct { background: var(--success); color: white; border-color: var(--success); }
+        .btn-opt.wrong { background: var(--danger); color: white; border-color: var(--danger); animation: shake 0.4s; }
+        
+        .opt-icon { font-size: 2.5rem; display: block; margin-bottom: 5px; }
+
+        /* --- Drag/Sort Style --- */
+        .drop-zones { display: flex; gap: 10px; margin-top: 20px; }
+        .drop-box { flex: 1; border: 3px dashed #ccc; border-radius: 15px; min-height: 100px; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+        .drop-box.active { border-color: var(--secondary); background: #e0f7fa; }
+
+        /* --- Feedback Overlay --- */
+        .feedback-overlay {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: white; padding: 30px; border-radius: 20px; text-align: center;
+            box-shadow: 0 0 0 1000px rgba(0,0,0,0.5); z-index: 999; display: none;
+        }
+        .fb-emoji { font-size: 4rem; }
+        .fb-text { font-size: 1.5rem; font-weight: bold; margin: 10px 0; }
+
+        /* --- Animations --- */
+        @keyframes popIn { 0% { transform: scale(0); } 80% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+        /* --- Footer --- */
+        footer {
+            background: var(--dark); color: #888; text-align: center; padding: 20px;
+            margin-top: 40px; border-top-left-radius: 25px; border-top-right-radius: 25px; font-size: 0.8rem;
+        }
+        
+        /* Utility Buttons */
+        .btn-main { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 50px; font-weight: bold; cursor: pointer; font-size: 1rem; }
+        .btn-speak { background: var(--secondary); border: none; width: 40px; height: 40px; border-radius: 50%; color: white; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🌱 Shan EduHub</h1>
+        <div class="subtitle">Class 1 EVS • Fun Learning & Games</div>
+    </header>
+
+    <div class="container">
+        
+        <div class="nav-tabs">
+            <button class="nav-btn active" onclick="switchTab('study')" id="tab-study">📖 Learn</button>
+            <button class="nav-btn" onclick="switchTab('play')" id="tab-play">🎮 Play (20 Games)</button>
+        </div>
+
+        <div id="view-study">
+            <div class="grid" id="study-grid"></div>
+            
+            <div id="study-detail" class="hidden">
+                <button class="btn-main" onclick="closeStudyDetail()" style="margin-bottom:15px">⬅ Back</button>
+                <h2 id="study-title" style="text-align:center; color: var(--primary);"></h2>
+                <div id="chapter-list"></div>
+            </div>
+        </div>
+
+        <div id="view-play" class="hidden">
+            
+            <div id="game-menu">
+                <h3 style="text-align:center; color: var(--dark);">Select a Game Mode! 👇</h3>
+                <div class="game-grid" id="game-grid"></div>
+            </div>
+
+            <div id="game-arena" class="hidden">
+                <div class="score-panel">
+                    <div>
+                        <span style="color:var(--success)">✅ <span id="sc-right">0</span></span>
+                        <span style="color:var(--danger); margin-left:10px">❌ <span id="sc-wrong">0</span></span>
+                    </div>
+                    <div class="stars" id="sc-stars">⭐⭐⭐</div>
+                    <div><span id="sc-pct">0</span>%</div>
+                </div>
+
+                <div class="question-card">
+                    <button class="btn-speak" style="position:absolute; top:10px; right:10px;" onclick="speakCurrentQ()">🔊</button>
+                    <div id="q-content">
+                        </div>
+                </div>
+
+                <div id="options-area" class="options-grid">
+                    </div>
+
+                <div style="text-align:center; margin-top:20px;">
+                    <button class="btn-main" style="background:#ccc;" onclick="exitGame()">Exit Game 🚪</button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div id="feedback-popup" class="feedback-overlay">
+        <div class="fb-emoji" id="fb-icon">🎉</div>
+        <div class="fb-text" id="fb-msg">Correct!</div>
+    </div>
+
+    <footer>
+        <p>🌱 Shan EduHub Class 1 EVS</p>
+        <p>Made with ❤️ for Kids • 2026</p>
+    </footer>
+
+    <script>
+        // ==========================================
+        // 1. DATA: SYLLABUS (STUDY MODE)
+        // ==========================================
+        const syllabus = [
+            { id: 1, title: "Me & Body", icon: "🧍", color: "#FF6B6B", chapters: [
+                { t: "Myself", c: "My name is... I am a boy/girl. I like to play.", h: "Mera naam... hai." },
+                { t: "Body Parts", c: "Eyes see 👀, Ears hear 👂, Nose smells 👃, Hands work ✋.", h: "Aankhein dekhti hain, Kaan sunte hain." }
+            ]},
+            { id: 2, title: "Family", icon: "👨‍👩‍👧", color: "#4ECDC4", chapters: [
+                { t: "My Family", c: "Small Family: Parents + Kids. Big Family: Grandparents too.", h: "Chhota aur Bada Parivaar." },
+                { t: "Helpers", c: "Doctor 👨‍⚕️ cures sick. Teacher 👩‍🏫 teaches. Policeman 👮 keeps safe.", h: "Hamare Madadgaar." }
+            ]},
+            { id: 3, title: "Home/School", icon: "🏫", color: "#FFE66D", chapters: [
+                { t: "My House", c: "Bedroom 🛌, Kitchen 🍳, Bathroom 🛁. Keeps us safe.", h: "Ghar humein surakshit rakhta hai." },
+                { t: "My School", c: "We learn to read 📚 and write ✍️. We play games.", h: "Hum school mein padhte hain." }
+            ]},
+            { id: 4, title: "Nature", icon: "🌳", color: "#95E1D3", chapters: [
+                { t: "Plants", c: "Trees are big 🌳. Shrubs are small 🌹. Plants need water 💧.", h: "Paudhon ko paani chahiye." },
+                { t: "Plant Parts", c: "Root, Stem, Leaf 🍃, Flower 🌸, Fruit 🍎.", h: "Paudhe ke ang." }
+            ]},
+            { id: 5, title: "Animals", icon: "🦁", color: "#F9D56E", chapters: [
+                { t: "Types", c: "Wild (Lion) 🦁, Domestic (Cow) 🐮, Water (Fish) 🐟.", h: "Junglee aur Paltu janwar." },
+                { t: "Homes", c: "Bird → Nest 🪺, Dog → Kennel 🏠, Lion → Den ⛰️.", h: "Janwaron ke ghar." }
+            ]},
+            { id: 6, title: "Food", icon: "🍎", color: "#FF8E53", chapters: [
+                { t: "Healthy Food", c: "Fruits 🍇, Veggies 🥕, Milk 🥛. Makes us strong 💪.", h: "Swasth khana." },
+                { t: "Junk Food", c: "Chips, Burger 🍔, Soda. Not good for daily eating.", h: "Junk food se bacho." }
+            ]},
+            { id: 7, title: "Transport", icon: "🚗", color: "#A8D8EA", chapters: [
+                { t: "Vehicles", c: "Land: Car 🚘. Water: Boat ⛵. Air: Plane ✈️.", h: "Yata-yaat ke sadhan." },
+                { t: "Safety", c: "Red Light 🔴 Stop. Green Light 🟢 Go. Zebra Crossing 🦓.", h: "Sadak suraksha." }
+            ]},
+            { id: 8, title: "Weather", icon: "🌦️", color: "#AA96DA", chapters: [
+                { t: "Seasons", c: "Summer ☀️ (Cotton), Winter ❄️ (Wool), Rain 🌧️ (Umbrella).", h: "Mausam aur kapde." }
+            ]},
+            { id: 9, title: "Habits", icon: "✨", color: "#FCBAD3", chapters: [
+                { t: "Good Habits", c: "Brush teeth 🪥, Bath daily 🚿, Wash hands 🧼.", h: "Acchi aadatein." }
+            ]},
+            { id: 10, title: "Fun", icon: "🎨", color: "#FFFFD2", chapters: [
+                { t: "Activities", c: "Drawing, Singing, Dancing. Be happy! 😄", h: "Maje karo!" }
+            ]}
+        ];
+
+        // ==========================================
+        // 2. DATA: GAME MODES & 500 QUESTION ENGINE
+        // ==========================================
+        // To simulate 500 questions, we use templates and arrays.
+        
+        const gameModes = [
+            { id: 'mcq_pic', name: "Picture Power 🖼️", desc: "Look at the picture and answer", type: "mcq_img" },
+            { id: 'tap_tell', name: "Tap & Tell 👆", desc: "Identify the object", type: "mcq_simple" },
+            { id: 'sound', name: "Sound Guess 🔊", desc: "Who makes this sound?", type: "mcq_sound" },
+            { id: 'odd_one', name: "Odd One Out 🤔", desc: "Find the different one", type: "mcq_odd" },
+            { id: 'yes_no', name: "Yes / No Fun ✅", desc: "True or False?", type: "bool" },
+            { id: 'sort', name: "Sort It Right 📦", desc: "Put in correct box", type: "sort" },
+            { id: 'family', name: "Family Tree 👨‍👩‍👧", desc: "Relations game", type: "mcq_simple" },
+            { id: 'traffic', name: "Traffic Hero 🚦", desc: "Road safety rules", type: "mcq_img" },
+            { id: 'weather', name: "Weather Watch 🌦️", desc: "Seasons and clothes", type: "mcq_img" },
+            { id: 'clean', name: "Clean/Dirty 🧹", desc: "Hygiene check", type: "bool" },
+            { id: 'who_am_i', name: "Who Am I? 🎭", desc: "Guess the riddle", type: "mcq_riddle" },
+            { id: 'match', name: "Match Logic 🧩", desc: "Connect pairs", type: "mcq_match" },
+            { id: 'plant', name: "Plant Power 🌱", desc: "Parts of plant", type: "mcq_img" },
+            { id: 'food', name: "Yummy Food 🍎", desc: "Healthy vs Junk", type: "sort" },
+            { id: 'body', name: "My Body 💪", desc: "Body parts quiz", type: "mcq_simple" },
+            { id: 'animal_home', name: "Animal Homes 🏠", desc: "Where do they live?", type: "mcq_match" },
+            { id: 'colors', name: "Color World 🎨", desc: "Identify colors", type: "mcq_simple" },
+            { id: 'numbers', name: "Count It 🔢", desc: "How many items?", type: "mcq_count" },
+            { id: 'senses', name: "5 Senses 👃", desc: "See, hear, smell...", type: "mcq_simple" },
+            { id: 'action', name: "Act & Answer 🕺", desc: "Do and learn", type: "mcq_action" }
+        ];
+
+        // --- Question Generators ---
+        // A robust bank of data to generate questions from
+        const db = {
+            animals: [
+                {n:"Lion", i:"🦁", s:"Roar", h:"Den", t:"wild"}, {n:"Cow", i:"🐮", s:"Moo", h:"Shed", t:"domestic"},
+                {n:"Dog", i:"🐶", s:"Bark", h:"Kennel", t:"domestic"}, {n:"Cat", i:"🐱", s:"Meow", h:"Basket", t:"domestic"},
+                {n:"Bird", i:"🐦", s:"Chirp", h:"Nest", t:"wild"}, {n:"Fish", i:"🐟", s:"Blub", h:"Water", t:"water"}
+            ],
+            body: [
+                {n:"Eyes", i:"👀", f:"See"}, {n:"Nose", i:"👃", f:"Smell"}, {n:"Ears", i:"👂", f:"Hear"},
+                {n:"Hands", i:"✋", f:"Work"}, {n:"Legs", i:"🦶", f:"Walk"}, {n:"Tongue", i:"👅", f:"Taste"}
+            ],
+            food: [
+                {n:"Apple", i:"🍎", t:"healthy"}, {n:"Burger", i:"🍔", t:"junk"}, {n:"Milk", i:"🥛", t:"healthy"},
+                {n:"Candy", i:"🍬", t:"junk"}, {n:"Carrot", i:"🥕", t:"healthy"}, {n:"Pizza", i:"🍕", t:"junk"}
+            ],
+            transport: [
+                {n:"Car", i:"🚗", t:"road"}, {n:"Bus", i:"🚌", t:"road"}, {n:"Boat", i:"⛵", t:"water"},
+                {n:"Plane", i:"✈️", t:"air"}, {n:"Train", i:"🚂", t:"rail"}
+            ],
+            colors: ["🔴 Red", "🔵 Blue", "🟢 Green", "🟡 Yellow", "⚫ Black", "⚪ White"]
+        };
+
+        // --- Question Generation Logic ---
+        function generateQuestion(modeId) {
+            let q = {};
+            const r = (arr) => arr[Math.floor(Math.random() * arr.length)]; // Random helper
+            
+            switch(modeId) {
+                case 'mcq_pic': 
+                case 'tap_tell':
+                    let item = r([...db.animals, ...db.transport, ...db.food]);
+                    q.text = `Identify this: ${item.i}`;
+                    q.sub = `Yeh kya hai?`;
+                    q.img = item.i;
+                    q.ans = item.n;
+                    q.opts = [item.n, r(db.body).n, r(db.animals).n, r(db.food).n]; // Dummy options
+                    break;
+                
+                case 'sound':
+                    let sItem = r(db.animals);
+                    q.text = `Who says "${sItem.s}"?`;
+                    q.sub = `Kaun "${sItem.s}" karta hai?`;
+                    q.img = "🔊";
+                    q.ans = sItem.n;
+                    q.opts = [sItem.n, r(db.animals).n, r(db.animals).n, "Table"];
+                    q.tts = sItem.s; // Special trigger
+                    break;
+
+                case 'odd_one':
+                    // Logic: 3 animals, 1 food
+                    let a1 = db.animals[0].i, a2 = db.animals[1].i, a3 = db.animals[2].i;
+                    let f1 = db.food[0].i;
+                    q.text = "Find the Odd One Out";
+                    q.sub = "Sabse alag kaun hai?";
+                    q.img = "🤔";
+                    q.ans = f1;
+                    q.opts = [a1, a2, a3, f1];
+                    break;
+
+                case 'yes_no':
+                case 'clean':
+                    let isTrue = Math.random() > 0.5;
+                    if(modeId === 'clean') {
+                        q.text = isTrue ? "Is throwing trash in bin good?" : "Is spitting on road good?";
+                        q.sub = "Kya yeh acchi aadat hai?";
+                        q.img = isTrue ? "🗑️" : "🤮";
+                        q.ans = isTrue ? "Yes ✅" : "No ❌";
+                    } else {
+                        let fact = r(db.animals);
+                        q.text = isTrue ? `Does a ${fact.n} live in a ${fact.h}?` : `Does a ${fact.n} live in a Water?`;
+                        q.sub = "Kya yeh sahi hai?";
+                        q.img = fact.i;
+                        q.ans = isTrue ? "Yes ✅" : "No ❌";
+                    }
+                    q.opts = ["Yes ✅", "No ❌"];
+                    break;
+
+                case 'sort':
+                case 'food':
+                    let fItem = r(db.food);
+                    q.text = `Is ${fItem.n} Healthy or Junk?`;
+                    q.sub = "Yeh healthy hai ya junk?";
+                    q.img = fItem.i;
+                    q.ans = fItem.t === 'healthy' ? "Healthy 🥗" : "Junk 🍟";
+                    q.opts = ["Healthy 🥗", "Junk 🍟"];
+                    break;
+                
+                case 'numbers':
+                    let num = Math.floor(Math.random() * 5) + 1;
+                    let icon = r(db.food).i;
+                    let str = Array(num).fill(icon).join(" ");
+                    q.text = "Count objects: " + str;
+                    q.sub = "Gino kitne hain?";
+                    q.img = ""; // Shown in text
+                    q.ans = String(num);
+                    q.opts = [String(num), String(num+1), String(num-1), String(num+2)];
+                    break;
+
+                default: // Generic fallback for other modes
+                    let gItem = r(db.body);
+                    q.text = `We use ${gItem.n} to...?`;
+                    q.sub = "Iska istemal kis liye hota hai?";
+                    q.img = gItem.i;
+                    q.ans = gItem.f;
+                    q.opts = [gItem.f, "Fly", "Sleep", "Jump"];
+            }
+
+            // Shuffle options logic
+            q.opts = [...new Set(q.opts)]; // unique
+            while(q.opts.length < 2) q.opts.push("Other"); // safety
+            // Ensure Correct Answer is in options
+            if(!q.opts.includes(q.ans)) q.opts[0] = q.ans;
+            // Shuffle
+            q.opts.sort(() => Math.random() - 0.5);
+            
+            return q;
+        }
+
+        // ==========================================
+        // 3. ENGINE LOGIC
+        // ==========================================
+        
+        // --- Navigation ---
+        const views = {
+            study: document.getElementById('view-study'),
+            play: document.getElementById('view-play')
+        };
+        const tabs = {
+            study: document.getElementById('tab-study'),
+            play: document.getElementById('tab-play')
+        };
+
+        function switchTab(tab) {
+            // UI Toggle
+            Object.values(views).forEach(v => v.classList.add('hidden'));
+            Object.values(tabs).forEach(t => t.classList.remove('active'));
+            
+            views[tab].classList.remove('hidden');
+            tabs[tab].classList.add('active');
+
+            if(tab === 'study') { renderStudyGrid(); closeStudyDetail(); }
+            if(tab === 'play') { renderGameMenu(); document.getElementById('game-arena').classList.add('hidden'); document.getElementById('game-menu').classList.remove('hidden'); }
+        }
+
+        // --- Study Logic ---
+        function renderStudyGrid() {
+            const grid = document.getElementById('study-grid');
+            grid.innerHTML = '';
+            syllabus.forEach(cat => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `<div class="card-icon">${cat.icon}</div><div class="card-title">${cat.title}</div>`;
+                card.onclick = () => openStudyCategory(cat);
+                grid.appendChild(card);
+            });
+        }
+
+        function openStudyCategory(cat) {
+            document.getElementById('study-grid').classList.add('hidden');
+            const detail = document.getElementById('study-detail');
+            detail.classList.remove('hidden');
+            document.getElementById('study-title').innerText = `${cat.icon} ${cat.title}`;
+            
+            const list = document.getElementById('chapter-list');
+            list.innerHTML = '';
+            cat.chapters.forEach(chap => {
+                const item = document.createElement('div');
+                item.className = 'accordion-item';
+                item.innerHTML = `
+                    <div class="accordion-header" onclick="toggleAcc(this)">${chap.t} <span>▼</span></div>
+                    <div class="accordion-body">
+                        <div class="content-block">
+                            <p>${chap.c}</p>
+                            <span class="hinglish">${chap.h}</span>
+                        </div>
+                        <button class="btn-main" onclick="speak('${chap.c}')" style="font-size:0.8rem">🔊 Read</button>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function closeStudyDetail() {
+            document.getElementById('study-detail').classList.add('hidden');
+            document.getElementById('study-grid').classList.remove('hidden');
+        }
+
+        function toggleAcc(header) {
+            const body = header.nextElementSibling;
+            const isActive = body.classList.contains('active');
+            document.querySelectorAll('.accordion-body').forEach(b => b.classList.remove('active'));
+            if (!isActive) body.classList.add('active');
+        }
+
+        // --- Game Engine Logic ---
+        let currentMode = null;
+        let score = { right: 0, wrong: 0, total: 0 };
+        let currentQ = null;
+
+        function renderGameMenu() {
+            const grid = document.getElementById('game-grid');
+            grid.innerHTML = '';
+            gameModes.forEach(mode => {
+                const card = document.createElement('div');
+                card.className = 'game-card';
+                card.innerHTML = `
+                    <div class="tag">NEW</div>
+                    <div style="font-size:2rem; margin-bottom:5px;">${mode.name.split(" ").pop()}</div>
+                    <div style="font-weight:bold;">${mode.name.replace(mode.name.split(" ").pop(), "")}</div>
+                    <div style="font-size:0.7rem; color:#888;">${mode.desc}</div>
+                `;
+                card.onclick = () => startGame(mode.id);
+                grid.appendChild(card);
+            });
+        }
+
+        function startGame(modeId) {
+            currentMode = modeId;
+            score = { right: 0, wrong: 0, total: 0 };
+            updateScoreUI();
+            
+            document.getElementById('game-menu').classList.add('hidden');
+            document.getElementById('game-arena').classList.remove('hidden');
+            
+            loadNextQuestion();
+        }
+
+        function loadNextQuestion() {
+            currentQ = generateQuestion(currentMode);
+            
+            // Render UI
+            const qDiv = document.getElementById('q-content');
+            qDiv.innerHTML = `
+                ${currentQ.img ? `<div class="q-img">${currentQ.img}</div>` : ''}
+                <div class="q-text">${currentQ.text}</div>
+                <div class="q-sub">${currentQ.sub}</div>
+            `;
+
+            const optDiv = document.getElementById('options-area');
+            optDiv.innerHTML = '';
+            currentQ.opts.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-opt';
+                // Try to detect if option is text or emoji based
+                btn.innerHTML = opt; 
+                btn.onclick = () => checkAnswer(opt, btn);
+                optDiv.appendChild(btn);
+            });
+
+            // Auto speak question
+            speak(currentQ.text);
+        }
+
+        function checkAnswer(selected, btnElem) {
+            // Lock UI
+            const allBtns = document.querySelectorAll('.btn-opt');
+            allBtns.forEach(b => b.disabled = true);
+
+            if(selected === currentQ.ans) {
+                // Correct
+                btnElem.classList.add('correct');
+                score.right++;
+                showFeedback(true);
+                playSound('correct');
+            } else {
+                // Wrong
+                btnElem.classList.add('wrong');
+                // Highlight correct
+                allBtns.forEach(b => {
+                    if(b.innerText === currentQ.ans || b.innerHTML.includes(currentQ.ans)) b.classList.add('correct');
+                });
+                score.wrong++;
+                showFeedback(false);
+                playSound('wrong');
+            }
+            score.total++;
+            updateScoreUI();
+
+            setTimeout(() => {
+                loadNextQuestion();
+            }, 2000);
+        }
+
+        function updateScoreUI() {
+            document.getElementById('sc-right').innerText = score.right;
+            document.getElementById('sc-wrong').innerText = score.wrong;
+            
+            let pct = score.total === 0 ? 0 : Math.round((score.right / score.total) * 100);
+            document.getElementById('sc-pct').innerText = pct;
+
+            let stars = "";
+            if(pct >= 90) stars = "⭐⭐⭐⭐⭐";
+            else if(pct >= 70) stars = "⭐⭐⭐⭐";
+            else if(pct >= 50) stars = "⭐⭐⭐";
+            else stars = "⭐⭐";
+            document.getElementById('sc-stars').innerText = stars;
+        }
+
+        function showFeedback(isCorrect) {
+            const popup = document.getElementById('feedback-popup');
+            const icon = document.getElementById('fb-icon');
+            const msg = document.getElementById('fb-msg');
+
+            popup.style.display = 'block';
+            if(isCorrect) {
+                icon.innerText = "🎉";
+                msg.innerText = "Awesome!";
+                msg.style.color = "var(--success)";
+            } else {
+                icon.innerText = "💪";
+                msg.innerText = "Try Again!";
+                msg.style.color = "var(--primary)";
+            }
+
+            setTimeout(() => {
+                popup.style.display = 'none';
+            }, 1000);
+        }
+
+        function exitGame() {
+            document.getElementById('game-arena').classList.add('hidden');
+            document.getElementById('game-menu').classList.remove('hidden');
+        }
+
+        // --- Utilities ---
+        function speakCurrentQ() {
+            if(currentQ) speak(currentQ.text + ". Options: " + currentQ.opts.join(", "));
+        }
+
+        function speak(text) {
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = 'en-IN';
+            u.rate = 0.9;
+            window.speechSynthesis.speak(u);
+        }
+
+        function playSound(type) {
+            // Simple synthesized sound since no audio files allowed
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            
+            if(type === 'correct') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
+            } else {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(300, ctx.currentTime);
+                osc.frequency.linearRampToValueAtTime(100, ctx.currentTime + 0.1);
+            }
+            
+            osc.start();
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+            osc.stop(ctx.currentTime + 0.3);
+        }
+
+        // Init
+        renderStudyGrid();
+
+    </script>
+</body>
+</html>

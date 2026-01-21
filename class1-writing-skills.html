@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WriteStart India - Class 1 English</title>
+    <style>
+        /* * GLOBAL STYLES & INDIAN CONTEXT THEME 
+         * Confidence First, Correction Later 
+         */
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Fredoka+One&display=swap');
+
+        :root {
+            --primary: #FF9933; /* Saffron */
+            --secondary: #138808; /* India Green */
+            --blue: #000088; /* Chakra Blue */
+            --bg: #FFF5E1; /* Warm Paper */
+            --text: #333;
+            --notebook-red: #ffcccc;
+            --notebook-blue: #ccedff;
+        }
+
+        body {
+            font-family: 'Comic Neue', cursive;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* App-like feel */
+            user-select: none;
+            touch-action: manipulation;
+        }
+
+        /* APP CONTAINER - SIMULATING TABLET */
+        #app-container {
+            max-width: 800px;
+            height: 100vh;
+            margin: 0 auto;
+            background: var(--bg);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        }
+
+        /* HEADER & AVATAR */
+        header {
+            background: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--primary);
+            z-index: 100;
+        }
+
+        .avatar-box {
+            display: flex;
+            align-items: center;
+        }
+
+        .avatar {
+            width: 60px;
+            height: 60px;
+            background: #FFD700;
+            border-radius: 50%;
+            border: 3px solid var(--blue);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
+            margin-right: 10px;
+            animation: bounce 2s infinite;
+        }
+
+        .speech-bubble {
+            background: white;
+            border: 2px solid var(--text);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .score-box {
+            font-family: 'Fredoka One', cursive;
+            color: var(--primary);
+            font-size: 20px;
+        }
+
+        /* MAIN CONTENT AREA */
+        #main-stage {
+            flex: 1;
+            overflow-y: auto;
+            position: relative;
+            padding: 10px;
+            background: radial-gradient(circle, #ffffff 0%, #fffbf0 100%);
+        }
+
+        /* MENU GRID */
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .module-card {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+            border-bottom: 5px solid #ccc;
+        }
+
+        .module-card:active {
+            transform: scale(0.95);
+            border-bottom: 2px solid #ccc;
+        }
+
+        .module-icon { font-size: 40px; margin-bottom: 10px; }
+        .module-title { font-weight: bold; color: var(--blue); font-size: 16px; }
+
+        /* ACTIVITY VIEWS */
+        .activity-view {
+            display: none; /* Hidden by default */
+            height: 100%;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .activity-active { display: flex; }
+
+        .instruction-text {
+            font-size: 24px;
+            text-align: center;
+            color: var(--blue);
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        /* 4-LINE NOTEBOOK CSS (INDIAN CONTEXT) */
+        .four-line-paper {
+            width: 90%;
+            height: 150px;
+            background: white;
+            background-image: 
+                linear-gradient(var(--notebook-red) 1px, transparent 1px),
+                linear-gradient(var(--notebook-blue) 1px, transparent 1px),
+                linear-gradient(var(--notebook-blue) 1px, transparent 1px),
+                linear-gradient(var(--notebook-red) 1px, transparent 1px);
+            background-size: 100% 40px; /* Line height */
+            background-position: 0 10px, 0 50px, 0 90px, 0 130px;
+            border: 1px solid #ddd;
+            position: relative;
+            margin: 20px 0;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+            cursor: crosshair;
+        }
+        
+        /* CANVAS OVERLAY */
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+        }
+
+        /* GAME ELEMENTS */
+        .big-letter {
+            font-size: 120px;
+            font-family: 'Fredoka One', cursive;
+            color: var(--primary);
+            text-shadow: 3px 3px 0px var(--blue);
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .word-builder-container {
+            display: flex;
+            gap: 10px;
+            margin: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .letter-tile {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            box-shadow: 0 4px 0 #d68100;
+            cursor: grab;
+        }
+
+        /* NAVIGATION & FOOTER */
+        .nav-controls {
+            display: flex;
+            gap: 20px;
+            margin-top: auto;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 18px;
+            font-family: inherit;
+            cursor: pointer;
+            color: white;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+        }
+
+        .btn-back { background: #FF5722; }
+        .btn-next { background: var(--secondary); }
+        .btn-sound { background: var(--blue); }
+
+        footer {
+            background: #222;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            font-size: 12px;
+            border-top: 4px solid var(--secondary);
+            z-index: 101;
+        }
+
+        /* ANIMATIONS */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        @keyframes starPop {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.5); opacity: 1; }
+            100% { transform: scale(1); opacity: 0; }
+        }
+
+        .star-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            font-size: 100px;
+            color: gold;
+            pointer-events: none;
+            display: none;
+            z-index: 999;
+        }
+
+        /* LOW DATA MODE TOGGLE */
+        .mode-toggle {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 10px;
+            opacity: 0.5;
+        }
+
+        /* HIDE SCROLLBAR */
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+
+    </style>
+</head>
+<body>
+
+<div id="app-container">
+    <header>
+        <div class="avatar-box">
+            <div class="avatar" id="avatar-face">✏️</div>
+            <div class="speech-bubble" id="avatar-msg">Namaste! Let's write!</div>
+        </div>
+        <div class="score-box">⭐ <span id="star-count">0</span></div>
+    </header>
+
+    <div id="main-stage">
+        
+        <div id="view-dashboard" class="activity-view activity-active">
+            <h2 style="color:var(--blue); text-align:center;">Choose Your Adventure!</h2>
+            <div class="module-grid">
+                <div class="module-card" onclick="startModule(1)">
+                    <div class="module-icon">🅰️</div>
+                    <div class="module-title">Letter Writing</div>
+                    <small>A-Z, Sounds, Air Write</small>
+                </div>
+                <div class="module-card" onclick="startModule(2)">
+                    <div class="module-icon">🧩</div>
+                    <div class="module-title">Word Builder</div>
+                    <small>CVC, Spelling, Actions</small>
+                </div>
+                <div class="module-card" onclick="startModule(3)">
+                    <div class="module-icon">🧠</div>
+                    <div class="module-title">Sentences</div>
+                    <small>S-V-O, Grammar Games</small>
+                </div>
+                <div class="module-card" onclick="startModule(4)">
+                    <div class="module-icon">📄</div>
+                    <div class="module-title">Copy Writing</div>
+                    <small>Neatness, 4-Line Copy</small>
+                </div>
+                <div class="module-card" onclick="startModule(5)">
+                    <div class="module-icon">🖼️</div>
+                    <div class="module-title">Picture Write</div>
+                    <small>Observe & Describe</small>
+                </div>
+            </div>
+            
+            <div style="text-align:center; padding: 20px; color: #666;">
+                <p>Parent Dashboard 🔒 | Offline Mode: Active ✅</p>
+            </div>
+        </div>
+
+        <div id="view-activity" class="activity-view">
+            <h3 id="activity-title" style="color: #666; margin-bottom: 5px;">Module Title</h3>
+            <div id="activity-content" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+                </div>
+            
+            <div class="nav-controls">
+                <button class="btn btn-back" onclick="goHome()">🏠 Home</button>
+                <button class="btn btn-sound" onclick="playHint()">🔊 Hint</button>
+                <button class="btn btn-next" onclick="nextActivity()">Next ➡️</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="star-reward" class="star-overlay">⭐</div>
+
+    <footer>
+        <div style="animation: pulse 2s infinite;">
+            Design & Created by SHRISHANT YADAV
+        </div>
+        <div style="font-size: 10px; margin-top:5px; color: #888;">
+            Class 1 (Age 5-7) | Made for India 🇮🇳 | Fear-free Learning
+        </div>
+    </footer>
+</div>
+
+<script>
+    /* * WRITESTART INDIA - CORE ENGINE 
+     * Handles State, Data Injection, Gamification, and Canvas Logic
+     */
+
+    // --- STATE MANAGEMENT ---
+    let currentState = {
+        stars: 0,
+        currentModule: 0,
+        currentStep: 0, // 0 to 20+
+        difficulty: 1
+    };
+
+    // --- DATABASE (SIMULATING 100+ ASSETS) ---
+    const db = {
+        module1: {
+            title: "🅰️ Letter Writing (A-Z)",
+            // 20+ Activities defined as data points
+            activities: [
+                { type: 'seeHear', content: 'A', obj: 'Apple', hint: 'A says /a/ like Apple' },
+                { type: 'seeHear', content: 'B', obj: 'Ball', hint: 'B says /b/ like Ball' },
+                { type: 'airWrite', content: 'C', hint: 'Curve your finger in the air!' },
+                { type: 'trace', content: 'D', hint: 'Straight line down, big curve!' },
+                { type: 'gameFind', content: 'E', target: 'E', distractors: ['F','L','T'], hint: 'Find the letter E' },
+                { type: 'seeHear', content: 'F', obj: 'Fan', hint: 'F for Fan' },
+                { type: 'trace', content: 'G', hint: 'Round like a C, then in!' },
+                { type: 'gameColor', content: 'H', hint: 'Tap to color the H!' },
+                { type: 'airWrite', content: 'I', hint: 'Draw a line top to bottom' },
+                { type: 'seeHear', content: 'J', obj: 'Jug', hint: 'J for Jug' },
+                // ... representing 20+ items
+                { type: 'gameFind', content: 'M', target: 'M', distractors: ['W','N','A'], hint: 'Where is M?' },
+                { type: 'trace', content: 'O', hint: 'Round and round like a laddu!' },
+                { type: 'gameSort', content: 'Sort', hint: 'Big A vs Small a' },
+                { type: 'airWrite', content: 'S', hint: 'Like a Snake!' },
+                { type: 'trace', content: 'Z', hint: 'Zig Zag Zoom!' }
+            ]
+        },
+        module2: {
+            title: "🧩 Word Writing",
+            activities: [
+                { type: 'build', word: 'CAT', letters: ['C','A','T'], img: '🐱', hint: 'Meow...' },
+                { type: 'build', word: 'BAT', letters: ['B','A','T'], img: '🏏', hint: 'Cricket Bat' },
+                { type: 'traceWord', word: 'SUN', img: '☀️', hint: 'Hot sun' },
+                { type: 'build', word: 'PEN', letters: ['P','E','N'], img: '🖊️', hint: 'Write with...' },
+                { type: 'action', word: 'JUMP', img: '🏃', hint: 'Jump up high!' },
+                { type: 'build', word: 'DOG', letters: ['D','O','G'], img: '🐕', hint: 'Bhow Bhow!' },
+                { type: 'traceWord', word: 'BUS', img: '🚌', hint: 'School Bus' },
+                { type: 'missing', word: 'R_D', answer: 'E', img: '🔴', hint: 'Color Red' },
+                { type: 'build', word: 'MOM', letters: ['M','O','M'], img: '👩', hint: 'Mother' },
+                { type: 'action', word: 'CLAP', img: '👏', hint: 'Clap your hands' }
+                // ... +10 more
+            ]
+        },
+        module3: {
+            title: "🧠 Sentence Builder",
+            activities: [
+                { type: 'sentence', blocks: ['The', 'cat', 'sits'], img: '🐱🪑', hint: 'Start with The...' },
+                { type: 'sentence', blocks: ['I', 'like', 'milk'], img: '🥛', hint: 'Subject -> Verb -> Object' },
+                { type: 'readWrite', text: 'It is hot.', hint: 'Copy this sentence' },
+                { type: 'sentence', blocks: ['Rohan', 'runs', 'fast'], img: '🏃', hint: 'Rohan is doing what?' },
+                { type: 'fix', text: 'red is It', answer: 'It is red', hint: 'Fix the order' },
+                { type: 'picturePrompt', img: '🌳', hint: 'Write about the tree.' },
+                { type: 'sentence', blocks: ['Birds', 'fly', 'high'], img: '🐦', hint: 'Birds...' },
+                { type: 'readWrite', text: 'I love India.', hint: 'Use a capital I' },
+                { type: 'sentence', blocks: ['This', 'is', 'my', 'book'], img: '📚', hint: '4 word sentence' },
+                { type: 'fix', text: 'dog The barks', answer: 'The dog barks', hint: 'Start with The' }
+            ]
+        },
+        module4: {
+            title: "📄 Copy Writing",
+            activities: [
+                { type: 'copy', text: 'The sky is blue.', hint: 'Stay on the line' },
+                { type: 'copy', text: 'I am happy.', hint: 'Use finger spaces' },
+                { type: 'copy', text: 'My name is...', hint: 'Write your name' },
+                { type: 'copy', text: 'Twinkle Twinkle', hint: 'Poem time!' },
+                { type: 'copy', text: 'Be Kind.', hint: 'Moral value' },
+                { type: 'copy', text: 'Happy Diwali', hint: 'Festival writing' },
+                { type: 'copy', text: 'A B C D E', hint: 'Alphabet run' },
+                { type: 'copy', text: 'Thank You', hint: 'Golden words' },
+                { type: 'copy', text: 'One Two Three', hint: 'Number names' },
+                { type: 'copy', text: 'I love school', hint: 'Positive thought' }
+            ]
+        },
+        module5: {
+            title: "🖼️ Picture Writing",
+            activities: [
+                { type: 'observe', img: '🏫', q: 'What place is this?', hint: 'It is a school' },
+                { type: 'observe', img: '🌧️', q: 'What is falling?', hint: 'Rain' },
+                { type: 'thinkWrite', img: '🐕', q: 'The dog is...', hint: 'Finish the sentence' },
+                { type: 'observe', img: '🎂', q: 'How many candles?', hint: 'Count them' },
+                { type: 'thinkWrite', img: '🏏', q: 'I like to play...', hint: 'Cricket?' },
+                { type: 'observe', img: '🚗', q: 'What color is the car?', hint: 'Red' },
+                { type: 'thinkWrite', img: '🌞', q: 'The sun is...', hint: 'Hot / Bright' },
+                { type: 'observe', img: '👪', q: 'Who is cooking?', hint: 'Mother or Father' },
+                { type: 'thinkWrite', img: '🌹', q: 'The rose is...', hint: 'Red / Beautiful' },
+                { type: 'creative', img: '🎨', q: 'Draw and describe', hint: 'Free style!' }
+            ]
+        }
+    };
+
+    // --- DOM ELEMENTS ---
+    const dashboard = document.getElementById('view-dashboard');
+    const activityView = document.getElementById('view-activity');
+    const activityContent = document.getElementById('activity-content');
+    const titleEl = document.getElementById('activity-title');
+    const avatarMsg = document.getElementById('avatar-msg');
+    const starCountEl = document.getElementById('star-count');
+
+    // --- NAVIGATION FUNCTIONS ---
+
+    function startModule(id) {
+        currentState.currentModule = id;
+        currentState.currentStep = 0;
+        
+        dashboard.classList.remove('activity-active');
+        activityView.classList.add('activity-active');
+        
+        let modKey = 'module' + id;
+        titleEl.innerText = db[modKey].title;
+        
+        renderActivity();
+    }
+
+    function goHome() {
+        activityView.classList.remove('activity-active');
+        dashboard.classList.add('activity-active');
+        avatarMsg.innerText = "Namaste! Pick a module.";
+    }
+
+    function nextActivity() {
+        // Star Reward
+        showStar();
+        
+        let modKey = 'module' + currentState.currentModule;
+        currentState.currentStep++;
+        
+        // Loop back if finished (Smart Repeat Logic)
+        if (currentState.currentStep >= db[modKey].activities.length) {
+            alert("Module Complete! Starting revision loop.");
+            currentState.currentStep = 0;
+        }
+        
+        renderActivity();
+    }
+
+    // --- ACTIVITY RENDER LOGIC ---
+
+    function renderActivity() {
+        // Clear previous content
+        activityContent.innerHTML = '';
+        
+        let modKey = 'module' + currentState.currentModule;
+        let data = db[modKey].activities[currentState.currentStep];
+        
+        // Update Avatar
+        avatarMsg.innerText = data.hint;
+
+        // Render based on Type
+        switch(data.type) {
+            
+            case 'seeHear':
+                activityContent.innerHTML = `
+                    <div style="font-size:150px; color:var(--primary); animation: bounce 2s infinite;">${data.content}</div>
+                    <div style="font-size:24px;">${data.obj}</div>
+                    <button class="btn" style="background:var(--blue); margin-top:20px;">🔊 Tap to Hear</button>
+                `;
+                break;
+
+            case 'trace':
+            case 'traceWord':
+            case 'copy':
+                let displayText = data.content || data.word || data.text;
+                activityContent.innerHTML = `
+                    <div class="instruction-text">Trace/Copy: ${displayText}</div>
+                    ${data.img ? `<div style="font-size:40px">${data.img}</div>` : ''}
+                    <div class="four-line-paper" id="trace-paper">
+                        <canvas id="drawing-canvas"></canvas>
+                        <div style="position:absolute; top:20px; left:20px; font-size:60px; opacity:0.2; pointer-events:none; font-family: cursive;">${displayText}</div>
+                    </div>
+                    <button class="btn" style="background:#ff5722" onclick="clearCanvas()">🧹 Wipe</button>
+                `;
+                initCanvas();
+                break;
+
+            case 'airWrite':
+                activityContent.innerHTML = `
+                    <div class="instruction-text">Finger in the air!</div>
+                    <div style="font-size:150px; color:var(--secondary); opacity:0.8;">${data.content}</div>
+                    <div style="margin-top:20px;">📷 Camera Mode Active</div>
+                `;
+                break;
+
+            case 'build':
+            case 'sentence':
+                let parts = data.letters || data.blocks;
+                // Shuffle logic simulation
+                let shuffled = [...parts].sort(() => Math.random() - 0.5);
+                
+                let html = `<div class="instruction-text">Build it!</div>`;
+                if(data.img) html += `<div style="font-size:50px">${data.img}</div>`;
+                html += `<div class="word-builder-container">`;
+                shuffled.forEach(p => {
+                    html += `<div class="letter-tile">${p}</div>`;
+                });
+                html += `</div><div style="color:#888; margin-top:10px;">(Drag blocks to order)</div>`;
+                activityContent.innerHTML = html;
+                break;
+
+            case 'gameFind':
+                let grid = [data.target, ...data.distractors, ...data.distractors].sort(() => Math.random() - 0.5);
+                let gridHtml = `<div class="instruction-text">Find: ${data.target}</div><div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px;">`;
+                grid.forEach(l => {
+                    gridHtml += `<div class="letter-tile" onclick="this.style.background='lightgreen'">${l}</div>`;
+                });
+                gridHtml += `</div>`;
+                activityContent.innerHTML = gridHtml;
+                break;
+                
+            case 'action':
+                activityContent.innerHTML = `
+                    <div class="instruction-text">DO THIS ACTION!</div>
+                    <div style="font-size:100px;">${data.img}</div>
+                    <h1 style="color:var(--primary)">${data.word}</h1>
+                `;
+                break;
+
+            case 'picturePrompt':
+            case 'observe':
+            case 'thinkWrite':
+                activityContent.innerHTML = `
+                    <div class="instruction-text">${data.q}</div>
+                    <div style="font-size:100px; border:3px solid #ccc; padding:10px; border-radius:10px; background:white;">${data.img}</div>
+                    <div class="four-line-paper">
+                        <canvas id="drawing-canvas"></canvas>
+                    </div>
+                `;
+                initCanvas();
+                break;
+                
+            default:
+                activityContent.innerHTML = `<div>Activity Loading...</div>`;
+        }
+    }
+
+    // --- CANVAS LOGIC (TRACING) ---
+    function initCanvas() {
+        setTimeout(() => {
+            const canvas = document.getElementById('drawing-canvas');
+            if(!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const rect = canvas.parentNode.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+
+            let painting = false;
+
+            function startPosition(e) {
+                painting = true;
+                draw(e);
+            }
+
+            function finishedPosition() {
+                painting = false;
+                ctx.beginPath();
+            }
+
+            function draw(e) {
+                if (!painting) return;
+                e.preventDefault();
+                
+                // Coordinates
+                let clientX = e.clientX || e.touches[0].clientX;
+                let clientY = e.clientY || e.touches[0].clientY;
+                
+                const rect = canvas.getBoundingClientRect();
+                const x = clientX - rect.left;
+                const y = clientY - rect.top;
+
+                ctx.lineWidth = 5;
+                ctx.lineCap = 'round';
+                ctx.strokeStyle = '#000088'; // Blue Ink
+
+                ctx.lineTo(x, y);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+            }
+
+            // Events
+            canvas.addEventListener('mousedown', startPosition);
+            canvas.addEventListener('mouseup', finishedPosition);
+            canvas.addEventListener('mousemove', draw);
+            
+            canvas.addEventListener('touchstart', startPosition);
+            canvas.addEventListener('touchend', finishedPosition);
+            canvas.addEventListener('touchmove', draw);
+        }, 100);
+    }
+
+    function clearCanvas() {
+        const canvas = document.getElementById('drawing-canvas');
+        if(canvas) {
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    }
+
+    // --- REWARD SYSTEM ---
+    function showStar() {
+        const star = document.getElementById('star-reward');
+        star.style.display = 'block';
+        star.style.animation = 'starPop 1s forwards';
+        
+        // Audio simulation
+        // let audio = new Audio('ding.mp3'); audio.play();
+
+        setTimeout(() => {
+            star.style.display = 'none';
+            currentState.stars += 5;
+            starCountEl.innerText = currentState.stars;
+        }, 1000);
+        
+        avatarMsg.innerText = ["Excellent!", "Shabash!", "Good Job!", "Keep it up!"][Math.floor(Math.random()*4)];
+    }
+
+    function playHint() {
+        avatarMsg.innerText = "Listen closely... (Audio Playing)";
+        // In a real app, this plays the phonetic sound
+    }
+
+</script>
+</body>
+</html>

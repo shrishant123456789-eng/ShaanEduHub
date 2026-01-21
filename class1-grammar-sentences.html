@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+​<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Class 1 English: Super Sentence Hero</title>
+<style>
+:root {
+--primary: #FFD93D;
+--secondary: #6BCB77;
+--accent: #4D96FF;
+--danger: #FF6B6B;
+--dark: #2C3E50;
+--light: #F7F9FC;
+--font-main: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+}
+<header>
+    <div class="logo">✏️ English Fun</div>
+    <div class="score-box">⭐ <span id="scoreDisplay">0</span></div>
+</header>
+
+<div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<div id="screen-home" class="screen active">
+    <h1 class="hero-title">SENTENCE<br>SUPERHERO</h1>
+    <div class="card">
+        <p style="font-size: 1.2rem;">Welcome Class 1! Are you ready to learn?</p>
+        <div class="menu-grid">
+            <div class="menu-card" onclick="startLearnMode()">
+                <span class="menu-icon">📖</span>
+                <span class="menu-text">Learn First</span>
+            </div>
+            <div class="menu-card" onclick="startGame('mixed')">
+                <span class="menu-icon">🎮</span>
+                <span class="menu-text">Play Quiz</span>
+            </div>
+            <div class="menu-card" onclick="startGame('builder')">
+                <span class="menu-icon">🧩</span>
+                <span class="menu-text">Builder</span>
+            </div>
+            <div class="menu-card" onclick="startGame('cards')">
+                <span class="menu-icon">👀</span>
+                <span class="menu-text">Read Cards</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="screen-learn" class="screen">
+    <h2>What is a Sentence?</h2>
+    <div id="learn-container" class="card">
+        </div>
+    <div>
+        <button class="btn btn-warning" onclick="prevLearnCard()">⬅️ Back</button>
+        <button class="btn btn-primary" onclick="nextLearnCard()">Next ➡️</button>
+    </div>
+    <br>
+    <button class="btn btn-danger" onclick="showHome()">Exit</button>
+</div>
+
+<div id="screen-game" class="screen">
+    <div class="card">
+        <div id="game-image-container" style="font-size: 4rem; margin-bottom: 10px;"></div>
+        <div id="game-question" class="question-text">Question goes here...</div>
+        
+        <div id="area-mcq" class="option-grid"></div>
+
+        <div id="area-builder" style="display:none;">
+            <div class="sentence-drop-zone" id="drop-zone"></div>
+            <div class="word-bank" id="word-bank"></div>
+            <button class="btn btn-success" onclick="checkBuilderAnswer()">Check ✅</button>
+            <button class="btn btn-warning" onclick="resetBuilder()">Reset 🔄</button>
+        </div>
+        
+        <div id="feedback-msg" style="height: 30px; font-weight: bold; margin-top: 10px;"></div>
+    </div>
+    <button class="btn btn-danger" style="margin-top: 20px; width: auto;" onclick="showHome()">Quit Game</button>
+</div>
+
+<div id="screen-cards" class="screen">
+    <div class="card learn-card" id="reading-card">
+        </div>
+    <p>Read Aloud!</p>
+    <button class="btn btn-primary" onclick="nextReadingCard()">Next Card ➡️</button>
+    <button class="btn btn-danger" onclick="showHome()">Exit</button>
+</div>
+
+<div id="screen-result" class="screen">
+    <div class="card">
+        <span id="result-emoji" class="result-emoji">🏆</span>
+        <h2>Game Over!</h2>
+        <p>Your Score</p>
+        <div class="final-score" id="final-score">0</div>
+        <p id="result-message">Excellent!</p>
+        <button class="btn btn-success" onclick="showHome()">Play Again 🔄</button>
+    </div>
+</div>
+
+<footer>
+    <div class="wave"></div>
+    <div class="footer-content">
+        Learning English is Fun! 🎈
+    </div>
+</footer>
+
+<script>
+    /* --- SOUND ENGINE (No external files) --- */
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    
+    function playSound(type) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        if (type === 'correct') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(500, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(1000, audioCtx.currentTime + 0.1);
+            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.5);
+        } else if (type === 'wrong') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+            osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.3);
+            gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.3);
+        } else if (type === 'pop') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
+        }
+    }
+
+    /* --- DATA REPOSITORY (200+ Logic) --- */
+    // We generate data to keep file clean but extensive
+    
+    const subjects = ["The cat", "A dog", "My mom", "The boy", "She", "He", "The bird", "My dad", "The car", "A fish"];
+    const verbs = ["runs", "eats", "sleeps", "plays", "jumps", "reads", "sings", "swims", "cooks", "walks"];
+    const objects = ["fast.", "food.", "well.", "ball.", "high.", "a book.", "songs.", "in water.", "dinner.", "slowly."];
+    
+    const invalidSentences = [
+        "cat the runs", "runs cat the", "my ball is", "blue sky", "jump high", "eat apple", "is name my", 
+        "dog bark", "me happy", "play garden"
+    ];
+
+    const punctuationsData = [
+        { s: "What is your name", a: "?" },
+        { s: "I like apples", a: "." },
+        { s: "Stop that", a: "!" },
+        { s: "Where is the cat", a: "?" },
+        { s: "The sun is hot", a: "." },
+        { s: "Happy Birthday", a: "!" },
+        { s: "Can I play", a: "?" },
+        { s: "Wow", a: "!" },
+        { s: "Sit down", a: "." },
+        { s: "Who are you", a: "?" }
+    ];
+
+    // Generator functions to fill the database
+    let questionBank = [];
+
+    function generateQuestions() {
+        questionBank = [];
+        
+        // 1. JUMBLED SENTENCES (50 items)
+        for(let i=0; i<50; i++) {
+            let s = subjects[i % subjects.length];
+            let v = verbs[i % verbs.length];
+            let o = objects[i % objects.length];
+            let full = `${s} ${v} ${o}`;
+            // remove dot for parts
+            let cleanO = o.replace('.',''); 
+            let parts = [s, v, cleanO, "."];
+            if(i % 2 === 0) parts = [s, v, cleanO]; // Some without separate dot for simplicity
+            
+            questionBank.push({
+                type: 'builder',
+                q: "Arrange the words:",
+                parts: parts, // will be shuffled in logic
+                correct: full,
+                img: '🧩'
+            });
+        }
+
+        // 2. IDENTIFY CORRECT SENTENCE (50 items)
+        for(let i=0; i<50; i++) {
+            let good = `${subjects[i%subjects.length]} ${verbs[i%verbs.length]} ${objects[i%objects.length]}`;
+            let bad = invalidSentences[i % invalidSentences.length];
+            
+            questionBank.push({
+                type: 'mcq',
+                q: "Which one is a correct sentence?",
+                options: [good, bad],
+                correct: 0, // 0 is index of good
+                img: '🤔'
+            });
+        }
+
+        // 3. PUNCTUATION (50 items)
+        for(let i=0; i<50; i++) {
+            let data = punctuationsData[i % punctuationsData.length];
+            questionBank.push({
+                type: 'mcq',
+                q: `Choose the mark: "${data.s} ___"`,
+                options: [".", "?", "!"],
+                correct: data.options ? data.options.indexOf(data.a) : [".", "?", "!"].indexOf(data.a),
+                img: '🖊️'
+            });
+        }
+
+        // 4. MISSING WORD (50 items)
+        for(let i=0; i<50; i++) {
+            let s = subjects[i % subjects.length];
+            let v = verbs[i % verbs.length];
+            questionBank.push({
+                type: 'mcq',
+                q: `Fill in the blank: ${s} ___ ${objects[i%objects.length]}`,
+                options: [v, "table", "blue"],
+                correct: 0,
+                img: '🔡'
+            });
+        }
+        
+        // Shuffle the big bank
+        shuffleArray(questionBank);
+    }
+
+    /* --- STATE MANAGEMENT --- */
+    let currentQuestions = [];
+    let currentIndex = 0;
+    let score = 0;
+    let builtSentence = [];
+    
+    // Learn Data
+    const learnSlides = [
+        { title: "Start with Capital", content: "A sentence always starts with a Big Letter.<br><br>✅ <b>T</b>he cat sleeps.<br>❌ <b>t</b>he cat sleeps." },
+        { title: "Complete Meaning", content: "A sentence must make sense.<br><br>✅ I like ice cream.<br>❌ Like cream I." },
+        { title: "Ending Marks", content: "Use a dot (.) for statements.<br>Use a question mark (?) for asking.<br><br>✅ I run.<br>✅ Who are you?" }
+    ];
+    let learnIndex = 0;
+
+    /* --- DOM ELEMENTS --- */
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const progressBar = document.getElementById('progressBar');
+    const screens = document.querySelectorAll('.screen');
+
+    /* --- NAVIGATION --- */
+    function showScreen(id) {
+        screens.forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        playSound('pop');
+    }
+
+    function showHome() {
+        showScreen('screen-home');
+    }
+
+    /* --- LEARN MODE --- */
+    function startLearnMode() {
+        learnIndex = 0;
+        renderLearnCard();
+        showScreen('screen-learn');
+    }
+
+    function renderLearnCard() {
+        const c = learnSlides[learnIndex];
+        document.getElementById('learn-container').innerHTML = `
+            <h3 style="color:var(--accent)">${c.title}</h3>
+            <p style="font-size:1.3rem; text-align:left;">${c.content}</p>
+        `;
+    }
+    function nextLearnCard() {
+        if(learnIndex < learnSlides.length - 1) {
+            learnIndex++;
+            renderLearnCard();
+        } else {
+            alert("Great job learning! Now try the Quiz.");
+            showHome();
+        }
+        playSound('pop');
+    }
+    function prevLearnCard() {
+        if(learnIndex > 0) {
+            learnIndex--;
+            renderLearnCard();
+            playSound('pop');
+        }
+    }
+
+    /* --- GAME LOGIC --- */
+    function startGame(mode) {
+        generateQuestions(); // Regenerate/Shuffle
+        score = 0;
+        currentIndex = 0;
+        scoreDisplay.innerText = score;
+        
+        if (mode === 'builder') {
+            // Filter only builder questions
+            currentQuestions = questionBank.filter(q => q.type === 'builder').slice(0, 10);
+        } else {
+            // Mix of 10 random questions
+            currentQuestions = questionBank.slice(0, 10);
+        }
+        
+        updateProgress();
+        loadQuestion();
+        showScreen('screen-game');
+    }
+
+    function loadQuestion() {
+        const q = currentQuestions[currentIndex];
+        const qText = document.getElementById('game-question');
+        const imgArea = document.getElementById('game-image-container');
+        const mcqArea = document.getElementById('area-mcq');
+        const builderArea = document.getElementById('area-builder');
+        const feedback = document.getElementById('feedback-msg');
+
+        qText.innerText = q.q;
+        imgArea.innerText = q.img || '';
+        feedback.innerText = '';
+        
+        // Reset areas
+        mcqArea.innerHTML = '';
+        mcqArea.style.display = 'none';
+        builderArea.style.display = 'none';
+
+        if (q.type === 'mcq') {
+            mcqArea.style.display = 'grid';
+            let opts = [...q.options];
+            // Keep track of correct string before shuffle if needed, 
+            // but here we stored index. 
+            // Wait, if we shuffle options, index changes.
+            // Let's map options to objects to track correctness.
+            let optObjs = opts.map((txt, idx) => ({ txt, isCorrect: idx === q.correct }));
+            shuffleArray(optObjs);
+
+            optObjs.forEach(opt => {
+                let btn = document.createElement('button');
+                btn.className = 'btn btn-warning full-width';
+                btn.innerText = opt.txt;
+                btn.onclick = () => handleMCQ(btn, opt.isCorrect);
+                mcqArea.appendChild(btn);
+            });
+
+        } else if (q.type === 'builder') {
+            builderArea.style.display = 'block';
+            builtSentence = [];
+            renderBuilderUI(q);
+        }
+    }
+
+    /* --- BUILDER LOGIC --- */
+    function renderBuilderUI(q) {
+        const dropZone = document.getElementById('drop-zone');
+        const wordBank = document.getElementById('word-bank');
+        
+        dropZone.innerHTML = '';
+        wordBank.innerHTML = '';
+        
+        // Draw Dropped words
+        builtSentence.forEach((word, idx) => {
+            let span = document.createElement('div');
+            span.className = 'draggable-word';
+            span.innerText = word;
+            span.onclick = () => removeWordFromSentence(idx);
+            dropZone.appendChild(span);
+        });
+
+        // Draw Bank words (shuffled)
+        // We need to keep consistency.
+        // On first load of Q, shuffle parts. 
+        if (!q.shuffledParts) {
+            q.shuffledParts = [...q.parts];
+            shuffleArray(q.shuffledParts);
+        }
+
+        q.shuffledParts.forEach(word => {
+            let div = document.createElement('div');
+            div.className = 'draggable-word';
+            div.innerText = word;
+            
+            // If already used, grey out
+            // Simple logic: count occurrences
+            let usedCount = builtSentence.filter(w => w === word).length;
+            let totalCount = q.parts.filter(w => w === word).length;
+            
+            if (usedCount >= totalCount) {
+                div.classList.add('selected');
+            } else {
+                div.onclick = () => addWordToSentence(word);
+            }
+            wordBank.appendChild(div);
+        });
+    }
+
+    function addWordToSentence(word) {
+        builtSentence.push(word);
+        playSound('pop');
+        renderBuilderUI(currentQuestions[currentIndex]);
+    }
+
+    function removeWordFromSentence(idx) {
+        builtSentence.splice(idx, 1);
+        playSound('pop');
+        renderBuilderUI(currentQuestions[currentIndex]);
+    }
+
+    function resetBuilder() {
+        builtSentence = [];
+        renderBuilderUI(currentQuestions[currentIndex]);
+    }
+
+    function checkBuilderAnswer() {
+        const q = currentQuestions[currentIndex];
+        let attempt = builtSentence.join(' ');
+        // Normalize spaces
+        if (attempt.replace(/\s+/g, ' ').trim() === q.correct.replace(/\s+/g, ' ').trim()) {
+            handleSuccess();
+        } else {
+            handleFailure(document.getElementById('drop-zone'));
+        }
+    }
+
+    /* --- MCQ LOGIC --- */
+    function handleMCQ(btn, isCorrect) {
+        if (isCorrect) {
+            btn.classList.remove('btn-warning');
+            btn.classList.add('btn-success');
+            handleSuccess();
+        } else {
+            btn.classList.remove('btn-warning');
+            btn.classList.add('btn-danger');
+            handleFailure(btn);
+        }
+    }
+
+    /* --- COMMON GAME HANDLERS --- */
+    function handleSuccess() {
+        playSound('correct');
+        score++;
+        scoreDisplay.innerText = score;
+        document.getElementById('feedback-msg').innerText = "Correct! 🌟";
+        document.getElementById('feedback-msg').style.color = "green";
+        
+        setTimeout(() => {
+            nextQuestion();
+        }, 1000);
+    }
+
+    function handleFailure(element) {
+        playSound('wrong');
+        element.classList.add('shake-red');
+        document.getElementById('feedback-msg').innerText = "Try Again! 💪";
+        document.getElementById('feedback-msg').style.color = "red";
+        setTimeout(() => {
+            element.classList.remove('shake-red');
+        }, 500);
+    }
+
+    function nextQuestion() {
+        currentIndex++;
+        updateProgress();
+        if (currentIndex < currentQuestions.length) {
+            loadQuestion();
+        } else {
+            endGame();
+        }
+    }
+
+    function updateProgress() {
+        let pct = (currentIndex / currentQuestions.length) * 100;
+        progressBar.style.width = pct + '%';
+    }
+
+    function endGame() {
+        showScreen('screen-result');
+        const finalScoreEl = document.getElementById('final-score');
+        const msg = document.getElementById('result-message');
+        const emo = document.getElementById('result-emoji');
+        
+        finalScoreEl.innerText = `${score} / ${currentQuestions.length}`;
+        
+        if (score === currentQuestions.length) {
+            msg.innerText = "Excellent! You are a Star! 🌟";
+            emo.innerText = "🤩";
+        } else if (score > currentQuestions.length / 2) {
+            msg.innerText = "Good Job! Keep practicing! 👍";
+            emo.innerText = "🙂";
+        } else {
+            msg.innerText = "Don't give up! Try again! 💪";
+            emo.innerText = "🌱";
+        }
+        playSound('correct');
+    }
+
+    /* --- READING CARDS MODE --- */
+    let cardIndex = 0;
+    const readingSentences = [
+        "The sun is big.", "I like to play.", "The cat is red.", "He has a ball.", "She eats an apple.",
+        "My dog runs fast.", "The sky is blue.", "I love my mom.", "Look at the bird.", "We go to school."
+    ];
+
+    function nextReadingCard() {
+        cardIndex = (cardIndex + 1) % readingSentences.length;
+        document.getElementById('reading-card').innerHTML = `
+            ${readingSentences[cardIndex]}
+            <div class="example-text">🗣️ Read it loud!</div>
+        `;
+        playSound('pop');
+    }
+
+    /* --- UTILS --- */
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    // Init Reading Card
+    document.getElementById('reading-card').innerHTML = `${readingSentences[0]}<div class="example-text">🗣️ Read it loud!</div>`;
+
+</script>
+</body>
+</html>

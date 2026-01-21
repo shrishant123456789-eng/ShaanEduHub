@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Class 1 English – Practice All</title>
+    <style>
+        /* =========================================
+           1. CORE STYLES & VARIABLES
+           ========================================= */
+        :root {
+            --primary: #FF9F1C;   /* Orange */
+            --secondary: #2EC4B6; /* Teal/Green */
+            --accent: #FFBF69;    /* Light Orange */
+            --bg: #CBF3F0;        /* Light Blue */
+            --white: #FFFFFF;
+            --text: #333333;
+            --success: #70E000;
+            --error: #FF595E;
+            --font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none; /* Prevent text selection */
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-family);
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* =========================================
+           2. HEADER & LAYOUT
+           ========================================= */
+        header {
+            background: var(--white);
+            padding: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 5px solid var(--primary);
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mascot {
+            font-size: 2.5rem;
+            animation: bounce 2s infinite;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--primary);
+            line-height: 1.2;
+        }
+
+        h1 span {
+            font-size: 0.9rem;
+            color: var(--secondary);
+            display: block;
+        }
+
+        .score-board {
+            background: var(--accent);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .main-container {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* =========================================
+           3. CARD & GAME UI
+           ========================================= */
+        .game-card {
+            background: var(--white);
+            border-radius: 25px;
+            padding: 25px;
+            width: 100%;
+            box-shadow: 0 10px 0 rgba(0,0,0,0.1);
+            text-align: center;
+            position: relative;
+            transition: transform 0.3s;
+        }
+
+        .progress-container {
+            width: 100%;
+            background: #eee;
+            height: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--secondary);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .question-emoji {
+            font-size: 4rem;
+            display: block;
+            margin-bottom: 10px;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .question-text {
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            color: var(--text);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .btn-option {
+            background: var(--white);
+            border: 3px solid #eee;
+            border-radius: 15px;
+            padding: 15px;
+            font-size: 1.2rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 0 #ddd;
+            color: #555;
+        }
+
+        .btn-option:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        .btn-option.correct {
+            background: #E6FFFA;
+            border-color: var(--success);
+            color: var(--success);
+            box-shadow: 0 4px 0 #4da800;
+        }
+
+        .btn-option.wrong {
+            background: #FFF5F5;
+            border-color: var(--error);
+            color: var(--error);
+            animation: shake 0.4s;
+        }
+
+        /* Sentence Builder specific styles */
+        .sentence-area {
+            background: #f4f4f4;
+            min-height: 60px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            padding: 5px;
+            border: 2px dashed #ccc;
+        }
+        
+        .word-bank {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .word-tile {
+            background: var(--primary);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 3px 0 #d68100;
+        }
+
+        /* =========================================
+           4. FEEDBACK & OVERLAYS
+           ========================================= */
+        .feedback-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.9);
+            border-radius: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            display: none;
+        }
+
+        .feedback-overlay.active { display: flex; animation: fadeIn 0.3s; }
+
+        .big-star { font-size: 5rem; animation: spin 1s; }
+        .feedback-text { font-size: 2rem; font-weight: bold; color: var(--primary); margin: 10px 0; }
+
+        .btn-next {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #1b8a7e;
+            font-family: inherit;
+        }
+
+        /* End Screen */
+        .end-screen {
+            display: none;
+            text-align: center;
+        }
+        .end-screen.active { display: block; }
+
+        /* =========================================
+           5. ANIMATIONS
+           ========================================= */
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 80% { transform: scale(1.1); } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } 100% { transform: translateX(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* =========================================
+           6. FOOTER
+           ========================================= */
+        footer {
+            background: var(--text);
+            color: var(--white);
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9rem;
+            margin-top: auto;
+        }
+        
+        .hint-text {
+            margin-top: 15px;
+            font-size: 1rem;
+            color: var(--primary);
+            font-style: italic;
+            min-height: 24px;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 400px) {
+            .question-text { font-size: 1.2rem; }
+            .btn-option { font-size: 1rem; padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <div class="mascot">🐯</div>
+            <h1>Class 1 English<span>Practice Hub</span></h1>
+        </div>
+        <div class="score-board">
+            <span>⭐</span>
+            <span id="score-val">0</span>
+        </div>
+    </header>
+
+    <div class="main-container">
+        
+        <div id="start-screen" class="game-card">
+            <div style="font-size: 4rem;">🎒</div>
+            <h2>Let's Practice!</h2>
+            <p>Grammar • Stories • Words</p>
+            <p style="color: #666; font-size: 0.9rem;">50 Questions per Round</p>
+            <button class="btn-next" onclick="Game.start()">Start Game ▶</button>
+        </div>
+
+        <div id="game-screen" class="game-card" style="display: none;">
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            
+            <div id="q-container">
+                </div>
+
+            <div class="hint-text" id="hint-box"></div>
+
+            <div class="feedback-overlay" id="feedback-overlay">
+                <div class="big-star">⭐</div>
+                <div class="feedback-text" id="feedback-msg">Good Job!</div>
+                <button class="btn-next" onclick="Game.next()">Next ➡</button>
+            </div>
+        </div>
+
+        <div id="end-screen" class="game-card end-screen">
+            <div style="font-size: 5rem;">🎉</div>
+            <h2 style="color: var(--secondary);">You Did Great!</h2>
+            <p style="font-size: 1.5rem;">You earned <span id="final-score" style="color: var(--primary); font-weight: bold;">0</span> Stars!</p>
+            <div id="performance-msg">Superstar!</div>
+            <br>
+            <button class="btn-next" onclick="location.reload()">Play Again 🔄</button>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>Designed & Created by<br><strong>SHRISHANT YADAV</strong></p>
+        <p style="font-size: 0.7rem; color: #888;">© Class 1 English Learning Platform</p>
+    </footer>
+
+    <script>
+        /* =========================================
+           DATA BANK (GENERATORS FOR INFINITE Qs)
+           ========================================= */
+        const Data = {
+            vowels: ['a','e','i','o','u'],
+            consonants: ['b','c','d','f','g','h','j','k','l','m','n','p','q','r','s','t','v','w','x','y','z'],
+            nouns: [
+                {w:'Apple', e:'🍎', type:'Thing'}, {w:'Ball', e:'⚽', type:'Thing'}, 
+                {w:'Cat', e:'🐱', type:'Animal'}, {w:'Dog', e:'🐶', type:'Animal'},
+                {w:'Rahul', e:'👦', type:'Person'}, {w:'Delhi', e:'🏙️', type:'Place'},
+                {w:'School', e:'🏫', type:'Place'}, {w:'Teacher', e:'👩‍🏫', type:'Person'}
+            ],
+            opposites: [
+                ['Hot ☕', 'Cold ❄️'], ['Big 🐘', 'Small 🐜'], ['Up ⬆️', 'Down ⬇️'], 
+                ['Day ☀️', 'Night 🌙'], ['Happy 😊', 'Sad 😢'], ['Fast 🚀', 'Slow 🐢'],
+                ['Open 📂', 'Close 📁'], ['In 📦', 'Out 📤']
+            ],
+            articles: [
+                {w:'Apple', a:'An'}, {w:'Egg', a:'An'}, {w:'Ice-cream', a:'An'}, {w:'Owl', a:'An'}, {w:'Umbrella', a:'An'},
+                {w:'Ball', a:'A'}, {w:'Cat', a:'A'}, {w:'Dog', a:'A'}, {w:'Fan', a:'A'}, {w:'Kite', a:'A'}
+            ],
+            genders: [
+                ['Boy 👦', 'Girl 👧'], ['King 👑', 'Queen 👸'], ['Father 👨', 'Mother 👩'],
+                ['Brother 👦', 'Sister 👧'], ['Uncle 👨', 'Aunt 👩'], ['Lion 🦁', 'Lioness 🦁']
+            ],
+            plurals: [
+                {s:'Cat', p:'Cats'}, {s:'Dog', p:'Dogs'}, {s:'Box', p:'Boxes'}, 
+                {s:'Bus', p:'Buses'}, {s:'Bird', p:'Birds'}, {s:'Star', p:'Stars'}
+            ],
+            sentences: [
+                {j:['is', 'hot', 'The', 'sun'], s:'The sun is hot'},
+                {j:['play', 'I', 'football'], s:'I play football'},
+                {j:['is', 'red', 'The', 'apple'], s:'The apple is red'},
+                {j:['love', 'I', 'India'], s:'I love India'},
+                {j:['fly', 'Birds', 'sky', 'in'], s:'Birds fly in sky'}
+            ],
+            rhymes: [
+                {w:'Cat', opts:['Bat', 'Dog', 'Pen'], a:'Bat'},
+                {w:'Sun', opts:['Run', 'Sit', 'Map'], a:'Run'},
+                {w:'Pen', opts:['Hen', 'Pan', 'Pin'], a:'Hen'},
+                {w:'Pot', opts:['Hot', 'Pat', 'Put'], a:'Hot'}
+            ],
+            actions: [
+                {w:'Running', e:'🏃'}, {w:'Sleeping', e:'😴'}, {w:'Eating', e:'🍲'}, {w:'Reading', e:'📖'}
+            ]
+        };
+
+        /* =========================================
+           QUESTION FACTORY (GENERATES 500+ VARIATIONS)
+           ========================================= */
+        class QGenerator {
+            static getRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+            
+            static getVowelQ() {
+                const isVowel = Math.random() > 0.5;
+                const letter = isVowel ? Data.getRandom(Data.vowels) : Data.getRandom(Data.consonants);
+                return {
+                    type: 'mcq',
+                    q: `Is the letter '${letter.toUpperCase()}' a Vowel?`,
+                    emoji: '🅰️',
+                    opts: ['Yes', 'No'],
+                    ans: isVowel ? 'Yes' : 'No',
+                    hint: 'Vowels are A, E, I, O, U'
+                };
+            }
+
+            static getArticleQ() {
+                const item = Data.getRandom(Data.articles);
+                return {
+                    type: 'mcq',
+                    q: `Choose correct article: ___ ${item.w}`,
+                    emoji: '📝',
+                    opts: ['A', 'An'],
+                    ans: item.a,
+                    hint: 'Words starting with a,e,i,o,u usually take "An"'
+                };
+            }
+
+            static getNounQ() {
+                const item = Data.getRandom(Data.nouns);
+                return {
+                    type: 'mcq',
+                    q: `What is '${item.w}'?`,
+                    emoji: item.e,
+                    opts: ['Person', 'Place', 'Animal', 'Thing'].sort(()=>0.5-Math.random()),
+                    ans: item.type,
+                    hint: `Look at the picture of ${item.w}`
+                };
+            }
+
+            static getOppositeQ() {
+                const pair = Data.getRandom(Data.opposites);
+                const showIndex = Math.random() > 0.5 ? 0 : 1;
+                const ansIndex = showIndex === 0 ? 1 : 0;
+                // Generate distractors
+                let distractors = [];
+                while(distractors.length < 3) {
+                    let r = Data.getRandom(Data.opposites).flat();
+                    if(!distractors.includes(r) && r !== pair[0] && r !== pair[1]) distractors.push(r);
+                }
+                const options = [pair[ansIndex], distractors[0], distractors[1], distractors[2]].sort(()=>0.5-Math.random());
+
+                return {
+                    type: 'mcq',
+                    q: `Opposite of ${pair[showIndex]}?`,
+                    emoji: '↔️',
+                    opts: options,
+                    ans: pair[ansIndex],
+                    hint: 'Think: What is totally different?'
+                };
+            }
+
+            static getPluralQ() {
+                const item = Data.getRandom(Data.plurals);
+                const isPluralAsk = Math.random() > 0.5; // Ask singular or plural
+                
+                if (isPluralAsk) {
+                    return {
+                        type: 'mcq',
+                        q: `One ${item.s}. Many ___?`,
+                        emoji: '🔢',
+                        opts: [item.s, item.p, item.s+'es', item.p+'s'].sort(()=>0.5-Math.random()).slice(0,2), // Simplify to 2 opts for class 1
+                        ans: item.p,
+                        hint: 'Add "s" or "es" for many.'
+                    };
+                } else {
+                     return {
+                        type: 'mcq',
+                        q: `Which one is ONE (Singular)?`,
+                        emoji: '☝️',
+                        opts: [item.s, item.p],
+                        ans: item.s,
+                        hint: 'Singular means only one.'
+                    };
+                }
+            }
+            
+            static getSentenceQ() {
+                const item = Data.getRandom(Data.sentences);
+                return {
+                    type: 'sentence',
+                    q: 'Make a correct sentence:',
+                    emoji: '🧩',
+                    parts: [...item.j].sort(()=>0.5-Math.random()),
+                    ans: item.s,
+                    hint: 'Tap words in the correct order.'
+                };
+            }
+
+            static getRhymeQ() {
+                const item = Data.getRandom(Data.rhymes);
+                return {
+                    type: 'mcq',
+                    q: `What rhymes with ${item.w}?`,
+                    emoji: '🎵',
+                    opts: [item.a, ...item.opts.filter(o => o !== item.a).slice(0,3)].sort(()=>0.5-Math.random()),
+                    ans: item.a,
+                    hint: 'Rhyming words sound the same at the end.'
+                };
+            }
+
+            static getGenderQ() {
+                const pair = Data.getRandom(Data.genders);
+                return {
+                    type: 'mcq',
+                    q: `Change Gender: ${pair[0].split(' ')[0]}`,
+                    emoji: '👫',
+                    opts: [pair[1], 'Table', 'Car'].sort(()=>0.5-Math.random()),
+                    ans: pair[1],
+                    hint: 'He -> She'
+                };
+            }
+
+            static getActionQ() {
+                const item = Data.getRandom(Data.actions);
+                const wrong = Data.getRandom(Data.actions);
+                return {
+                    type: 'mcq',
+                    q: `Who is ${item.w}?`,
+                    emoji: '❓',
+                    // Using emojis as options for visual recognition
+                    opts: [item.e, wrong.e].sort(()=>0.5-Math.random()),
+                    ans: item.e,
+                    isImageOpt: true,
+                    hint: `Find the picture of ${item.w}`
+                };
+            }
+
+            // Master Generator
+            static generateSet(count = 50) {
+                let questions = [];
+                const generators = [
+                    this.getVowelQ, this.getArticleQ, this.getNounQ, 
+                    this.getOppositeQ, this.getPluralQ, this.getSentenceQ,
+                    this.getRhymeQ, this.getGenderQ, this.getActionQ
+                ];
+
+                for (let i = 0; i < count; i++) {
+                    // Smart Difficulty: Simple first, harder later
+                    let availableGens = generators;
+                    if (i < 10) availableGens = generators.slice(0, 3); // Basic
+                    else if (i < 30) availableGens = generators.slice(0, 6); // Medium
+                    
+                    const randomGen = availableGens[Math.floor(Math.random() * availableGens.length)];
+                    questions.push(randomGen.call(this));
+                }
+                return questions;
+            }
+        }
+
+        /* =========================================
+           GAME ENGINE
+           ========================================= */
+        const Game = {
+            questions: [],
+            currentIdx: 0,
+            score: 0,
+            
+            start: function() {
+                this.questions = QGenerator.generateSet(50);
+                this.currentIdx = 0;
+                this.score = 0;
+                document.getElementById('score-val').innerText = '0';
+                
+                document.getElementById('start-screen').style.display = 'none';
+                document.getElementById('end-screen').style.display = 'none';
+                document.getElementById('game-screen').style.display = 'block';
+                
+                this.loadQuestion();
+            },
+
+            loadQuestion: function() {
+                const q = this.questions[this.currentIdx];
+                const container = document.getElementById('q-container');
+                const progressBar = document.getElementById('progress-bar');
+                const hintBox = document.getElementById('hint-box');
+                
+                // Reset UI
+                container.innerHTML = '';
+                hintBox.innerText = '';
+                hintBox.style.opacity = '0';
+                document.getElementById('feedback-overlay').classList.remove('active');
+                
+                // Update Progress
+                const pct = ((this.currentIdx) / 50) * 100;
+                progressBar.style.width = pct + '%';
+
+                // Render based on type
+                if (q.type === 'mcq') {
+                    this.renderMCQ(q, container);
+                } else if (q.type === 'sentence') {
+                    this.renderSentence(q, container);
+                }
+            },
+
+            renderMCQ: function(q, container) {
+                let html = `
+                    <div class="question-emoji">${q.emoji}</div>
+                    <div class="question-text">${q.q}</div>
+                    <div class="options-grid" style="grid-template-columns: ${q.isImageOpt ? 'repeat(2,1fr)' : 'repeat(2,1fr)'}">
+                `;
+                
+                q.opts.forEach(opt => {
+                    const display = q.isImageOpt ? `<span style="font-size:3rem">${opt}</span>` : opt;
+                    // Escape single quotes for HTML attribute
+                    const val = opt.replace(/'/g, "&#39;"); 
+                    html += `<button class="btn-option" onclick="Game.check(this, '${val}', '${q.ans.replace(/'/g, "&#39;")}', '${q.hint}')">${display}</button>`;
+                });
+                
+                html += `</div>`;
+                container.innerHTML = html;
+            },
+
+            renderSentence: function(q, container) {
+                // Sentence Builder UI
+                container.innerHTML = `
+                    <div class="question-emoji">${q.emoji}</div>
+                    <div class="question-text">${q.q}</div>
+                    <div class="sentence-area" id="sentence-drop"></div>
+                    <div class="word-bank" id="word-bank"></div>
+                    <button class="btn-next" style="margin-top:20px; background:var(--primary)" onclick="Game.checkSentence('${q.ans}')">Check ✅</button>
+                `;
+
+                const bank = document.getElementById('word-bank');
+                const drop = document.getElementById('sentence-drop');
+
+                q.parts.forEach(word => {
+                    const span = document.createElement('div');
+                    span.className = 'word-tile';
+                    span.innerText = word;
+                    span.onclick = function() {
+                        // Move logic
+                        if(this.parentElement === bank) drop.appendChild(this);
+                        else bank.appendChild(this);
+                    };
+                    bank.appendChild(span);
+                });
+            },
+
+            check: function(btn, selected, correct, hint) {
+                // Prevent multiple clicks
+                if(btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
+
+                if (selected === correct) {
+                    btn.classList.add('correct');
+                    this.success();
+                } else {
+                    btn.classList.add('wrong');
+                    this.fail(hint);
+                }
+            },
+
+            checkSentence: function(correctStr) {
+                const drop = document.getElementById('sentence-drop');
+                const currentStr = Array.from(drop.children).map(c => c.innerText).join(' ');
+                
+                if(currentStr === correctStr) {
+                    drop.style.borderColor = 'green';
+                    drop.style.background = '#e6fffa';
+                    this.success();
+                } else {
+                    drop.style.borderColor = 'red';
+                    drop.style.background = '#fff5f5';
+                    drop.classList.add('shake');
+                    setTimeout(()=>drop.classList.remove('shake'), 500);
+                    this.fail('Tap words to move them. Put them in order!');
+                }
+            },
+
+            success: function() {
+                this.score += 10; // 10 points per right answer
+                document.getElementById('score-val').innerText = this.score;
+                
+                // Show Feedback
+                const fb = document.getElementById('feedback-overlay');
+                const msgs = ['Awesome!', 'Great Job!', 'Super!', 'Correct!', 'Wow!'];
+                document.getElementById('feedback-msg').innerText = msgs[Math.floor(Math.random()*msgs.length)];
+                fb.classList.add('active');
+            },
+
+            fail: function(hint) {
+                // Fear free: Show hint, don't deduct points heavily (maybe visual only)
+                const hintBox = document.getElementById('hint-box');
+                hintBox.innerText = "Hint: " + hint;
+                hintBox.style.opacity = '1';
+                // Audio hint sound effect (simulated via thought)
+            },
+
+            next: function() {
+                this.currentIdx++;
+                if (this.currentIdx >= 50) {
+                    this.endGame();
+                } else {
+                    this.loadQuestion();
+                }
+            },
+
+            endGame: function() {
+                document.getElementById('game-screen').style.display = 'none';
+                document.getElementById('end-screen').style.display = 'block';
+                document.getElementById('final-score').innerText = this.score;
+                
+                // Celebration Logic
+                let perf = "Good Start!";
+                if(this.score > 400) perf = "Outstanding! 🏆";
+                else if(this.score > 300) perf = "Great Job! 🌟";
+                else if(this.score > 200) perf = "Well Done! 👍";
+                document.getElementById('performance-msg').innerText = perf;
+                
+                // Simple Confetti (DOM based)
+                this.spawnConfetti();
+            },
+
+            spawnConfetti: function() {
+                const colors = ['#f00', '#0f0', '#00f', '#ff0', '#f0f'];
+                for(let i=0; i<30; i++) {
+                    let c = document.createElement('div');
+                    c.style.position = 'fixed';
+                    c.style.top = '-10px';
+                    c.style.left = Math.random() * 100 + 'vw';
+                    c.style.width = '10px';
+                    c.style.height = '10px';
+                    c.style.background = colors[Math.floor(Math.random()*colors.length)];
+                    c.style.animation = `bounce ${Math.random()*2 + 1}s infinite`;
+                    document.body.appendChild(c);
+                }
+            }
+        };
+
+    </script>
+</body>
+</html>

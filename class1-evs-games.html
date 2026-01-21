@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Shan EduHub - Class 1 EVS Ultimate</title>
+    <style>
+        :root {
+            --primary: #FFD93D; /* Yellow */
+            --secondary: #6BCB77; /* Green */
+            --tertiary: #FF6B6B; /* Red/Orange */
+            --action: #4D96FF; /* Blue */
+            --dark: #2C3E50;
+            --light: #FFFBF0;
+            --font-kid: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+        
+        body {
+            font-family: var(--font-kid);
+            background-color: var(--light);
+            margin: 0; padding: 0;
+            color: var(--dark);
+            overflow-x: hidden;
+            padding-bottom: 80px; /* Space for bottom nav */
+        }
+
+        /* --- Header --- */
+        header {
+            background: linear-gradient(135deg, var(--action), var(--secondary));
+            color: white; padding: 15px; text-align: center;
+            border-bottom-left-radius: 25px; border-bottom-right-radius: 25px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100;
+        }
+        h1 { margin: 0; font-size: 1.4rem; text-shadow: 2px 2px 0 rgba(0,0,0,0.1); }
+        .subtitle { font-size: 0.8rem; opacity: 0.9; }
+
+        /* --- Global Layout --- */
+        .container { max-width: 800px; margin: 0 auto; padding: 15px; }
+        .hidden { display: none !important; }
+
+        /* --- VIEW: GAMES MENU --- */
+        .game-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; }
+        .game-card {
+            background: white; border-radius: 20px; padding: 15px 10px; text-align: center;
+            border-bottom: 5px solid #eee; cursor: pointer; transition: 0.2s; position: relative; overflow: hidden;
+        }
+        .game-card:active { transform: scale(0.95); border-bottom: 2px solid #eee; margin-top: 3px; }
+        .game-card.locked { filter: grayscale(1); opacity: 0.6; pointer-events: none; }
+        .g-icon { font-size: 3rem; display: block; margin-bottom: 5px; animation: bounce 2s infinite; }
+        .g-title { font-size: 0.9rem; font-weight: bold; line-height: 1.2; }
+        .g-badge { position: absolute; top:0; right:0; background: var(--tertiary); color: white; font-size: 0.6rem; padding: 3px 6px; border-bottom-left-radius: 10px; }
+
+        /* --- VIEW: GAME ARENA --- */
+        .arena-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: white; padding: 10px; border-radius: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .score-box { font-size: 1.2rem; font-weight: bold; }
+        .task-area { background: white; border-radius: 20px; padding: 20px; text-align: center; min-height: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        
+        /* Game Types Styles */
+        .drop-zone-container { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 20px; width: 100%; }
+        .drop-zone { border: 3px dashed #ccc; border-radius: 15px; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; font-size: 2rem; background: #f9f9f9; transition: 0.3s; }
+        .drop-zone.active-zone { border-color: var(--action); background: #e3f2fd; transform: scale(1.1); }
+        .drop-zone.filled { border-style: solid; border-color: var(--secondary); background: #e8f5e9; }
+        
+        .item-pool { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 30px; border-top: 2px solid #eee; padding-top: 20px; width: 100%; }
+        .draggable { background: white; border: 2px solid var(--dark); padding: 10px; border-radius: 10px; font-size: 2rem; cursor: pointer; box-shadow: 0 4px 0 var(--dark); }
+        .draggable:active { transform: translateY(4px); box-shadow: none; }
+        .draggable.selected { background: var(--primary); transform: scale(1.1) rotate(-5deg); }
+
+        .memory-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; }
+        .mem-card { aspect-ratio: 1; background: var(--action); border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: transparent; transition: transform 0.3s; }
+        .mem-card.flipped { background: white; border: 2px solid var(--action); color: initial; transform: rotateY(180deg); }
+        .mem-card.matched { background: var(--secondary); border-color: var(--secondary); opacity: 0.5; pointer-events: none; }
+
+        .choice-btn { background: white; border: 2px solid #eee; width: 100%; padding: 15px; margin: 5px 0; border-radius: 15px; font-size: 1.2rem; font-weight: bold; cursor: pointer; text-align: left; display: flex; align-items: center; }
+        .choice-btn:hover { background: #f0f8ff; border-color: var(--action); }
+        
+        /* --- BOTTOM NAVIGATION --- */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; border-top-left-radius: 20px; border-top-right-radius: 20px; box-shadow: 0 -5px 20px rgba(0,0,0,0.1); z-index: 999; }
+        .nav-item { text-align: center; color: #aaa; font-size: 0.7rem; cursor: pointer; }
+        .nav-item.active { color: var(--action); font-weight: bold; }
+        .nav-icon { font-size: 1.5rem; display: block; margin-bottom: 2px; }
+
+        /* --- ANIMATIONS --- */
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        @keyframes pop { 0% { transform: scale(0); } 80% { transform: scale(1.2); } 100% { transform: scale(1); } }
+
+        /* --- FOOTER --- */
+        footer { text-align: center; font-size: 0.8rem; color: #888; padding: 20px; margin-top: 20px; }
+        
+        /* --- MODAL --- */
+        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 2000; animation: pop 0.3s; }
+        .modal-content { background: white; padding: 30px; border-radius: 20px; text-align: center; max-width: 90%; }
+        .big-star { font-size: 4rem; margin: 10px 0; }
+        
+        button { font-family: inherit; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🌱 Shan EduHub</h1>
+        <div class="subtitle">Class 1 EVS • Play & Learn</div>
+    </header>
+
+    <div class="container">
+        
+        <div id="view-games">
+            <h2 style="text-align:center; color: var(--action);">🎮 Game Zone (20 Puzzles)</h2>
+            <div class="game-grid" id="game-list">
+                </div>
+        </div>
+
+        <div id="view-arena" class="hidden">
+            <div class="arena-header">
+                <button onclick="exitGame()" style="background:none; border:none; font-size:1.5rem;">🔙</button>
+                <div class="score-box">⭐ <span id="score">0</span></div>
+                <button onclick="speakInstruction()" style="background:var(--primary); border:none; border-radius:50%; width:40px; height:40px;">🔊</button>
+            </div>
+            
+            <h3 id="game-instruction" style="text-align:center; margin: 10px 0; color:var(--dark);">Loading...</h3>
+            
+            <div class="task-area" id="game-board">
+                </div>
+        </div>
+
+        <div id="view-other" class="hidden" style="text-align:center; padding:20px;">
+            <h2>🚧 Under Construction</h2>
+            <p>This section (Study/Practice/Parent) is integrated in the full version.</p>
+            <p>Go to <strong>Games</strong> to play!</p>
+        </div>
+
+    </div>
+
+    <footer>
+        designed by Shrishant Yadav<br>
+        © Shan EduHub – Class 1 EVS
+    </footer>
+
+    <div class="bottom-nav">
+        <div class="nav-item" onclick="navTo('home')">
+            <span class="nav-icon">🏠</span> Home
+        </div>
+        <div class="nav-item active" onclick="navTo('games')">
+            <span class="nav-icon">🎮</span> Games
+        </div>
+        <div class="nav-item" onclick="navTo('study')">
+            <span class="nav-icon">📘</span> Learn
+        </div>
+        <div class="nav-item" onclick="navTo('practice')">
+            <span class="nav-icon">📝</span> Practice
+        </div>
+        <div class="nav-item" onclick="navTo('parents')">
+            <span class="nav-icon">👨‍👩‍👧</span> Parents
+        </div>
+    </div>
+
+    <div id="result-modal" class="hidden modal">
+        <div class="modal-content">
+            <div class="big-star">🏆</div>
+            <h2 id="result-title">Amazing!</h2>
+            <p id="result-msg">You are an EVS Hero!</p>
+            <button onclick="closeModal()" style="background:var(--secondary); color:white; border:none; padding:10px 30px; border-radius:20px; font-size:1.2rem; cursor:pointer;">Play More</button>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. GAME DATA (20 UNIQUE GAMES)
+        // ==========================================
+        const GAMES = [
+            { id: 1, title: "Myself Puzzle", icon: "🧍‍♂️", type: "match", data: [
+                { q: "Boy or Girl?", t: "Boy", opts: ["Boy 👦", "Cat 🐱", "Tree 🌳"] },
+                { q: "I use my legs to?", t: "Walk", opts: ["Walk 🏃", "Eat 🍎", "Smell 👃"] },
+                { q: "I see with?", t: "Eyes", opts: ["Eyes 👀", "Ears 👂", "Nose 👃"] }
+            ]},
+            { id: 2, title: "Body Builder", icon: "🧠", type: "drag", items: [
+                { name: "Eye", icon: "👀" }, { name: "Hand", icon: "✋" }, { name: "Leg", icon: "🦶" }, { name: "Nose", icon: "👃" }
+            ]},
+            { id: 3, title: "Sense Detective", icon: "🕵️", type: "match", data: [
+                { q: "Smell Flower?", t: "Nose", opts: ["Nose 👃", "Ear 👂"] },
+                { q: "Taste Icecream?", t: "Tongue", opts: ["Tongue 👅", "Hand ✋"] },
+                { q: "Hear Music?", t: "Ear", opts: ["Ear 👂", "Eye 👀"] }
+            ]},
+            { id: 4, title: "Healthy Race", icon: "🪥", type: "choice", data: [
+                { q: "Morning First?", a: "Brush 🪥", w: "Sleep 😴" },
+                { q: "Before Eating?", a: "Wash Hands 🧼", w: "Play 🏏" },
+                { q: "Dirty Nails?", a: "Cut ✂️", w: "Paint 💅" }
+            ]},
+            { id: 5, title: "Family House", icon: "🏡", type: "drag", items: [
+                { name: "Mom", icon: "👩" }, { name: "Dad", icon: "👨" }, { name: "Grandpa", icon: "👴" }, { name: "Baby", icon: "👶" }
+            ]},
+            { id: 6, title: "Match City", icon: "🏘️", type: "match", data: [
+                { q: "Who teaches?", t: "Teacher", opts: ["Teacher 👩‍🏫", "Doctor 👨‍⚕️"] },
+                { q: "Who catches thieves?", t: "Police", opts: ["Police 👮", "Farmer 👨‍🌾"] }
+            ]},
+            { id: 7, title: "Helper Mission", icon: "🦸", type: "match", data: [
+                { q: "I am sick. Who helps?", t: "Doctor", opts: ["Doctor 👨‍⚕️", "Cobbler 👞"] },
+                { q: "I need food. Who grows?", t: "Farmer", opts: ["Farmer 👨‍🌾", "Barber 💇"] }
+            ]},
+            { id: 8, title: "Sweet Home", icon: "🏠", type: "drag", items: [
+                { name: "Bed", icon: "🛏️" }, { name: "Sofa", icon: "🛋️" }, { name: "Stove", icon: "🍳" }, { name: "Tub", icon: "🛁" }
+            ]},
+            { id: 9, title: "School Explorer", icon: "🏫", type: "choice", data: [
+                { q: "Where to read books?", a: "Library 📚", w: "Canteen 🍔" },
+                { q: "Throw trash where?", a: "Dustbin 🗑️", w: "Floor 👇" }
+            ]},
+            { id: 10, title: "Sorting Things", icon: "🧺", type: "drag", items: [
+                { name: "Book", icon: "📘" }, { name: "Ball", icon: "⚽" }, { name: "Shirt", icon: "👕" }, { name: "Apple", icon: "🍎" }
+            ]},
+            { id: 11, title: "Green World", icon: "🌳", type: "choice", data: [
+                { q: "Big & Strong Plant?", a: "Tree 🌳", w: "Herb 🌱" },
+                { q: "Rose plant is a?", a: "Shrub 🌹", w: "Tree 🌴" }
+            ]},
+            { id: 12, title: "Plant Lab", icon: "🌱", type: "drag", items: [
+                { name: "Root", icon: "🟤" }, { name: "Stem", icon: "🌿" }, { name: "Leaf", icon: "🍃" }, { name: "Flower", icon: "🌻" }
+            ]},
+            { id: 13, title: "Plant Factory", icon: "🏭", type: "match", data: [
+                { q: "Plant gives us?", t: "Fruit", opts: ["Fruit 🍎", "Plastic 🥤"] },
+                { q: "Bees love?", t: "Flower", opts: ["Flower 🌸", "Root 🥔"] }
+            ]},
+            { id: 14, title: "Animal Kingdom", icon: "🦁", type: "choice", data: [
+                { q: "King of Jungle?", a: "Lion 🦁", w: "Dog 🐶" },
+                { q: "Gives Milk?", a: "Cow 🐮", w: "Cat 🐱" }
+            ]},
+            { id: 15, title: "Home Maze", icon: "🕸️", type: "drag", items: [
+                { name: "Bird", icon: "🐦" }, { name: "Lion", icon: "🦁" }, { name: "Dog", icon: "🐶" }, { name: "Bee", icon: "🐝" }
+            ]},
+            { id: 16, title: "Baby Memory", icon: "🐾", type: "memory", pairs: ["🐶", "🐶", "🐱", "🐱", "🐮", "🐮"] },
+            { id: 17, title: "Food Plate", icon: "🍎", type: "choice", data: [
+                { q: "Healthy?", a: "Carrot 🥕", w: "Candy 🍬" },
+                { q: "Drink this?", a: "Milk 🥛", w: "Cola 🥤" }
+            ]},
+            { id: 18, title: "Water Hero", icon: "💧", type: "choice", data: [
+                { q: "Save water?", a: "Close Tap 🚰", w: "Shower 🚿" },
+                { q: "Drink?", a: "Clean Water 🥤", w: "Dirty Water 🤢" }
+            ]},
+            { id: 19, title: "Traffic Town", icon: "🚦", type: "match", data: [
+                { q: "Red Light means?", t: "Stop", opts: ["Stop 🛑", "Go 🟢"] },
+                { q: "Walk on?", t: "Footpath 🚶", opts: ["Road 🛣️", "Water 🌊"] }
+            ]},
+            { id: 20, title: "Weather Safe", icon: "🌦️", type: "drag", items: [
+                { name: "Rain", icon: "☔" }, { name: "Cold", icon: "🧥" }, { name: "Hot", icon: "🍦" }, { name: "Sun", icon: "🕶️" }
+            ]}
+        ];
+
+        // ==========================================
+        // 2. STATE MANAGEMENT
+        // ==========================================
+        let currentGame = null;
+        let gameScore = 0;
+        let selectedDragItem = null;
+
+        // --- Init ---
+        window.onload = function() {
+            renderGameList();
+        };
+
+        // --- Navigation ---
+        function navTo(view) {
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            if(view === 'games') {
+                document.getElementById('view-games').classList.remove('hidden');
+                document.getElementById('view-other').classList.add('hidden');
+                document.getElementById('view-arena').classList.add('hidden');
+            } else if (view === 'home') {
+                alert("Home View would go here in full app");
+            } else {
+                document.getElementById('view-games').classList.add('hidden');
+                document.getElementById('view-other').classList.remove('hidden');
+                document.getElementById('view-arena').classList.add('hidden');
+            }
+        }
+
+        // --- Render Menu ---
+        function renderGameList() {
+            const grid = document.getElementById('game-list');
+            grid.innerHTML = '';
+            GAMES.forEach(game => {
+                const card = document.createElement('div');
+                card.className = 'game-card';
+                card.innerHTML = `
+                    <span class="g-badge">New</span>
+                    <span class="g-icon">${game.icon}</span>
+                    <div class="g-title">${game.id}. ${game.title}</div>
+                `;
+                card.onclick = () => launchGame(game);
+                grid.appendChild(card);
+            });
+        }
+
+        // ==========================================
+        // 3. GAME ENGINE
+        // ==========================================
+        
+        function launchGame(game) {
+            currentGame = game;
+            gameScore = 0;
+            document.getElementById('score').innerText = "0";
+            document.getElementById('view-games').classList.add('hidden');
+            document.getElementById('view-arena').classList.remove('hidden');
+            
+            // Render specific engine
+            if(game.type === 'match') renderMatchGame(game);
+            else if(game.type === 'drag') renderDragGame(game);
+            else if(game.type === 'choice') renderChoiceGame(game);
+            else if(game.type === 'memory') renderMemoryGame(game);
+            
+            speak(`Welcome to ${game.title}. Let's play!`);
+        }
+
+        function exitGame() {
+            document.getElementById('view-arena').classList.add('hidden');
+            document.getElementById('view-games').classList.remove('hidden');
+            window.speechSynthesis.cancel();
+        }
+
+        // --- ENGINE A: MATCH / QUIZ ---
+        function renderMatchGame(game) {
+            const board = document.getElementById('game-board');
+            let qIndex = 0;
+
+            function nextQ() {
+                if(qIndex >= game.data.length) { showResult(); return; }
+                const item = game.data[qIndex];
+                document.getElementById('game-instruction').innerText = item.q;
+                speak(item.q);
+
+                board.innerHTML = '';
+                item.opts.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'choice-btn';
+                    btn.innerText = opt;
+                    btn.onclick = () => {
+                        if(opt.includes(item.t)) {
+                            playSound('win');
+                            gameScore += 10;
+                            document.getElementById('score').innerText = gameScore;
+                            btn.style.background = 'var(--secondary)';
+                            setTimeout(() => { qIndex++; nextQ(); }, 1000);
+                        } else {
+                            playSound('lose');
+                            btn.style.background = 'var(--tertiary)';
+                            speak("Try again");
+                        }
+                    };
+                    board.appendChild(btn);
+                });
+            }
+            nextQ();
+        }
+
+        // --- ENGINE B: DRAG (CLICK TO MATCH) ---
+        function renderDragGame(game) {
+            const board = document.getElementById('game-board');
+            document.getElementById('game-instruction').innerText = "Tap item, then tap box!";
+            speak("Tap the item, then tap the correct box.");
+            
+            let matchedCount = 0;
+            board.innerHTML = `
+                <div class="drop-zone-container" id="zones"></div>
+                <div class="item-pool" id="pool"></div>
+            `;
+
+            // Create Zones
+            game.items.forEach(item => {
+                const z = document.createElement('div');
+                z.className = 'drop-zone';
+                z.innerText = item.name; // Label
+                z.dataset.target = item.name;
+                z.onclick = () => handleDrop(z);
+                document.getElementById('zones').appendChild(z);
+            });
+
+            // Create Items
+            game.items.forEach(item => {
+                const d = document.createElement('div');
+                d.className = 'draggable';
+                d.innerText = item.icon;
+                d.dataset.name = item.name;
+                d.onclick = () => handleSelect(d);
+                document.getElementById('pool').appendChild(d);
+            });
+
+            function handleSelect(el) {
+                document.querySelectorAll('.draggable').forEach(d => d.classList.remove('selected'));
+                el.classList.add('selected');
+                selectedDragItem = el;
+                playSound('pop');
+            }
+
+            function handleDrop(zone) {
+                if(!selectedDragItem) return;
+                if(selectedDragItem.dataset.name === zone.dataset.target) {
+                    // Correct
+                    zone.innerHTML = selectedDragItem.innerText; // Move icon to zone
+                    zone.classList.add('filled');
+                    selectedDragItem.remove();
+                    selectedDragItem = null;
+                    playSound('win');
+                    gameScore += 10;
+                    document.getElementById('score').innerText = gameScore;
+                    matchedCount++;
+                    if(matchedCount === game.items.length) setTimeout(showResult, 1000);
+                } else {
+                    playSound('lose');
+                    speak("Not there!");
+                }
+            }
+        }
+
+        // --- ENGINE C: CHOICE (Binary) ---
+        function renderChoiceGame(game) {
+            // Re-using Match logic as it is structurally same (Q -> Correct/Wrong)
+            renderMatchGame({
+                ...game,
+                data: game.data.map(d => ({ q: d.q, t: d.a.split(" ")[0], opts: [d.a, d.w].sort(()=>Math.random()-0.5) }))
+            });
+        }
+
+        // --- ENGINE D: MEMORY ---
+        function renderMemoryGame(game) {
+            const board = document.getElementById('game-board');
+            document.getElementById('game-instruction').innerText = "Find matching pairs!";
+            speak("Tap cards to find matching pairs.");
+            
+            let cards = [...game.pairs].sort(() => Math.random() - 0.5);
+            board.innerHTML = '<div class="memory-grid" id="mem-grid"></div>';
+            
+            let firstCard = null;
+            let pairsFound = 0;
+
+            cards.forEach((symbol, idx) => {
+                const c = document.createElement('div');
+                c.className = 'mem-card';
+                c.dataset.val = symbol;
+                c.innerText = symbol;
+                c.onclick = () => flipCard(c);
+                document.getElementById('mem-grid').appendChild(c);
+            });
+
+            function flipCard(card) {
+                if(card.classList.contains('flipped') || card.classList.contains('matched')) return;
+                
+                card.classList.add('flipped');
+                playSound('pop');
+
+                if(!firstCard) {
+                    firstCard = card;
+                } else {
+                    // Check Match
+                    if(firstCard.dataset.val === card.dataset.val) {
+                        firstCard.classList.add('matched');
+                        card.classList.add('matched');
+                        firstCard = null;
+                        gameScore += 20;
+                        document.getElementById('score').innerText = gameScore;
+                        playSound('win');
+                        pairsFound++;
+                        if(pairsFound === game.pairs.length / 2) setTimeout(showResult, 1000);
+                    } else {
+                        // Reset
+                        setTimeout(() => {
+                            firstCard.classList.remove('flipped');
+                            card.classList.remove('flipped');
+                            firstCard = null;
+                        }, 800);
+                    }
+                }
+            }
+        }
+
+        // ==========================================
+        // 4. UTILITIES (AUDIO & MODALS)
+        // ==========================================
+
+        function speak(text) {
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = 'en-IN'; // Indian English
+            u.rate = 0.9;
+            u.pitch = 1.1; // Slightly higher pitch for kids
+            window.speechSynthesis.speak(u);
+        }
+
+        function speakInstruction() {
+            speak(document.getElementById('game-instruction').innerText);
+        }
+
+        function playSound(type) {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            
+            if(type === 'win') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523, ctx.currentTime); // C5
+                osc.frequency.exponentialRampToValueAtTime(1046, ctx.currentTime + 0.1); // C6
+                gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                osc.start(); osc.stop(ctx.currentTime + 0.3);
+            } else if (type === 'lose') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(200, ctx.currentTime);
+                osc.frequency.linearRampToValueAtTime(100, ctx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+                osc.start(); osc.stop(ctx.currentTime + 0.2);
+            } else {
+                // Pop
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, ctx.currentTime);
+                gain.gain.setValueAtTime(0.05, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+                osc.start(); osc.stop(ctx.currentTime + 0.1);
+            }
+        }
+
+        function showResult() {
+            document.getElementById('result-modal').classList.remove('hidden');
+            playSound('win');
+            speak("Maza aa gaya! Great job!");
+        }
+
+        function closeModal() {
+            document.getElementById('result-modal').classList.add('hidden');
+            exitGame();
+        }
+
+    </script>
+</body>
+</html>

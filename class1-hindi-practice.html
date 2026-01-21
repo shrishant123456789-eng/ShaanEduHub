@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 1 Hindi - Practice & Assessment | Designed by Shrishant Yadav</title>
+    <style>
+        /* --- 1. CSS VARIABLES & THEME --- */
+        :root {
+            --primary: #FF5722;   /* Orange */
+            --secondary: #4CAF50; /* Green */
+            --accent: #2196F3;    /* Blue */
+            --purple: #9C27B0;
+            --yellow: #FFC107;
+            --bg-color: #FFF3E0;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding-bottom: 70px; /* Space for footer */
+            min-height: 100vh;
+        }
+
+        /* --- 2. HEADER --- */
+        header {
+            background: linear-gradient(135deg, var(--primary), #FF9800);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            border-bottom-left-radius: 25px;
+            border-bottom-right-radius: 25px;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header h1 { font-size: 1.5rem; margin: 0; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
+        header p { font-size: 0.9rem; opacity: 0.9; margin-top: 5px; }
+
+        /* --- 3. VIEWS CONTROL --- */
+        .view-section { display: none; padding: 20px; max-width: 800px; margin: 0 auto; }
+        .view-section.active { display: block; animation: fadeIn 0.5s; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- 4. CHAPTER GRID (HOME) --- */
+        .chapter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .chapter-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            border-bottom: 5px solid #ddd;
+            transition: transform 0.2s;
+        }
+
+        .chapter-card:active { transform: scale(0.95); border-bottom-width: 2px; }
+        
+        /* Dynamic Colors for cards */
+        .chapter-card:nth-child(4n+1) { border-color: var(--primary); color: var(--primary); }
+        .chapter-card:nth-child(4n+2) { border-color: var(--secondary); color: var(--secondary); }
+        .chapter-card:nth-child(4n+3) { border-color: var(--accent); color: var(--accent); }
+        .chapter-card:nth-child(4n+4) { border-color: var(--purple); color: var(--purple); }
+
+        .chap-icon { font-size: 2.5rem; display: block; margin-bottom: 10px; }
+        .chap-title { font-weight: bold; font-size: 1.1rem; }
+        .chap-info { font-size: 0.8rem; color: #777; margin-top: 5px; }
+
+        /* --- 5. GAME PLAY AREA --- */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff;
+            padding: 10px 15px;
+            border-radius: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--secondary);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .question-box {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .q-img { font-size: 4rem; display: block; margin-bottom: 10px; }
+        .q-text { font-size: 1.5rem; font-weight: bold; color: #444; }
+
+        .speak-btn {
+            background: var(--yellow);
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 3px 0 #FBC02D;
+            margin-top: 10px;
+        }
+
+        /* OPTIONS GRID */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .option-btn {
+            background: white;
+            border: 2px solid #eee;
+            border-radius: 15px;
+            padding: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 4px 0 #ddd;
+        }
+
+        .option-btn:active { transform: translateY(4px); box-shadow: none; }
+        
+        .option-btn.correct { background: #C8E6C9; border-color: var(--secondary); box-shadow: 0 4px 0 #2E7D32; color: #1B5E20; }
+        .option-btn.wrong { background: #FFCDD2; border-color: var(--primary); box-shadow: 0 4px 0 #C62828; color: #B71C1C; }
+        .option-btn.disabled { pointer-events: none; opacity: 0.7; }
+
+        /* --- 6. RESULT SCREEN --- */
+        .result-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            margin-top: 20px;
+        }
+
+        .big-stars { font-size: 3rem; color: gold; margin: 10px 0; }
+        .score-circle {
+            width: 100px; height: 100px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0 auto 20px;
+            border: 5px solid #BBDEFB;
+        }
+
+        .action-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin: 10px;
+            box-shadow: 0 4px 0 #D84315;
+        }
+        
+        .action-btn.home { background: var(--secondary); box-shadow: 0 4px 0 #388E3C; }
+
+        /* --- 7. FOOTER --- */
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: #212121;
+            color: white;
+            text-align: center;
+            padding: 12px;
+            font-size: 0.8rem;
+            z-index: 2000;
+        }
+
+        /* --- 8. ANIMATIONS & CONFETTI --- */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        .shake { animation: shake 0.4s; }
+
+        /* Simple Confetti using CSS Particles (Simulated) */
+        .confetti-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: none; z-index: 9999; }
+        .particle { position: absolute; width: 10px; height: 10px; background: red; animation: fall linear forwards; }
+        @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .options-grid { grid-template-columns: 1fr; } /* Stack on mobile */
+            .q-img { font-size: 3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>अभ्यास और परीक्षा (Practice)</h1>
+        <p>Class 1 Hindi - 500+ Questions</p>
+    </header>
+
+    <div id="view-home" class="view-section active">
+        <h2 style="text-align:center; color:#555;">कोई एक पाठ चुनें:</h2>
+        <div class="chapter-grid" id="chapter-list">
+            </div>
+    </div>
+
+    <div id="view-game" class="view-section">
+        <div class="top-bar">
+            <span onclick="goHome()" style="cursor:pointer;">🏠 होम</span>
+            <span>⭐ <span id="game-stars">0</span></span>
+            <span>✅ <span id="game-score">0</span></span>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+
+        <div class="question-box" id="q-box">
+            <span class="q-img" id="q-image">🦁</span>
+            <div class="q-text" id="q-text">सवाल लोड हो रहा है...</div>
+            <button class="speak-btn" onclick="speakCurrentQ()">🔊</button>
+        </div>
+
+        <div class="options-grid" id="options-area">
+            </div>
+        
+        <div id="feedback-msg" style="text-align:center; margin-top:15px; font-weight:bold; min-height:24px;"></div>
+    </div>
+
+    <div id="view-result" class="view-section">
+        <div class="result-card">
+            <h1 id="result-title">बहुत बढ़िया! 🎉</h1>
+            <div class="big-stars" id="result-stars">⭐⭐⭐</div>
+            
+            <div class="score-circle">
+                <span id="result-percent">80%</span>
+            </div>
+
+            <div style="display:flex; justify-content:space-around; margin-bottom:20px; font-weight:bold; color:#555;">
+                <span>कुल: <span id="res-total">10</span></span>
+                <span style="color:green;">सही: <span id="res-right">8</span></span>
+                <span style="color:red;">गलत: <span id="res-wrong">2</span></span>
+            </div>
+
+            <button class="action-btn" onclick="restartChapter()">🔄 फिर से करें</button>
+            <button class="action-btn home" onclick="goHome()">🏠 होम पर जाएँ</button>
+        </div>
+    </div>
+
+    <div id="confetti" class="confetti-container"></div>
+
+    <footer>
+        Designed & Created by SHRISHANT YADAV | Class 1 Hindi - Practice Section
+    </footer>
+
+    <script>
+        // --- 1. DATA DATABASE (500+ Question Capacity Structure) ---
+        // I have added sample questions. You can copy-paste objects to reach 500.
+        
+        const questionBank = {
+            1: {
+                title: "वर्णमाला (Alphabet)", icon: "🅰️",
+                questions: [
+                    { q: "‘क’ से क्या होता है?", img: "🕊️", opts: ["कबूतर", "खरगोश", "गमला", "घड़ी"], ans: "कबूतर" },
+                    { q: "स्वर पहचानें:", img: "🗣️", opts: ["क", "अ", "म", "ल"], ans: "अ" },
+                    { q: "चित्र का पहला अक्षर क्या है?", img: "🍎", opts: ["स", "अ", "प", "क"], ans: "स" }, // Seb
+                    { q: "व्यंजन पहचानें:", img: "🧩", opts: ["इ", "उ", "ख", "ए"], ans: "ख" },
+                    { q: "‘म’ के बाद क्या आता है?", img: "⏭️", opts: ["य", "र", "ल", "व"], ans: "य" },
+                    { q: "‘अ’ से...?", img: "❓", opts: ["अनार", "आम", "इमली", "ईख"], ans: "अनार" },
+                    { q: "‘ट’ से...?", img: "🍅", opts: ["टमाटर", "ठठेरा", "डमरू", "ढक्कन"], ans: "टमाटर" },
+                    { q: "इनमें से अलग क्या है?", img: "🤔", opts: ["क", "ख", "ग", "अ"], ans: "अ" },
+                    { q: "‘त्र’ क्या है?", img: "🔱", opts: ["स्वर", "व्यंजन", "संयुक्त", "मात्रा"], ans: "संयुक्त" },
+                    { q: "सही अक्षर चुनें: 🦉", img: "🦉", opts: ["उ", "ऊ", "ओ", "औ"], ans: "उ" }
+                    // Add 40 more here...
+                ]
+            },
+            2: {
+                title: "मात्रा ज्ञान (Matras)", icon: "🧩",
+                questions: [
+                    { q: "‘क’ + ‘ा’ = ?", img: "➕", opts: ["कि", "का", "कु", "के"], ans: "का" },
+                    { q: "किस शब्द में ‘इ’ (छोटी) की मात्रा है?", img: "🔍", opts: ["दिन", "दीन", "दान", "दोन"], ans: "दिन" },
+                    { q: "‘केला’ में कौन सी मात्रा है?", img: "🍌", opts: ["ए", "ऐ", "ओ", "औ"], ans: "ए" },
+                    { q: "‘सूरज’ में ‘स’ पर मात्रा?", img: "☀️", opts: ["ू", "ु", "ो", "ा"], ans: "ू" },
+                    { q: "सही शब्द चुनें:", img: "✅", opts: ["किताब", "कीताब", "केताब", "कुताब"], ans: "किताब" },
+                    { q: "‘पैर’ में कौन सी मात्रा है?", img: "🦶", opts: ["े", "ै", "ो", "ौ"], ans: "ै" },
+                    { q: "‘मोर’ शब्द में मात्रा?", img: "🦚", opts: ["ो", "ौ", "ा", "ी"], ans: "ो" },
+                    { q: "‘गुलाब’ में ‘ग’ पर मात्रा?", img: "🌹", opts: ["ु", "ू", "ो", "इ"], ans: "ु" },
+                    { q: "‘वृक्ष’ में मात्रा?", img: "🌳", opts: ["ृ", "्र", "र", "ि"], ans: "ृ" },
+                    { q: "‘प्रातः’ में चिन्ह?", img: "☀️", opts: ["अं", "अः", "आ", "ओ"], ans: "अः" }
+                    // Add 40 more here...
+                ]
+            },
+            3: {
+                title: "शब्द ज्ञान (Vocabulary)", icon: "📖",
+                questions: [
+                    { q: "राजा का घर?", img: "🏰", opts: ["महल", "झोपड़ी", "गुफा", "सड़क"], ans: "महल" },
+                    { q: "जल का मतलब?", img: "💧", opts: ["पानी", "आग", "हवा", "मिट्टी"], ans: "पानी" },
+                    { q: "हम किससे देखते हैं?", img: "👀", opts: ["आँख", "कान", "नाक", "जीभ"], ans: "आँख" },
+                    { q: "स्कूल में हम क्या करते हैं?", img: "🏫", opts: ["पढ़ते हैं", "सोते हैं", "नहाते हैं", "तैरते हैं"], ans: "पढ़ते हैं" },
+                    { q: "फल कौन सा है?", img: "🍎", opts: ["सेब", "आलू", "मटर", "बैंगन"], ans: "सेब" },
+                    { q: "सब्जी कौन सी है?", img: "🥦", opts: ["आम", "गोभी", "केला", "अंगूर"], ans: "गोभी" },
+                    { q: "जानवर कौन है?", img: "🦁", opts: ["शेर", "तोता", "मछली", "मोर"], ans: "शेर" },
+                    { q: "पक्षी कौन है?", img: "🦜", opts: ["हाथी", "कबूतर", "कुत्ता", "बिल्ली"], ans: "कबूतर" },
+                    { q: "रंग पहचानो: 🔴", img: "🔴", opts: ["लाल", "हरा", "नीला", "पीला"], ans: "लाल" },
+                    { q: "रंग पहचानो: 🟢", img: "🟢", opts: ["हरा", "लाल", "काला", "सफेद"], ans: "हरा" }
+                    // Add more...
+                ]
+            },
+            4: {
+                title: "व्याकरण (Grammar)", icon: "⚖️",
+                questions: [
+                    { q: "लड़का का स्त्रीलिंग?", img: "👧", opts: ["लड़की", "माता", "बहन", "चाची"], ans: "लड़की" },
+                    { q: "एक: केला -> अनेक: ?", img: "🍌", opts: ["केले", "केली", "केलो", "कल"], ans: "केले" },
+                    { q: "दिन का उल्टा?", img: "☀️", opts: ["रात", "सुबह", "शाम", "दोपहर"], ans: "रात" },
+                    { q: "नाम वाले शब्द को क्या कहते हैं?", img: "🏷️", opts: ["संज्ञा", "क्रिया", "वचन", "लिंग"], ans: "संज्ञा" },
+                    { q: "काम वाले शब्द को क्या कहते हैं?", img: "🏃", opts: ["क्रिया", "संज्ञा", "सर्वनाम", "विशेषण"], ans: "क्रिया" },
+                    { q: "राजा का स्त्रीलिंग?", img: "👑", opts: ["रानी", "दासी", "बेटी", "माता"], ans: "रानी" },
+                    { q: "मोटा का उल्टा?", img: "↔️", opts: ["पतला", "बड़ा", "छोटा", "भारी"], ans: "पतला" },
+                    { q: "अच्छा का विलोम?", img: "👍", opts: ["बुरा", "साफ", "गंदा", "सही"], ans: "बुरा" },
+                    { q: "पानी का पर्यायवाची?", img: "💧", opts: ["जल", "आग", "वायु", "धरा"], ans: "जल" },
+                    { q: "पेड़ पर कौन बैठा है?", img: "🐵", opts: ["बंदर", "मछली", "हाथी", "गाय"], ans: "बंदर" }
+                ]
+            },
+            5: {
+                title: "वाक्य (Sentences)", icon: "🗣️",
+                questions: [
+                    { q: "सही वाक्य चुनें:", img: "✅", opts: ["राम घर जाता है", "राम जाता घर है"], ans: "राम घर जाता है" },
+                    { q: "मैं ____ हूँ।", img: "👦", opts: ["पढ़ता", "उड़ता", "तैरता", "काटता"], ans: "पढ़ता" },
+                    { q: "मछली ____ में रहती है।", img: "🐟", opts: ["पानी", "पेड़", "हवा", "आग"], ans: "पानी" },
+                    { q: "तोता ____ रंग का है।", img: "🦜", opts: ["हरा", "लाल", "नीला", "काला"], ans: "हरा" },
+                    { q: "सूरज ____ है।", img: "☀️", opts: ["गर्म", "ठंडा", "गीला", "कड़वा"], ans: "गर्म" }
+                ]
+            },
+            6: {
+                title: "सामान्य ज्ञान (GK)", icon: "🧠",
+                questions: [
+                    { q: "फलों का राजा?", img: "👑", opts: ["आम", "सेब", "केला", "अनार"], ans: "आम" },
+                    { q: "हफ्ते में कितने दिन?", img: "📅", opts: ["7", "10", "12", "5"], ans: "7" },
+                    { q: "तिरंगे में कितने रंग?", img: "🇮🇳", opts: ["3", "4", "2", "5"], ans: "3" },
+                    { q: "बापू कौन हैं?", img: "👓", opts: ["गांधी जी", "नेहरू जी"], ans: "गांधी जी" },
+                    { q: "दिवाली पर क्या जलाते हैं?", img: "🪔", opts: ["दीये", "पानी", "कागज", "कपड़े"], ans: "दीये" }
+                ]
+            },
+            7: {
+                title: "पहेलियाँ (Puzzles)", icon: "🧩",
+                questions: [
+                    { q: "कटोरे पे कटोरा, बेटा बाप से गोरा?", img: "🥥", opts: ["नारियल", "आम"], ans: "नारियल" },
+                    { q: "तीन अक्षर का मेरा नाम, उल्टा सीधा एक समान?", img: "🚘", opts: ["जहाज", "कार"], ans: "जहाज" },
+                    { q: "रोज सुबह आता हूँ, दुनिया को जगाता हूँ?", img: "☀️", opts: ["सूरज", "चाँद"], ans: "सूरज" },
+                    { q: "हरी थी मन भरी थी, मोतियों से जड़ी थी?", img: "🌽", opts: ["भुट्टा", "मटर"], ans: "भुट्टा" },
+                    { q: "मामा किसे कहते हैं?", img: "🌙", opts: ["चंदा", "सूरज"], ans: "चंदा" }
+                ]
+            },
+            8: {
+                title: "कहानी (Story Quiz)", icon: "📚",
+                questions: [
+                    { q: "कौआ कैसा था?", img: "🦅", opts: ["प्यासा", "भूखा"], ans: "प्यासा" },
+                    { q: "कछुआ और खरगोश में कौन जीता?", img: "🐢", opts: ["कछुआ", "खरगोश"], ans: "कछुआ" },
+                    { q: "अंगूर कैसे थे?", img: "🍇", opts: ["खट्टे", "मीठे"], ans: "खट्टे" },
+                    { q: "शेर को किसने बचाया?", img: "🦁", opts: ["चूहे ने", "हाथी ने"], ans: "चूहे ने" },
+                    { q: "बंदर और मगरमच्छ दोस्त थे?", img: "🐊", opts: ["हाँ", "नहीं"], ans: "हाँ" }
+                ]
+            },
+            9: {
+                title: "सही/गलत (True/False)", icon: "⚖️",
+                questions: [
+                    { q: "सूरज रात में निकलता है।", img: "🌙", opts: ["गलत", "सही"], ans: "गलत" },
+                    { q: "मछली उड़ती है।", img: "🐟", opts: ["गलत", "सही"], ans: "गलत" },
+                    { q: "बर्फ ठंडी होती है।", img: "🧊", opts: ["सही", "गलत"], ans: "सही" },
+                    { q: "हाथी बहुत छोटा होता है।", img: "🐘", opts: ["गलत", "सही"], ans: "गलत" },
+                    { q: "हमें सच बोलना चाहिए।", img: "✅", opts: ["सही", "गलत"], ans: "सही" }
+                ]
+            },
+            10: {
+                title: "मिश्रित अभ्यास (Mix)", icon: "🎲",
+                questions: [
+                    { q: "अ + ज + ग + र = ?", img: "🐍", opts: ["अजगर", "अदरक"], ans: "अजगर" },
+                    { q: "कौन सा रंग लाल है?", img: "🔴", opts: ["सेब", "पत्ता"], ans: "सेब" },
+                    { q: "10 के बाद क्या आता है?", img: "🔢", opts: ["11", "9"], ans: "11" },
+                    { q: "हवा हमें दिखती है?", img: "🌬️", opts: ["नहीं", "हाँ"], ans: "नहीं" },
+                    { q: "कान से हम क्या करते हैं?", img: "👂", opts: ["सुनते हैं", "देखते हैं"], ans: "सुनते हैं" }
+                ]
+            }
+        };
+
+        // --- 2. GAME VARIABLES ---
+        let currentChapter = null;
+        let currentQuestions = [];
+        let currentIndex = 0;
+        let score = 0;
+        let wrong = 0;
+        let stars = 0;
+
+        // --- 3. INIT & NAVIGATION ---
+        window.onload = function() {
+            renderChapters();
+        };
+
+        function showView(viewId) {
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        function goHome() {
+            showView('view-home');
+            document.getElementById('confetti').style.display = 'none';
+        }
+
+        function renderChapters() {
+            const list = document.getElementById('chapter-list');
+            list.innerHTML = "";
+            for (let id in questionBank) {
+                const chap = questionBank[id];
+                list.innerHTML += `
+                    <div class="chapter-card" onclick="startChapter(${id})">
+                        <span class="chap-icon">${chap.icon}</span>
+                        <div class="chap-title">${chap.title}</div>
+                        <div class="chap-info">${chap.questions.length}+ प्रश्न</div>
+                    </div>
+                `;
+            }
+        }
+
+        // --- 4. GAME LOGIC ---
+        function startChapter(id) {
+            currentChapter = id;
+            // Get questions and shuffle them
+            currentQuestions = [...questionBank[id].questions].sort(() => Math.random() - 0.5);
+            
+            // Limit to 50 questions per session if pool is huge
+            if(currentQuestions.length > 50) currentQuestions = currentQuestions.slice(0, 50);
+
+            currentIndex = 0;
+            score = 0;
+            wrong = 0;
+            stars = 0;
+            
+            updateTopBar();
+            showView('view-game');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentIndex >= currentQuestions.length) {
+                endGame();
+                return;
+            }
+
+            const q = currentQuestions[currentIndex];
+            
+            // UI Update
+            document.getElementById('q-image').innerText = q.img || "❓";
+            document.getElementById('q-text').innerText = q.q;
+            document.getElementById('feedback-msg').innerText = "";
+            
+            // Progress Bar
+            let pct = (currentIndex / currentQuestions.length) * 100;
+            document.getElementById('progress-bar').style.width = pct + "%";
+
+            // Options (Shuffle)
+            const optsArea = document.getElementById('options-area');
+            optsArea.innerHTML = "";
+            
+            let shuffledOpts = [...q.opts].sort(() => Math.random() - 0.5);
+            
+            shuffledOpts.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(btn, opt, q.ans);
+                optsArea.appendChild(btn);
+            });
+            
+            // Auto-speak question (Optional, disabled by default to avoid noise spam)
+            // speak(q.q); 
+        }
+
+        function checkAnswer(btn, selected, correct) {
+            // Disable all buttons
+            const allBtns = document.querySelectorAll('.option-btn');
+            allBtns.forEach(b => b.classList.add('disabled'));
+
+            const fb = document.getElementById('feedback-msg');
+
+            if (selected === correct) {
+                btn.classList.add('correct');
+                score++;
+                stars += 3; // Basic Star Logic
+                fb.innerText = "✅ सही जवाब! (Correct)";
+                fb.style.color = "green";
+                speak("सही");
+            } else {
+                btn.classList.add('wrong');
+                wrong++;
+                fb.innerText = "❌ गलत! सही उत्तर: " + correct;
+                fb.style.color = "red";
+                // Show shake animation
+                document.getElementById('q-box').classList.add('shake');
+                setTimeout(()=>document.getElementById('q-box').classList.remove('shake'), 400);
+                speak("गलत");
+                
+                // Highlight correct
+                allBtns.forEach(b => {
+                    if(b.innerText === correct) b.classList.add('correct');
+                });
+            }
+
+            updateTopBar();
+
+            // Next Question Delay
+            setTimeout(() => {
+                currentIndex++;
+                loadQuestion();
+            }, 1500);
+        }
+
+        function updateTopBar() {
+            document.getElementById('game-score').innerText = score;
+            document.getElementById('game-stars').innerText = stars;
+        }
+
+        function restartChapter() {
+            startChapter(currentChapter);
+        }
+
+        // --- 5. RESULT & GAMIFICATION ---
+        function endGame() {
+            showView('view-result');
+            
+            const total = currentQuestions.length;
+            const percent = Math.round((score / total) * 100);
+            
+            document.getElementById('res-total').innerText = total;
+            document.getElementById('res-right').innerText = score;
+            document.getElementById('res-wrong').innerText = wrong;
+            document.getElementById('result-percent').innerText = percent + "%";
+            
+            // Star Logic
+            let starDisplay = "⭐";
+            if(percent > 50) starDisplay = "⭐⭐";
+            if(percent > 80) starDisplay = "⭐⭐⭐";
+            if(percent === 100) starDisplay = "⭐⭐⭐⭐⭐";
+            
+            document.getElementById('result-stars').innerText = starDisplay;
+
+            // Message
+            const title = document.getElementById('result-title');
+            if(percent >= 80) {
+                title.innerText = "अद्भुत! (Amazing) 🎉";
+                startConfetti();
+            } else if(percent >= 50) {
+                title.innerText = "बहुत अच्छे! (Good Job)";
+            } else {
+                title.innerText = "फिर से कोशिश करो! (Try Again)";
+            }
+        }
+
+        // --- 6. UTILITIES ---
+        function speakCurrentQ() {
+            const txt = document.getElementById('q-text').innerText;
+            speak(txt);
+        }
+
+        function speak(text) {
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = 'hi-IN';
+            u.rate = 0.9;
+            window.speechSynthesis.speak(u);
+        }
+
+        // Simple Confetti Generator
+        function startConfetti() {
+            const container = document.getElementById('confetti');
+            container.style.display = 'block';
+            container.innerHTML = '';
+            
+            const colors = ['#f00', '#0f0', '#00f', '#ff0', '#0ff', '#f0f'];
+            
+            for(let i=0; i<50; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.left = Math.random() * 100 + 'vw';
+                p.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                p.style.background = colors[Math.floor(Math.random() * colors.length)];
+                container.appendChild(p);
+            }
+
+            setTimeout(() => {
+                container.style.display = 'none';
+            }, 4000);
+        }
+
+    </script>
+</body>
+</html>

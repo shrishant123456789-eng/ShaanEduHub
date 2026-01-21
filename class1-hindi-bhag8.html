@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 1 Hindi - भाग 8: श्रवण व वाचन | Designed by Shrishant Yadav</title>
+    <style>
+        /* --- CSS VARIABLES & THEME --- */
+        :root {
+            --primary-color: #00BCD4; /* Cyan */
+            --secondary-color: #FF4081; /* Pink */
+            --accent-color: #FFEB3B; /* Yellow */
+            --bg-color: #E0F7FA; /* Light Cyan */
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding-bottom: 80px; /* Space for footer */
+        }
+
+        /* --- HEADER --- */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), #0097A7);
+            color: white;
+            text-align: center;
+            padding: 25px 10px;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+            animation: slideIn 0.8s;
+        }
+
+        header p { font-size: 1rem; opacity: 0.95; }
+
+        /* --- CONTAINER --- */
+        .container {
+            max-width: 800px;
+            margin: 25px auto;
+            padding: 0 15px;
+        }
+
+        /* --- ACCORDION CHAPTERS --- */
+        .chapter-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+            overflow: hidden;
+            transition: transform 0.2s;
+            border-left: 6px solid var(--secondary-color);
+        }
+
+        .chapter-card:hover { transform: translateY(-3px); }
+
+        .chapter-header {
+            padding: 18px 20px;
+            background: #fff;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .chapter-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+            background: #FAFAFA;
+            padding: 0 20px;
+        }
+
+        .chapter-content.active {
+            padding: 20px;
+            max-height: 2000px;
+            border-top: 2px solid #eee;
+        }
+
+        /* --- LISTENING/SPEAKING UI --- */
+        .audio-box {
+            background: #FFFDE7;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border: 2px solid #FFF59D;
+            text-align: center;
+        }
+
+        .big-listen-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+            box-shadow: 0 4px 0 #00838F;
+            transition: 0.1s;
+        }
+
+        .big-listen-btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        .dialogue-box {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .dialogue-box.right {
+            flex-direction: row-reverse;
+        }
+
+        .avatar {
+            font-size: 2rem;
+            margin: 0 10px;
+        }
+
+        .bubble {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: relative;
+            max-width: 70%;
+        }
+
+        .bubble.user {
+            background: #E1F5FE;
+            border: 1px solid #B3E5FC;
+        }
+
+        /* --- PRACTICE SECTION --- */
+        .practice-section {
+            margin-top: 40px;
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 -5px 25px rgba(0,0,0,0.1);
+            border: 3px solid var(--secondary-color);
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-around;
+            background: #333;
+            color: white;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .question-area {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .q-text {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #444;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .listen-q-btn {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 1.8rem;
+            cursor: pointer;
+            animation: pulse 2s infinite;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .opt-btn {
+            padding: 15px;
+            background: #f5f5f5;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .opt-btn:active { transform: scale(0.98); }
+        .correct { background: #C8E6C9 !important; border-color: #4CAF50 !important; color: #1B5E20; }
+        .wrong { background: #FFCDD2 !important; border-color: #F44336 !important; color: #B71C1C; }
+
+        /* --- FOOTER --- */
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: #212121;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            font-size: 0.9rem;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(255, 64, 129, 0.4); }
+            100% { transform: scale(1); }
+        }
+
+        @media (min-width: 600px) {
+            .options-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>भाग 8: श्रवण व वाचन कौशल</h1>
+        <p>Listening & Speaking Skills</p>
+    </header>
+
+    <div class="container">
+
+        <div class="chapter-card">
+            <div class="chapter-header" onclick="toggleChapter('ch33')">
+                3️⃣3️⃣ कहानी सुनकर समझना
+                <span>▼</span>
+            </div>
+            <div id="ch33" class="chapter-content">
+                <p style="text-align:center; color:#666;">बटन दबाकर कहानी सुनें और प्रश्न का उत्तर दें।</p>
+                
+                <div class="audio-box">
+                    <h3>🐢 खरगोश और कछुआ</h3>
+                    <button class="big-listen-btn" onclick="speak('एक बार खरगोश और कछुए में दौड़ हुई। खरगोश तेज दौड़ा पर सो गया। कछुआ धीरे-धीरे चलता रहा और जीत गया।')">
+                        🔊 कहानी सुनें (Play)
+                    </button>
+                    <hr style="margin:10px 0; border:0; border-top:1px dashed #ccc;">
+                    <p><strong>प्रश्न: कौन जीता?</strong></p>
+                    <div style="display:flex; justify-content:center; gap:10px;">
+                        <button class="opt-btn" onclick="simpleFeedback(this, true)">🐢 कछुआ</button>
+                        <button class="opt-btn" onclick="simpleFeedback(this, false)">🐇 खरगोश</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="chapter-card">
+            <div class="chapter-header" onclick="toggleChapter('ch34')">
+                3️⃣4️⃣ कविता सुनकर दोहराना
+                <span>▼</span>
+            </div>
+            <div id="ch34" class="chapter-content">
+                <p style="text-align:center; color:#666;">सुनें और मेरे बाद बोलें (Repeat after me).</p>
+                
+                <div class="audio-box">
+                    <button class="big-listen-btn" onclick="speak('तितली उड़ी, बस में चढ़ी')">🔊 लाइन 1 सुनें</button>
+                    <p>तितली उड़ी, बस में चढ़ी</p>
+                </div>
+                <div class="audio-box">
+                    <button class="big-listen-btn" onclick="speak('सीट न मिली, तो रोने लगी')">🔊 लाइन 2 सुनें</button>
+                    <p>सीट न मिली, तो रोने लगी</p>
+                </div>
+                <div class="audio-box">
+                    <button class="big-listen-btn" onclick="speak('ड्राइवर ने कहा, आजा मेरे पास')">🔊 लाइन 3 सुनें</button>
+                    <p>ड्राइवर ने कहा, आजा मेरे पास</p>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="chapter-card">
+            <div class="chapter-header" onclick="toggleChapter('ch35')">
+                3️⃣5️⃣ मौखिक प्रश्न–उत्तर
+                <span>▼</span>
+            </div>
+            <div id="ch35" class="chapter-content">
+                <p style="text-align:center; color:#666;">कंप्यूटर प्रश्न पूछेगा, आप उत्तर सोचें।</p>
+
+                <div class="audio-box" style="border-left:5px solid var(--primary-color);">
+                    <button class="big-listen-btn" onclick="speak('आपका नाम क्या है?')">🔊 प्रश्न सुनें</button>
+                    <p>उत्तर बोलें: "मेरा नाम ____ है।"</p>
+                </div>
+
+                <div class="audio-box" style="border-left:5px solid var(--primary-color);">
+                    <button class="big-listen-btn" onclick="speak('आप किस कक्षा में पढ़ते हैं?')">🔊 प्रश्न सुनें</button>
+                    <p>उत्तर बोलें: "मैं कक्षा 1 में पढ़ता हूँ।"</p>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="chapter-card">
+            <div class="chapter-header" onclick="toggleChapter('ch36')">
+                3️⃣6️⃣ छोटी बातचीत (Conversation)
+                <span>▼</span>
+            </div>
+            <div id="ch36" class="chapter-content">
+                
+                <div class="dialogue-box">
+                    <span class="avatar">👩‍🏫</span>
+                    <div class="bubble">
+                        <span onclick="speak('सुप्रभात बच्चों!')">🔊 "सुप्रभात बच्चों!" (Good Morning)</span>
+                    </div>
+                </div>
+
+                <div class="dialogue-box right">
+                    <span class="avatar">🧒</span>
+                    <div class="bubble user">
+                        <span onclick="speak('सुप्रभात मैडम!')">🔊 "सुप्रभात मैडम!"</span>
+                    </div>
+                </div>
+
+                <div class="dialogue-box">
+                    <span class="avatar">👩‍🏫</span>
+                    <div class="bubble">
+                        <span onclick="speak('आज आप कैसे हैं?')">🔊 "आज आप कैसे हैं?"</span>
+                    </div>
+                </div>
+
+                <div class="dialogue-box right">
+                    <span class="avatar">🧒</span>
+                    <div class="bubble user">
+                        <span onclick="speak('हम ठीक हैं, धन्यवाद।')">🔊 "हम ठीक हैं, धन्यवाद।"</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="practice-section" id="practice">
+            <h2 style="text-align:center; color:var(--secondary-color);">👂 श्रवण परीक्षा (Listening Quiz)</h2>
+            <div style="text-align:center; font-size:1.5rem; margin-top:5px; color:#FFD700;" id="stars">⭐⭐⭐⭐⭐</div>
+
+            <div class="score-board">
+                <span>सही: <span id="right-score">0</span> ✅</span>
+                <span>गलत: <span id="wrong-score">0</span> ❌</span>
+            </div>
+
+            <div class="question-area">
+                <p style="margin-bottom:10px; color:#666;">नीचे दिए गए बटन को दबाकर सवाल सुनें:</p>
+                <button class="listen-q-btn" onclick="speakQuestion()">🔊</button>
+                <span class="q-text" id="q-text" style="display:none;">(Hidden Text)</span>
+            </div>
+
+            <div class="options-grid" id="opts">
+                </div>
+            
+            <p style="text-align:center; margin-top:20px; color:#999;">Question: <span id="q-num">1</span>/50</p>
+        </div>
+
+    </div>
+
+    <footer>
+        Designed & Created by SHRISHANT YADAV | Class 1 Hindi – भाग 8
+    </footer>
+
+    <script>
+        // --- SPEECH ENGINE ---
+        function speak(text) {
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = 'hi-IN';
+            u.rate = 0.9;
+            window.speechSynthesis.speak(u);
+        }
+
+        // --- ACCORDION ---
+        function toggleChapter(id) {
+            document.querySelectorAll('.chapter-content').forEach(div => {
+                if(div.id !== id) div.classList.remove('active');
+            });
+            document.getElementById(id).classList.toggle('active');
+        }
+
+        function simpleFeedback(btn, isCorrect) {
+            if(isCorrect) {
+                btn.style.background = "#C8E6C9";
+                speak("शाबाश! सही जवाब।");
+            } else {
+                btn.style.background = "#FFCDD2";
+                speak("ओहो! गलत।");
+            }
+        }
+
+        // --- QUESTION BANK (50 Questions) ---
+        // 'text' is what the computer speaks. Options are what user clicks.
+        const questions = [
+            // Sound Recognition
+            { text: "क से कमल। सही चित्र चुनें।", opts: ["🪷 कमल", "🏡 घर"], ans: "🪷 कमल" },
+            { text: "ख से खरगोश। सही विकल्प चुनें।", opts: ["🐢 कछुआ", "🐇 खरगोश"], ans: "🐇 खरगोश" },
+            { text: "फलों का राजा आम है। आम कौन सा है?", opts: ["🥭 आम", "🍎 सेब"], ans: "🥭 आम" },
+            { text: "बारिश में हम क्या लेते हैं?", opts: ["☂️ छाता", "🕶️ चश्मा"], ans: "☂️ छाता" },
+            
+            // Conversation Logic
+            { text: "जब कोई नमस्ते करे, तो आप क्या कहेंगे?", opts: ["नमस्ते", "जाओ"], ans: "नमस्ते" },
+            { text: "आपका नाम क्या है? इस प्रश्न का सही उत्तर चुनें।", opts: ["मेरा नाम राम है", "मैं घर जा रहा हूँ"], ans: "मेरा नाम राम है" },
+            { text: "आप कैसे हैं? इसका सही उत्तर क्या है?", opts: ["मैं ठीक हूँ", "मेरा नाम अमन है"], ans: "मैं ठीक हूँ" },
+            
+            // Story Recall (General)
+            { text: "कौआ कैसा था? भूखा या प्यासा?", opts: ["प्यासा", "भूखा"], ans: "प्यासा" },
+            { text: "जंगल का राजा कौन है?", opts: ["🦁 शेर", "🐘 हाथी"], ans: "🦁 शेर" },
+            { text: "चूहा कैसा होता है? बड़ा या छोटा?", opts: ["छोटा", "बड़ा"], ans: "छोटा" },
+            
+            // Poem Completion
+            { text: "मछली जल की ____ है।", opts: ["रानी", "राजा"], ans: "रानी" },
+            { text: "जीवन उसका ____ है।", opts: ["पानी", "दाना"], ans: "पानी" },
+            { text: "आलू कचालू बेटा ____ गए थे?", opts: ["कहाँ", "वहाँ"], ans: "कहाँ" },
+            { text: "बैंगन की टोकरी में ____ रहे थे?", opts: ["सो", "रो"], ans: "सो" },
+            
+            // Directions/Actions (Listen & Identify)
+            { text: "जोड़ने (Add) का निशान कौन सा है?", opts: ["➕", "➖"], ans: "➕" },
+            { text: "रुकिये (Stop) का रंग कौन सा होता है?", opts: ["🔴 लाल", "🟢 हरा"], ans: "🔴 लाल" },
+            { text: "चलिये (Go) का रंग कौन सा होता है?", opts: ["🟢 हरा", "🔴 लाल"], ans: "🟢 हरा" },
+            
+            // Vocabulary Listening
+            { text: "मैं 'लाल' बोल रहा हूँ। लाल रंग चुनें।", opts: ["🔴", "🔵"], ans: "🔴" },
+            { text: "मैं 'नीला' बोल रहा हूँ। नीला रंग चुनें।", opts: ["🔵", "🟡"], ans: "🔵" },
+            { text: "मैं 'किताब' बोल रहा हूँ। किताब चुनें।", opts: ["📕", "✏️"], ans: "📕" },
+            { text: "मैं 'पेंसिल' बोल रहा हूँ। पेंसिल चुनें।", opts: ["✏️", "👟"], ans: "✏️" },
+            
+            // True/False Listening
+            { text: "सुनो और बताओ: हाथी उड़ता है। यह सही है या गलत?", opts: ["गलत", "सही"], ans: "गलत" },
+            { text: "सुनो: सूरज दिन में निकलता है। सही या गलत?", opts: ["सही", "गलत"], ans: "सही" },
+            { text: "सुनो: बर्फ गर्म होती है। सही या गलत?", opts: ["गलत", "सही"], ans: "गलत" },
+            { text: "सुनो: हमें सच बोलना चाहिए।", opts: ["सही", "गलत"], ans: "सही" },
+            
+            // Odd One Out Listening
+            { text: "इनमें से अलग क्या है? कार, बस, सेब।", opts: ["सेब", "कार", "बस"], ans: "सेब" },
+            { text: "इनमें से अलग क्या है? शेर, तोता, चीता।", opts: ["तोता", "शेर", "चीता"], ans: "तोता" },
+            
+            // Daily Routine
+            { text: "सुबह उठकर हम क्या करते हैं?", opts: ["ब्रश करते हैं", "सोते हैं"], ans: "ब्रश करते हैं" },
+            { text: "रात को हम क्या करते हैं?", opts: ["सोते हैं", "स्कूल जाते हैं"], ans: "सोते हैं" },
+            
+            // Polite Words
+            { text: "गलती होने पर क्या कहते हैं?", opts: ["Sorry (माफ कीजिये)", "Thank You (धन्यवाद)"], ans: "Sorry (माफ कीजिये)" },
+            { text: "उपहार मिलने पर क्या कहते हैं?", opts: ["Thank You (धन्यवाद)", "Sorry"], ans: "Thank You (धन्यवाद)" },
+            
+            // More Practice
+            { text: "कान से हम क्या करते हैं?", opts: ["सुनते हैं", "देखते हैं"], ans: "सुनते हैं" },
+            { text: "आँख से हम क्या करते हैं?", opts: ["देखते हैं", "सूंघते हैं"], ans: "देखते हैं" },
+            { text: "मुँह से हम क्या करते हैं?", opts: ["बोलते/खाते हैं", "चलते हैं"], ans: "बोलते/खाते हैं" },
+            { text: "पैर से हम क्या करते हैं?", opts: ["चलते हैं", "खाते हैं"], ans: "चलते हैं" },
+            
+            { text: "कौआ कैसे बोलता है?", opts: ["काँव-काँव", "म्याऊँ"], ans: "काँव-काँव" },
+            { text: "बिल्ली कैसे बोलती है?", opts: ["म्याऊँ", "भौ-भौ"], ans: "म्याऊँ" },
+            { text: "कुत्ता कैसे बोलता है?", opts: ["भौ-भौ", "कुहू-कुहू"], ans: "भौ-भौ" },
+            
+            { text: "हफ्ते में कितने दिन होते हैं?", opts: ["7", "10"], ans: "7" },
+            { text: "हमारे देश का नाम क्या है?", opts: ["भारत", "चीन"], ans: "भारत" },
+            { text: "तिरंगे में कितने रंग हैं?", opts: ["3", "5"], ans: "3" },
+            
+            { text: "गर्मियों में हम क्या खाते हैं?", opts: ["आइसक्रीम", "गरम चाय"], ans: "आइसक्रीम" },
+            { text: "सर्दियों में हम क्या पहनते हैं?", opts: ["स्वेटर", "टी-शर्ट"], ans: "स्वेटर" },
+            
+            { text: "दीपावली पर क्या जलाते हैं?", opts: ["दीये", "पानी"], ans: "दीये" },
+            { text: "होली पर क्या लगाते हैं?", opts: ["रंग", "कीचड़"], ans: "रंग" },
+            { text: "राखी कौन बांधती है?", opts: ["बहन", "भाई"], ans: "बहन" },
+            
+            { text: "स्कूल में कौन पढ़ाता है?", opts: ["अध्यापक (Teacher)", "डॉक्टर"], ans: "अध्यापक (Teacher)" },
+            { text: "इलाज कौन करता है?", opts: ["डॉक्टर", "मोची"], ans: "डॉक्टर" }
+        ];
+
+        // --- GAME ENGINE ---
+        let currentIdx = 0;
+        let right = 0;
+        let wrong = 0;
+        let quizQ = [];
+        let currentQObj = null;
+
+        function initQuiz() {
+            quizQ = questions.sort(() => Math.random() - 0.5);
+            loadQ();
+        }
+
+        function loadQ() {
+            if (currentIdx >= 50 || currentIdx >= quizQ.length) {
+                currentIdx = 0;
+                quizQ = questions.sort(() => Math.random() - 0.5);
+            }
+
+            currentQObj = quizQ[currentIdx];
+            document.getElementById("q-text").innerText = currentQObj.text;
+            document.getElementById("q-num").innerText = currentIdx + 1;
+
+            const box = document.getElementById("opts");
+            box.innerHTML = "";
+
+            currentQObj.opts.forEach(opt => {
+                const btn = document.createElement("button");
+                btn.className = "opt-btn";
+                btn.innerHTML = `<span style="font-size:1.2rem;">👉</span> ${opt}`;
+                btn.onclick = () => checkAns(btn, opt, currentQObj.ans);
+                box.appendChild(btn);
+            });
+            
+            // Optional: Auto speak on load? 
+            // Better to let user click button to establish context.
+        }
+
+        function speakQuestion() {
+            const txt = document.getElementById("q-text").innerText;
+            speak(txt);
+        }
+
+        function checkAns(btn, sel, cor) {
+            const all = document.querySelectorAll(".opt-btn");
+            all.forEach(b => b.disabled = true);
+
+            if (sel === cor) {
+                btn.classList.add("correct");
+                right++;
+                document.getElementById("right-score").innerText = right;
+                speak("सही जवाब!");
+            } else {
+                btn.classList.add("wrong");
+                wrong++;
+                document.getElementById("wrong-score").innerText = wrong;
+                all.forEach(b => {
+                    if(b.innerText.includes(cor)) b.classList.add("correct");
+                });
+                speak("गलत, सही है " + cor);
+            }
+
+            setTimeout(() => {
+                currentIdx++;
+                loadQ();
+            }, 2500);
+        }
+
+        window.onload = initQuiz;
+
+    </script>
+</body>
+</html>

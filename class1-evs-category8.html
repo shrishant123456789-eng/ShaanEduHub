@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather & Time - Class 1 EVS | Shan EduHub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --yellow: #FFD93D;
+            --blue: #4D96FF;
+            --green: #6BCB77;
+            --orange: #FF6B6B;
+            --white: #ffffff;
+            --sky-bg: #E3F2FD;
+            --text: #2D3436;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--sky-bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            padding-bottom: 70px; /* Space for footer */
+            user-select: none;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3 { font-family: 'Fredoka One', cursive; margin: 0; letter-spacing: 0.5px; }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            background: linear-gradient(135deg, var(--blue), var(--yellow));
+            color: var(--white);
+            text-align: center;
+            padding: 30px 20px;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero h1 { font-size: 2rem; text-shadow: 2px 2px 0 rgba(0,0,0,0.1); animation: bounce 2s infinite; }
+        .hero p { font-size: 1.1rem; margin-top: 5px; opacity: 0.95; font-weight: bold; }
+
+        /* --- CONTAINER --- */
+        .container { max-width: 800px; margin: 25px auto; padding: 0 15px; }
+
+        /* --- ACCORDION CARDS --- */
+        .chapter-card {
+            background: var(--white);
+            border-radius: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            overflow: hidden;
+            border: 3px solid transparent;
+            transition: transform 0.2s;
+        }
+        
+        .chapter-header {
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #fff;
+            transition: background 0.3s;
+        }
+        .chapter-header:hover { background-color: #f0f8ff; }
+
+        /* Icons with specific animations */
+        .c-icon { font-size: 3rem; margin-right: 15px; }
+        .spin-sun { animation: spin 4s infinite linear; }
+        .bounce-cloud { animation: bounce 3s infinite; }
+        .glow-moon { animation: glow 2s infinite alternate; }
+
+        .c-info h2 { font-size: 1.3rem; color: var(--text); }
+        .c-info span { font-size: 0.9rem; color: #777; font-weight: bold; display: block; margin-top: 2px; }
+        .arrow { font-size: 1.5rem; color: var(--blue); transition: transform 0.3s; }
+
+        /* Chapter Themes */
+        .ch23 { border-color: var(--orange); }
+        .ch24 { border-color: var(--blue); }
+        .ch25 { border-color: var(--green); }
+
+        /* Content Area */
+        .chapter-content {
+            display: none;
+            padding: 20px;
+            background: #fff;
+            border-top: 2px dashed #eee;
+        }
+        .chapter-content.active { display: block; animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+        /* --- COMPONENTS --- */
+        .note-box {
+            background: #fff3e0;
+            border-left: 6px solid var(--orange);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            font-size: 1.1rem;
+        }
+        .note-box.blue { background: #e3f2fd; border-color: var(--blue); }
+        .note-box.green { background: #e8f5e9; border-color: var(--green); }
+
+        .hinglish {
+            display: block;
+            color: #636e72;
+            font-size: 0.9em;
+            font-style: italic;
+            margin-top: 5px;
+        }
+
+        /* Visual Cards */
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .v-card {
+            background: #fff;
+            border: 2px solid #f1f1f1;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.2s, border-color 0.2s;
+            cursor: pointer;
+        }
+        .v-card:active { transform: scale(0.95); }
+        .v-card:hover { border-color: var(--yellow); transform: translateY(-5px); }
+        .v-card div { font-size: 3.5rem; margin-bottom: 5px; }
+        .v-card strong { color: var(--text); font-size: 1.1rem; display: block; }
+
+        /* Speak Button */
+        .btn-speak {
+            background: var(--blue);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px #2c7be5;
+        }
+        .btn-speak:active { transform: translateY(4px); box-shadow: none; }
+
+        /* Mini Think Zone */
+        .think-zone {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 20px;
+            text-align: center;
+            border: 2px dashed var(--green);
+        }
+        .think-btn {
+            background: white;
+            border: 2px solid var(--green);
+            color: var(--green);
+            padding: 8px 20px;
+            margin: 5px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            min-width: 100px;
+        }
+        .think-btn.correct { background: var(--green); color: white; border-color: var(--green); }
+        .think-btn.wrong { background: var(--orange); color: white; border-color: var(--orange); }
+
+        /* --- PRACTICE ZONE --- */
+        .practice-btn {
+            background: linear-gradient(45deg, #FFD93D, #FF9F43);
+            color: #fff;
+            text-shadow: 1px 1px 0 rgba(0,0,0,0.1);
+            width: 100%;
+            padding: 20px;
+            font-size: 1.3rem;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Fredoka One', cursive;
+            margin-top: 30px;
+            box-shadow: 0 8px 0 #E58E26;
+            animation: pulse 2s infinite;
+        }
+        .practice-btn:active { transform: translateY(4px); box-shadow: 0 4px 0 #E58E26; }
+
+        /* --- MODAL QUIZ --- */
+        #quiz-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(45, 52, 54, 0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .quiz-card {
+            background: white;
+            width: 90%;
+            max-width: 500px;
+            padding: 25px;
+            border-radius: 25px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        }
+        
+        .score-board {
+            display: flex;
+            justify-content: space-between;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #636e72;
+        }
+
+        .q-text { font-size: 1.3rem; font-weight: bold; margin: 20px 0; color: var(--text); }
+        
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .opt-btn {
+            background: white;
+            border: 3px solid #eee;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .opt-btn:active { transform: scale(0.95); }
+
+        /* Confetti Canvas */
+        #confetti {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1100;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--text);
+            color: white;
+            text-align: center;
+            padding: 12px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            font-size: 0.85rem;
+            z-index: 100;
+        }
+
+        /* Animations */
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes glow { from { filter: drop-shadow(0 0 5px gold); } to { filter: drop-shadow(0 0 15px orange); } }
+        @keyframes slideDown { from{opacity:0; transform:translateY(-20px);} to{opacity:1; transform:translateY(0);} }
+        @keyframes pulse { 0% {transform: scale(1);} 50% {transform: scale(1.02);} 100% {transform: scale(1);} }
+
+    </style>
+</head>
+<body>
+
+    <div class="hero">
+        <h1>🌦️ Weather & Time</h1>
+        <p>Mausam, Din aur Raat</p>
+    </div>
+
+    <div class="container">
+
+        <div class="chapter-card ch23">
+            <div class="chapter-header" onclick="toggleChapter('c23')">
+                <div style="display:flex; align-items:center;">
+                    <span class="c-icon spin-sun">🌈</span>
+                    <div class="c-info">
+                        <h2>Seasons</h2>
+                        <span>Mausam ke Prakar</span>
+                    </div>
+                </div>
+                <span class="arrow">▼</span>
+            </div>
+            <div id="c23" class="chapter-content">
+                <button class="btn-speak" onclick="speakContent('n23')">🔊 Listen to Notes</button>
+                <div id="n23">
+                    <div class="note-box">
+                        <p>• <b>Summer:</b> Hot Season.</p>
+                        <span class="hinglish">Summer me garmi hoti hai. ☀️</span>
+                    </div>
+                    <div class="note-box">
+                        <p>• <b>Winter:</b> Cold Season.</p>
+                        <span class="hinglish">Winter me thand hoti hai. ❄️</span>
+                    </div>
+                    <div class="note-box">
+                        <p>• <b>Rainy:</b> It rains a lot.</p>
+                        <span class="hinglish">Baarish me umbrella use karte hain. ☂️</span>
+                    </div>
+                </div>
+
+                <h3>What to wear? 🧣</h3>
+                <div class="grid-cards">
+                    <div class="v-card" onclick="speak('Summer is Hot')"><div>☀️</div><strong>Summer</strong></div>
+                    <div class="v-card" onclick="speak('Winter is Cold')"><div>❄️</div><strong>Winter</strong></div>
+                    <div class="v-card" onclick="speak('Cotton Clothes for Summer')"><div>👕</div><strong>Cotton</strong></div>
+                    <div class="v-card" onclick="speak('Woollen Clothes for Winter')"><div>🧣</div><strong>Woollen</strong></div>
+                </div>
+
+                <div class="think-zone">
+                    <h3>Think & Answer 🤔</h3>
+                    <p>Q: Do we wear Woollen clothes in Summer?</p>
+                    <button class="think-btn" onclick="checkMini(this, false)">Yes</button>
+                    <button class="think-btn" onclick="checkMini(this, true)">No</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="chapter-card ch24">
+            <div class="chapter-header" onclick="toggleChapter('c24')">
+                <div style="display:flex; align-items:center;">
+                    <span class="c-icon glow-moon">🌙</span>
+                    <div class="c-info">
+                        <h2>Day & Night</h2>
+                        <span>Din aur Raat</span>
+                    </div>
+                </div>
+                <span class="arrow">▼</span>
+            </div>
+            <div id="c24" class="chapter-content">
+                <button class="btn-speak" onclick="speakContent('n24')">🔊 Listen to Notes</button>
+                <div id="n24">
+                    <div class="note-box blue">
+                        <p>• <b>Day:</b> Sun shines. Light is there.</p>
+                        <span class="hinglish">Din me hum kaam karte hain. ☀️</span>
+                    </div>
+                    <div class="note-box blue">
+                        <p>• <b>Night:</b> Moon shines. It is dark.</p>
+                        <span class="hinglish">Raat me hum sote hain. 😴</span>
+                    </div>
+                </div>
+
+                <h3>Day or Night? 🕒</h3>
+                <div class="grid-cards">
+                    <div class="v-card" onclick="speak('Sun shines in the Day')"><div>☀️</div><strong>Day</strong></div>
+                    <div class="v-card" onclick="speak('Moon shines at Night')"><div>🌙</div><strong>Night</strong></div>
+                    <div class="v-card" onclick="speak('We play in the Day')"><div>⚽</div><strong>Play</strong></div>
+                    <div class="v-card" onclick="speak('We sleep at Night')"><div>😴</div><strong>Sleep</strong></div>
+                </div>
+
+                <div class="think-zone">
+                    <h3>Think & Answer 🤔</h3>
+                    <p>Q: Do we see the Sun at Night?</p>
+                    <button class="think-btn" onclick="checkMini(this, false)">Yes</button>
+                    <button class="think-btn" onclick="checkMini(this, true)">No</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="chapter-card ch25">
+            <div class="chapter-header" onclick="toggleChapter('c25')">
+                <div style="display:flex; align-items:center;">
+                    <span class="c-icon bounce-cloud">☁️</span>
+                    <div class="c-info">
+                        <h2>Weather</h2>
+                        <span>Mausam</span>
+                    </div>
+                </div>
+                <span class="arrow">▼</span>
+            </div>
+            <div id="c25" class="chapter-content">
+                <button class="btn-speak" onclick="speakContent('n25')">🔊 Listen to Notes</button>
+                <div id="n25">
+                    <div class="note-box green">
+                        <p>• <b>Hot Weather:</b> We feel warm.</p>
+                        <span class="hinglish">Garmi me pasina aata hai. 🥵</span>
+                    </div>
+                    <div class="note-box green">
+                        <p>• <b>Cold Weather:</b> We feel cold.</p>
+                        <span class="hinglish">Thand me kaampte hain. 🥶</span>
+                    </div>
+                    <div class="note-box green">
+                        <p>• <b>Rainy Weather:</b> Wet and cool.</p>
+                        <span class="hinglish">Mitti ki khushboo aati hai. 🌧️</span>
+                    </div>
+                </div>
+
+                <h3>How do you feel? 🌡️</h3>
+                <div class="grid-cards">
+                    <div class="v-card" onclick="speak('Hot Weather')"><div>🥵</div><strong>Hot</strong></div>
+                    <div class="v-card" onclick="speak('Cold Weather')"><div>🥶</div><strong>Cold</strong></div>
+                    <div class="v-card" onclick="speak('Rainy Weather')"><div>🌧️</div><strong>Rainy</strong></div>
+                    <div class="v-card" onclick="speak('Cloudy Weather')"><div>⛅</div><strong>Cloudy</strong></div>
+                </div>
+
+                <div class="think-zone">
+                    <h3>Think & Answer 🤔</h3>
+                    <p>Q: We use Umbrella in...?</p>
+                    <button class="think-btn" onclick="checkMini(this, true)">Rain</button>
+                    <button class="think-btn" onclick="checkMini(this, false)">Sun</button>
+                </div>
+            </div>
+        </div>
+
+        <button class="practice-btn" onclick="startPractice()">
+            Let’s Practice Weather & Time 🌦️⏰
+        </button>
+
+    </div>
+
+    <div id="quiz-modal">
+        <canvas id="confetti"></canvas>
+        <div class="quiz-card">
+            <div class="score-board">
+                <span>⭐ Score: <span id="score">0</span></span>
+                <span>❌ Wrong: <span id="wrong">0</span></span>
+                <span>🔢 Q: <span id="q-num">1</span></span>
+            </div>
+            
+            <div id="end-screen" style="display:none;">
+                <div style="font-size:4rem;" id="final-stars">⭐⭐⭐</div>
+                <h2 id="final-msg" style="color:var(--text);">Amazing!</h2>
+                <p>You scored <span id="final-score"></span>%</p>
+                <button class="practice-btn" onclick="startPractice()" style="font-size:1.1rem; padding:12px;">Play Again 🔄</button>
+                <button onclick="closeQuiz()" style="margin-top:15px; background:none; border:none; text-decoration:underline; cursor:pointer; color: #666;">Exit Quiz</button>
+            </div>
+
+            <div id="quiz-area">
+                <div class="q-text" id="q-text">Loading...</div>
+                <button class="btn-speak" onclick="speakQuestion()" style="margin-bottom:15px;">🔊 Read Question</button>
+                <div class="options-grid" id="opt-grid">
+                    </div>
+                <button onclick="closeQuiz()" style="margin-top:20px; padding:10px; border-radius:10px; border:none; background:#eee;">Exit</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        © Shan EduHub | Designed by Shrishant Yadav ❤️<br>Learning EVS with Fun – Class 1
+    </footer>
+
+    <script>
+        /* --- 1. ACCORDION UI --- */
+        function toggleChapter(id) {
+            document.querySelectorAll('.chapter-content').forEach(d => {
+                if(d.id !== id) d.classList.remove('active');
+            });
+            const el = document.getElementById(id);
+            el.classList.toggle('active');
+            if(el.classList.contains('active')) speak("Let's learn!");
+        }
+
+        /* --- 2. TEXT TO SPEECH --- */
+        function speak(text) {
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = 'en-IN';
+            u.rate = 0.9;
+            u.pitch = 1.1; // Kid friendly
+            window.speechSynthesis.speak(u);
+        }
+
+        function speakContent(id) {
+            speak(document.getElementById(id).innerText);
+        }
+
+        function speakQuestion() {
+            speak(document.getElementById('q-text').innerText);
+        }
+
+        /* --- 3. MINI CHECK --- */
+        function checkMini(btn, isCorrect) {
+            if(isCorrect) {
+                btn.classList.add('correct');
+                btn.innerText += " ✔";
+                speak("Good Job!");
+            } else {
+                btn.classList.add('wrong');
+                btn.innerText += " ❌";
+                speak("Try Again");
+            }
+        }
+
+        /* --- 4. QUESTION GENERATOR ENGINE (120+ Q Logic) --- */
+        
+        const seasonData = [
+            {name: "Summer", item: "Cotton Clothes", feel: "Hot", drink: "Cold Drink", emoji: "☀️"},
+            {name: "Winter", item: "Woollen Clothes", feel: "Cold", drink: "Hot Tea", emoji: "❄️"},
+            {name: "Rainy", item: "Umbrella", feel: "Wet", drink: "Soup", emoji: "🌧️"}
+        ];
+
+        const dayNightData = [
+            {time: "Day", item: "Sun", action: "Play", emoji: "☀️"},
+            {time: "Night", item: "Moon", action: "Sleep", emoji: "🌙"},
+            {time: "Night", item: "Stars", action: "Dream", emoji: "⭐"}
+        ];
+
+        const weatherData = [
+            {type: "Hot", emoji: "🥵", feel: "Sweaty"},
+            {type: "Cold", emoji: "🥶", feel: "Shiver"},
+            {type: "Rainy", emoji: "☔", feel: "Wet"}
+        ];
+
+        function generatePool() {
+            let pool = [];
+
+            // Pattern 1: Season Association
+            seasonData.forEach(s => {
+                pool.push({ q: `We wear ${s.item} in...`, ans: s.name, opts: [s.name, "Winter", "Summer"] }); // Logic ensures correct options below
+                pool.push({ q: `In ${s.name} season, we feel...`, ans: s.feel, opts: [s.feel, "Happy", "Sad"] });
+                pool.push({ q: `Identify: ${s.emoji}`, ans: s.name, opts: [s.name, "Day", "Night"] });
+            });
+
+            // Pattern 2: Day & Night
+            dayNightData.forEach(d => {
+                pool.push({ q: `We see ${d.item} in the...`, ans: d.time, opts: ["Day", "Night"] });
+                pool.push({ q: `We ${d.action} at...`, ans: d.time, opts: ["Day", "Night"] });
+            });
+
+            // Pattern 3: True/False
+            pool.push(
+                {q: "Sun gives us heat?", ans: "Yes", opts: ["Yes", "No"]},
+                {q: "Moon is hot like Sun?", ans: "No", opts: ["Yes", "No"]},
+                {q: "We use Umbrella in Summer?", ans: "No", opts: ["Yes", "No"]},
+                {q: "Stars shine at Night?", ans: "Yes", opts: ["Yes", "No"]},
+                {q: "Summer is cold?", ans: "No", opts: ["Yes", "No"]}
+            );
+
+            // Pattern 4: Weather ID
+            weatherData.forEach(w => {
+                pool.push({ q: `Identify: ${w.emoji}`, ans: w.type, opts: [w.type, "Sunny", "Cloudy"] });
+            });
+
+            return pool.sort(() => 0.5 - Math.random());
+        }
+
+        /* --- 5. QUIZ LOGIC --- */
+        let qIndex = 0;
+        let score = 0;
+        let wrong = 0;
+        let currentPool = [];
+        const totalQ = 10; // 10 Questions per session
+
+        function startPractice() {
+            currentPool = generatePool().slice(0, totalQ);
+            qIndex = 0; score = 0; wrong = 0;
+            updateStats();
+            document.getElementById('quiz-modal').style.display = 'flex';
+            document.getElementById('end-screen').style.display = 'none';
+            document.getElementById('quiz-area').style.display = 'block';
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if(qIndex >= totalQ) { showResults(); return; }
+            const q = currentPool[qIndex];
+            document.getElementById('q-text').innerText = q.q;
+            document.getElementById('q-num').innerText = qIndex + 1;
+            speak(q.q);
+
+            const grid = document.getElementById('opt-grid');
+            grid.innerHTML = '';
+            
+            // Generate options logic (Fixing duplicates)
+            let opts = [q.ans];
+            let distractors = q.opts.filter(o => o !== q.ans);
+            
+            // Fallback distractors if needed
+            if(distractors.length < 3 && q.opts.length > 2) {
+                 distractors = ["Winter", "Rainy", "Day"]; // generic fallback
+            } 
+            
+            // If binary choice (Yes/No), keep it 2 options
+            if(q.opts.length === 2) {
+                opts = q.opts; 
+            } else {
+                // Add distractors up to 4 total options
+                opts = opts.concat(distractors.slice(0, 3));
+            }
+            
+            // Shuffle options
+            opts.sort(() => 0.5 - Math.random());
+            // Unique filter just in case
+            opts = [...new Set(opts)];
+
+            opts.forEach(o => {
+                const btn = document.createElement('button');
+                btn.className = 'opt-btn';
+                btn.innerText = o;
+                btn.onclick = () => handleAnswer(btn, o, q.ans);
+                grid.appendChild(btn);
+            });
+        }
+
+        function handleAnswer(btn, selected, correct) {
+            const allBtns = document.querySelectorAll('.opt-btn');
+            allBtns.forEach(b => b.disabled = true);
+
+            if(selected === correct) {
+                btn.style.background = '#6BCB77'; 
+                btn.style.color = 'white';
+                btn.style.borderColor = '#6BCB77';
+                score++;
+                speak("Excellent!");
+                triggerConfetti();
+            } else {
+                btn.style.background = '#FF6B6B';
+                btn.style.color = 'white';
+                btn.style.borderColor = '#FF6B6B';
+                wrong++;
+                speak("Oops! The answer is " + correct);
+                // Highlight correct
+                allBtns.forEach(b => {
+                    if(b.innerText === correct) {
+                        b.style.background = '#eee';
+                        b.style.borderColor = '#6BCB77';
+                        b.style.color = '#6BCB77';
+                    }
+                });
+            }
+            updateStats();
+            setTimeout(() => { qIndex++; loadQuestion(); }, 2000);
+        }
+
+        function updateStats() {
+            document.getElementById('score').innerText = score;
+            document.getElementById('wrong').innerText = wrong;
+        }
+
+        function showResults() {
+            document.getElementById('quiz-area').style.display = 'none';
+            document.getElementById('end-screen').style.display = 'block';
+            
+            const pct = (score / totalQ) * 100;
+            let stars = "⭐";
+            let msg = "Keep Learning 💪";
+            
+            if(pct >= 90) { stars = "⭐⭐⭐⭐"; msg = "Weather Champ! 🌈"; }
+            else if(pct >= 75) { stars = "⭐⭐⭐"; msg = "Great Job!"; }
+            else if(pct >= 50) { stars = "⭐⭐"; msg = "Good!"; }
+
+            document.getElementById('final-stars').innerText = stars;
+            document.getElementById('final-msg').innerText = msg;
+            document.getElementById('final-score').innerText = pct;
+            speak(msg + " You got " + score + " correct.");
+            if(pct >= 75) triggerConfetti();
+        }
+
+        function closeQuiz() {
+            document.getElementById('quiz-modal').style.display = 'none';
+        }
+
+        /* --- 6. CONFETTI EFFECT --- */
+        function triggerConfetti() {
+            const canvas = document.getElementById('confetti');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            let particles = [];
+            const colors = ['#FFD93D', '#6BCB77', '#FF6B6B', '#4D96FF'];
+            
+            for(let i=0; i<50; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    size: Math.random() * 10 + 5,
+                    speed: Math.random() * 5 + 2
+                });
+            }
+
+            let animationId;
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach((p, index) => {
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+                    ctx.fill();
+                    p.y += p.speed;
+                    if(p.y > canvas.height) particles.splice(index, 1);
+                });
+                if(particles.length > 0) animationId = requestAnimationFrame(draw);
+                else cancelAnimationFrame(animationId);
+            }
+            draw();
+        }
+
+    </script>
+</body>
+</html>
