@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 5: Pronouns & Helping Words | Class 2 English</title>
+    <style>
+        /* 🎨 THEME & VARIABLES */
+        :root {
+            --primary: #4A90E2;       /* Bright Blue */
+            --secondary: #F5A623;     /* Orange */
+            --accent: #7ED321;        /* Lime Green */
+            --bg: #E3F2FD;            /* Light Blue BG */
+            --card-bg: #FFFFFF;
+            --text: #333333;
+            --correct: #2ECC71;
+            --wrong: #E74C3C;
+            --font: 'Comic Sans MS', 'Comic Neue', cursive, sans-serif;
+        }
+
+        * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: var(--font);
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* 🟢 HEADER */
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 5px solid #2C6FB5;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 { margin: 0; font-size: 1.5rem; text-shadow: 2px 2px 0px rgba(0,0,0,0.2); }
+        .subtitle { font-size: 0.9rem; margin-top: 5px; opacity: 0.9; }
+
+        /* 🧭 MAIN CONTAINER */
+        .container {
+            flex: 1;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            width: 100%;
+        }
+
+        /* 🃏 MENU CARDS */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .menu-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            border: 3px solid var(--primary);
+            box-shadow: 0 5px 0 var(--primary);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .menu-card:active { transform: scale(0.97); box-shadow: 0 2px 0 var(--primary); }
+        .menu-card h2 { margin: 10px 0 5px 0; color: var(--primary); }
+        .icon { font-size: 2.5rem; }
+
+        /* 🎮 GAME AREA */
+        #game-screen { display: none; }
+
+        .progress-bar-container {
+            width: 100%;
+            background: #ddd;
+            height: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .question-box {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            text-align: center;
+            margin-bottom: 20px;
+            border: 2px solid #eee;
+        }
+
+        .q-text { font-size: 1.4rem; font-weight: bold; margin-bottom: 15px; line-height: 1.4; }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .option-btn {
+            background: white;
+            border: 2px solid var(--secondary);
+            color: #333;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-family: var(--font);
+            cursor: pointer;
+            box-shadow: 0 4px 0 var(--secondary);
+            transition: 0.2s;
+        }
+
+        .option-btn:active { transform: translateY(4px); box-shadow: none; }
+
+        /* FEEDBACK STYLES */
+        .correct-anim { background: var(--correct) !important; color: white; border-color: #27ae60 !important; box-shadow: none !important; }
+        .wrong-anim { background: var(--wrong) !important; color: white; border-color: #c0392b !important; box-shadow: none !important; }
+
+        #feedback-area {
+            height: 40px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-top: 10px;
+        }
+
+        .nav-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-family: var(--font);
+            cursor: pointer;
+            margin-top: 10px;
+            display: none; /* Hidden until answered */
+            width: 100%;
+            box-shadow: 0 4px 0 #2C6FB5;
+        }
+        
+        .nav-btn:active { transform: translateY(4px); box-shadow: none; }
+
+        /* 📊 SCOREBOARD FOOTER */
+        .scoreboard {
+            background: #fff;
+            border-top: 4px solid var(--secondary);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1rem;
+            position: sticky;
+            bottom: 0;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
+        }
+
+        .score-box { text-align: center; }
+        .score-val { font-weight: bold; font-size: 1.2rem; display: block; }
+        .footer-credit {
+            text-align: center;
+            background: #333;
+            color: #fff;
+            padding: 5px;
+            font-size: 0.7rem;
+        }
+
+        /* 🏆 END SCREEN */
+        #end-screen {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+        #end-screen h2 { font-size: 2rem; color: var(--accent); }
+        .big-score { font-size: 3rem; font-weight: bold; color: var(--primary); margin: 20px 0; }
+        
+        .back-home-btn {
+            background: var(--text);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: var(--font);
+            margin-top: 20px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>📘 Chapter 5</h1>
+        <div class="subtitle">Pronouns & Helping Words</div>
+    </header>
+
+    <div class="container">
+        
+        <div id="menu-screen" class="menu-grid">
+            <div class="menu-card" onclick="startSection('pronouns')">
+                <div class="icon">👦👧</div>
+                <h2>Pronouns</h2>
+                <p>I, You, He, She, It, We, They</p>
+            </div>
+            <div class="menu-card" onclick="startSection('helping')">
+                <div class="icon">🎒🐕</div>
+                <h2>Has & Have</h2>
+                <p>Helping words for possession</p>
+            </div>
+            <div class="menu-card" onclick="startSection('joining')">
+                <div class="icon">🤝➕</div>
+                <h2>And & But</h2>
+                <p>Joining two ideas</p>
+            </div>
+            <div class="menu-card" style="background:var(--accent); border-color:#6ABF10;" onclick="startSection('mix')">
+                <div class="icon">🎲🚀</div>
+                <h2 style="color:white; text-shadow:1px 1px 0 #333;">Mix Challenge</h2>
+                <p style="color:white;">Test everything!</p>
+            </div>
+        </div>
+
+        <div id="game-screen">
+            <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                <button class="back-home-btn" style="margin:0; padding:5px 10px; font-size:0.8rem;" onclick="goHome()">🏠 Home</button>
+                <span id="q-counter">1 / 15</span>
+            </div>
+            
+            <div class="progress-bar-container">
+                <div id="progress" class="progress-bar"></div>
+            </div>
+
+            <div class="question-box">
+                <div id="q-text" class="q-text">Loading...</div>
+                <div id="options-container" class="options-grid"></div>
+                <div id="feedback-area"></div>
+            </div>
+
+            <button id="next-btn" class="nav-btn" onclick="nextQuestion()">Next Question ➡️</button>
+        </div>
+
+        <div id="end-screen">
+            <h2>🎉 Section Complete!</h2>
+            <p>You did a great job.</p>
+            <div class="big-score"><span id="final-score">0</span>%</div>
+            <p>Correct: <span id="final-correct">0</span> | Wrong: <span id="final-wrong">0</span></p>
+            <button class="back-home-btn" onclick="goHome()">Play Another Topic</button>
+        </div>
+
+    </div>
+
+    <div class="scoreboard">
+        <div class="score-box" style="color:var(--correct)">
+            <span>✔ Correct</span>
+            <span id="score-correct" class="score-val">0</span>
+        </div>
+        <div class="score-box" style="color:var(--text)">
+            <span>📊 Score</span>
+            <span id="score-pct" class="score-val">0%</span>
+        </div>
+        <div class="score-box" style="color:var(--wrong)">
+            <span>❌ Wrong</span>
+            <span id="score-wrong" class="score-val">0</span>
+        </div>
+    </div>
+
+    <footer class="footer-credit">
+        Designed & Created by SHRISHANT YADAV
+    </footer>
+
+<script>
+    // 🧠 QUESTION DATABASE (55+ Unique Questions)
+    const db = [
+        // 🟢 SECTION 1: PRONOUNS (I, He, She, It, We, They, You)
+        { cat: 'pronouns', q: "___ am a boy.", ans: "I", opts: ["I", "Me"] },
+        { cat: 'pronouns', q: "___ is a good girl.", ans: "She", opts: ["She", "He"] },
+        { cat: 'pronouns', q: "My father is tall. ___ is strong.", ans: "He", opts: ["He", "She"] },
+        { cat: 'pronouns', q: "Look at the dog. ___ is barking.", ans: "It", opts: ["It", "He"] },
+        { cat: 'pronouns', q: "Rahul and I play. ___ are friends.", ans: "We", opts: ["We", "They"] },
+        { cat: 'pronouns', q: "The boys are running. ___ are fast.", ans: "They", opts: ["They", "We"] },
+        { cat: 'pronouns', q: "This is a ball. ___ is red.", ans: "It", opts: ["It", "She"] },
+        { cat: 'pronouns', q: "___ are my best friend.", ans: "You", opts: ["You", "I"] },
+        { cat: 'pronouns', q: "Riya is dancing. ___ is happy.", ans: "She", opts: ["She", "He"] },
+        { cat: 'pronouns', q: "The sun is hot. ___ shines bright.", ans: "It", opts: ["It", "He"] },
+        { cat: 'pronouns', q: "Tom and Jerry are playing. ___ have fun.", ans: "They", opts: ["They", "We"] },
+        { cat: 'pronouns', q: "My mother cooks. ___ makes tasty food.", ans: "She", opts: ["She", "It"] },
+        { cat: 'pronouns', q: "___ am six years old.", ans: "I", opts: ["I", "You"] },
+        { cat: 'pronouns', q: "Look at the stars. ___ are far away.", ans: "They", opts: ["They", "It"] },
+        { cat: 'pronouns', q: "The cat drinks milk. ___ is cute.", ans: "It", opts: ["It", "He"] },
+        { cat: 'pronouns', q: "You and I study. ___ go to school.", ans: "We", opts: ["We", "They"] },
+        { cat: 'pronouns', q: "Mr. Sharma is a doctor. ___ helps people.", ans: "He", opts: ["He", "She"] },
+        { cat: 'pronouns', q: "The birds fly. ___ have wings.", ans: "They", opts: ["They", "We"] },
+        { cat: 'pronouns', q: "___ is a sunny day.", ans: "It", opts: ["It", "He"] },
+        { cat: 'pronouns', q: "Sita and Gita talk. ___ are sisters.", ans: "They", opts: ["They", "We"] },
+        { cat: 'pronouns', q: "The table is brown. ___ is made of wood.", ans: "It", opts: ["It", "He"] },
+
+        // 🟢 SECTION 2: HAS / HAVE
+        { cat: 'helping', q: "I ___ a red pen.", ans: "have", opts: ["have", "has"] },
+        { cat: 'helping', q: "She ___ a beautiful doll.", ans: "has", opts: ["has", "have"] },
+        { cat: 'helping', q: "He ___ a new car.", ans: "has", opts: ["has", "have"] },
+        { cat: 'helping', q: "We ___ many books.", ans: "have", opts: ["have", "has"] },
+        { cat: 'helping', q: "The dog ___ a tail.", ans: "has", opts: ["has", "have"] },
+        { cat: 'helping', q: "They ___ a big house.", ans: "have", opts: ["have", "has"] },
+        { cat: 'helping', q: "It ___ four legs.", ans: "has", opts: ["has", "have"] },
+        { cat: 'helping', q: "You ___ nice hair.", ans: "have", opts: ["have", "has"] },
+        { cat: 'helping', q: "The elephant ___ big ears.", ans: "has", opts: ["has", "have"] },
+        { cat: 'helping', q: "Birds ___ wings.", ans: "have", opts: ["have", "has"] },
+        { cat: 'helping', q: "Ravi ___ a kite.", ans: "has", opts: ["has", "have"] },
+        { cat: 'helping', q: "I ___ two eyes.", ans: "have", opts: ["have", "has"] },
+        { cat: 'helping', q: "A chair ___ four legs.", ans: "has", opts: ["has", "have"] },
+        { cat: 'helping', q: "My sister ___ long hair.", ans: "has", opts: ["has", "have"] },
+        { cat: 'helping', q: "We ___ fun at the park.", ans: "have", opts: ["have", "has"] },
+        { cat: 'helping', q: "The tree ___ green leaves.", ans: "has", opts: ["has", "have"] },
+        { cat: 'helping', q: "Do you ___ a pencil?", ans: "have", opts: ["have", "has"] },
+        { cat: 'helping', q: "A rabbit ___ long ears.", ans: "has", opts: ["has", "have"] },
+
+        // 🟢 SECTION 3: JOINING WORDS (AND / BUT)
+        { cat: 'joining', q: "Bread ___ butter.", ans: "and", opts: ["and", "but"] },
+        { cat: 'joining', q: "The tea is hot ___ the ice is cold.", ans: "but", opts: ["but", "and"] },
+        { cat: 'joining', q: "I like apples ___ bananas.", ans: "and", opts: ["and", "but"] },
+        { cat: 'joining', q: "He is old ___ he is strong.", ans: "but", opts: ["but", "and"] },
+        { cat: 'joining', q: "The sun ___ the moon.", ans: "and", opts: ["and", "but"] },
+        { cat: 'joining', q: "The elephant is big ___ the ant is small.", ans: "but", opts: ["but", "and"] },
+        { cat: 'joining', q: "I ran fast ___ I missed the bus.", ans: "but", opts: ["but", "and"] },
+        { cat: 'joining', q: "Tom ___ Jerry.", ans: "and", opts: ["and", "but"] },
+        { cat: 'joining', q: "My bag is heavy ___ your bag is light.", ans: "but", opts: ["but", "and"] },
+        { cat: 'joining', q: "I want a pen ___ a paper.", ans: "and", opts: ["and", "but"] },
+        { cat: 'joining', q: "She is sad ___ she is smiling.", ans: "but", opts: ["but", "and"] },
+        { cat: 'joining', q: "Black ___ white.", ans: "and", opts: ["and", "but"] },
+        { cat: 'joining', q: "The boy is tall ___ the girl is short.", ans: "but", opts: ["but", "and"] },
+        { cat: 'joining', q: "I wash my hands ___ eat food.", ans: "and", opts: ["and", "but"] },
+        { cat: 'joining', q: "The car is fast ___ the cycle is slow.", ans: "but", opts: ["but", "and"] },
+        { cat: 'joining', q: "Shoes ___ socks.", ans: "and", opts: ["and", "but"] },
+        { cat: 'joining', q: "I tried ___ I failed.", ans: "but", opts: ["but", "and"] }
+    ];
+
+    // 🌟 GAME STATE
+    let currentQuestions = [];
+    let currentIndex = 0;
+    let score = { correct: 0, wrong: 0 };
+    let canClick = true;
+
+    // 🔉 AUDIO SYSTEM
+    function speak(text, isFeedback = false) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.rate = isFeedback ? 1 : 0.8; // Slower for questions
+            utterance.pitch = 1.1; // Cheerful pitch
+            window.speechSynthesis.speak(utterance);
+        }
+    }
+
+    // 🎲 UTILS
+    function shuffle(array) {
+        return array.sort(() => Math.random() - 0.5);
+    }
+
+    // 🚀 ENGINE
+    function startSection(category) {
+        // Filter and Shuffle
+        if (category === 'mix') {
+            currentQuestions = shuffle([...db]).slice(0, 20);
+        } else {
+            currentQuestions = shuffle(db.filter(x => x.cat === category));
+        }
+        
+        // Reset State
+        currentIndex = 0;
+        score = { correct: 0, wrong: 0 };
+        updateScoreboard();
+        
+        // UI Switch
+        document.getElementById('menu-screen').style.display = 'none';
+        document.getElementById('end-screen').style.display = 'none';
+        document.getElementById('game-screen').style.display = 'block';
+        
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        const q = currentQuestions[currentIndex];
+        const qText = document.getElementById('q-text');
+        const optsDiv = document.getElementById('options-container');
+        const nextBtn = document.getElementById('next-btn');
+        const feedback = document.getElementById('feedback-area');
+        const progress = document.getElementById('progress');
+        const counter = document.getElementById('q-counter');
+
+        // Reset UI
+        qText.innerHTML = q.q.replace("___", "<span style='color:var(--primary); text-decoration:underline;'>____</span>");
+        optsDiv.innerHTML = '';
+        nextBtn.style.display = 'none';
+        feedback.innerHTML = '';
+        canClick = true;
+
+        // Progress
+        counter.innerText = `${currentIndex + 1} / ${currentQuestions.length}`;
+        progress.style.width = `${((currentIndex) / currentQuestions.length) * 100}%`;
+
+        // Speak Question
+        speak(q.q.replace("___", "blank"));
+
+        // Generate Options
+        const shuffledOpts = shuffle([...q.opts]);
+        shuffledOpts.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(btn, opt, q.ans);
+            optsDiv.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(btn, selected, correct) {
+        if (!canClick) return;
+        canClick = false;
+
+        const feedback = document.getElementById('feedback-area');
+        const nextBtn = document.getElementById('next-btn');
+        const options = document.querySelectorAll('.option-btn');
+
+        if (selected === correct) {
+            // Correct
+            btn.classList.add('correct-anim');
+            score.correct++;
+            const rewards = ["🌟 Excellent!", "⭐ Very Good!", "🎉 Super!", "✨ Awesome!"];
+            const msg = rewards[Math.floor(Math.random() * rewards.length)];
+            feedback.innerHTML = `<span style="color:var(--correct)">${msg}</span>`;
+            speak("Correct! " + msg, true);
+        } else {
+            // Wrong
+            btn.classList.add('wrong-anim');
+            score.wrong++;
+            const comforts = ["❌ Try Again", "🙂 Don't Worry", "💪 Keep Trying"];
+            const msg = comforts[Math.floor(Math.random() * comforts.length)];
+            feedback.innerHTML = `<span style="color:var(--wrong)">${msg} Answer is: <b>${correct}</b></span>`;
+            speak("Oops. The answer is " + correct, true);
+            
+            // Highlight right answer
+            options.forEach(o => {
+                if (o.innerText === correct) o.classList.add('correct-anim');
+            });
+        }
+
+        updateScoreboard();
+        nextBtn.style.display = 'block';
+        document.getElementById('progress').style.width = `${((currentIndex + 1) / currentQuestions.length) * 100}%`;
+    }
+
+    function nextQuestion() {
+        currentIndex++;
+        if (currentIndex < currentQuestions.length) {
+            loadQuestion();
+        } else {
+            endGame();
+        }
+    }
+
+    function updateScoreboard() {
+        document.getElementById('score-correct').innerText = score.correct;
+        document.getElementById('score-wrong').innerText = score.wrong;
+        const total = score.correct + score.wrong;
+        const pct = total === 0 ? 0 : Math.round((score.correct / total) * 100);
+        document.getElementById('score-pct').innerText = pct + "%";
+    }
+
+    function endGame() {
+        document.getElementById('game-screen').style.display = 'none';
+        document.getElementById('end-screen').style.display = 'block';
+        
+        document.getElementById('final-correct').innerText = score.correct;
+        document.getElementById('final-wrong').innerText = score.wrong;
+        const pct = Math.round((score.correct / (score.correct + score.wrong)) * 100) || 0;
+        document.getElementById('final-score').innerText = pct;
+
+        if(pct > 80) speak("Wow! You are a grammar champion!", true);
+        else speak("Good job! Keep practicing.", true);
+    }
+
+    function goHome() {
+        document.getElementById('game-screen').style.display = 'none';
+        document.getElementById('end-screen').style.display = 'none';
+        document.getElementById('menu-screen').style.display = 'grid';
+        window.speechSynthesis.cancel();
+    }
+
+</script>
+
+</body>
+</html>

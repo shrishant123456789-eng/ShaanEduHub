@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time | ShanEduHub</title>
+    <style>
+        /* --- GENERAL STYLES --- */
+        :root {
+            --primary: #3498DB; /* Sky Blue */
+            --secondary: #F1C40F; /* Sun Yellow */
+            --accent: #E74C3C; /* Red */
+            --green: #2ECC71; /* Green */
+            --purple: #9B59B6;
+            --bg: #F0F8FF; /* Alice Blue Background */
+            --card-bg: #FFFFFF;
+            --text: #2C3E50;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background: linear-gradient(135deg, #2980B9, #6DD5FA);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            border-radius: 0 0 30px 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-bottom: 5px solid #F39C12;
+        }
+
+        header h1 { margin: 0; font-size: 2.2em; text-shadow: 2px 2px 0 rgba(0,0,0,0.2); }
+        header p { font-size: 1.2em; margin-top: 10px; font-weight: bold; background: rgba(255,255,255,0.2); display: inline-block; padding: 5px 15px; border-radius: 20px; }
+
+        /* --- CARDS & SECTIONS --- */
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-left: 6px solid var(--primary);
+            transition: transform 0.2s;
+        }
+
+        .card:hover { transform: translateY(-3px); }
+
+        h2 { color: #2980B9; border-bottom: 2px dashed #BDC3C7; padding-bottom: 10px; }
+        h3 { color: #E67E22; margin-top: 20px; }
+
+        .note-box {
+            padding: 15px;
+            border-radius: 15px;
+            margin: 10px 0;
+            border: 2px solid transparent;
+        }
+
+        .day-box { background: #E8F8F5; border-color: #1ABC9C; }
+        .clock-box { background: #FEF9E7; border-color: #F1C40F; }
+        .routine-box { background: #F4ECF7; border-color: #9B59B6; }
+
+        /* --- CSS CLOCK VISUAL --- */
+        .clock-visual {
+            width: 100px;
+            height: 100px;
+            border: 5px solid #2C3E50;
+            border-radius: 50%;
+            position: relative;
+            margin: 10px auto;
+            background: white;
+        }
+        .clock-center {
+            width: 10px;
+            height: 10px;
+            background: #E74C3C;
+            border-radius: 50%;
+            position: absolute;
+            top: 45px;
+            left: 45px;
+            z-index: 2;
+        }
+        .hand-hour {
+            width: 4px;
+            height: 30px;
+            background: #2C3E50;
+            position: absolute;
+            top: 20px;
+            left: 48px;
+            transform-origin: bottom center;
+        }
+        .hand-min {
+            width: 2px;
+            height: 40px;
+            background: #2C3E50;
+            position: absolute;
+            top: 10px;
+            left: 49px;
+            transform-origin: bottom center;
+        }
+
+        /* --- PRACTICE SECTION UI --- */
+        .quiz-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .set-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: all 0.2s;
+            color: white;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+        }
+
+        .set-btn:active { transform: translateY(2px); box-shadow: none; }
+        .btn-yellow { background-color: #F1C40F; color: #333; }
+        .btn-blue { background-color: #3498DB; }
+        .btn-green { background-color: #2ECC71; }
+        .btn-orange { background-color: #E67E22; }
+        .btn-red { background-color: #C0392b; }
+
+        .active-set { border: 3px solid #2C3E50; transform: scale(1.05); box-shadow: 0 0 10px rgba(0,0,0,0.2); }
+
+        /* --- QUESTION STYLES --- */
+        .question-box {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 15px;
+            border: 2px solid #ECF0F1;
+        }
+
+        .input-answer {
+            padding: 10px;
+            font-size: 1.1rem;
+            border: 2px solid #BDC3C7;
+            border-radius: 10px;
+            width: 150px;
+            text-align: center;
+            outline: none;
+        }
+        .input-answer:focus { border-color: var(--primary); }
+
+        .mcq-options button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 12px;
+            margin: 8px 0;
+            background: #F9F9F9;
+            border: 2px solid #EEE;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+        .mcq-options button:hover { background: #EEF; border-color: var(--primary); }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+            font-weight: bold;
+        }
+        .correct { background-color: #D5F5E3; color: #196F3D; border: 1px solid #ABEBC6; }
+        .wrong { background-color: #FADBD8; color: #943126; border: 1px solid #F5B7B1; }
+
+        /* --- SCOREBOARD --- */
+        .scoreboard {
+            position: sticky;
+            top: 0;
+            background: #2C3E50;
+            color: white;
+            padding: 15px;
+            z-index: 100;
+            display: flex;
+            justify-content: space-around;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            font-weight: bold;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background-color: #2C3E50;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.8em; }
+            .set-btn { width: 100%; margin-bottom: 5px; }
+            .scoreboard { font-size: 0.8em; padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>ShanEduHub 🌟</h1>
+        <p>Class 2 Maths – Time ⏰ 📅</p>
+    </header>
+
+    <div class="container">
+
+        <div class="card">
+            <h2>👋 What is Time?</h2>
+            <p><strong>Time</strong> tells us <em>when</em> to do things! 🕐</p>
+            <p>We use time to know when to wake up ☀️, go to school 🏫, play 🏏, and sleep 🌙.</p>
+            <p>We see time on a <strong>Clock</strong> (for hours) and a <strong>Calendar</strong> (for days and months).</p>
+        </div>
+
+        <div class="card note-box day-box">
+            <h2>1️⃣ Days & Months 📅</h2>
+            
+            <h3>7 Days of the Week:</h3>
+            <p>Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday.</p>
+            <p><strong>Order:</strong> Monday comes after Sunday. Sunday is a holiday! 🎉</p>
+
+            <h3>12 Months of the Year:</h3>
+            <p>January (First), February, March... all the way to December (Last).</p>
+        </div>
+
+        <div class="card note-box clock-box">
+            <h2>2️⃣ Reading the Clock 🕰️</h2>
+            <p>A clock has two main hands:</p>
+            <ul>
+                <li><strong>Short Hand:</strong> Hour Hand (Tells the hour).</li>
+                <li><strong>Long Hand:</strong> Minute Hand (Tells the minutes).</li>
+            </ul>
+
+            <div style="display:flex; justify-content: space-around; flex-wrap:wrap;">
+                <div style="text-align:center;">
+                    <div class="clock-visual">
+                        <div class="clock-center"></div>
+                        <div class="hand-hour" style="transform: rotate(90deg);"></div> <div class="hand-min" style="transform: rotate(0deg);"></div> </div>
+                    <strong>3 O'Clock (3:00)</strong><br>
+                    Long hand at 12
+                </div>
+
+                <div style="text-align:center;">
+                    <div class="clock-visual">
+                        <div class="clock-center"></div>
+                        <div class="hand-hour" style="transform: rotate(15deg);"></div> <div class="hand-min" style="transform: rotate(180deg);"></div> </div>
+                    <strong>Half Past 12 (12:30)</strong><br>
+                    Long hand at 6
+                </div>
+            </div>
+        </div>
+
+        <div class="card note-box routine-box">
+            <h2>3️⃣ Daily Routine & Word Problems 📝</h2>
+            <p>We do things at specific times:</p>
+            <ul>
+                <li><strong>7:00 AM:</strong> Wake up & Brush 🪥</li>
+                <li><strong>8:00 AM:</strong> Go to School 🚌</li>
+                <li><strong>1:00 PM:</strong> Lunch Time 🍱</li>
+                <li><strong>9:00 PM:</strong> Bed Time 😴</li>
+            </ul>
+            <p><strong>Duration:</strong> If you play from 4:00 to 5:00, you played for <strong>1 Hour</strong>.</p>
+        </div>
+
+        <div class="card" style="border-left-color: #9B59B6;">
+            <h2>👀 Look and Learn (Tap to see Answer)</h2>
+            
+            <div style="background:#fff; padding:10px; margin-bottom:10px; border:1px solid #ccc; border-radius:5px;">
+                <strong>Q: Today is Monday. What is tomorrow?</strong>
+                <button onclick="this.nextElementSibling.innerText = 'Tuesday'" style="margin-left:10px; padding:5px 10px;">Show Answer</button>
+                <span style="font-weight:bold; color:#8E44AD; margin-left:10px;"></span>
+            </div>
+
+            <div style="background:#fff; padding:10px; border:1px solid #ccc; border-radius:5px;">
+                <strong>Q: The Minute hand is at 6. It is...?</strong>
+                <button onclick="this.nextElementSibling.innerText = 'Half Past'" style="margin-left:10px; padding:5px 10px;">Show Answer</button>
+                <span style="font-weight:bold; color:#8E44AD; margin-left:10px;"></span>
+            </div>
+        </div>
+
+        <div id="practice-section">
+            <h1 style="text-align: center; color: var(--text);">🔥 Practice Time (50+ Questions)</h1>
+            
+            <div class="scoreboard">
+                <span>📊 Total: <span id="total-q">0</span></span>
+                <span>✅ Correct: <span id="correct-score">0</span></span>
+                <span>❌ Wrong: <span id="wrong-score">0</span></span>
+                <span>📈 Score: <span id="percentage">0%</span></span>
+            </div>
+            <br>
+
+            <div class="quiz-controls">
+                <button class="set-btn btn-yellow" onclick="loadSet(1)">🟡 Set 1: Blanks</button>
+                <button class="set-btn btn-blue" onclick="loadSet(2)">🔵 Set 2: Choice</button>
+                <button class="set-btn btn-green" onclick="loadSet(3)">🟢 Set 3: Match</button>
+                <button class="set-btn btn-orange" onclick="loadSet(4)">🟠 Set 4: Stories</button>
+                <button class="set-btn btn-red" onclick="loadSet(5)">🔴 Set 5: Expert</button>
+            </div>
+
+            <div id="quiz-container">
+                <div class="card" style="text-align: center; padding: 50px;">
+                    <h3>Select a Practice Set to start! 👆</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="background: #E8F8F5; border-left: 6px solid #1ABC9C;">
+            <h2>🎮 Fun Learning Activities</h2>
+            <ol>
+                <li><strong>Paper Plate Clock:</strong> Use a paper plate and cardboard strips to make your own clock!</li>
+                <li><strong>Calendar Fun:</strong> Circle your birthday on a calendar. What day is it?</li>
+                <li><strong>Time Game:</strong> Ask your friend "What time is it?" randomly during the day.</li>
+            </ol>
+        </div>
+
+        <div class="card" style="background: #fff; border-left: 6px solid #F1C40F;">
+            <h2>🎓 Learning Outcomes</h2>
+            <p><strong>Great job! Now you can:</strong></p>
+            <ul>
+                <li>✅ Read time (O'Clock and Half Past).</li>
+                <li>✅ Know Days of the Week & Months.</li>
+                <li>✅ Solve simple time word problems.</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>Designed & Created by <strong>SHRISHANT YADAV</strong></p>
+        <p>🌟 ShanEduHub – Fun & Smart Learning for Class 2</p>
+        <p>&copy; All Rights Reserved</p>
+    </footer>
+
+    <script>
+        // --- DATA: 50+ UNIQUE QUESTIONS ---
+        const questionSets = {
+            1: [ // Set 1: Fill in the Blanks (10 Q)
+                { id: 101, type: 'input', q: "There are ____ days in a week.", a: "7", exp: "Monday to Sunday = 7 days." },
+                { id: 102, type: 'input', q: "The long hand of the clock shows ____.", a: "minutes", exp: "Long hand is for minutes, short is for hours." },
+                { id: 103, type: 'input', q: "When the long hand is at 12, it is ____ o'clock.", a: "o'clock", exp: "At 12, the hour is complete." },
+                { id: 104, type: 'input', q: "There are ____ months in a year.", a: "12", exp: "Jan to Dec = 12 months." },
+                { id: 105, type: 'input', q: "The day after Tuesday is ____.", a: "wednesday", exp: "Sequence: Mon, Tue, Wed..." },
+                { id: 106, type: 'input', q: "When the long hand is at 6, it is ____ past.", a: "half", exp: "6 is half of 12, so 'Half Past'." },
+                { id: 107, type: 'input', q: "The first month of the year is ____.", a: "january", exp: "The year starts with January." },
+                { id: 108, type: 'input', q: "The short hand shows the ____.", a: "hour", exp: "Short hand = Hour hand." },
+                { id: 109, type: 'input', q: "Sunday is a ____ (working day/holiday).", a: "holiday", exp: "We usually don't go to school on Sunday." },
+                { id: 110, type: 'input', q: "Last month of the year is ____.", a: "december", exp: "The year ends with December." }
+            ],
+            2: [ // Set 2: Tap Correct Answer (10 Q)
+                { id: 201, type: 'mcq', q: "Which hand moves faster?", options: ["Minute Hand", "Hour Hand"], a: "Minute Hand", exp: "Minute hand completes a circle in 1 hour." },
+                { id: 202, type: 'mcq', q: "Which day comes before Friday?", options: ["Thursday", "Saturday"], a: "Thursday", exp: "Wed, Thu, Fri..." },
+                { id: 203, type: 'mcq', q: "How many hours in a day?", options: ["12", "24", "48"], a: "24", exp: "A full day has 24 hours." },
+                { id: 204, type: 'mcq', q: "Short hand at 4, Long hand at 12. Time is?", options: ["4:00", "12:04"], a: "4:00", exp: "Long at 12 means O'clock." },
+                { id: 205, type: 'mcq', q: "When do you eat breakfast?", options: ["Morning", "Night"], a: "Morning", exp: "Breakfast is the first meal." },
+                { id: 206, type: 'mcq', q: "Which month has Christmas?", options: ["June", "December"], a: "December", exp: "Christmas is on 25th Dec." },
+                { id: 207, type: 'mcq', q: "Short hand between 2 and 3, Long hand at 6.", options: ["2:00", "2:30", "3:30"], a: "2:30", exp: "Long at 6 means Half Past." },
+                { id: 208, type: 'mcq', q: "Which takes longer?", options: ["Blinking Eye", "Sleeping at Night"], a: "Sleeping at Night", exp: "Sleep takes hours, blink takes a second." },
+                { id: 209, type: 'mcq', q: "60 Minutes make?", options: ["1 Hour", "1 Day"], a: "1 Hour", exp: "60 mins = 1 hr." },
+                { id: 210, type: 'mcq', q: "Day after Sunday?", options: ["Monday", "Tuesday"], a: "Monday", exp: "New week starts with Monday." }
+            ],
+            3: [ // Set 3: Match / Logic (10 Q)
+                { id: 301, type: 'mcq', q: "Match: 5:00 matches with?", options: ["Five O'Clock", "Half Past Five"], a: "Five O'Clock", exp: ":00 means O'Clock." },
+                { id: 302, type: 'mcq', q: "Match: Half Past 9 matches with?", options: ["9:00", "9:30"], a: "9:30", exp: "Half past means 30 minutes." },
+                { id: 303, type: 'mcq', q: "Match: August 15 matches with?", options: ["Independence Day", "Christmas"], a: "Independence Day", exp: "Indian Independence Day." },
+                { id: 304, type: 'mcq', q: "Match: Lunch Time matches with?", options: ["8:00 AM", "1:00 PM"], a: "1:00 PM", exp: "Lunch is in the afternoon." },
+                { id: 305, type: 'mcq', q: "Match: 12:00 at day matches with?", options: ["Noon", "Midnight"], a: "Noon", exp: "Daytime 12 is Noon." },
+                { id: 306, type: 'mcq', q: "Match: February usually has?", options: ["30 days", "28 days"], a: "28 days", exp: "Feb is the shortest month." },
+                { id: 307, type: 'mcq', q: "Match: Short Hand at 10, Long at 12?", options: ["10:00", "12:10"], a: "10:00", exp: "Classic O'Clock reading." },
+                { id: 308, type: 'mcq', q: "Match: Saturday and Sunday?", options: ["Weekdays", "Weekend"], a: "Weekend", exp: "End of the week." },
+                { id: 309, type: 'mcq', q: "Match: 30 minutes past 1?", options: ["1:30", "1:00"], a: "1:30", exp: "30 mins past is half past." },
+                { id: 310, type: 'mcq', q: "Match: School Bus Time?", options: ["Morning", "Night"], a: "Morning", exp: "School starts in the morning." }
+            ],
+            4: [ // Set 4: Word Problems (10 Q)
+                { id: 401, type: 'mcq', q: "School starts at 8:00. Ends at 12:00. How many hours?", options: ["3 hours", "4 hours"], a: "4 hours", exp: "8 to 12 is 4 hours." },
+                { id: 402, type: 'mcq', q: "If today is Monday, what was yesterday?", options: ["Sunday", "Tuesday"], a: "Sunday", exp: "Sunday comes before Monday." },
+                { id: 403, type: 'input', q: "A movie is 2 hours long. Starts at 4:00. Ends at ____.", a: "6:00", exp: "4 + 2 = 6." },
+                { id: 404, type: 'mcq', q: "Sam sleeps at 9:00 PM. Wakes up at 6:00 AM. Is it night or day when he wakes?", options: ["Day", "Night"], a: "Day", exp: "6 AM is morning." },
+                { id: 405, type: 'mcq', q: "Which month comes after May?", options: ["April", "June"], a: "June", exp: "April, May, June..." },
+                { id: 406, type: 'input', q: "Playing for 1 hour from 5:00. Ends at ____.", a: "6:00", exp: "5 + 1 = 6." },
+                { id: 407, type: 'mcq', q: "Vacation starts in May and ends in July. How many months?", options: ["2 months", "5 months"], a: "2 months", exp: "May to July is approx 2 months." },
+                { id: 408, type: 'mcq', q: "Train leaves at 1:30. Reaches at 2:30. Time taken?", options: ["1 Hour", "2 Hours"], a: "1 Hour", exp: "1:30 to 2:30 is exactly 1 hour." },
+                { id: 409, type: 'mcq', q: "If tomorrow is Wednesday, what is today?", options: ["Tuesday", "Thursday"], a: "Tuesday", exp: "Tue comes before Wed." },
+                { id: 410, type: 'mcq', q: "You brush teeth for 2 minutes or 2 hours?", options: ["2 Minutes", "2 Hours"], a: "2 Minutes", exp: "Brushing is quick." }
+            ],
+            5: [ // Set 5: Expert/Mixed (10 Q)
+                { id: 501, type: 'mcq', q: "How many minutes in half an hour?", options: ["30", "60"], a: "30", exp: "Half of 60 is 30." },
+                { id: 502, type: 'input', q: "What comes between March and May?", a: "april", exp: "Mar, Apr, May." },
+                { id: 503, type: 'mcq', q: "12 Midnight is?", options: ["Start of new day", "Middle of day"], a: "Start of new day", exp: "Date changes at 12 midnight." },
+                { id: 504, type: 'mcq', q: "Clock shows 6:00. In 1 hour it will be?", options: ["7:00", "5:00"], a: "7:00", exp: "6 + 1 = 7." },
+                { id: 505, type: 'mcq', q: "Which is a Leap Year month?", options: ["February", "March"], a: "February", exp: "Feb gets 29 days in Leap Year." },
+                { id: 506, type: 'mcq', q: "Short hand moves from 3 to 4. How much time passed?", options: ["1 Hour", "1 Minute"], a: "1 Hour", exp: "Short hand indicates hours." },
+                { id: 507, type: 'input', q: "2 days after Sunday is ____.", a: "tuesday", exp: "Sun -> Mon -> Tue." },
+                { id: 508, type: 'mcq', q: "To show 3:30, Long hand points to?", options: ["3", "6", "12"], a: "6", exp: "6 represents 30 minutes." },
+                { id: 509, type: 'mcq', q: "Does the sun set in AM or PM?", options: ["PM", "AM"], a: "PM", exp: "Evening is PM." },
+                { id: 510, type: 'mcq', q: "Which is longest?", options: ["1 Week", "1 Month", "1 Year"], a: "1 Year", exp: "Year has 12 months." }
+            ]
+        };
+
+        // --- STATE VARIABLES ---
+        let currentSet = 1;
+        let scoreCorrect = 0;
+        let scoreWrong = 0;
+        let totalAttempted = 0;
+
+        // --- FUNCTIONS ---
+
+        function loadSet(setNum) {
+            currentSet = setNum;
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = `<h2>📝 Set ${setNum} Questions</h2>`;
+            
+            // Highlight active button
+            document.querySelectorAll('.set-btn').forEach(btn => btn.classList.remove('active-set'));
+            document.querySelector(`.set-btn:nth-child(${setNum})`).classList.add('active-set');
+
+            // Load questions
+            const questions = questionSets[setNum];
+            questions.forEach(q => {
+                const qDiv = document.createElement('div');
+                qDiv.className = 'question-box';
+                qDiv.id = `qbox-${q.id}`;
+                
+                let inputHTML = '';
+                
+                if (q.type === 'input') {
+                    inputHTML = `
+                        <p><strong>Q. ${q.q}</strong></p>
+                        <input type="text" class="input-answer" id="input-${q.id}" placeholder="Type here...">
+                        <button class="set-btn btn-blue" style="font-size:0.8rem; padding: 5px 15px; margin-left:10px;" onclick="checkInput(${q.id}, '${q.a}', '${q.exp.replace(/'/g, "\\'")}')">Check</button>
+                    `;
+                } else if (q.type === 'mcq') {
+                    let optionsHTML = '';
+                    q.options.forEach(opt => {
+                        optionsHTML += `<button onclick="checkMCQ(${q.id}, '${opt}', '${q.a}', '${q.exp.replace(/'/g, "\\'")}')">${opt}</button>`;
+                    });
+                    inputHTML = `
+                        <p><strong>Q. ${q.q}</strong></p>
+                        <div class="mcq-options" id="opts-${q.id}">
+                            ${optionsHTML}
+                        </div>
+                    `;
+                }
+
+                qDiv.innerHTML = inputHTML + `<div class="feedback" id="feedback-${q.id}"></div>`;
+                container.appendChild(qDiv);
+            });
+        }
+
+        function updateScore() {
+            document.getElementById('correct-score').innerText = scoreCorrect;
+            document.getElementById('wrong-score').innerText = scoreWrong;
+            document.getElementById('total-q').innerText = totalAttempted;
+            
+            let percent = totalAttempted === 0 ? 0 : Math.round((scoreCorrect / totalAttempted) * 100);
+            document.getElementById('percentage').innerText = percent + "%";
+        }
+
+        function showFeedback(id, isCorrect, correctAns, exp) {
+            const fbDiv = document.getElementById(`feedback-${id}`);
+            fbDiv.style.display = 'block';
+            
+            if (isCorrect) {
+                fbDiv.className = 'feedback correct';
+                fbDiv.innerHTML = `🎉 Correct! <br> <small>${exp}</small>`;
+            } else {
+                fbDiv.className = 'feedback wrong';
+                fbDiv.innerHTML = `❌ Wrong. The answer is <strong>${correctAns}</strong>. <br> <small>Reason: ${exp}</small>`;
+            }
+        }
+
+        function checkInput(id, correct, exp) {
+            const userVal = document.getElementById(`input-${id}`).value.trim().toLowerCase();
+            const correctVal = correct.toLowerCase();
+            const box = document.getElementById(`qbox-${id}`);
+
+            // Prevent re-answering
+            if(box.getAttribute('data-answered') === 'true') return;
+            box.setAttribute('data-answered', 'true');
+
+            totalAttempted++;
+            if (userVal === correctVal) {
+                scoreCorrect++;
+                showFeedback(id, true, correct, exp);
+            } else {
+                scoreWrong++;
+                showFeedback(id, false, correct, exp);
+            }
+            updateScore();
+        }
+
+        function checkMCQ(id, selected, correct, exp) {
+            const box = document.getElementById(`qbox-${id}`);
+            
+            // Prevent re-answering
+            if(box.getAttribute('data-answered') === 'true') return;
+            box.setAttribute('data-answered', 'true');
+
+            totalAttempted++;
+            if (selected === correct) {
+                scoreCorrect++;
+                showFeedback(id, true, correct, exp);
+            } else {
+                scoreWrong++;
+                showFeedback(id, false, correct, exp);
+            }
+            updateScore();
+            
+            // Disable buttons visually
+            const opts = document.getElementById(`opts-${id}`).getElementsByTagName('button');
+            for(let btn of opts) {
+                btn.disabled = true;
+                if(btn.innerText === correct) btn.style.background = '#D5F5E3';
+                else if(btn.innerText === selected) btn.style.background = '#FADBD8';
+            }
+        }
+
+        // Initialize with Set 1
+        window.onload = function() {
+            loadSet(1);
+        };
+
+    </script>
+</body>
+</html>

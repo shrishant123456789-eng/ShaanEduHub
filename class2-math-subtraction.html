@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subtraction | ShanEduHub</title>
+    <style>
+        /* --- GENERAL STYLES --- */
+        :root {
+            --primary: #FF7675; /* Soft Red */
+            --secondary: #74B9FF; /* Soft Blue */
+            --accent: #FDCB6E; /* Warm Yellow */
+            --dark: #2D3436;
+            --bg: #FAACA8;
+            --bg-gradient: linear-gradient(19deg, #FAACA8 0%, #DDD6F3 100%);
+            --card-bg: #FFFFFF;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+            background-image: var(--bg-gradient);
+            color: var(--dark);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background: white;
+            color: var(--primary);
+            padding: 25px;
+            text-align: center;
+            border-radius: 0 0 30px 30px;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            border-bottom: 5px solid var(--accent);
+        }
+
+        header h1 { margin: 0; font-size: 2.5em; letter-spacing: 1px; color: #E84393; }
+        header p { font-size: 1.3em; margin-top: 5px; font-weight: bold; color: #636E72; }
+
+        /* --- CARDS & SECTIONS --- */
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-left: 6px solid var(--secondary);
+            transition: transform 0.2s;
+        }
+
+        .card:hover { transform: translateY(-2px); }
+
+        h2 { color: #0984E3; border-bottom: 2px dashed #dfe6e9; padding-bottom: 10px; }
+        h3 { color: #D63031; margin-top: 20px; }
+
+        .example-box {
+            background-color: #FFF3E0;
+            padding: 15px;
+            border-radius: 15px;
+            border: 2px dashed #FFB74D;
+            margin: 15px 0;
+            font-weight: bold;
+            font-size: 1.1em;
+            text-align: center;
+        }
+
+        .step-box {
+            background: #E1F5FE;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #29B6F6;
+        }
+
+        .image-placeholder {
+            background-color: #f1f2f6;
+            border: 2px dashed #a4b0be;
+            color: #57606f;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+            margin: 10px 0;
+            font-style: italic;
+        }
+
+        /* --- PRACTICE SECTION UI --- */
+        .quiz-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .set-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: all 0.2s;
+            color: white;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+            margin-bottom: 5px;
+        }
+
+        .set-btn:active { transform: translateY(4px); box-shadow: none; }
+        .btn-green { background-color: #00b894; }
+        .btn-blue { background-color: #0984e3; }
+        .btn-yellow { background-color: #fdcb6e; color: #333; }
+        .btn-orange { background-color: #e17055; }
+        .btn-red { background-color: #d63031; }
+
+        .active-set { box-shadow: inset 0 0 10px rgba(0,0,0,0.3); transform: translateY(2px); }
+
+        /* --- QUESTION STYLES --- */
+        .question-box {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 15px;
+            border: 2px solid #f1f2f6;
+        }
+
+        .input-answer {
+            padding: 10px;
+            font-size: 1.1rem;
+            border: 2px solid #b2bec3;
+            border-radius: 10px;
+            width: 120px;
+            text-align: center;
+            outline: none;
+        }
+        
+        .input-answer:focus { border-color: var(--secondary); }
+
+        .mcq-options button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 12px;
+            margin: 8px 0;
+            background: #f9f9f9;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .mcq-options button:hover { background: #dfe6e9; }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+            font-weight: bold;
+        }
+
+        .correct { background-color: #55efc4; color: #006266; border: 1px solid #00b894; }
+        .wrong { background-color: #fab1a0; color: #b71540; border: 1px solid #e17055; }
+
+        /* --- SCOREBOARD --- */
+        .scoreboard {
+            position: sticky;
+            top: 0;
+            background: #6c5ce7;
+            color: white;
+            padding: 15px;
+            z-index: 100;
+            display: flex;
+            justify-content: space-around;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            font-weight: bold;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background-color: #2d3436;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+
+        .tips-box {
+            background: #FFEBEE;
+            border-left: 6px solid #FF5252;
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.8em; }
+            .set-btn { width: 100%; }
+            .scoreboard { font-size: 0.85em; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>ShanEduHub 🎓</h1>
+        <p>Class 2 Mathematics – Subtraction ➖</p>
+    </header>
+
+    <div class="container">
+
+        <div class="card">
+            <h2>👋 Hello Kids! What is Subtraction?</h2>
+            <p><strong>Subtraction</strong> means "taking away" or finding out "how many are left".</p>
+            <p>It helps us find the <strong>difference</strong> between two numbers.</p>
+            <div class="example-box">
+                🍭 You have 8 candies.<br>
+                😋 You eat 3 candies.<br>
+                ❓ How many left? <strong>8 – 3 = 5</strong> candies!
+            </div>
+            
+        </div>
+
+        <div class="card">
+            <h2>3.1 The Minus Sign (–)</h2>
+            <p>The symbol for subtraction is a small sleeping line: <strong style="font-size:1.5em; color:var(--primary);">–</strong></p>
+            <p>We read it as <strong>MINUS</strong>.</p>
+            <p><strong>Example:</strong> 7 – 4 = 3</p>
+            <p>(Here, 7 is the big number, 4 is what we take away, and 3 is the Answer or Difference).</p>
+        </div>
+
+        <div class="card">
+            <h2>3.2 Subtracting Big Numbers (Up to 999)</h2>
+            <p>We can subtract 1-digit, 2-digit, and 3-digit numbers.</p>
+            <p><strong>Important Rule:</strong> Always start from the <strong>Ones</strong> place (Right side) and move to the left!</p>
+            <ul>
+                <li><strong>H</strong> = Hundreds</li>
+                <li><strong>T</strong> = Tens</li>
+                <li><strong>O</strong> = Ones</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>3.3 Subtraction Without Borrowing 😊</h2>
+            <p>This is easy! The top number is bigger than the bottom number.</p>
+            <div class="step-box">
+                <strong>Example: 654 – 321</strong><br><br>
+                Step 1 (Ones): 4 – 1 = <strong>3</strong><br>
+                Step 2 (Tens): 5 – 2 = <strong>3</strong><br>
+                Step 3 (Hundreds): 6 – 3 = <strong>3</strong><br>
+                <strong>Answer: 333</strong>
+            </div>
+            
+        </div>
+
+        <div class="card">
+            <h2>3.4 Subtraction With Borrowing (Knock Knock!) 🚪</h2>
+            <p>Sometimes, the top number is <strong>smaller</strong> than the bottom number. You cannot take away 8 from 2.</p>
+            <p>So, we knock on the neighbor's door and <strong>BORROW</strong> 1 ten.</p>
+            <div class="step-box">
+                <strong>Example: 52 – 38</strong><br>
+                <em>(We cannot do 2 – 8)</em><br><br>
+                1. <strong>Borrow:</strong> The 2 asks the 5 (Tens) for help.<br>
+                2. <strong>Change:</strong> The 5 becomes <strong>4</strong>. The 2 becomes <strong>12</strong>.<br>
+                3. <strong>Subtract:</strong> 12 – 8 = <strong>4</strong>.<br>
+                4. <strong>Tens:</strong> 4 – 3 = <strong>1</strong>.<br>
+                <strong>Answer: 14</strong>
+            </div>
+            
+        </div>
+
+        <div class="card">
+            <h2>3.5 Vertical & Horizontal Subtraction</h2>
+            
+            <h3>Vertical Subtraction (Standing) ⬇️</h3>
+            <p>Write numbers one below the other. Keep Ones under Ones.</p>
+            <div class="example-box">
+              &nbsp;&nbsp;45<br>
+            – 23<br>
+            -----<br>
+            &nbsp;&nbsp;22
+            </div>
+
+            <h3>Horizontal Subtraction (Sleeping) ➡️</h3>
+            <p>Subtracting side by side. Useful for quick maths!</p>
+            <div class="example-box">50 – 20 = 30</div>
+        </div>
+
+        <div class="card">
+            <h2>3.7 Word Problems (Stories) 📖</h2>
+            <p>Look for these magic words to know it is Subtraction:</p>
+            <ul>
+                <li>Left / Remaining ✅</li>
+                <li>Difference ✅</li>
+                <li>How many more? ✅</li>
+                <li>Take away ✅</li>
+            </ul>
+            <p><strong>Steps:</strong> Read ➔ Understand ➔ Subtract ➔ Write Answer.</p>
+        </div>
+
+        <div class="card">
+            <h2>3.8 Number Line & Mental Subtraction 🧠</h2>
+            <p><strong>Number Line:</strong> Start at the big number. Jump <strong>BACKWARD</strong> (left) by the small number.</p>
+            
+            
+            <p><strong>Mental Maths Tricks:</strong></p>
+            <ul>
+                <li>Subtracting 0: Number stays same (5 – 0 = 5).</li>
+                <li>Subtracting same number: Answer is 0 (9 – 9 = 0).</li>
+                <li>Subtracting 1: Answer is the number before (Previous number).</li>
+            </ul>
+        </div>
+
+        <div class="tips-box">
+            <h3>💡 Subtraction Tips</h3>
+            <ul>
+                <li>👉 Always subtract from <strong>Right to Left</strong>.</li>
+                <li>👀 If top number is small, <strong>Borrow</strong> from neighbor.</li>
+                <li>🐢 Read the numbers slowly. Don't rush!</li>
+            </ul>
+        </div>
+
+        <div id="practice-section">
+            <h1 style="text-align: center; color: var(--primary);">🎯 Practice Time!</h1>
+            
+            <div class="scoreboard">
+                <span>📝 Q: <span id="total-q">0</span></span>
+                <span>✅ Correct: <span id="correct-score">0</span></span>
+                <span>❌ Wrong: <span id="wrong-score">0</span></span>
+            </div>
+            <br>
+
+            <div class="quiz-controls">
+                <button class="set-btn btn-green" onclick="loadSet(1)">🟢 Set 1: Blanks</button>
+                <button class="set-btn btn-blue" onclick="loadSet(2)">🔵 Set 2: MCQ</button>
+                <button class="set-btn btn-yellow" onclick="loadSet(3)">🟡 Set 3: Type</button>
+                <button class="set-btn btn-orange" onclick="loadSet(4)">🟠 Set 4: Stories</button>
+                <button class="set-btn btn-red" onclick="loadSet(5)">🔴 Set 5: Mixed</button>
+            </div>
+
+            <div id="quiz-container">
+                <div class="card" style="text-align: center; padding: 50px;">
+                    <h3>Select a Practice Set to start! 👆</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="background: #E0F2F1; border-bottom: none; border-left: 6px solid #009688;">
+            <h2>🌟 Self Check Summary</h2>
+            <p><strong>Now you can:</strong></p>
+            <ul>
+                <li>✅ Find the difference between numbers.</li>
+                <li>✅ Subtract big numbers using Borrowing.</li>
+                <li>✅ Solve word problems about "How many left?".</li>
+            </ul>
+            <p><em>"Mistakes help us learn. Keep practicing!"</em></p>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>Designed & Created by <strong>SHRISHANT YADAV</strong></p>
+        <p>&copy; 2026 ShanEduHub – Learning Made Fun</p>
+    </footer>
+
+    <script>
+        // --- DATA: QUESTION BANK (50 QUESTIONS) ---
+        const questionSets = {
+            1: [ // Set 1: Fill in the Blanks (Simple)
+                { id: 101, type: 'input', q: "5 – 2 = ____", a: "3", exp: "If you take 2 away from 5, you have 3 left." },
+                { id: 102, type: 'input', q: "10 – 0 = ____", a: "10", exp: "Subtracting zero means taking nothing away." },
+                { id: 103, type: 'input', q: "8 – 8 = ____", a: "0", exp: "If you take everything away, zero is left." },
+                { id: 104, type: 'input', q: "15 – 5 = ____", a: "10", exp: "Remove the 5 ones, 1 ten is left." },
+                { id: 105, type: 'input', q: "The sign for subtraction is ____ (- or +)", a: "-", exp: "Minus sign (-) is used for subtraction." },
+                { id: 106, type: 'input', q: "One less than 20 is ____", a: "19", exp: "20 minus 1 is 19." },
+                { id: 107, type: 'input', q: "9 – 3 = ____", a: "6", exp: "Count backwards: 8, 7, 6." },
+                { id: 108, type: 'input', q: "25 – ____ = 25", a: "0", exp: "We subtracted nothing." },
+                { id: 109, type: 'input', q: "12 – 2 = ____", a: "10", exp: "Simple subtraction." },
+                { id: 110, type: 'input', q: "____ – 1 = 9", a: "10", exp: "10 minus 1 is 9." }
+            ],
+            2: [ // Set 2: MCQ (Tap Correct Answer)
+                { id: 201, type: 'mcq', q: "50 – 10 = ?", options: ["30", "40", "60"], a: "40", exp: "5 tens minus 1 ten is 4 tens." },
+                { id: 202, type: 'mcq', q: "What is the difference between 9 and 4?", options: ["4", "5", "6"], a: "5", exp: "Difference means subtract: 9 - 4 = 5." },
+                { id: 203, type: 'mcq', q: "35 – 5 =", options: ["30", "25", "35"], a: "30", exp: "Remove the 5 ones." },
+                { id: 204, type: 'mcq', q: "100 – 1 =", options: ["90", "99", "101"], a: "99", exp: "The number just before 100." },
+                { id: 205, type: 'mcq', q: "When we subtract, the answer gets:", options: ["Bigger", "Smaller", "Same"], a: "Smaller", exp: "Taking away makes the number smaller." },
+                { id: 206, type: 'mcq', q: "66 – 33 =", options: ["22", "33", "44"], a: "33", exp: "6-3=3 for both digits." },
+                { id: 207, type: 'mcq', q: "40 – 20 =", options: ["20", "10", "60"], a: "20", exp: "4 tens - 2 tens = 2 tens." },
+                { id: 208, type: 'mcq', q: "Which is correct?", options: ["5 - 2 = 3", "5 - 2 = 4", "5 - 2 = 2"], a: "5 - 2 = 3", exp: "5 take away 2 is 3." },
+                { id: 209, type: 'mcq', q: "200 – 100 =", options: ["0", "100", "200"], a: "100", exp: "2 hundreds - 1 hundred." },
+                { id: 210, type: 'mcq', q: "Choose the odd one out:", options: ["10-5=5", "7-2=5", "8-4=5"], a: "8-4=5", exp: "8-4 is 4, not 5. The others are correct." }
+            ],
+            3: [ // Set 3: Type Answers (Vertical/Horizontal)
+                { id: 301, type: 'input', q: "48 – 24 = ____", a: "24", exp: "8-4=4, 4-2=2." },
+                { id: 302, type: 'input', q: "70 – 30 = ____", a: "40", exp: "7 tens minus 3 tens." },
+                { id: 303, type: 'input', q: "100 – 50 = ____", a: "50", exp: "Half of 100 is 50." },
+                { id: 304, type: 'input', q: "32 – 18 = ____", a: "14", exp: "Borrow 1 ten. 12-8=4, 2-1=1." },
+                { id: 305, type: 'input', q: "500 – 200 = ____", a: "300", exp: "5-2=3 hundreds." },
+                { id: 306, type: 'input', q: "85 – 5 = ____", a: "80", exp: "Simple subtraction." },
+                { id: 307, type: 'input', q: "99 – 9 = ____", a: "90", exp: "Remove the 9 ones." },
+                { id: 308, type: 'input', q: "60 – 15 = ____", a: "45", exp: "Borrowing needed. 10-5=5, 5-1=4." },
+                { id: 309, type: 'input', q: "25 – 12 = ____", a: "13", exp: "5-2=3, 2-1=1." },
+                { id: 310, type: 'input', q: "11 – 7 = ____", a: "4", exp: "Count up from 7 to 11." }
+            ],
+            4: [ // Set 4: Word Problems
+                { id: 401, type: 'mcq', q: "You have 10 pens. You lose 2. How many left?", options: ["8", "12", "10"], a: "8", exp: "10 - 2 = 8." },
+                { id: 402, type: 'mcq', q: "15 birds on a tree. 5 fly away. Birds left?", options: ["20", "10", "5"], a: "10", exp: "15 - 5 = 10." },
+                { id: 403, type: 'input', q: "A shop has 50 eggs. 10 broke. How many good eggs?", a: "40", exp: "50 - 10 = 40." },
+                { id: 404, type: 'mcq', q: "Mom gave 20 rupees. You spent 5. How much is left?", options: ["25", "15", "10"], a: "15", exp: "20 - 5 = 15." },
+                { id: 405, type: 'input', q: "Class has 30 chairs. 5 are broken. How many good chairs?", a: "25", exp: "30 - 5 = 25." },
+                { id: 406, type: 'mcq', q: "Which word means subtraction?", options: ["Total", "Left", "Sum"], a: "Left", exp: "'Left' asks for what remains." },
+                { id: 407, type: 'input', q: "Tom has 8 apples. He eats 4. Apples remaining?", a: "4", exp: "8 - 4 = 4." },
+                { id: 408, type: 'mcq', q: "A book has 100 pages. I read 20. Pages left to read?", options: ["80", "120", "70"], a: "80", exp: "100 - 20 = 80." },
+                { id: 409, type: 'input', q: "There are 12 months. 2 have passed. How many left?", a: "10", exp: "12 - 2 = 10." },
+                { id: 410, type: 'mcq', q: "Difference between 10 and 3?", options: ["13", "7", "30"], a: "7", exp: "10 - 3 = 7." }
+            ],
+            5: [ // Set 5: Mixed Challenge
+                { id: 501, type: 'input', q: "50 – 25 = ____", a: "25", exp: "25 + 25 = 50, so 50 - 25 = 25." },
+                { id: 502, type: 'mcq', q: "200 – 0 = ?", options: ["0", "199", "200"], a: "200", exp: "Minus zero changes nothing." },
+                { id: 503, type: 'input', q: "82 – 4 = ____", a: "78", exp: "Borrowing: 12-4=8, 7 remains." },
+                { id: 504, type: 'mcq', q: "I am 50. Take away 10 from me. Who am I?", options: ["40", "60", "30"], a: "40", exp: "50 - 10 = 40." },
+                { id: 505, type: 'input', q: "100 – 100 = ____", a: "0", exp: "Number minus itself is zero." },
+                { id: 506, type: 'mcq', q: "90 – 45 = ?", options: ["45", "55", "35"], a: "45", exp: "Borrowing needed." },
+                { id: 507, type: 'input', q: "150 – 50 = ____", a: "100", exp: "Simple subtraction." },
+                { id: 508, type: 'mcq', q: "If 5 + 5 = 10, then 10 – 5 = ?", options: ["5", "0", "10"], a: "5", exp: "Addition and Subtraction are opposites." },
+                { id: 509, type: 'input', q: "Subtract 9 from 20.", a: "11", exp: "20 - 9 = 11." },
+                { id: 510, type: 'mcq', q: "Which is smaller: 10–2 or 10–5?", options: ["10-2", "10-5", "Equal"], a: "10-5", exp: "10-2=8, 10-5=5. 5 is smaller." }
+            ]
+        };
+
+        // --- STATE VARIABLES ---
+        let currentSet = 1;
+        let scoreCorrect = 0;
+        let scoreWrong = 0;
+        let totalAttempted = 0;
+
+        // --- FUNCTIONS ---
+
+        function loadSet(setNum) {
+            currentSet = setNum;
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = `<h2>📝 Set ${setNum} Questions</h2>`;
+            
+            // Highlight active button
+            document.querySelectorAll('.set-btn').forEach(btn => btn.classList.remove('active-set'));
+            document.querySelector(`.set-btn:nth-child(${setNum})`).classList.add('active-set');
+
+            // Load questions
+            const questions = questionSets[setNum];
+            questions.forEach(q => {
+                const qDiv = document.createElement('div');
+                qDiv.className = 'question-box';
+                qDiv.id = `qbox-${q.id}`;
+                
+                let inputHTML = '';
+                
+                if (q.type === 'input') {
+                    inputHTML = `
+                        <p><strong>Q. ${q.q}</strong></p>
+                        <input type="text" class="input-answer" id="input-${q.id}" placeholder="?">
+                        <button class="set-btn btn-blue" style="font-size:0.8rem; padding: 8px 20px; margin-left:10px;" onclick="checkInput(${q.id}, '${q.a}', '${q.exp.replace(/'/g, "\\'")}')">Check</button>
+                    `;
+                } else if (q.type === 'mcq') {
+                    let optionsHTML = '';
+                    q.options.forEach(opt => {
+                        optionsHTML += `<button onclick="checkMCQ(${q.id}, '${opt}', '${q.a}', '${q.exp.replace(/'/g, "\\'")}')">${opt}</button>`;
+                    });
+                    inputHTML = `
+                        <p><strong>Q. ${q.q}</strong></p>
+                        <div class="mcq-options" id="opts-${q.id}">
+                            ${optionsHTML}
+                        </div>
+                    `;
+                }
+
+                qDiv.innerHTML = inputHTML + `<div class="feedback" id="feedback-${q.id}"></div>`;
+                container.appendChild(qDiv);
+            });
+        }
+
+        function updateScore() {
+            document.getElementById('correct-score').innerText = scoreCorrect;
+            document.getElementById('wrong-score').innerText = scoreWrong;
+            document.getElementById('total-q').innerText = totalAttempted;
+        }
+
+        function showFeedback(id, isCorrect, correctAns, exp) {
+            const fbDiv = document.getElementById(`feedback-${id}`);
+            fbDiv.style.display = 'block';
+            
+            if (isCorrect) {
+                fbDiv.className = 'feedback correct';
+                fbDiv.innerHTML = `🎉 Correct! <br> <small>${exp}</small>`;
+            } else {
+                fbDiv.className = 'feedback wrong';
+                fbDiv.innerHTML = `❌ Wrong. The answer is <strong>${correctAns}</strong>. <br> <small>Reason: ${exp}</small>`;
+            }
+        }
+
+        function checkInput(id, correct, exp) {
+            const userVal = document.getElementById(`input-${id}`).value.trim();
+            const correctVal = correct;
+            const box = document.getElementById(`qbox-${id}`);
+
+            // Prevent re-answering
+            if(box.getAttribute('data-answered') === 'true') return;
+            box.setAttribute('data-answered', 'true');
+
+            totalAttempted++;
+            if (userVal === correctVal) {
+                scoreCorrect++;
+                showFeedback(id, true, correct, exp);
+            } else {
+                scoreWrong++;
+                showFeedback(id, false, correct, exp);
+            }
+            updateScore();
+        }
+
+        function checkMCQ(id, selected, correct, exp) {
+            const box = document.getElementById(`qbox-${id}`);
+            
+            // Prevent re-answering
+            if(box.getAttribute('data-answered') === 'true') return;
+            box.setAttribute('data-answered', 'true');
+
+            totalAttempted++;
+            if (selected === correct) {
+                scoreCorrect++;
+                showFeedback(id, true, correct, exp);
+            } else {
+                scoreWrong++;
+                showFeedback(id, false, correct, exp);
+            }
+            updateScore();
+            
+            // Disable buttons visually
+            const opts = document.getElementById(`opts-${id}`).getElementsByTagName('button');
+            for(let btn of opts) {
+                btn.disabled = true;
+                if(btn.innerText === correct) btn.style.background = '#55efc4';
+                else if(btn.innerText === selected) btn.style.background = '#fab1a0';
+            }
+        }
+
+        // Initialize with Set 1
+        window.onload = function() {
+            loadSet(1);
+        };
+
+    </script>
+</body>
+</html>

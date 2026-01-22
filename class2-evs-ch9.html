@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💡🌞 Class 2 EVS – Chapter 9: Light, Shadow & Day/Night</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Comic+Neue:wght@400;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --day-yellow: #FFEB3B;
+            --sun-orange: #FF9800;
+            --night-blue: #1A237E;
+            --light-blue: #C5CAE9;
+            --shadow-grey: #424242;
+            --text-dark: #37474F;
+            --bg-gradient: linear-gradient(180deg, #FFFDE7 0%, #E3F2FD 100%);
+        }
+
+        * { box-sizing: border-box; user-select: none; }
+
+        body {
+            font-family: 'Comic Neue', cursive;
+            background: var(--bg-gradient);
+            margin: 0;
+            padding: 0;
+            color: var(--text-dark);
+        }
+
+        /* --- Header --- */
+        header {
+            background: linear-gradient(to right, #2c3e50, #4ca1af); /* Night to Day gradient */
+            padding: 20px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 5px solid var(--sun-orange);
+        }
+
+        h1 {
+            font-family: 'Fredoka One', cursive;
+            margin: 0;
+            font-size: 2rem;
+            text-shadow: 3px 3px 0px rgba(0,0,0,0.2);
+            letter-spacing: 1px;
+            cursor: default;
+        }
+        
+        h1 span { display: inline-block; transition: transform 0.3s; }
+        h1 span:hover { transform: translateY(-5px) scale(1.1); color: var(--day-yellow); }
+
+        .header-emojis { margin-top: 10px; }
+        .header-emojis span {
+            font-size: 2.5rem;
+            display: inline-block;
+            margin: 0 10px;
+            animation: twinkle 3s infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(0.9); }
+        }
+
+        /* --- Layout --- */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* --- Section 1: Notes --- */
+        .notes-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border: 3px solid var(--sun-orange);
+        }
+
+        .section-title {
+            font-family: 'Fredoka One', cursive;
+            color: var(--night-blue);
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        /* Cursive Font for Notes */
+        .cursive-text {
+            font-family: 'Patrick Hand', cursive;
+            font-size: 1.5rem;
+            line-height: 1.6;
+            color: #263238;
+        }
+
+        /* Accordion Style */
+        .accordion {
+            background-color: #FFF9C4; /* Light Yellow */
+            color: var(--text-dark);
+            cursor: pointer;
+            padding: 15px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.3rem;
+            font-family: 'Fredoka One', cursive;
+            transition: 0.4s;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 6px solid var(--sun-orange);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .active, .accordion:hover {
+            background-color: var(--sun-orange);
+            color: white;
+        }
+
+        .panel {
+            padding: 0 18px;
+            background-color: white;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .light-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 15px;
+            text-align: center;
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .light-card {
+            background: #FAFAFA;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            border: 1px solid #DDD;
+        }
+        .emoji-lg { font-size: 2.5rem; display: block; margin-bottom: 5px; }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 2px dashed var(--night-blue);
+            cursor: help;
+            color: var(--night-blue);
+            font-weight: bold;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 240px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 5;
+            bottom: 130%;
+            left: 50%;
+            margin-left: -120px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-family: 'Comic Neue';
+            font-size: 1rem;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+        }
+
+        .tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
+
+        /* --- Section 2: Game Area --- */
+        .game-section {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border: 3px solid var(--night-blue);
+            text-align: center;
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-around;
+            background: var(--light-blue);
+            padding: 12px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--night-blue);
+            border: 2px solid var(--night-blue);
+        }
+
+        .level-selector { margin-bottom: 20px; }
+
+        .level-btn {
+            padding: 10px 20px;
+            font-family: 'Fredoka One';
+            border: none;
+            border-radius: 20px;
+            margin: 5px;
+            cursor: pointer;
+            background: #eceff1;
+            color: #546e7a;
+            transition: 0.3s;
+            box-shadow: 0 3px 0 #cfd8dc;
+        }
+
+        .level-btn.active-level {
+            background: var(--sun-orange);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 4px 0 #E65100;
+        }
+
+        .question-card {
+            background: #E0F7FA;
+            padding: 25px;
+            border-radius: 20px;
+            min-height: 250px;
+            position: relative;
+            border: 2px dashed #00ACC1;
+        }
+
+        .audio-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: white;
+            border: 2px solid var(--sun-orange);
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .q-text {
+            font-size: 1.6rem;
+            margin: 20px 0;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Options Grid */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .option-btn {
+            background: white;
+            border: 3px solid #B2EBF2;
+            padding: 15px;
+            border-radius: 15px;
+            font-family: 'Comic Neue';
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100px;
+            font-weight: bold;
+            color: #006064;
+        }
+
+        .option-btn:hover {
+            border-color: var(--sun-orange);
+            background: #FFF3E0;
+            transform: translateY(-3px);
+        }
+        
+        .opt-emoji { font-size: 2.2rem; margin-bottom: 5px; }
+
+        /* Input Field Style */
+        .input-answer {
+            padding: 15px;
+            font-size: 1.4rem;
+            border-radius: 10px;
+            border: 3px solid var(--sun-orange);
+            width: 80%;
+            text-align: center;
+            font-family: 'Comic Neue';
+            margin-bottom: 15px;
+            outline: none;
+        }
+
+        .submit-btn {
+            background: var(--night-blue);
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 20px;
+            font-size: 1.2rem;
+            font-family: 'Fredoka One';
+            cursor: pointer;
+            box-shadow: 0 4px 0 #1A237E;
+        }
+        .submit-btn:active { transform: translateY(4px); box-shadow: none; }
+
+        /* Feedback Modal */
+        .feedback-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 0 100px rgba(0,0,0,0.5);
+            z-index: 1000;
+            text-align: center;
+            display: none;
+            border: 6px solid;
+            width: 90%;
+            max-width: 400px;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 999;
+            display: none;
+            backdrop-filter: blur(4px);
+        }
+
+        .fb-emoji { font-size: 5rem; display: block; margin-bottom: 10px; animation: pop 0.5s; }
+        
+        @keyframes pop { 0% { transform: scale(0); } 70% { transform: scale(1.2); } 100% { transform: scale(1); } }
+
+        .next-btn {
+            background: var(--sun-orange);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.3rem;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-family: 'Fredoka One';
+            box-shadow: 0 4px 0 #E65100;
+        }
+        .next-btn:active { transform: translateY(4px); box-shadow: none; }
+
+        /* --- Footer --- */
+        footer {
+            background: #212121;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            border-top-left-radius: 30px;
+            border-top-right-radius: 30px;
+        }
+        
+        footer p { margin: 5px 0; transition: transform 0.3s; }
+        footer p:hover { transform: scale(1.05); color: var(--day-yellow); }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            h1 { font-size: 1.5rem; }
+            .option-btn { font-size: 1.1rem; padding: 10px; }
+            .header-emojis span { font-size: 1.8rem; }
+            .cursive-text { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>
+        <span>💡</span> <span>C</span><span>l</span><span>a</span><span>s</span><span>s</span> <span>2</span> <span>E</span><span>V</span><span>S</span> <span>🌞</span><br>
+        Chapter 9: Light, Shadow & Day/Night
+    </h1>
+    <div class="header-emojis">
+        <span>🌙</span><span>🔦</span><span>🕯️</span><span>☀️</span><span>🌘</span>
+    </div>
+</header>
+
+<main class="container">
+
+    <section class="notes-section">
+        <h2 class="section-title">📖 Let's Learn!</h2>
+        
+        <button class="accordion">1. Sources of Light 💡</button>
+        <div class="panel cursive-text">
+            <p><strong>Natural Sources:</strong> Not made by humans.</p>
+            <div class="light-grid">
+                <div class="light-card"><span class="emoji-lg">☀️</span>Sun<br>(Main Source)</div>
+                <div class="light-card"><span class="emoji-lg">🔥</span>Fire</div>
+                <div class="light-card"><span class="emoji-lg">✨</span>Stars</div>
+            </div>
+            <p><strong>Artificial Sources:</strong> Made by humans.</p>
+            <div class="light-grid">
+                <div class="light-card"><span class="emoji-lg">💡</span>Bulb</div>
+                <div class="light-card"><span class="emoji-lg">🕯️</span>Candle</div>
+                <div class="light-card"><span class="emoji-lg">🔦</span>Torch</div>
+            </div>
+        </div>
+
+        <button class="accordion">2. Shadows & Reflection 🌑</button>
+        <div class="panel cursive-text">
+            <p><strong>Reflection:</strong> When light bounces off a mirror or water. 🪞</p>
+            <p><strong>Shadows:</strong> Dark shapes formed when an object blocks light.</p>
+            <ul>
+                <li>Morning/Evening: Shadows are <strong>Long</strong>. 🦒</li>
+                <li>Noon (12 PM): Shadows are <strong>Short</strong>. 🐭</li>
+            </ul>
+        </div>
+
+        <button class="accordion">3. Day & Night 🌞🌙</button>
+        <div class="panel cursive-text">
+            <ul>
+                <li><strong>Day:</strong> When we can see the Sun. It is bright. ☀️</li>
+                <li><strong>Night:</strong> When the Sun sets. It is dark. We see Moon & Stars. 🌙</li>
+            </ul>
+            <p><span class="tooltip">💡 Fun Fact<span class="tooltiptext">Long ago, people used shadows to tell time! (Sundials)</span></span></p>
+        </div>
+
+        <button class="accordion">4. Safety First! ⚠️</button>
+        <div class="panel cursive-text">
+            <p><strong>Never look directly at the Sun!</strong> 🚫👀</p>
+            <p>It can hurt your eyes. Wear sunglasses on sunny days. 🕶️</p>
+            <p>Be careful with candles and fire. 🔥</p>
+        </div>
+    </section>
+
+    <section class="game-section" id="exercise-area">
+        <h2 class="section-title">🎮 Light Master Quiz</h2>
+        
+        <div class="score-board">
+            <span>⭐ Stars: <span id="star-count">0</span></span>
+            <span>✅ Score: <span id="score">0</span></span>
+            <span>📝 Left: <span id="q-left">50</span></span>
+        </div>
+
+        <div class="level-selector">
+            <button class="level-btn active-level" onclick="setLevel(1)">Level 1 (Basic)</button>
+            <button class="level-btn" onclick="setLevel(2)">Level 2 (Thinker)</button>
+            <button class="level-btn" onclick="setLevel(3)">Level 3 (Pro)</button>
+        </div>
+
+        <div class="question-card" id="question-container">
+            <button class="audio-btn" onclick="readQuestion()">🔊</button>
+            <div id="q-image" style="font-size:4rem; margin-bottom:15px;"></div>
+            <div class="q-text" id="q-text">Loading...</div>
+            
+            <div id="interaction-area">
+                </div>
+        </div>
+    </section>
+
+</main>
+
+<div class="overlay" id="overlay"></div>
+<div class="feedback-modal" id="feedback-modal">
+    <span class="fb-emoji" id="fb-emoji">🎉</span>
+    <h2 id="fb-title">Correct!</h2>
+    <p id="fb-msg">You are doing great!</p>
+    <button class="next-btn" onclick="nextQuestion()">Next Question ➡</button>
+</div>
+
+<footer>
+    <p>Designed & Created by <strong>SHRISHANT YADAV</strong></p>
+    <p>© 2026 ShanEduHub</p>
+</footer>
+
+<script>
+    // --- Data: 50+ Unique Questions ---
+    const allQuestions = [
+        // LEVEL 1: Basic (Identify Sources & Light Types)
+        { id: 1, level: 1, type: 'img', q: "Tap the NATURAL light source.", opts: [{t:"Sun", i:"☀️"}, {t:"Bulb", i:"💡"}, {t:"Torch", i:"🔦"}], ans: "Sun" },
+        { id: 2, level: 1, type: 'img', q: "Tap the ARTIFICIAL light source.", opts: [{t:"Candle", i:"🕯️"}, {t:"Sun", i:"☀️"}, {t:"Star", i:"✨"}], ans: "Candle" },
+        { id: 3, level: 1, type: 'tf', q: "The Sun is a natural source of light.", opts: [{t:"True", i:"✅"}, {t:"False", i:"❌"}], ans: "True" },
+        { id: 4, level: 1, type: 'tf', q: "A torch is natural.", opts: [{t:"True", i:"🔦"}, {t:"False", i:"❌"}], ans: "False" },
+        { id: 5, level: 1, type: 'mcq', q: "A ___ is used for portable light.", opts: [{t:"Torch", i:"🔦"}, {t:"Table", i:"🪑"}], ans: "Torch" },
+        { id: 6, level: 1, type: 'mcq', q: "A ___ gives light in rooms.", opts: [{t:"Lamp/Bulb", i:"💡"}, {t:"Book", i:"📚"}], ans: "Lamp/Bulb" },
+        { id: 7, level: 1, type: 'img', q: "Tap the CANDLE.", opts: [{t:"Candle", i:"🕯️"}, {t:"Fire", i:"🔥"}], ans: "Candle" },
+        { id: 8, level: 1, type: 'img', q: "Tap the SUN.", opts: [{t:"Sun", i:"☀️"}, {t:"Moon", i:"🌙"}], ans: "Sun" },
+        { id: 9, level: 1, type: 'match', q: "Match: Sun → ___", opts: [{t:"Natural", i:"🌳"}, {t:"Artificial", i:"🤖"}], ans: "Natural" },
+        { id: 10, level: 1, type: 'match', q: "Match: Lamp → ___", opts: [{t:"Artificial", i:"💡"}, {t:"Natural", i:"☀️"}], ans: "Artificial" },
+        { id: 11, level: 1, type: 'img', q: "Which gives BRIGHT daylight?", opts: [{t:"Sun", i:"☀️"}, {t:"Matchstick", i:"🔥"}], ans: "Sun" },
+        { id: 12, level: 1, type: 'img', q: "Which is a SMALL light?", opts: [{t:"Candle", i:"🕯️"}, {t:"Sun", i:"☀️"}], ans: "Candle" },
+        { id: 13, level: 1, type: 'mcq', q: "___ gives us daylight.", opts: [{t:"Sun", i:"☀️"}, {t:"Moon", i:"🌙"}], ans: "Sun" },
+        { id: 14, level: 1, type: 'tf', q: "Lamps can be carried outside easily.", opts: [{t:"True", i:"🤔"}, {t:"False", i:"❌"}], ans: "False" },
+        { id: 15, level: 1, type: 'img', q: "Light used when power goes off.", opts: [{t:"Torch", i:"🔦"}, {t:"Mirror", i:"🪞"}], ans: "Torch" },
+
+        // LEVEL 2: Intermediate (Shadows, Day/Night)
+        { id: 16, level: 2, type: 'input', q: "Name one natural source of light.", ans: ["sun", "fire", "star", "firefly"] },
+        { id: 17, level: 2, type: 'input', q: "Name one artificial source of light.", ans: ["lamp", "torch", "candle", "bulb", "tube light"] },
+        { id: 18, level: 2, type: 'match', q: "Match: Star → ___", opts: [{t:"Natural", i:"✨"}, {t:"Artificial", i:"🔦"}], ans: "Natural" },
+        { id: 19, level: 2, type: 'mcq', q: "Shadows form when light is...", opts: [{t:"Blocked", i:"🌑"}, {t:"Allowed", i:"☀️"}], ans: "Blocked" },
+        { id: 20, level: 2, type: 'img', q: "Tap where REFLECTION happens.", opts: [{t:"Mirror", i:"🪞"}, {t:"Wood", i:"🪵"}], ans: "Mirror" },
+        { id: 21, level: 2, type: 'mcq', q: "Shadows are ___ in the morning.", opts: [{t:"Long", i:"🦒"}, {t:"Short", i:"🐁"}], ans: "Long" },
+        { id: 22, level: 2, type: 'mcq', q: "Shadows are ___ at noon.", opts: [{t:"Short", i:"🐁"}, {t:"Long", i:"🦒"}], ans: "Short" },
+        { id: 23, level: 2, type: 'tf', q: "Shadows move as the Sun moves.", opts: [{t:"True", i:"🔄"}, {t:"False", i:"🛑"}], ans: "True" },
+        { id: 24, level: 2, type: 'img', q: "Tap the NIGHT sky.", opts: [{t:"Moon & Stars", i:"🌙✨"}, {t:"Blue Sky", i:"🌤️"}], ans: "Moon & Stars" },
+        { id: 25, level: 2, type: 'img', q: "Tap the DAY sky.", opts: [{t:"Bright Sun", i:"☀️"}, {t:"Dark", i:"🌑"}], ans: "Bright Sun" },
+        { id: 26, level: 2, type: 'match', q: "Match: Moon → ___", opts: [{t:"Night", i:"🌙"}, {t:"Day", i:"☀️"}], ans: "Night" },
+        { id: 27, level: 2, type: 'input', q: "What object shows reflection?", ans: ["mirror", "water", "glass", "metal"] },
+        { id: 28, level: 2, type: 'img', q: "Tap the object causing a shadow.", opts: [{t:"Tree", i:"🌳"}, {t:"Glass", i:"🪟"}], ans: "Tree" },
+        { id: 29, level: 2, type: 'mcq', q: "Sunlight is ___ for life.", opts: [{t:"Important", i:"✅"}, {t:"Bad", i:"❌"}], ans: "Important" },
+        { id: 30, level: 2, type: 'tf', q: "Looking at the Sun is harmful.", opts: [{t:"True", i:"😵"}, {t:"False", i:"😎"}], ans: "True" },
+        { id: 31, level: 2, type: 'img', q: "Shadows are Short at...", opts: [{t:"Noon (12 PM)", i:"🕛"}, {t:"Evening", i:"🌇"}], ans: "Noon (12 PM)" },
+        { id: 32, level: 2, type: 'img', q: "Shadows are Long at...", opts: [{t:"Morning", i:"🌅"}, {t:"Noon", i:"🕛"}], ans: "Morning" },
+        { id: 33, level: 2, type: 'mcq', q: "Torch gives ___ light.", opts: [{t:"Artificial", i:"🔦"}, {t:"Natural", i:"☀️"}], ans: "Artificial" },
+        { id: 34, level: 2, type: 'tf', q: "Candles are used indoors.", opts: [{t:"True", i:"🏠"}, {t:"False", i:"⛺"}], ans: "True" },
+        { id: 35, level: 2, type: 'match', q: "Match: Firefly → ___", opts: [{t:"Natural", i:"🪰"}, {t:"Artificial", i:"🔦"}], ans: "Natural" },
+
+        // LEVEL 3: Advanced (Reasoning & Safety)
+        { id: 36, level: 3, type: 'mcq', q: "Why do shadows change size?", opts: [{t:"Sun moves position", i:"🔄"}, {t:"Sun disappears", i:"👻"}], ans: "Sun moves position" },
+        { id: 37, level: 3, type: 'img', q: "Tap the SAFE action.", opts: [{t:"Wear Sunglasses", i:"🕶️"}, {t:"Look at Sun", i:"👀"}], ans: "Wear Sunglasses" },
+        { id: 38, level: 3, type: 'input', q: "Activity using shadow.", ans: ["time", "play", "game", "puppet", "shadow play"] },
+        { id: 39, level: 3, type: 'match', q: "Match: Evening Shadow → ___", opts: [{t:"Long", i:"🦒"}, {t:"Short", i:"🐁"}], ans: "Long" },
+        { id: 40, level: 3, type: 'tf', q: "Reflection helps us see in mirrors.", opts: [{t:"True", i:"🪞"}, {t:"False", i:"❌"}], ans: "True" },
+        { id: 41, level: 3, type: 'mcq', q: "Shadows are ___ shapes.", opts: [{t:"Dark/Black", i:"⬛"}, {t:"Colorful", i:"🌈"}], ans: "Dark/Black" },
+        { id: 42, level: 3, type: 'img', q: "Light is blocked by...", opts: [{t:"Solid Object", i:"🧱"}, {t:"Clear Glass", i:"🪟"}], ans: "Solid Object" },
+        { id: 43, level: 3, type: 'input', q: "Name a light used at home.", ans: ["lamp", "bulb", "tube light", "candle"] },
+        { id: 44, level: 3, type: 'match', q: "Match: Traffic Light → ___", opts: [{t:"Artificial", i:"🚦"}, {t:"Natural", i:"☀️"}], ans: "Artificial" },
+        { id: 45, level: 3, type: 'mcq', q: "The Sun rises in the...", opts: [{t:"Morning", i:"🌅"}, {t:"Night", i:"🌃"}], ans: "Morning" },
+        { id: 46, level: 3, type: 'mcq', q: "Sun is a ___ star.", opts: [{t:"Hot & Bright", i:"🔥"}, {t:"Cold", i:"❄️"}], ans: "Hot & Bright" },
+        { id: 47, level: 3, type: 'tf', q: "Torch cannot be used outside.", opts: [{t:"True", i:"🤔"}, {t:"False", i:"❌"}], ans: "False" },
+        { id: 48, level: 3, type: 'input', q: "Safety rule for sunlight.", ans: ["sunglasses", "hat", "don't look", "sunscreen"] },
+        { id: 49, level: 3, type: 'img', q: "Tap the REFLECTION.", opts: [{t:"Face in Water", i:"🌊"}, {t:"Shadow on ground", i:"🌑"}], ans: "Face in Water" },
+        { id: 50, level: 3, type: 'img', q: "Tap the SHADOW.", opts: [{t:"Dark Shape", i:"👤"}, {t:"Mirror Image", i:"🪞"}], ans: "Dark Shape" }
+    ];
+
+    // --- State ---
+    let currentLevel = 1;
+    let currentQuestions = [];
+    let currentQIndex = 0;
+    let score = 0;
+    let stars = 0;
+
+    // --- Init ---
+    document.addEventListener("DOMContentLoaded", () => {
+        setupAccordions();
+        setLevel(1);
+    });
+
+    function setupAccordions() {
+        const acc = document.getElementsByClassName("accordion");
+        for (let i = 0; i < acc.length; i++) {
+            acc[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                const panel = this.nextElementSibling;
+                if (panel.style.maxHeight) {
+                    panel.style.maxHeight = null;
+                } else {
+                    panel.style.maxHeight = panel.scrollHeight + "px";
+                }
+            });
+        }
+    }
+
+    // --- Game Logic ---
+    function setLevel(lvl) {
+        currentLevel = lvl;
+        // Update Buttons
+        document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active-level'));
+        document.querySelectorAll('.level-btn')[lvl-1].classList.add('active-level');
+        
+        // Filter & Shuffle
+        currentQuestions = allQuestions.filter(q => q.level === lvl).sort(() => Math.random() - 0.5);
+        currentQIndex = 0;
+        
+        updateUI();
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        if (currentQIndex >= currentQuestions.length) {
+            showLevelComplete();
+            return;
+        }
+
+        const q = currentQuestions[currentQIndex];
+        const container = document.getElementById('interaction-area');
+        container.innerHTML = '';
+        
+        document.getElementById('q-text').innerText = `${currentQIndex + 1}. ${q.q}`;
+        document.getElementById('q-image').innerText = q.type === 'img' ? '🖼️' : (q.type === 'input' ? '✍️' : '❓');
+
+        // Handle Input Type vs Button Types
+        if (q.type === 'input') {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'input-answer';
+            input.placeholder = "Type answer here...";
+            input.id = 'user-input';
+            
+            const btn = document.createElement('button');
+            btn.className = 'submit-btn';
+            btn.innerText = "Check Answer";
+            btn.onclick = () => checkInputAnswer(q.ans);
+            
+            container.appendChild(input);
+            container.appendChild(document.createElement('br'));
+            container.appendChild(btn);
+        } else {
+            const grid = document.createElement('div');
+            grid.className = 'options-grid';
+            
+            // Shuffle options
+            const shuffled = [...q.opts].sort(() => Math.random() - 0.5);
+            
+            shuffled.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerHTML = `<span class="opt-emoji">${opt.i}</span>${opt.t}`;
+                btn.onclick = () => checkButtonAnswer(opt.t, q.ans);
+                grid.appendChild(btn);
+            });
+            container.appendChild(grid);
+        }
+    }
+
+    function checkButtonAnswer(selected, correct) {
+        handleFeedback(selected === correct, correct);
+    }
+
+    function checkInputAnswer(correctArr) {
+        const userVal = document.getElementById('user-input').value.toLowerCase().trim();
+        // Check if userVal is in answer array or partial match logic
+        const isCorrect = correctArr.some(ans => userVal.includes(ans));
+        handleFeedback(isCorrect, correctArr[0].toUpperCase()); 
+    }
+
+    function handleFeedback(isCorrect, correctDisplay) {
+        const modal = document.getElementById('feedback-modal');
+        const overlay = document.getElementById('overlay');
+        const title = document.getElementById('fb-title');
+        const msg = document.getElementById('fb-msg');
+        const emoji = document.getElementById('fb-emoji');
+
+        modal.style.display = 'block';
+        overlay.style.display = 'block';
+
+        if (isCorrect) {
+            title.innerText = "Awesome! 🎉";
+            title.style.color = "#FF9800";
+            msg.innerText = "That is the correct answer!";
+            emoji.innerText = "🌟";
+            modal.style.borderColor = "#FF9800";
+            score += 10;
+            if (score % 50 === 0) stars++;
+            speak("Correct! You are shining bright.");
+        } else {
+            title.innerText = "Oops! 😅";
+            title.style.color = "#1A237E";
+            msg.innerText = `The correct answer was: ${correctDisplay}`;
+            emoji.innerText = "🌑";
+            modal.style.borderColor = "#1A237E";
+            speak("Wrong answer. Try again.");
+        }
+        updateUI();
+    }
+
+    function nextQuestion() {
+        document.getElementById('feedback-modal').style.display = 'none';
+        document.getElementById('overlay').style.display = 'none';
+        currentQIndex++;
+        loadQuestion();
+    }
+
+    function showLevelComplete() {
+        const modal = document.getElementById('feedback-modal');
+        const overlay = document.getElementById('overlay');
+        modal.style.display = 'block';
+        overlay.style.display = 'block';
+        
+        document.getElementById('fb-title').innerText = "Level Complete! 🏆";
+        document.getElementById('fb-msg').innerText = "You understand Light & Shadows!";
+        document.getElementById('fb-emoji').innerText = "💡";
+        
+        const nextBtn = document.querySelector('.next-btn');
+        nextBtn.innerText = "Close";
+        nextBtn.onclick = () => {
+             modal.style.display = 'none';
+             overlay.style.display = 'none';
+             nextBtn.innerText = "Next Question ➡";
+             nextBtn.onclick = nextQuestion; 
+        };
+        speak("Level Complete. Excellent work!");
+    }
+
+    function updateUI() {
+        document.getElementById('score').innerText = score;
+        document.getElementById('star-count').innerText = stars;
+        document.getElementById('q-left').innerText = (currentQuestions.length - currentQIndex);
+    }
+
+    function readQuestion() {
+        const text = currentQuestions[currentQIndex].q;
+        speak(text);
+    }
+
+    function speak(text) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.pitch = 1.1;
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
+        }
+    }
+</script>
+
+</body>
+</html>

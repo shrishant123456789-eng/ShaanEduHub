@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 4: Grammar Basics | Class 2 English</title>
+    <style>
+        /* 🎨 DESIGN SYSTEM & VARIABLES */
+        :root {
+            --primary: #FF6B6B;       /* Fun Red */
+            --secondary: #4ECDC4;     /* Teal */
+            --accent: #FFE66D;        /* Yellow */
+            --text: #292F36;          /* Dark Grey */
+            --bg: #F7FFF7;            /* Off White */
+            --correct: #2ecc71;       /* Green */
+            --wrong: #e74c3c;         /* Red */
+            --font-main: 'Comic Sans MS', 'Comic Neue', cursive, sans-serif;
+        }
+
+        * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            padding-bottom: 80px; /* Space for footer */
+        }
+
+        /* 🟢 HEADER */
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 20px;
+            border-bottom-left-radius: 25px;
+            border-bottom-right-radius: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 { margin: 0; font-size: 1.8rem; text-shadow: 2px 2px 0px rgba(0,0,0,0.1); }
+        .subtitle { font-size: 1rem; opacity: 0.9; margin-top: 5px; }
+
+        /* 🧭 NAVIGATION MENU */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        .menu-card {
+            background: white;
+            border: 3px solid var(--secondary);
+            border-radius: 15px;
+            padding: 15px;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            box-shadow: 0 4px 0 var(--secondary);
+        }
+
+        .menu-card:active { transform: translateY(4px); box-shadow: none; }
+        .menu-card h3 { margin: 5px 0 0 0; font-size: 1.1rem; color: var(--text); }
+        .icon { font-size: 2.5rem; display: block; margin-bottom: 5px; }
+
+        /* 🎮 GAME AREA */
+        #game-area {
+            display: none; /* Hidden by default */
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        .question-card {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border: 4px solid var(--accent);
+            position: relative;
+        }
+
+        .q-text {
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            line-height: 1.4;
+            color: #333;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .option-btn {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 1.2rem;
+            font-family: var(--font-main);
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 4px 0 #ccc;
+        }
+
+        .option-btn:active { transform: translateY(4px); box-shadow: none; }
+        
+        /* Feedback States */
+        .correct-btn { background: var(--correct) !important; color: white; border-color: #27ae60 !important; box-shadow: 0 4px 0 #27ae60 !important; }
+        .wrong-btn { background: var(--wrong) !important; color: white; border-color: #c0392b !important; box-shadow: 0 4px 0 #c0392b !important; }
+
+        /* ⭐ FEEDBACK POPUP */
+        #feedback-msg {
+            font-size: 1.4rem;
+            font-weight: bold;
+            height: 30px;
+            margin-top: 15px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .nav-btn {
+            background: var(--text);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-family: var(--font-main);
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        /* 📊 FOOTER SCOREBOARD */
+        .score-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            border-top: 4px solid var(--primary);
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
+        }
+
+        .stat { display: flex; flex-direction: column; align-items: center; line-height: 1; }
+        .stat span { font-size: 0.8rem; color: #777; margin-top: 3px; }
+
+        .end-screen {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            display: none;
+        }
+
+        /* Utility */
+        .hidden { display: none; }
+        .highlight { color: var(--primary); font-weight: bold; text-decoration: underline; }
+
+        @media (max-width: 400px) {
+            .q-text { font-size: 1.2rem; }
+            .option-btn { font-size: 1rem; padding: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>📘 Chapter 4: Grammar Basics</h1>
+        <div class="subtitle">Singular, Gender, Articles & Verbs</div>
+    </header>
+
+    <div id="menu" class="menu-grid">
+        <div class="menu-card" onclick="startSection('plural')">
+            <span class="icon">🍎</span>
+            <h3>One & Many<br>(Singular/Plural)</h3>
+        </div>
+        <div class="menu-card" onclick="startSection('gender')">
+            <span class="icon">👦👧</span>
+            <h3>He & She<br>(Gender)</h3>
+        </div>
+        <div class="menu-card" onclick="startSection('articles')">
+            <span class="icon">☂️</span>
+            <h3>A, An, The<br>(Articles)</h3>
+        </div>
+        <div class="menu-card" onclick="startSection('verbs')">
+            <span class="icon">🤸</span>
+            <h3>Is, Am, Are<br>(Helping Verbs)</h3>
+        </div>
+        <div class="menu-card" style="grid-column: 1 / -1; background: var(--accent); border-color: #e6c200;" onclick="startSection('mix')">
+            <span class="icon">🚀</span>
+            <h3>Mix Challenge!<br>(All Topics)</h3>
+        </div>
+    </div>
+
+    <div id="game-area">
+        <div class="controls">
+            <button class="nav-btn" onclick="goHome()">🏠 Home</button>
+            <span id="progress-text" style="align-self: center; font-weight: bold; color: #777;">1 / 15</span>
+        </div>
+
+        <div class="question-card">
+            <div id="question-text" class="q-text">Loading...</div>
+            
+            <div id="q-emoji" style="font-size: 3rem; margin-bottom: 15px; display:none;"></div>
+
+            <div id="options-container" class="options-grid">
+                </div>
+            
+            <div id="feedback-msg"></div>
+        </div>
+
+        <button id="next-btn" class="nav-btn hidden" style="background: var(--primary); width: 100%; margin-top: 20px; font-size: 1.2rem;" onclick="nextQuestion()">Next Question ➡️</button>
+    </div>
+
+    <div id="end-screen" class="game-area hidden" style="margin: 20px auto; max-width: 600px; text-align: center;">
+        <div class="question-card">
+            <span style="font-size: 4rem;">🏆</span>
+            <h2 id="final-title">Section Complete!</h2>
+            <p style="font-size: 1.2rem;">You scored: <span id="final-score" style="color: var(--primary); font-weight: bold;">0</span></p>
+            <button class="nav-btn" style="background: var(--secondary); font-size: 1.2rem; padding: 15px 30px;" onclick="goHome()">Play Another Topic</button>
+        </div>
+    </div>
+
+    <div class="score-footer">
+        <div class="stat">
+            <div style="color: var(--correct);">✔ <span id="score-correct">0</span></div>
+            <span>Correct</span>
+        </div>
+        <div class="stat">
+            <div style="color: var(--wrong);">✖ <span id="score-wrong">0</span></div>
+            <span>Wrong</span>
+        </div>
+        <div class="stat">
+            <div style="color: var(--text);">📊 <span id="score-pct">0%</span></div>
+            <span>Score</span>
+        </div>
+    </div>
+
+    <div style="margin-bottom: 20px; font-size: 0.8rem; color: #999; margin-top: 20px;">
+        Designed & Created by SHRISHANT YADAV
+    </div>
+
+<script>
+    // 🧠 DATABASE: 64 UNIQUE QUESTIONS (16 per category)
+    const database = [
+        // 🟢 SECTION 1: SINGULAR & PLURAL
+        { id: 101, cat: 'plural', q: "One Cat, Two ___?", emoji: "🐱", options: ["Cat", "Cats"], ans: "Cats" },
+        { id: 102, cat: 'plural', q: "This is a ___.", emoji: "🧢", options: ["Cap", "Caps"], ans: "Cap" },
+        { id: 103, cat: 'plural', q: "Many ___ are in the sky.", emoji: "⭐", options: ["Star", "Stars"], ans: "Stars" },
+        { id: 104, cat: 'plural', q: "I have one ___.", emoji: "🍎", options: ["Apple", "Apples"], ans: "Apple" },
+        { id: 105, cat: 'plural', q: "Plural of 'Box' is?", emoji: "📦", options: ["Boxs", "Boxes"], ans: "Boxes" },
+        { id: 106, cat: 'plural', q: "One Bus, Three ___?", emoji: "🚌", options: ["Buses", "Bus"], ans: "Buses" },
+        { id: 107, cat: 'plural', q: "Look at the ___ flying.", emoji: "🐦", options: ["Bird", "Birds"], ans: "Birds" },
+        { id: 108, cat: 'plural', q: "I brush my teeth with a ___.", emoji: "🪥", options: ["Brush", "Brushes"], ans: "Brush" },
+        { id: 109, cat: 'plural', q: "Plural of 'Baby' is?", emoji: "👶", options: ["Babys", "Babies"], ans: "Babies" },
+        { id: 110, cat: 'plural', q: "There are 5 ___ on the table.", emoji: "🖊️", options: ["Pen", "Pens"], ans: "Pens" },
+        { id: 111, cat: 'plural', q: "One Foot, Two ___?", emoji: "🦶", options: ["Foots", "Feet"], ans: "Feet" },
+        { id: 112, cat: 'plural', q: "One Tooth, Many ___?", emoji: "🦷", options: ["Teeth", "Tooths"], ans: "Teeth" },
+        { id: 113, cat: 'plural', q: "The ___ are playing.", emoji: "👦", options: ["Boy", "Boys"], ans: "Boys" },
+        { id: 114, cat: 'plural', q: "A ___ runs fast.", emoji: "🐕", options: ["Dog", "Dogs"], ans: "Dog" },
+        { id: 115, cat: 'plural', q: "Plural of 'Dish' is?", emoji: "🍽️", options: ["Dishs", "Dishes"], ans: "Dishes" },
+        { id: 116, cat: 'plural', q: "I have two ___.", emoji: "👀", options: ["Eye", "Eyes"], ans: "Eyes" },
+
+        // 🟢 SECTION 2: GENDER (HE/SHE)
+        { id: 201, cat: 'gender', q: "Boy is ___.", emoji: "👦", options: ["He", "She"], ans: "He" },
+        { id: 202, cat: 'gender', q: "Girl is ___.", emoji: "👧", options: ["He", "She"], ans: "She" },
+        { id: 203, cat: 'gender', q: "Father is ___.", emoji: "👨", options: ["He", "She"], ans: "He" },
+        { id: 204, cat: 'gender', q: "Mother is ___.", emoji: "👩", options: ["He", "She"], ans: "She" },
+        { id: 205, cat: 'gender', q: "King is ___.", emoji: "👑", options: ["He", "She"], ans: "He" },
+        { id: 206, cat: 'gender', q: "Queen is ___.", emoji: "👸", options: ["He", "She"], ans: "She" },
+        { id: 207, cat: 'gender', q: "My uncle is nice. ___ loves me.", emoji: "🧔", options: ["He", "She"], ans: "He" },
+        { id: 208, cat: 'gender', q: "My aunt is kind. ___ cooks well.", emoji: "👩", options: ["He", "She"], ans: "She" },
+        { id: 209, cat: 'gender', q: "Grandfather is old. ___ walks slowly.", emoji: "👴", options: ["He", "She"], ans: "He" },
+        { id: 210, cat: 'gender', q: "The Bull is ___.", emoji: "🐂", options: ["He", "She"], ans: "He" },
+        { id: 211, cat: 'gender', q: "The Cow is ___.", emoji: "🐄", options: ["He", "She"], ans: "She" },
+        { id: 212, cat: 'gender', q: "Lion is ___.", emoji: "🦁", options: ["He", "She"], ans: "He" },
+        { id: 213, cat: 'gender', q: "Lioness is ___.", emoji: "🦁", options: ["He", "She"], ans: "She" },
+        { id: 214, cat: 'gender', q: "Brother is ___.", emoji: "🙎‍♂️", options: ["He", "She"], ans: "He" },
+        { id: 215, cat: 'gender', q: "Sister is ___.", emoji: "🙎‍♀️", options: ["He", "She"], ans: "She" },
+        { id: 216, cat: 'gender', q: "Mr. Sharma is a man. ___ is a teacher.", emoji: "👨‍🏫", options: ["He", "She"], ans: "He" },
+
+        // 🟢 SECTION 3: ARTICLES (A, AN, THE)
+        { id: 301, cat: 'articles', q: "It is ___ apple.", emoji: "🍎", options: ["a", "an"], ans: "an" },
+        { id: 302, cat: 'articles', q: "This is ___ ball.", emoji: "⚽", options: ["a", "an"], ans: "a" },
+        { id: 303, cat: 'articles', q: "I saw ___ elephant.", emoji: "🐘", options: ["a", "an"], ans: "an" },
+        { id: 304, cat: 'articles', q: "She has ___ doll.", emoji: "🎎", options: ["a", "an"], ans: "a" },
+        { id: 305, cat: 'articles', q: "Look at ___ sun.", emoji: "☀️", options: ["a", "the"], ans: "the" },
+        { id: 306, cat: 'articles', q: "___ sky is blue.", emoji: "☁️", options: ["An", "The"], ans: "The" },
+        { id: 307, cat: 'articles', q: "I want ___ ice cream.", emoji: "🍦", options: ["a", "an"], ans: "an" },
+        { id: 308, cat: 'articles', q: "It is ___ orange.", emoji: "🍊", options: ["a", "an"], ans: "an" },
+        { id: 309, cat: 'articles', q: "He is ___ doctor.", emoji: "👨‍⚕️", options: ["a", "an"], ans: "a" },
+        { id: 310, cat: 'articles', q: "She has ___ umbrella.", emoji: "☂️", options: ["a", "an"], ans: "an" },
+        { id: 311, cat: 'articles', q: "I see ___ owl.", emoji: "🦉", options: ["a", "an"], ans: "an" },
+        { id: 312, cat: 'articles', q: "___ Taj Mahal is beautiful.", emoji: "🕌", options: ["A", "The"], ans: "The" },
+        { id: 313, cat: 'articles', q: "Give me ___ egg.", emoji: "🥚", options: ["a", "an"], ans: "an" },
+        { id: 314, cat: 'articles', q: "It is ___ big car.", emoji: "🚙", options: ["a", "an"], ans: "a" },
+        { id: 315, cat: 'articles', q: "___ moon shines at night.", emoji: "🌙", options: ["A", "The"], ans: "The" },
+        { id: 316, cat: 'articles', q: "I saw ___ octopus.", emoji: "🐙", options: ["a", "an"], ans: "an" },
+
+        // 🟢 SECTION 4: IS, AM, ARE
+        { id: 401, cat: 'verbs', q: "I ___ a boy.", emoji: "🙋‍♂️", options: ["is", "am"], ans: "am" },
+        { id: 402, cat: 'verbs', q: "She ___ happy.", emoji: "😊", options: ["is", "am"], ans: "is" },
+        { id: 403, cat: 'verbs', q: "We ___ playing.", emoji: "🤾", options: ["is", "are"], ans: "are" },
+        { id: 404, cat: 'verbs', q: "The dog ___ barking.", emoji: "🐕", options: ["is", "are"], ans: "is" },
+        { id: 405, cat: 'verbs', q: "They ___ my friends.", emoji: "👫", options: ["is", "are"], ans: "are" },
+        { id: 406, cat: 'verbs', q: "It ___ a cat.", emoji: "🐱", options: ["is", "are"], ans: "is" },
+        { id: 407, cat: 'verbs', q: "You ___ a good student.", emoji: "🎓", options: ["is", "are"], ans: "are" },
+        { id: 408, cat: 'verbs', q: "I ___ hungry.", emoji: "😋", options: ["am", "is"], ans: "am" },
+        { id: 409, cat: 'verbs', q: "The birds ___ flying.", emoji: "🐦", options: ["is", "are"], ans: "are" },
+        { id: 410, cat: 'verbs', q: "He ___ sleeping.", emoji: "🛌", options: ["is", "are"], ans: "is" },
+        { id: 411, cat: 'verbs', q: "Rahul and Simi ___ dancing.", emoji: "💃", options: ["is", "are"], ans: "are" },
+        { id: 412, cat: 'verbs', q: "This ___ my bag.", emoji: "🎒", options: ["is", "am"], ans: "is" },
+        { id: 413, cat: 'verbs', q: "I ___ six years old.", emoji: "🎂", options: ["is", "am"], ans: "am" },
+        { id: 414, cat: 'verbs', q: "The apples ___ red.", emoji: "🍎", options: ["is", "are"], ans: "are" },
+        { id: 415, cat: 'verbs', q: "My mother ___ cooking.", emoji: "🍳", options: ["is", "are"], ans: "is" },
+        { id: 416, cat: 'verbs', q: "Cars ___ fast.", emoji: "🏎️", options: ["is", "are"], ans: "are" }
+    ];
+
+    // 🌟 GAME VARIABLES
+    let currentQuestions = [];
+    let currentIndex = 0;
+    let scoreCorrect = 0;
+    let scoreWrong = 0;
+    let canClick = true;
+
+    // 🔊 AUDIO SYSTEM (Text to Speech)
+    function speak(text, isCorrection = false) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel(); // Stop previous
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.rate = isCorrection ? 0.9 : 0.8; // Slower for kids
+            utterance.pitch = 1.1; // Friendly pitch
+            window.speechSynthesis.speak(utterance);
+        }
+    }
+
+    // 🎲 FISHER-YATES SHUFFLE
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    // 🚀 START ENGINE
+    function startSection(category) {
+        // Filter and shuffle questions
+        if (category === 'mix') {
+            currentQuestions = shuffle([...database]).slice(0, 20); // Take 20 random for mix
+        } else {
+            currentQuestions = shuffle(database.filter(q => q.cat === category));
+        }
+
+        currentIndex = 0;
+        canClick = true;
+        
+        // Hide Menu, Show Game
+        document.getElementById('menu').style.display = 'none';
+        document.getElementById('end-screen').classList.add('hidden');
+        document.getElementById('game-area').style.display = 'block';
+
+        renderQuestion();
+    }
+
+    function goHome() {
+        document.getElementById('game-area').style.display = 'none';
+        document.getElementById('end-screen').classList.add('hidden');
+        document.getElementById('menu').style.display = 'grid';
+        window.speechSynthesis.cancel();
+    }
+
+    // 🖼️ RENDER QUESTION
+    function renderQuestion() {
+        const qData = currentQuestions[currentIndex];
+        
+        // Update Progress
+        document.getElementById('progress-text').innerText = `${currentIndex + 1} / ${currentQuestions.length}`;
+        document.getElementById('next-btn').classList.add('hidden');
+        document.getElementById('feedback-msg').style.opacity = '0';
+        
+        // Set Text
+        document.getElementById('question-text').innerText = qData.q;
+        
+        // Set Emoji
+        const emojiEl = document.getElementById('q-emoji');
+        emojiEl.style.display = 'block';
+        emojiEl.innerText = qData.emoji;
+
+        // Create Options
+        const optionsDiv = document.getElementById('options-container');
+        optionsDiv.innerHTML = '';
+        
+        // Shuffle Options slightly for variation
+        const shuffledOptions = shuffle([...qData.options]);
+
+        shuffledOptions.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(btn, opt, qData.ans);
+            optionsDiv.appendChild(btn);
+        });
+
+        // Speak Question (small delay to feel natural)
+        setTimeout(() => {
+            let speakText = qData.q.replace("___", "blank");
+            speak(speakText);
+        }, 300);
+
+        canClick = true;
+    }
+
+    // ✅ CHECK ANSWER
+    function checkAnswer(btn, selected, correct) {
+        if (!canClick) return;
+        canClick = false;
+
+        const feedbackEl = document.getElementById('feedback-msg');
+
+        if (selected === correct) {
+            // Correct Logic
+            btn.classList.add('correct-btn');
+            scoreCorrect++;
+            const rewards = ["⭐ Excellent!", "🌟 Very Good!", "🎉 Awesome!", "✅ Correct!"];
+            feedbackEl.innerText = rewards[Math.floor(Math.random() * rewards.length)];
+            feedbackEl.style.color = 'var(--correct)';
+            speak("Correct! " + selected);
+        } else {
+            // Wrong Logic
+            btn.classList.add('wrong-btn');
+            scoreWrong++;
+            const comforts = ["❌ Try Again", "💪 You Can Do It", "🙂 Don't Worry"];
+            feedbackEl.innerText = comforts[Math.floor(Math.random() * comforts.length)];
+            feedbackEl.style.color = 'var(--wrong)';
+            
+            // Highlight Correct
+            const allBtns = document.querySelectorAll('.option-btn');
+            allBtns.forEach(b => {
+                if (b.innerText === correct) b.classList.add('correct-btn');
+            });
+            speak("Oops. The answer is " + correct);
+        }
+
+        feedbackEl.style.opacity = '1';
+        updateScoreboard();
+
+        // Show Next Button
+        document.getElementById('next-btn').classList.remove('hidden');
+    }
+
+    function updateScoreboard() {
+        document.getElementById('score-correct').innerText = scoreCorrect;
+        document.getElementById('score-wrong').innerText = scoreWrong;
+        const total = scoreCorrect + scoreWrong;
+        const pct = total === 0 ? 0 : Math.round((scoreCorrect / total) * 100);
+        document.getElementById('score-pct').innerText = pct + "%";
+    }
+
+    function nextQuestion() {
+        currentIndex++;
+        if (currentIndex < currentQuestions.length) {
+            renderQuestion();
+        } else {
+            showEndScreen();
+        }
+    }
+
+    function showEndScreen() {
+        document.getElementById('game-area').style.display = 'none';
+        const endScreen = document.getElementById('end-screen');
+        endScreen.classList.remove('hidden');
+        endScreen.style.display = 'block';
+        
+        const total = scoreCorrect + scoreWrong;
+        const pct = total === 0 ? 0 : Math.round((scoreCorrect / total) * 100);
+        document.getElementById('final-score').innerText = `${scoreCorrect} / ${currentQuestions.length} (${pct}%)`;
+
+        if (pct > 80) speak("Congratulations! You are a grammar star!");
+        else speak("Good job! Keep practicing.");
+    }
+
+</script>
+
+</body>
+</html>

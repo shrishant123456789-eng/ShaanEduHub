@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maths Fun & Puzzles | ShanEduHub</title>
+    <style>
+        /* --- GENERAL STYLES --- */
+        :root {
+            --primary: #FF9F43; /* Fun Orange */
+            --secondary: #54A0FF; /* Bright Blue */
+            --accent: #FF6B6B; /* Red */
+            --green: #2ECC71; /* Success Green */
+            --purple: #5F27CD;
+            --bg: #FFF9E6; /* Light Cream Background */
+            --card-bg: #FFFFFF;
+            --text: #222F3E;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            user-select: none;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background: linear-gradient(135deg, #FF9F43, #FF6B6B);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 0 0 30px 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        header h1 { margin: 0; font-size: 2em; text-shadow: 2px 2px 0 rgba(0,0,0,0.2); }
+        header p { font-size: 1.1em; background: rgba(255,255,255,0.2); display: inline-block; padding: 5px 15px; border-radius: 20px; margin-top: 10px;}
+
+        /* --- GAME LOBBY (GRID) --- */
+        #game-lobby {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            padding-bottom: 50px;
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-bottom: 5px solid var(--secondary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 140px;
+        }
+
+        .game-card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.15); border-bottom-color: var(--primary); }
+        .game-icon { font-size: 2.5em; margin-bottom: 10px; }
+        .game-title { font-weight: bold; font-size: 0.9em; line-height: 1.2; }
+        .game-badge { font-size: 0.7em; background: #eee; padding: 2px 8px; border-radius: 10px; margin-top: 5px; color: #666; }
+
+        /* --- ACTIVE GAME AREA --- */
+        #game-area {
+            display: none; /* Hidden by default */
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            min-height: 400px;
+            position: relative;
+        }
+
+        .game-header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px dashed #eee;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .back-btn {
+            background: #eee;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .score-display { font-size: 1.2em; font-weight: bold; color: var(--green); }
+        .progress-bar { width: 100%; height: 10px; background: #eee; border-radius: 5px; margin-top: 5px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--secondary); width: 0%; transition: width 0.3s; }
+
+        /* --- QUESTION UI --- */
+        .question-container { text-align: center; margin-top: 20px; animation: fadeIn 0.5s; }
+        .visual-area { font-size: 3em; margin: 20px 0; letter-spacing: 5px; min-height: 80px; }
+        .question-text { font-size: 1.5em; font-weight: bold; color: var(--text); margin-bottom: 20px; }
+
+        /* --- INTERACTION TYPES --- */
+        .options-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 20px; }
+        
+        .option-btn {
+            background: #f1f2f6;
+            border: 2px solid #dfe4ea;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 15px;
+            cursor: pointer;
+            min-width: 100px;
+            transition: all 0.2s;
+        }
+        .option-btn:hover { background: var(--secondary); color: white; border-color: var(--secondary); }
+
+        .input-area { margin-top: 20px; }
+        .game-input { padding: 10px; font-size: 1.5em; width: 100px; text-align: center; border: 3px solid #ccc; border-radius: 10px; }
+        .check-btn { padding: 10px 20px; font-size: 1.2em; background: var(--green); color: white; border: none; border-radius: 10px; cursor: pointer; margin-left: 10px; }
+
+        /* --- FEEDBACK --- */
+        #feedback-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .feedback-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            width: 80%;
+            max-width: 400px;
+            animation: popIn 0.3s;
+        }
+        .fb-icon { font-size: 4em; display: block; margin-bottom: 10px; }
+        .fb-title { font-size: 1.5em; font-weight: bold; margin-bottom: 10px; }
+        .fb-msg { font-size: 1.1em; color: #666; margin-bottom: 20px; }
+        .next-btn { background: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 50px; font-size: 1.2em; cursor: pointer; }
+
+        /* --- FOOTER --- */
+        footer {
+            background-color: #222F3E;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes popIn { from { transform: scale(0.8); } to { transform: scale(1); } }
+
+        /* Shapes CSS for Games */
+        .shape-circle { width: 50px; height: 50px; background: #FF6B6B; border-radius: 50%; display: inline-block; }
+        .shape-square { width: 50px; height: 50px; background: #54A0FF; display: inline-block; }
+        .shape-triangle { width: 0; height: 0; border-left: 25px solid transparent; border-right: 25px solid transparent; border-bottom: 50px solid #2ECC71; display: inline-block; }
+        
+        /* Mobile Tweaks */
+        @media (max-width: 600px) {
+            #game-lobby { grid-template-columns: repeat(2, 1fr); }
+            .visual-area { font-size: 2em; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>ShanEduHub 🧩</h1>
+        <p>Class 2 Maths – 50 Fun Games & Puzzles</p>
+    </header>
+
+    <div class="container">
+
+        <div id="game-lobby">
+            </div>
+
+        <div id="game-area">
+            <div class="game-header-bar">
+                <button class="back-btn" onclick="showLobby()">⬅ Back</button>
+                <div id="game-title-display" style="font-weight:bold; font-size:1.2em;">Game Title</div>
+                <div class="score-display">Score: <span id="current-score">0</span>/10</div>
+            </div>
+            
+            <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+
+            <div class="question-container">
+                <div id="q-visual" class="visual-area"></div>
+                <div id="q-text" class="question-text">Question goes here...</div>
+                
+                <div id="interaction-options" class="options-grid"></div>
+                <div id="interaction-input" class="input-area" style="display:none;">
+                    <input type="number" id="user-input" class="game-input" placeholder="?">
+                    <button class="check-btn" onclick="checkAnswer('input')">Check</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="feedback-modal">
+        <div class="feedback-content">
+            <span id="fb-icon" class="fb-icon">🎉</span>
+            <div id="fb-title" class="fb-title">Correct!</div>
+            <div id="fb-msg" class="fb-msg">Great job!</div>
+            <button class="next-btn" onclick="nextQuestion()">Next ➡</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>Designed & Created by <strong>SHRISHANT YADAV</strong></p>
+        <p>🌟 ShanEduHub – Fun & Smart Learning for Class 2</p>
+        <p>&copy; All Rights Reserved</p>
+    </footer>
+
+    <script>
+        // --- GAME DATABASE (50 TITLES) ---
+        // Categories: Numbers, Add, Sub, Mul, Div, Shapes, Time, Money, Fractions, Data, Mental
+        const gamesDB = [
+            { id: 1, title: "Number Hunt", cat: "Numbers", icon: "🔢", type: "sequence" },
+            { id: 2, title: "Addition Adventure", cat: "Add", icon: "➕", type: "add_visual" },
+            { id: 3, title: "Subtraction Safari", cat: "Sub", icon: "➖", type: "sub_visual" },
+            { id: 4, title: "Multiplication Mission", cat: "Mul", icon: "✖️", type: "mul_basic" },
+            { id: 5, title: "Division Dash", cat: "Div", icon: "➗", type: "div_group" },
+            { id: 6, title: "Shape Explorer", cat: "Shape", icon: "🔺", type: "shape_id" },
+            { id: 7, title: "Measurement Mania", cat: "Measure", icon: "📏", type: "measure_cmp" },
+            { id: 8, title: "Time Tracker", cat: "Time", icon: "⏰", type: "time_read" },
+            { id: 9, title: "Money Master", cat: "Money", icon: "💰", type: "money_count" },
+            { id: 10, title: "Fraction Fun", cat: "Fraction", icon: "🍰", type: "frac_id" },
+            { id: 11, title: "Data Detective", cat: "Data", icon: "📊", type: "data_count" },
+            { id: 12, title: "Mental Math Mayhem", cat: "Mental", icon: "🧠", type: "mental_mix" },
+            { id: 13, title: "Number Puzzle Mania", cat: "Numbers", icon: "🧩", type: "compare" },
+            { id: 14, title: "Add & Sub Relay", cat: "Mixed", icon: "🏃", type: "add_sub_mix" },
+            { id: 15, title: "Multiplication Matrix", cat: "Mul", icon: "▦", type: "mul_table" },
+            { id: 16, title: "Division Detective", cat: "Div", icon: "🕵️", type: "div_basic" },
+            { id: 17, title: "Shape Match-Up", cat: "Shape", icon: "🏠", type: "shape_real" },
+            { id: 18, title: "Pattern Party", cat: "Pattern", icon: "🎨", type: "pattern" },
+            { id: 19, title: "Measurement Mystery", cat: "Measure", icon: "⚖️", type: "measure_weight" },
+            { id: 20, title: "Time Treasure Hunt", cat: "Time", icon: "⌛", type: "time_day" },
+            { id: 21, title: "Money Challenge", cat: "Money", icon: "💵", type: "money_math" },
+            { id: 22, title: "Fraction Factory", cat: "Fraction", icon: "🏭", type: "frac_visual" },
+            { id: 23, title: "Data Detective 2.0", cat: "Data", icon: "📉", type: "data_graph" },
+            { id: 24, title: "Mental Lightning", cat: "Mental", icon: "⚡", type: "mental_fast" },
+            { id: 25, title: "Number Bingo", cat: "Numbers", icon: "🎱", type: "number_word" },
+            { id: 26, title: "Addition Adv. 2.0", cat: "Add", icon: "🚀", type: "add_word" },
+            { id: 27, title: "Sub Safari 2.0", cat: "Sub", icon: "🦁", type: "sub_word" },
+            { id: 28, title: "Mul Quest 2.0", cat: "Mul", icon: "🏰", type: "mul_word" },
+            { id: 29, title: "Div Dash 2.0", cat: "Div", icon: "🏎️", type: "div_word" },
+            { id: 30, title: "Shape Explorer 2.0", cat: "Shape", icon: "🔷", type: "shape_3d" },
+            { id: 31, title: "Measure Mania 2.0", cat: "Measure", icon: "🌡️", type: "measure_cap" },
+            { id: 32, title: "Time Tracker 2.0", cat: "Time", icon: "📆", type: "time_month" },
+            { id: 33, title: "Money Master 2.0", cat: "Money", icon: "🛍️", type: "money_shop" },
+            { id: 34, title: "Fraction Fun 2.0", cat: "Fraction", icon: "🍕", type: "frac_word" },
+            { id: 35, title: "Data Detective 3.0", cat: "Data", icon: "📋", type: "data_picto" },
+            { id: 36, title: "Mental Mayhem 2.0", cat: "Mental", icon: "🤯", type: "mental_logic" },
+            { id: 37, title: "Puzzle Mania 2.0", cat: "Numbers", icon: "🔢", type: "place_value" },
+            { id: 38, title: "Relay 2.0", cat: "Mixed", icon: "🔁", type: "add_sub_hard" },
+            { id: 39, title: "Mul Matrix 2.0", cat: "Mul", icon: "✖️", type: "mul_missing" },
+            { id: 40, title: "Div Detective 2.0", cat: "Div", icon: "🔍", type: "div_rem" },
+            { id: 41, title: "Shape Match 2.0", cat: "Shape", icon: "🧱", type: "shape_count" },
+            { id: 42, title: "Pattern Party 2.0", cat: "Pattern", icon: "🎭", type: "pattern_num" },
+            { id: 43, title: "Measure Mystery 2.0", cat: "Measure", icon: "📏", type: "measure_unit" },
+            { id: 44, title: "Time Hunt 2.0", cat: "Time", icon: "⌚", type: "time_dur" },
+            { id: 45, title: "Money Challenge 2.0", cat: "Money", icon: "💳", type: "money_change" },
+            { id: 46, title: "Fraction Factory 2.0", cat: "Fraction", icon: "🍫", type: "frac_compare" },
+            { id: 47, title: "Data Detective 4.0", cat: "Data", icon: "📊", type: "data_tally" },
+            { id: 48, title: "Mental Lightning 2.0", cat: "Mental", icon: "🌩️", type: "mental_dbl" },
+            { id: 49, title: "Treasure Hunt", cat: "Mixed", icon: "🏴‍☠️", type: "mixed_all" },
+            { id: 50, title: "Maths Carnival", cat: "Fun", icon: "🎡", type: "mixed_fun" }
+        ];
+
+        // --- GAME STATE ---
+        let currentGame = null;
+        let currentLevel = 0;
+        let score = 0;
+        let currentQuestionData = {};
+
+        // --- INIT LOBBY ---
+        function initLobby() {
+            const lobby = document.getElementById('game-lobby');
+            lobby.innerHTML = '';
+            gamesDB.forEach(game => {
+                const card = document.createElement('div');
+                card.className = 'game-card';
+                card.innerHTML = `
+                    <div class="game-icon">${game.icon}</div>
+                    <div class="game-title">${game.title}</div>
+                    <div class="game-badge">${game.cat}</div>
+                `;
+                card.onclick = () => loadGame(game);
+                lobby.appendChild(card);
+            });
+        }
+
+        // --- GAME LOGIC ENGINE ---
+        function loadGame(game) {
+            currentGame = game;
+            currentLevel = 0;
+            score = 0;
+            
+            document.getElementById('game-lobby').style.display = 'none';
+            document.getElementById('game-area').style.display = 'block';
+            document.getElementById('game-title-display').innerText = game.title;
+            
+            nextQuestion();
+        }
+
+        function showLobby() {
+            document.getElementById('game-area').style.display = 'none';
+            document.getElementById('game-lobby').style.display = 'grid';
+        }
+
+        function nextQuestion() {
+            // Check for Game Over (10 Levels)
+            if (currentLevel >= 10) {
+                showFeedback(true, `Game Over! Score: ${score}/10`, "You are a Math Star! 🌟", true);
+                return;
+            }
+
+            currentLevel++;
+            updateUI();
+            document.getElementById('feedback-modal').style.display = 'none';
+            
+            // Generate Question based on Game Type
+            generateQuestionData(currentGame.type);
+        }
+
+        function updateUI() {
+            document.getElementById('current-score').innerText = score;
+            document.getElementById('progress-fill').style.width = `${(currentLevel-1)*10}%`;
+            document.getElementById('user-input').value = '';
+        }
+
+        // --- QUESTION GENERATOR (THE BRAIN) ---
+        function generateQuestionData(type) {
+            let q = "", a = "", v = "", options = [], inputMode = false;
+            
+            // Random Number Helpers
+            const r = (n) => Math.floor(Math.random() * n);
+            const rRange = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+            // --- TYPE SWITCHER ---
+            switch(type) {
+                // NUMBERS
+                case 'sequence': 
+                    let start = r(50);
+                    q = `What comes next? ${start}, ${start+1}, ${start+2}, __`;
+                    a = (start+3).toString();
+                    options = [start+3, start+5, start+10];
+                    break;
+                case 'compare':
+                    let n1 = r(99), n2 = r(99);
+                    q = `Compare: ${n1} ___ ${n2}`;
+                    a = n1 > n2 ? ">" : (n1 < n2 ? "<" : "=");
+                    options = [">", "<", "="];
+                    v = `${n1} 🆚 ${n2}`;
+                    break;
+                case 'number_word':
+                    let numW = r(10);
+                    const words = ["Zero","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten"];
+                    q = `Find the number for: ${words[numW]}`;
+                    a = numW.toString();
+                    options = [numW, numW+2, r(10)];
+                    break;
+                case 'place_value':
+                    let pv = rRange(10,99);
+                    q = `In ${pv}, what is the tens digit?`;
+                    a = Math.floor(pv/10).toString();
+                    options = [Math.floor(pv/10), pv%10, 0];
+                    break;
+
+                // OPERATIONS
+                case 'add_visual':
+                    let ad1 = r(5)+1, ad2 = r(5)+1;
+                    v = "🍎".repeat(ad1) + " ➕ " + "🍎".repeat(ad2);
+                    q = "Count and Add:";
+                    a = (ad1+ad2).toString();
+                    options = [ad1+ad2, ad1+ad2+1, ad1+ad2-1];
+                    break;
+                case 'sub_visual':
+                    let s1 = r(5)+5, s2 = r(4)+1;
+                    v = "🍪".repeat(s1) + " ➖ " + s2;
+                    q = `You have ${s1} cookies. Eat ${s2}. Left?`;
+                    a = (s1-s2).toString();
+                    options = [s1-s2, s1-s2+1, s1+s2];
+                    break;
+                case 'mul_basic':
+                    let m1 = r(5)+1, m2 = r(5)+1;
+                    q = `${m1} × ${m2} = ?`;
+                    a = (m1*m2).toString();
+                    options = [m1*m2, m1*m2+m1, m1*m2-1];
+                    break;
+                case 'div_group':
+                    let dTotal = r(3)*4 + 4; // 4, 8, 12, 16
+                    v = "🔵".repeat(dTotal);
+                    q = `Divide ${dTotal} dots into 4 groups.`;
+                    a = (dTotal/4).toString();
+                    options = [dTotal/4, dTotal/2, dTotal/4+1];
+                    break;
+                case 'add_word':
+                    let aw1 = r(20), aw2 = r(10);
+                    q = `Tom has ${aw1} pens. He buys ${aw2} more. Total?`;
+                    a = (aw1+aw2).toString();
+                    inputMode = true;
+                    break;
+                
+                // SHAPES & PATTERNS
+                case 'shape_id':
+                    const shapes = [
+                        {name:"Circle", html:"<div class='shape-circle'></div>"},
+                        {name:"Square", html:"<div class='shape-square'></div>"},
+                        {name:"Triangle", html:"<div class='shape-triangle'></div>"}
+                    ];
+                    let sh = shapes[r(3)];
+                    v = sh.html;
+                    q = "Identify the Shape:";
+                    a = sh.name;
+                    options = ["Circle", "Square", "Triangle"];
+                    break;
+                case 'pattern':
+                    q = "Complete Pattern: 🔴 🔵 🔴 🔵 __";
+                    a = "🔴";
+                    options = ["🔴", "🔵", "🟢"];
+                    break;
+                
+                // MONEY & TIME
+                case 'money_count':
+                    let coin1 = r(5)+1, coin2 = r(5)+1;
+                    q = `₹${coin1} + ₹${coin2} = ?`;
+                    a = (coin1+coin2).toString();
+                    v = "💰";
+                    options = [coin1+coin2, coin1+coin2+2, coin1+coin2-1];
+                    break;
+                case 'time_read':
+                    let hr = r(11)+1;
+                    v = "⏰"; // In a real app, use canvas for clock hands
+                    q = `The small hand is on ${hr}. The big hand is on 12. Time?`;
+                    a = `${hr}:00`;
+                    options = [`${hr}:00`, `${hr}:30`, `${hr+1}:00`];
+                    break;
+
+                // FRACTION
+                case 'frac_id':
+                    q = "What is half of 10?";
+                    a = "5";
+                    options = [5, 2, 10];
+                    break;
+
+                // DEFAULT / MIXED
+                default: 
+                    // Fallback to simple addition for unimplemented types
+                    let x = r(20), y = r(20);
+                    q = `${x} + ${y} = ?`;
+                    a = (x+y).toString();
+                    inputMode = true;
+            }
+
+            // Shuffle Options if MCQ
+            if(!inputMode) {
+                options = options.sort(() => Math.random() - 0.5);
+            }
+
+            renderQuestion(q, a, v, options, inputMode);
+        }
+
+        // --- RENDER & CHECK ---
+        function renderQuestion(q, a, v, options, inputMode) {
+            currentQuestionData = { answer: a };
+            document.getElementById('q-text').innerText = q;
+            document.getElementById('q-visual').innerHTML = v;
+
+            const optDiv = document.getElementById('interaction-options');
+            const inpDiv = document.getElementById('interaction-input');
+            optDiv.innerHTML = '';
+
+            if (inputMode) {
+                optDiv.style.display = 'none';
+                inpDiv.style.display = 'block';
+                document.getElementById('user-input').focus();
+            } else {
+                inpDiv.style.display = 'none';
+                optDiv.style.display = 'flex';
+                options.forEach(opt => {
+                    let btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerText = opt;
+                    btn.onclick = () => checkAnswer(opt.toString());
+                    optDiv.appendChild(btn);
+                });
+            }
+        }
+
+        function checkAnswer(userAns) {
+            if (userAns === 'input') {
+                userAns = document.getElementById('user-input').value.trim();
+            }
+
+            let correct = currentQuestionData.answer.toString().toLowerCase();
+            let isRight = userAns.toString().toLowerCase() === correct;
+
+            if (isRight) {
+                score++;
+                showFeedback(true, "Correct! 🎉", "You got it right!");
+            } else {
+                showFeedback(false, "Oops! ❌", `The correct answer was: ${correct}`);
+            }
+        }
+
+        function showFeedback(isSuccess, title, msg, gameOver=false) {
+            const modal = document.getElementById('feedback-modal');
+            document.getElementById('fb-icon').innerText = isSuccess ? "🌟" : "🤔";
+            document.getElementById('fb-title').innerText = title;
+            document.getElementById('fb-title').style.color = isSuccess ? "var(--green)" : "var(--accent)";
+            document.getElementById('fb-msg').innerText = msg;
+            
+            const btn = document.querySelector('.next-btn');
+            if(gameOver) {
+                btn.innerText = "Back to Lobby";
+                btn.onclick = showLobby;
+            } else {
+                btn.innerText = "Next ➡";
+                btn.onclick = nextQuestion;
+            }
+
+            modal.style.display = 'flex';
+        }
+
+        // --- START ---
+        initLobby();
+
+    </script>
+</body>
+</html>

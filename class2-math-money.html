@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Money | ShanEduHub</title>
+    <style>
+        /* --- GENERAL STYLES --- */
+        :root {
+            --primary: #27ae60; /* Money Green */
+            --secondary: #f1c40f; /* Gold */
+            --accent: #e67e22; /* Bronze */
+            --text: #2c3e50;
+            --bg: #f9fff9; /* Light Mint Background */
+            --card-bg: #FFFFFF;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            border-radius: 0 0 30px 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-bottom: 5px solid #f1c40f;
+        }
+
+        header h1 { margin: 0; font-size: 2.2em; text-shadow: 2px 2px 0 rgba(0,0,0,0.2); }
+        header p { font-size: 1.2em; margin-top: 10px; font-weight: bold; background: rgba(255,255,255,0.2); display: inline-block; padding: 5px 15px; border-radius: 20px; }
+
+        /* --- CARDS & SECTIONS --- */
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-left: 6px solid var(--primary);
+            transition: transform 0.2s;
+        }
+
+        .card:hover { transform: translateY(-3px); }
+
+        h2 { color: var(--primary); border-bottom: 2px dashed #ddd; padding-bottom: 10px; }
+        h3 { color: var(--accent); margin-top: 20px; }
+
+        /* --- CURRENCY VISUALS (CSS) --- */
+        .currency-box {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 15px 0;
+        }
+
+        .coin {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #f1c40f 0%, #f39c12 100%);
+            border: 3px solid #d35400;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #5d4037;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+        }
+        .coin.silver { background: radial-gradient(circle, #ecf0f1 0%, #bdc3c7 100%); border-color: #7f8c8d; color: #2c3e50; }
+
+        .note {
+            width: 100px;
+            height: 50px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+            font-size: 1.1em;
+            position: relative;
+            border: 1px dashed rgba(255,255,255,0.5);
+        }
+        .note::before { content: '₹'; position: absolute; left: 5px; top: 5px; font-size: 0.8em; opacity: 0.8; }
+        
+        .n10 { background: #8d6e63; } /* Brown */
+        .n20 { background: #cddc39; color: #333; } /* Green-Yellow */
+        .n50 { background: #00bcd4; } /* Blue */
+        .n100 { background: #9c27b0; } /* Lavender/Purple */
+        .n200 { background: #ff9800; } /* Orange */
+        .n500 { background: #607d8b; } /* Grey */
+
+        /* --- PRACTICE SECTION UI --- */
+        .quiz-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .set-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: all 0.2s;
+            color: white;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+        }
+
+        .set-btn:active { transform: translateY(2px); box-shadow: none; }
+        .btn-yellow { background-color: #f1c40f; color: #333; }
+        .btn-blue { background-color: #3498DB; }
+        .btn-green { background-color: #2ECC71; }
+        .btn-orange { background-color: #E67E22; }
+        .btn-red { background-color: #C0392b; }
+
+        .active-set { border: 3px solid #2C3E50; transform: scale(1.05); box-shadow: 0 0 10px rgba(0,0,0,0.2); }
+
+        /* --- QUESTION STYLES --- */
+        .question-box {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 15px;
+            border: 2px solid #ecf0f1;
+        }
+
+        .input-answer {
+            padding: 10px;
+            font-size: 1.1rem;
+            border: 2px solid #bdc3c7;
+            border-radius: 10px;
+            width: 150px;
+            text-align: center;
+            outline: none;
+        }
+        .input-answer:focus { border-color: var(--primary); }
+
+        .mcq-options button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 12px;
+            margin: 8px 0;
+            background: #f9f9f9;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+        .mcq-options button:hover { background: #eef; border-color: var(--primary); }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+            font-weight: bold;
+        }
+        .correct { background-color: #d5f5e3; color: #196f3d; border: 1px solid #abebc6; }
+        .wrong { background-color: #fadbd8; color: #943126; border: 1px solid #f5b7b1; }
+
+        /* --- SCOREBOARD --- */
+        .scoreboard {
+            position: sticky;
+            top: 0;
+            background: #2c3e50;
+            color: white;
+            padding: 15px;
+            z-index: 100;
+            display: flex;
+            justify-content: space-around;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            font-weight: bold;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.8em; }
+            .set-btn { width: 100%; margin-bottom: 5px; }
+            .scoreboard { font-size: 0.8em; padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>ShanEduHub 🌟</h1>
+        <p>Class 2 Maths – Money 💰 🪙 💵</p>
+    </header>
+
+    <div class="container">
+
+        <div class="card">
+            <h2>👋 What is Money?</h2>
+            <p><strong>Money</strong> helps us buy things like toys 🧸, chocolates 🍫, and books 📚!</p>
+            <p>In India, our money is called <strong>Rupees</strong> (₹) and <strong>Paise</strong> (p).</p>
+            <p>We use <strong>Coins</strong> (Metal) and <strong>Notes</strong> (Paper).</p>
+        </div>
+
+        <div class="card">
+            <h2>1️⃣ Indian Currency: Coins & Notes</h2>
+            
+            <h3>🪙 Coins</h3>
+            <div class="currency-box">
+                <div class="coin silver">₹1</div>
+                <div class="coin silver">₹2</div>
+                <div class="coin">₹5</div>
+                <div class="coin">₹10</div>
+                <div class="coin">₹20</div>
+            </div>
+            [attachment_0](attachment)
+
+            <h3>💵 Notes</h3>
+            <div class="currency-box">
+                <div class="note n10">₹10</div>
+                <div class="note n20">₹20</div>
+                <div class="note n50">₹50</div>
+                <div class="note n100">₹100</div>
+                <div class="note n200">₹200</div>
+                <div class="note n500">₹500</div>
+            </div>
+             
+        </div>
+
+        <div class="card">
+            <h2>2️⃣ Counting Money ➕</h2>
+            <p>To find the total money, we add the numbers on the coins and notes.</p>
+            
+            <div style="background:#e8f8f5; padding:15px; border-radius:10px; text-align:center; margin:10px 0;">
+                <div class="currency-box">
+                    <div class="coin">₹5</div> ➕ <div class="coin">₹5</div>
+                </div>
+                <strong>5 + 5 = ₹10</strong>
+            </div>
+
+            <div style="background:#fff3e0; padding:15px; border-radius:10px; text-align:center; margin:10px 0;">
+                <div class="currency-box">
+                    <div class="note n50">₹50</div> ➕ <div class="note n20">₹20</div>
+                </div>
+                <strong>50 + 20 = ₹70</strong>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>3️⃣ Spending & Saving 🛍️</h2>
+            <p><strong>Shopping:</strong> When we buy things, we give money. We do <strong>Subtraction (-)</strong>.</p>
+            <ul>
+                <li>I have ₹50. I bought a pen for ₹10.</li>
+                <li>Money left = 50 - 10 = <strong>₹40</strong>.</li>
+            </ul>
+            <p><strong>Saving:</strong> When we get more money, we do <strong>Addition (+)</strong>.</p>
+            <ul>
+                <li>I had ₹10. Dad gave me ₹5.</li>
+                <li>Total = 10 + 5 = <strong>₹15</strong>.</li>
+            </ul>
+        </div>
+
+        <div class="card" style="border-left-color: #9B59B6;">
+            <h2>👀 Look and Learn (Interactive)</h2>
+            
+            <div style="background:#fff; padding:10px; margin-bottom:10px; border:1px solid #ccc; border-radius:5px;">
+                <strong>Q: How much is one ₹10 Note + one ₹10 Coin?</strong>
+                <button onclick="this.nextElementSibling.innerText = '₹20'" style="margin-left:10px; padding:5px 10px;">Show Answer</button>
+                <span style="font-weight:bold; color:#27ae60; margin-left:10px;"></span>
+            </div>
+
+            <div style="background:#fff; padding:10px; border:1px solid #ccc; border-radius:5px;">
+                <strong>Q: Identify the Lavender/Purple note.</strong>
+                <button onclick="this.nextElementSibling.innerText = '₹100'" style="margin-left:10px; padding:5px 10px;">Show Answer</button>
+                <span style="font-weight:bold; color:#27ae60; margin-left:10px;"></span>
+            </div>
+        </div>
+
+        <div id="practice-section">
+            <h1 style="text-align: center; color: var(--text);">🔥 Practice Time (50+ Questions)</h1>
+            
+            <div class="scoreboard">
+                <span>📊 Total: <span id="total-q">0</span></span>
+                <span>✅ Correct: <span id="correct-score">0</span></span>
+                <span>❌ Wrong: <span id="wrong-score">0</span></span>
+                <span>📈 Score: <span id="percentage">0%</span></span>
+            </div>
+            <br>
+
+            <div class="quiz-controls">
+                <button class="set-btn btn-yellow" onclick="loadSet(1)">🟡 Set 1: Blanks</button>
+                <button class="set-btn btn-blue" onclick="loadSet(2)">🔵 Set 2: Choice</button>
+                <button class="set-btn btn-green" onclick="loadSet(3)">🟢 Set 3: Match</button>
+                <button class="set-btn btn-orange" onclick="loadSet(4)">🟠 Set 4: Stories</button>
+                <button class="set-btn btn-red" onclick="loadSet(5)">🔴 Set 5: Expert</button>
+            </div>
+
+            <div id="quiz-container">
+                <div class="card" style="text-align: center; padding: 50px;">
+                    <h3>Select a Practice Set to start! 👆</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="background: #e8f8f5; border-left: 6px solid #1ABC9C;">
+            <h2>🎮 Fun Learning Activities</h2>
+            <ol>
+                <li><strong>Coin Rubbing:</strong> Put a coin under a paper and rub with a pencil to see the design!</li>
+                <li><strong>Shopkeeper Game:</strong> Use fake money or paper notes to play shop with your friends.</li>
+                <li><strong>Piggy Bank:</strong> Start saving ₹1 or ₹2 every day!</li>
+            </ol>
+        </div>
+
+        <div class="card" style="background: #fff; border-left: 6px solid #F1C40F;">
+            <h2>🎓 Learning Outcomes</h2>
+            <p><strong>Great job! Now you can:</strong></p>
+            <ul>
+                <li>✅ Identify Indian coins and notes.</li>
+                <li>✅ Count total money.</li>
+                <li>✅ Solve shopping word problems.</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>Designed & Created by <strong>SHRISHANT YADAV</strong></p>
+        <p>🌟 ShanEduHub – Fun & Smart Learning for Class 2</p>
+        <p>&copy; All Rights Reserved</p>
+    </footer>
+
+    <script>
+        // --- DATA: 50+ UNIQUE QUESTIONS ---
+        const questionSets = {
+            1: [ // Set 1: Fill in the Blanks (10 Q)
+                { id: 101, type: 'input', q: "The symbol of Indian Rupee is ____.", a: "₹", exp: "We write ₹ before the amount." },
+                { id: 102, type: 'input', q: "2 coins of ₹5 = ____ Rupees.", a: "10", exp: "5 + 5 = 10." },
+                { id: 103, type: 'input', q: "The colour of ₹10 note is ____ (Brown/Pink).", a: "brown", exp: "New ₹10 notes are chocolate brown." },
+                { id: 104, type: 'input', q: "100 paise make ____ Rupee.", a: "1", exp: "100p = ₹1." },
+                { id: 105, type: 'input', q: "₹50 + ₹50 = ₹____.", a: "100", exp: "50 + 50 = 100." },
+                { id: 106, type: 'input', q: "To buy a ₹5 chocolate, I need a ₹____ coin.", a: "5", exp: "You need a 5 Rupee coin." },
+                { id: 107, type: 'input', q: "Which is paper money? (Coin/Note) ____.", a: "note", exp: "Notes are made of paper." },
+                { id: 108, type: 'input', q: "₹20 - ₹10 = ₹____.", a: "10", exp: "20 minus 10 is 10." },
+                { id: 109, type: 'input', q: "I have two ₹1 coins. Total = ₹____.", a: "2", exp: "1 + 1 = 2." },
+                { id: 110, type: 'input', q: "₹100 is ____ (bigger/smaller) than ₹50.", a: "bigger", exp: "100 is more than 50." }
+            ],
+            2: [ // Set 2: Tap Correct Answer (10 Q)
+                { id: 201, type: 'mcq', q: "Which note is Greenish-Yellow?", options: ["₹10", "₹20"], a: "₹20", exp: "The ₹20 note is greenish-yellow." },
+                { id: 202, type: 'mcq', q: "How many ₹10 notes make ₹20?", options: ["2", "3", "5"], a: "2", exp: "10 + 10 = 20." },
+                { id: 203, type: 'mcq', q: "Which is a coin?", options: ["₹50", "₹5", "₹100"], a: "₹5", exp: "₹5 comes in coin and note, others only notes." },
+                { id: 204, type: 'mcq', q: "Value of the Purple note?", options: ["₹100", "₹2000", "₹500"], a: "₹100", exp: "₹100 note is Lavender/Purple." },
+                { id: 205, type: 'mcq', q: "₹50 + ₹20 = ?", options: ["₹60", "₹70", "₹80"], a: "₹70", exp: "50 + 20 = 70." },
+                { id: 206, type: 'mcq', q: "Which has more value?", options: ["₹200", "₹500"], a: "₹500", exp: "500 is bigger than 200." },
+                { id: 207, type: 'mcq', q: "₹10 - ₹5 = ?", options: ["₹5", "₹2", "₹1"], a: "₹5", exp: "10 minus 5 is 5." },
+                { id: 208, type: 'mcq', q: "Identify Stone Grey note:", options: ["₹500", "₹10"], a: "₹500", exp: "The new ₹500 note is grey." },
+                { id: 209, type: 'mcq', q: "Can we tear a coin?", options: ["Yes", "No"], a: "No", exp: "Coins are made of metal." },
+                { id: 210, type: 'mcq', q: "Which is NOT a valid note?", options: ["₹30", "₹20", "₹50"], a: "₹30", exp: "There is no ₹30 note." }
+            ],
+            3: [ // Set 3: Match / Logic (10 Q)
+                { id: 301, type: 'mcq', q: "Match: Bright Blue Note matches with?", options: ["₹50", "₹10"], a: "₹50", exp: "₹50 is fluorescent blue." },
+                { id: 302, type: 'mcq', q: "Match: 10 coins of ₹1 matches with?", options: ["₹5", "₹10"], a: "₹10", exp: "1 x 10 = 10." },
+                { id: 303, type: 'mcq', q: "Match: Bright Orange Note matches with?", options: ["₹200", "₹20"], a: "₹200", exp: "₹200 is bright orange." },
+                { id: 304, type: 'mcq', q: "Match: Piggy Bank matches with?", options: ["Saving", "Spending"], a: "Saving", exp: "We use piggy banks to save." },
+                { id: 305, type: 'mcq', q: "Match: 2 notes of ₹50 matches with?", options: ["₹100", "₹200"], a: "₹100", exp: "50 + 50 = 100." },
+                { id: 306, type: 'mcq', q: "Match: Shopkeeper gives back money matches with?", options: ["Change", "Gift"], a: "Change", exp: "Money returned is called change." },
+                { id: 307, type: 'mcq', q: "Match: ₹20 + ₹20 + ₹10 matches with?", options: ["₹40", "₹50"], a: "₹50", exp: "20+20=40, 40+10=50." },
+                { id: 308, type: 'mcq', q: "Match: Smallest Note Value matches with?", options: ["₹10", "₹2000"], a: "₹10", exp: "₹10 is the smallest paper note value commonly used." },
+                { id: 309, type: 'mcq', q: "Match: Metal Money matches with?", options: ["Coin", "Note"], a: "Coin", exp: "Coins are metal." },
+                { id: 310, type: 'mcq', q: "Match: Half of ₹100 matches with?", options: ["₹50", "₹20"], a: "₹50", exp: "50 is half of 100." }
+            ],
+            4: [ // Set 4: Word Problems (10 Q)
+                { id: 401, type: 'mcq', q: "A pen costs ₹20. I have ₹10. How much more needed?", options: ["₹10", "₹5"], a: "₹10", exp: "20 - 10 = 10." },
+                { id: 402, type: 'mcq', q: "Mom gave ₹50. Dad gave ₹50. Total?", options: ["₹100", "₹50"], a: "₹100", exp: "50 + 50 = 100." },
+                { id: 403, type: 'input', q: "I bought candy for ₹5. Gave ₹10. Change back?", a: "5", exp: "10 - 5 = 5." },
+                { id: 404, type: 'mcq', q: "Toy costs ₹80. I have ₹100. Can I buy it?", options: ["Yes", "No"], a: "Yes", exp: "100 is more than 80." },
+                { id: 405, type: 'mcq', q: "Cost: ₹15. I paid: ₹20. Change?", options: ["₹5", "₹10"], a: "₹5", exp: "20 - 15 = 5." },
+                { id: 406, type: 'input', q: "Rahul saved ₹2 everyday for 5 days. Total?", a: "10", exp: "2 + 2 + 2 + 2 + 2 = 10." },
+                { id: 407, type: 'mcq', q: "Book is ₹40. Copy is ₹20. Total cost?", options: ["₹60", "₹50"], a: "₹60", exp: "40 + 20 = 60." },
+                { id: 408, type: 'mcq', q: "I have three ₹10 notes. How much money?", options: ["₹30", "₹13"], a: "₹30", exp: "10 + 10 + 10 = 30." },
+                { id: 409, type: 'mcq', q: "Ice cream is ₹25. I have ₹20. How much less do I have?", options: ["₹5", "₹10"], a: "₹5", exp: "25 - 20 = 5." },
+                { id: 410, type: 'mcq', q: "Lost ₹10 from ₹50. How much left?", options: ["₹40", "₹60"], a: "₹40", exp: "50 - 10 = 40." }
+            ],
+            5: [ // Set 5: Expert/Mixed (10 Q)
+                { id: 501, type: 'mcq', q: "Which amounts to ₹15?", options: ["₹10 + ₹5", "₹5 + ₹5"], a: "₹10 + ₹5", exp: "10 + 5 = 15." },
+                { id: 502, type: 'input', q: "5 notes of ₹100 = ₹____.", a: "500", exp: "5 times 100 is 500." },
+                { id: 503, type: 'mcq', q: "I want to buy a bag for ₹250. I have ₹200 note. Enough?", options: ["No", "Yes"], a: "No", exp: "200 is less than 250." },
+                { id: 504, type: 'mcq', q: "₹100 - ₹90 = ?", options: ["₹10", "₹9"], a: "₹10", exp: "Difference is 10." },
+                { id: 505, type: 'mcq', q: "Which is largest?", options: ["₹500", "₹200", "₹100"], a: "₹500", exp: "500 is the biggest number here." },
+                { id: 506, type: 'mcq', q: "How many ₹5 coins make ₹20?", options: ["4", "5"], a: "4", exp: "5, 10, 15, 20. (4 coins)." },
+                { id: 507, type: 'input', q: "₹50 + ₹20 + ₹10 = ₹____.", a: "80", exp: "50+20=70, 70+10=80." },
+                { id: 508, type: 'mcq', q: "I have ₹500. I spent ₹200. Left?", options: ["₹300", "₹200"], a: "₹300", exp: "500 - 200 = 300." },
+                { id: 509, type: 'mcq', q: "Which note has the Gandhi ji photo?", options: ["All Notes", "Only ₹500"], a: "All Notes", exp: "All Indian currency notes have Gandhi ji." },
+                { id: 510, type: 'mcq', q: "Double of ₹50 is?", options: ["₹100", "₹25"], a: "₹100", exp: "50 + 50 = 100." }
+            ]
+        };
+
+        // --- STATE VARIABLES ---
+        let currentSet = 1;
+        let scoreCorrect = 0;
+        let scoreWrong = 0;
+        let totalAttempted = 0;
+
+        // --- FUNCTIONS ---
+
+        function loadSet(setNum) {
+            currentSet = setNum;
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = `<h2>📝 Set ${setNum} Questions</h2>`;
+            
+            // Highlight active button
+            document.querySelectorAll('.set-btn').forEach(btn => btn.classList.remove('active-set'));
+            document.querySelector(`.set-btn:nth-child(${setNum})`).classList.add('active-set');
+
+            // Load questions
+            const questions = questionSets[setNum];
+            questions.forEach(q => {
+                const qDiv = document.createElement('div');
+                qDiv.className = 'question-box';
+                qDiv.id = `qbox-${q.id}`;
+                
+                let inputHTML = '';
+                
+                if (q.type === 'input') {
+                    inputHTML = `
+                        <p><strong>Q. ${q.q}</strong></p>
+                        <input type="text" class="input-answer" id="input-${q.id}" placeholder="?">
+                        <button class="set-btn btn-blue" style="font-size:0.8rem; padding: 5px 15px; margin-left:10px;" onclick="checkInput(${q.id}, '${q.a}', '${q.exp.replace(/'/g, "\\'")}')">Check</button>
+                    `;
+                } else if (q.type === 'mcq') {
+                    let optionsHTML = '';
+                    q.options.forEach(opt => {
+                        optionsHTML += `<button onclick="checkMCQ(${q.id}, '${opt}', '${q.a}', '${q.exp.replace(/'/g, "\\'")}')">${opt}</button>`;
+                    });
+                    inputHTML = `
+                        <p><strong>Q. ${q.q}</strong></p>
+                        <div class="mcq-options" id="opts-${q.id}">
+                            ${optionsHTML}
+                        </div>
+                    `;
+                }
+
+                qDiv.innerHTML = inputHTML + `<div class="feedback" id="feedback-${q.id}"></div>`;
+                container.appendChild(qDiv);
+            });
+        }
+
+        function updateScore() {
+            document.getElementById('correct-score').innerText = scoreCorrect;
+            document.getElementById('wrong-score').innerText = scoreWrong;
+            document.getElementById('total-q').innerText = totalAttempted;
+            
+            let percent = totalAttempted === 0 ? 0 : Math.round((scoreCorrect / totalAttempted) * 100);
+            document.getElementById('percentage').innerText = percent + "%";
+        }
+
+        function showFeedback(id, isCorrect, correctAns, exp) {
+            const fbDiv = document.getElementById(`feedback-${id}`);
+            fbDiv.style.display = 'block';
+            
+            if (isCorrect) {
+                fbDiv.className = 'feedback correct';
+                fbDiv.innerHTML = `🎉 Correct! <br> <small>${exp}</small>`;
+            } else {
+                fbDiv.className = 'feedback wrong';
+                fbDiv.innerHTML = `❌ Wrong. The answer is <strong>${correctAns}</strong>. <br> <small>Reason: ${exp}</small>`;
+            }
+        }
+
+        function checkInput(id, correct, exp) {
+            const userVal = document.getElementById(`input-${id}`).value.trim().toLowerCase();
+            const correctVal = correct.toLowerCase();
+            const box = document.getElementById(`qbox-${id}`);
+
+            // Prevent re-answering
+            if(box.getAttribute('data-answered') === 'true') return;
+            box.setAttribute('data-answered', 'true');
+
+            totalAttempted++;
+            if (userVal === correctVal) {
+                scoreCorrect++;
+                showFeedback(id, true, correct, exp);
+            } else {
+                scoreWrong++;
+                showFeedback(id, false, correct, exp);
+            }
+            updateScore();
+        }
+
+        function checkMCQ(id, selected, correct, exp) {
+            const box = document.getElementById(`qbox-${id}`);
+            
+            // Prevent re-answering
+            if(box.getAttribute('data-answered') === 'true') return;
+            box.setAttribute('data-answered', 'true');
+
+            totalAttempted++;
+            if (selected === correct) {
+                scoreCorrect++;
+                showFeedback(id, true, correct, exp);
+            } else {
+                scoreWrong++;
+                showFeedback(id, false, correct, exp);
+            }
+            updateScore();
+            
+            // Disable buttons visually
+            const opts = document.getElementById(`opts-${id}`).getElementsByTagName('button');
+            for(let btn of opts) {
+                btn.disabled = true;
+                if(btn.innerText === correct) btn.style.background = '#d5f5e3';
+                else if(btn.innerText === selected) btn.style.background = '#fadbd8';
+            }
+        }
+
+        // Initialize with Set 1
+        window.onload = function() {
+            loadSet(1);
+        };
+
+    </script>
+</body>
+</html>

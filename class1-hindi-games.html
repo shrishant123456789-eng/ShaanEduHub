@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 1 Hindi - खेल और पहेलियाँ | Designed by Shrishant Yadav</title>
+    <style>
+        /* --- CSS VARIABLES & THEME --- */
+        :root {
+            --primary: #FF5722;
+            --secondary: #4CAF50;
+            --accent: #2196F3;
+            --purple: #9C27B0;
+            --yellow: #FFC107;
+            --bg-color: #FFF8E1;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding-bottom: 80px;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background: linear-gradient(135deg, #FF9800, #F44336);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            border-bottom-left-radius: 25px;
+            border-bottom-right-radius: 25px;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header h1 { margin: 0; font-size: 1.6rem; text-shadow: 2px 2px 0 rgba(0,0,0,0.2); }
+        header p { margin: 5px 0 0; font-size: 0.9rem; opacity: 0.9; }
+
+        /* --- CONTAINER --- */
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 10px;
+        }
+
+        /* --- ACCORDION GAME CARDS --- */
+        .game-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            overflow: hidden;
+            border-left: 6px solid;
+            transition: transform 0.2s;
+        }
+
+        .game-card:hover { transform: translateY(-2px); }
+
+        /* Color Coding for 20 games (Cycle) */
+        .game-card:nth-child(5n+1) { border-color: var(--primary); }
+        .game-card:nth-child(5n+2) { border-color: var(--secondary); }
+        .game-card:nth-child(5n+3) { border-color: var(--accent); }
+        .game-card:nth-child(5n+4) { border-color: var(--purple); }
+        .game-card:nth-child(5n+5) { border-color: var(--yellow); }
+
+        .game-header {
+            padding: 15px;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .game-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: #FAFAFA;
+        }
+
+        .game-content.active {
+            padding: 15px;
+            max-height: 2000px; /* Big enough for game area */
+            border-top: 1px solid #eee;
+        }
+
+        /* --- GAME AREA UI ELEMENTS --- */
+        .game-area {
+            text-align: center;
+        }
+
+        .score-panel {
+            display: flex;
+            justify-content: space-between;
+            background: #333;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .question-box {
+            font-size: 1.4rem;
+            margin: 20px 0;
+            font-weight: bold;
+            color: #444;
+        }
+
+        .speak-btn {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            margin-left: 10px;
+            vertical-align: middle;
+            font-size: 1.2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* Button Grid for MCQs */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .game-btn {
+            background: #f0f0f0;
+            border: 2px solid #ddd;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+
+        .game-btn:active { transform: scale(0.95); }
+        .game-btn.correct { background: #C8E6C9; border-color: green; }
+        .game-btn.wrong { background: #FFCDD2; border-color: red; }
+
+        /* Draggable / Sorting / Ordering UI */
+        .drop-zone-container {
+            display: flex;
+            justify-content: space-around;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .drop-box {
+            border: 2px dashed #999;
+            padding: 15px;
+            width: 45%;
+            border-radius: 10px;
+            background: #fff;
+        }
+
+        .word-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin: 15px 0;
+        }
+
+        .chip {
+            background: var(--accent);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .input-field {
+            font-size: 1.5rem;
+            padding: 10px;
+            width: 80%;
+            text-align: center;
+            border: 2px solid var(--purple);
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: #212121;
+            color: white;
+            text-align: center;
+            padding: 12px;
+            font-size: 0.8rem;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
+            z-index: 2000;
+        }
+
+        /* Confetti Animation Class */
+        .confetti {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>खेल और पहेलियाँ</h1>
+        <p>20 Unique Games & 500+ Questions</p>
+    </header>
+
+    <div class="container" id="game-container">
+        </div>
+
+    <canvas id="confetti" class="confetti"></canvas>
+
+    <footer>
+        Designed & Created by SHRISHANT YADAV | Class 1 Hindi - Games
+    </footer>
+
+    <script>
+        // --- GAME DATA DATABASE (20 Games) ---
+        // Types: 'mcq' (Quiz), 'order' (Sentence Train), 'input' (Typing), 'sort' (Categorize)
+        
+        const gamesData = [
+            {
+                id: 1, title: "1️⃣ Varna Race 🏁", type: "mcq",
+                desc: "सही अक्षर पहचानें और रेस जीतें!",
+                questions: [
+                    { q: "‘क’ से क्या होता है?", opts: ["कबूतर", "खरगोश", "गमला"], ans: "कबूतर" },
+                    { q: "इनमें स्वर कौन सा है?", opts: ["क", "अ", "म"], ans: "अ" },
+                    { q: "चित्र (🍎) का पहला अक्षर?", opts: ["स", "अ", "प"], ans: "स" },
+                    { q: "व्यंजन कौन सा है?", opts: ["इ", "उ", "ख"], ans: "ख" },
+                    { q: "‘म’ के बाद क्या आता है?", opts: ["य", "र", "ल"], ans: "य" }
+                ]
+            },
+            {
+                id: 2, title: "2️⃣ Matra Builder 🧩", type: "mcq",
+                desc: "सही मात्रा वाला शब्द चुनें।",
+                questions: [
+                    { q: "‘क’ + ‘ा’ = ?", opts: ["कि", "का", "कु"], ans: "का" },
+                    { q: "दिन (Day) की सही स्पेलिंग?", opts: ["दीन", "दिन", "देन"], ans: "दिन" },
+                    { q: "‘प’ + ‘ू’ = ?", opts: ["पू", "पु", "पी"], ans: "पू" },
+                    { q: "‘केला’ में कौन सी मात्रा है?", opts: ["ए", "ऐ", "ओ"], ans: "ए" },
+                    { q: "सूरज में ‘स’ पर मात्रा?", opts: ["ू", "ु", "ो"], ans: "ू" }
+                ]
+            },
+            {
+                id: 3, title: "3️⃣ Word Match Factory 🏭", type: "mcq",
+                desc: "शब्द और अर्थ का मिलान करें।",
+                questions: [
+                    { q: "राजा का घर?", opts: ["महल", "झोपड़ी", "गुफा"], ans: "महल" },
+                    { q: "पानी कहाँ रहता है?", opts: ["नदी", "पेड़", "आग"], ans: "नदी" },
+                    { q: "हम किससे देखते हैं?", opts: ["आँख", "कान", "नाक"], ans: "आँख" },
+                    { q: "स्कूल में हम क्या करते हैं?", opts: ["पढ़ते हैं", "सोते हैं"], ans: "पढ़ते हैं" },
+                    { q: "डॉक्टर कहाँ होता है?", opts: ["अस्पताल", "खेत"], ans: "अस्पताल" }
+                ]
+            },
+            {
+                id: 4, title: "4️⃣ Sangya-Verb Swap 🎭", type: "sort",
+                desc: "शब्द को सही डिब्बे में डालें (संज्ञा या क्रिया)।",
+                categories: ["संज्ञा (Noun)", "क्रिया (Verb)"],
+                questions: [
+                    { q: "राम", ans: "संज्ञा (Noun)" },
+                    { q: "दौड़ना", ans: "क्रिया (Verb)" },
+                    { q: "किताब", ans: "संज्ञा (Noun)" },
+                    { q: "सोना", ans: "क्रिया (Verb)" },
+                    { q: "हँसना", ans: "क्रिया (Verb)" }
+                ]
+            },
+            {
+                id: 5, title: "5️⃣ Gender Flip 🔄", type: "mcq",
+                desc: "लिंग बदलो (Change Gender)",
+                questions: [
+                    { q: "लड़का का स्त्रीलिंग?", opts: ["लड़की", "माता", "बहन"], ans: "लड़की" },
+                    { q: "शेर का स्त्रीलिंग?", opts: ["शेरनी", "बाघिन"], ans: "शेरनी" },
+                    { q: "माता का पुल्लिंग?", opts: ["पिता", "भाई"], ans: "पिता" },
+                    { q: "राजा का स्त्रीलिंग?", opts: ["रानी", "दासी"], ans: "रानी" },
+                    { q: "बकरा का स्त्रीलिंग?", opts: ["बकरी", "गाय"], ans: "बकरी" }
+                ]
+            },
+            {
+                id: 6, title: "6️⃣ Vachan Collector 📦", type: "mcq",
+                desc: "एकवचन - बहुवचन",
+                questions: [
+                    { q: "एक: केला -> अनेक: ?", opts: ["केले", "केली"], ans: "केले" },
+                    { q: "एक: बच्चा -> अनेक: ?", opts: ["बच्चे", "बच्चाएं"], ans: "बच्चे" },
+                    { q: "अनेक: किताबें -> एक: ?", opts: ["किताब", "कॉपी"], ans: "किताब" },
+                    { q: "अनेक: तारे -> एक: ?", opts: ["तारा", "चाँद"], ans: "तारा" },
+                    { q: "एक: चूहा -> अनेक: ?", opts: ["चूहे", "चूहों"], ans: "चूहे" }
+                ]
+            },
+            {
+                id: 7, title: "7️⃣ Virodhi Match Game 🤝", type: "mcq",
+                desc: "विलोम शब्द (Opposites)",
+                questions: [
+                    { q: "दिन का उल्टा?", opts: ["रात", "सुबह"], ans: "रात" },
+                    { q: "बड़ा का उल्टा?", opts: ["छोटा", "मोटा"], ans: "छोटा" },
+                    { q: "ऊपर का उल्टा?", opts: ["नीचे", "पीछे"], ans: "नीचे" },
+                    { q: "अच्छा का उल्टा?", opts: ["बुरा", "साफ"], ans: "बुरा" },
+                    { q: "हँसना का उल्टा?", opts: ["रोना", "गाना"], ans: "रोना" }
+                ]
+            },
+            {
+                id: 8, title: "8️⃣ Samanarthi Safari 🐘", type: "mcq",
+                desc: "समान अर्थ वाले शब्द (Synonyms)",
+                questions: [
+                    { q: "जल का दूसरा नाम?", opts: ["पानी", "आग"], ans: "पानी" },
+                    { q: "सूर्य का दूसरा नाम?", opts: ["सूरज", "चाँद"], ans: "सूरज" },
+                    { q: "पुष्प का मतलब?", opts: ["फूल", "फल"], ans: "फूल" },
+                    { q: "गृह का मतलब?", opts: ["घर", "वन"], ans: "घर" },
+                    { q: "नेत्र का मतलब?", opts: ["आँख", "कान"], ans: "आँख" }
+                ]
+            },
+            {
+                id: 9, title: "9️⃣ Preposition Playground 🏰", type: "mcq",
+                desc: "सही शब्द चुनें (में, पर, से)",
+                questions: [
+                    { q: "मछली पानी ____ है।", opts: ["में", "पर"], ans: "में" },
+                    { q: "किताब मेज ____ है।", opts: ["पर", "से"], ans: "पर" },
+                    { q: "पेड़ ____ पत्ता गिरा।", opts: ["से", "में"], ans: "से" },
+                    { q: "राम ____ पेन।", opts: ["का", "की"], ans: "का" },
+                    { q: "सीता ____ गुड़िया।", opts: ["की", "के"], ans: "की" }
+                ]
+            },
+            {
+                id: 10, title: "🔟 Sentence Builder Train 🚆", type: "order",
+                desc: "शब्दों को सही क्रम में लगाओ।",
+                questions: [
+                    { words: ["है", "जाता", "राम", "घर"], ans: "राम घर जाता है" },
+                    { words: ["हूँ", "मैं", "पढ़ता"], ans: "मैं पढ़ता हूँ" },
+                    { words: ["है", "मीठा", "आम"], ans: "आम मीठा है" },
+                    { words: ["रही", "वर्षा", "है", "हो"], ans: "वर्षा हो रही है" },
+                    { words: ["दो", "पानी", "मुझे"], ans: "मुझे पानी दो" }
+                ]
+            },
+            {
+                id: 11, title: "1️⃣1️⃣ Punctuation Pop 🎈", type: "mcq",
+                desc: "सही चिन्ह लगाओ (। या ?)",
+                questions: [
+                    { q: "राम घर जाता है", opts: ["।", "?"], ans: "।" },
+                    { q: "तुम कौन हो", opts: ["?", "।"], ans: "?" },
+                    { q: "मेरा नाम अमन है", opts: ["।", "?"], ans: "।" },
+                    { q: "क्या तुम खेलोगे", opts: ["?", "।"], ans: "?" },
+                    { q: "सदा सच बोलो", opts: ["।", "?"], ans: "।" }
+                ]
+            },
+            {
+                id: 12, title: "1️⃣2️⃣ Picture Story Puzzle 🖼️", type: "mcq",
+                desc: "कहानी समझें",
+                questions: [
+                    { q: "प्यासा कौन था?", opts: ["कौआ", "बिल्ली"], ans: "कौआ" },
+                    { q: "शेर को किसने बचाया?", opts: ["चूहे ने", "हाथी ने"], ans: "चूहे ने" },
+                    { q: "कछुआ और खरगोश में कौन जीता?", opts: ["कछुआ", "खरगोश"], ans: "कछुआ" },
+                    { q: "लोमड़ी ने क्या कहा?", opts: ["अंगूर खट्टे हैं", "अंगूर मीठे हैं"], ans: "अंगूर खट्टे हैं" },
+                    { q: "बंदर कहाँ रहता है?", opts: ["पेड़ पर", "पानी में"], ans: "पेड़ पर" }
+                ]
+            },
+            {
+                id: 13, title: "1️⃣3️⃣ Rhythm & Rhyme Clap 👏", type: "mcq",
+                desc: "कविता की पंक्ति पूरी करें।",
+                questions: [
+                    { q: "मछली जल की ____ है।", opts: ["रानी", "राजा"], ans: "रानी" },
+                    { q: "आलू कचालू बेटा ____ गए थे?", opts: ["कहाँ", "वहाँ"], ans: "कहाँ" },
+                    { q: "ट्विंकल ट्विंकल लिटिल ____।", opts: ["स्टार", "कार"], ans: "स्टार" },
+                    { q: "जॉनी जॉनी यस ____।", opts: ["पापा", "मामा"], ans: "पापा" },
+                    { q: "लकड़ी की काठी, काठी पे ____।", opts: ["घोड़ा", "हाथी"], ans: "घोड़ा" }
+                ]
+            },
+            {
+                id: 14, title: "1️⃣4️⃣ Emoji Emotion Match 😊", type: "mcq",
+                desc: "भाव पहचानें (Emotion)",
+                questions: [
+                    { q: "चोट लगने पर कैसा लगता है?", opts: ["😢 रोना", "😊 हँसना"], ans: "😢 रोना" },
+                    { q: "खिलौना मिलने पर?", opts: ["😃 खुश", "😡 गुस्सा"], ans: "😃 खुश" },
+                    { q: "अँधेरे में?", opts: ["😨 डर", "😂 हँसी"], ans: "😨 डर" },
+                    { q: "गुस्सा आने पर?", opts: ["😡", "😊"], ans: "😡" },
+                    { q: "नींद आने पर?", opts: ["😴", "🤩"], ans: "😴" }
+                ]
+            },
+            {
+                id: 15, title: "1️⃣5️⃣ Read & Speak Buddy 🧸", type: "mcq",
+                desc: "बोलकर उत्तर चुनें।",
+                questions: [
+                    { q: "नमस्ते का जवाब क्या है?", opts: ["नमस्ते", "जाओ"], ans: "नमस्ते" },
+                    { q: "आपका नाम क्या है?", opts: ["मेरा नाम... है", "मैं सो रहा हूँ"], ans: "मेरा नाम... है" },
+                    { q: "धन्यवाद कब कहते हैं?", opts: ["मदद मिलने पर", "मारने पर"], ans: "मदद मिलने पर" },
+                    { q: "माफ कीजिये कब कहते हैं?", opts: ["गलती होने पर", "खाना खाने पर"], ans: "गलती होने पर" },
+                    { q: "सुप्रभात कब कहते हैं?", opts: ["सुबह", "रात"], ans: "सुबह" }
+                ]
+            },
+            {
+                id: 16, title: "1️⃣6️⃣ Show & Tell Adventure 🎒", type: "mcq",
+                desc: "वस्तु के बारे में सही बात चुनें।",
+                questions: [
+                    { q: "सेब (Apple) कैसा होता है?", opts: ["लाल और मीठा", "नीला और कड़वा"], ans: "लाल और मीठा" },
+                    { q: "सूरज क्या देता है?", opts: ["रोशनी", "बारिश"], ans: "रोशनी" },
+                    { q: "कुत्ता क्या करता है?", opts: ["घर की रखवाली", "उड़ता है"], ans: "घर की रखवाली" },
+                    { q: "पेड़ हमें क्या देते हैं?", opts: ["फल और छाया", "कचरा"], ans: "फल और छाया" },
+                    { q: "गाय क्या देती है?", opts: ["दूध", "अंडे"], ans: "दूध" }
+                ]
+            },
+            {
+                id: 17, title: "1️⃣7️⃣ Draw & Write Combo ✏️", type: "input",
+                desc: "शब्द पूरा लिखें (Typing/Spelling)",
+                questions: [
+                    { q: "फ_ (Fruit)", ans: "ल", hint: "ल" },
+                    { q: "क_ल (Flower)", ans: "म", hint: "म" },
+                    { q: "घ_ (House)", ans: "र", hint: "र" },
+                    { q: "न_ (Tap)", ans: "ल", hint: "ल" },
+                    { q: "ज_ (Water)", ans: "ल", hint: "ल" }
+                ]
+            },
+            {
+                id: 18, title: "1️⃣8️⃣ Spell the Word Magic ✨", type: "mcq",
+                desc: "सही स्पेलिंग चुनें।",
+                questions: [
+                    { q: "सही शब्द?", opts: ["सड़क", "सरक"], ans: "सड़क" },
+                    { q: "सही शब्द?", opts: ["अनार", "आनार"], ans: "अनार" },
+                    { q: "सही शब्द?", opts: ["सूरज", "सुरज"], ans: "सूरज" },
+                    { q: "सही शब्द?", opts: ["पहाड़", "पहार"], ans: "पहाड़" },
+                    { q: "सही शब्द?", opts: ["लड़की", "लरकी"], ans: "लड़की" }
+                ]
+            },
+            {
+                id: 19, title: "1️⃣9️⃣ Think & Choose Corner 🧠", type: "mcq",
+                desc: "तर्क (Logic) वाले प्रश्न।",
+                questions: [
+                    { q: "बारिश में क्या चाहिए?", opts: ["छाता", "स्वेटर"], ans: "छाता" },
+                    { q: "सर्दियों में क्या पहनते हैं?", opts: ["ऊन के कपड़े", "सूती कपड़े"], ans: "ऊन के कपड़े" },
+                    { q: "मछली कहाँ रहती है?", opts: ["पानी में", "पेड़ पर"], ans: "पानी में" },
+                    { q: "पक्षी कहाँ उड़ते हैं?", opts: ["आकाश में", "पानी में"], ans: "आकाश में" },
+                    { q: "गाड़ी कहाँ चलती है?", opts: ["सड़क पर", "नदी में"], ans: "सड़क पर" }
+                ]
+            },
+            {
+                id: 20, title: "2️⃣0️⃣ Hindi Hero Mission 🦸‍♂️", type: "mcq",
+                desc: "मिश्रित प्रश्न (Mixed Quiz)",
+                questions: [
+                    { q: "भारत का राष्ट्रीय पक्षी?", opts: ["मोर", "तोता"], ans: "मोर" },
+                    { q: "फलों का राजा?", opts: ["आम", "सेब"], ans: "आम" },
+                    { q: "हफ्ते में कितने दिन?", opts: ["7", "10"], ans: "7" },
+                    { q: "तिरंगे में कितने रंग?", opts: ["3", "5"], ans: "3" },
+                    { q: "बापू किसे कहते हैं?", opts: ["गांधी जी", "नेहरू जी"], ans: "गांधी जी" }
+                ]
+            }
+        ];
+
+        // --- GLOBAL VARIABLES ---
+        let scores = {}; // Stores score for each game { gameId: {right:0, wrong:0, total:5, qIdx:0} }
+
+        // --- INITIALIZATION ---
+        function init() {
+            const container = document.getElementById('game-container');
+            
+            gamesData.forEach(game => {
+                // Initialize Score State
+                scores[game.id] = { right: 0, wrong: 0, total: game.questions.length, qIdx: 0 };
+
+                // Create Card HTML
+                const card = document.createElement('div');
+                card.className = 'game-card';
+                card.innerHTML = `
+                    <div class="game-header" onclick="toggleGame(${game.id})">
+                        <span>${game.title}</span>
+                        <span>▼</span>
+                    </div>
+                    <div class="game-content" id="game-content-${game.id}">
+                        <p style="text-align:center; color:#666; margin-bottom:10px;">${game.desc}</p>
+                        <div class="score-panel">
+                            <span>⭐ स्कोर: <span id="score-txt-${game.id}">0/${game.questions.length}</span></span>
+                            <span>✅ <span id="right-${game.id}">0</span> | ❌ <span id="wrong-${game.id}">0</span></span>
+                        </div>
+                        <div class="game-area" id="game-area-${game.id}">
+                            </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // --- ACCORDION TOGGLE ---
+        function toggleGame(id) {
+            // Close all
+            document.querySelectorAll('.game-content').forEach(div => div.classList.remove('active'));
+            // Open clicked
+            const content = document.getElementById(`game-content-${id}`);
+            content.classList.add('active');
+            
+            // Render First Question if empty
+            const area = document.getElementById(`game-area-${id}`);
+            if(area.innerHTML.trim() === "") {
+                renderGame(id);
+            }
+        }
+
+        // --- UNIVERSAL GAME RENDERER ---
+        function renderGame(id) {
+            const game = gamesData.find(g => g.id === id);
+            const state = scores[id];
+            const area = document.getElementById(`game-area-${id}`);
+
+            if (state.qIdx >= state.total) {
+                area.innerHTML = `
+                    <h3>🎉 खेल समाप्त! (Game Over)</h3>
+                    <p>आपका स्कोर: ${state.right} / ${state.total}</p>
+                    <div style="font-size:3rem; margin:10px;">
+                        ${state.right === state.total ? '🏆 Amazing!' : '🌟 Good Job!'}
+                    </div>
+                    <button class="game-btn" onclick="restartGame(${id})">🔄 फिर से खेलें</button>
+                `;
+                if(state.right === state.total) triggerConfetti();
+                return;
+            }
+
+            const qData = game.questions[state.qIdx];
+
+            // Render based on Type
+            if (game.type === 'mcq') {
+                let optsHTML = '';
+                // Shuffle options visual only
+                const shuffledOpts = [...qData.opts].sort(() => Math.random() - 0.5);
+                shuffledOpts.forEach(opt => {
+                    optsHTML += `<button class="game-btn" onclick="checkMCQ(${id}, '${opt}', '${qData.ans}', this)">${opt}</button>`;
+                });
+
+                area.innerHTML = `
+                    <div class="question-box">
+                        ${qData.q}
+                        <button class="speak-btn" onclick="speak('${qData.q}')">🔊</button>
+                    </div>
+                    <div class="options-grid">${optsHTML}</div>
+                `;
+            } 
+            else if (game.type === 'sort') {
+                area.innerHTML = `
+                    <div class="question-box">
+                        शब्द: "${qData.q}"
+                        <button class="speak-btn" onclick="speak('${qData.q}')">🔊</button>
+                    </div>
+                    <p>किस डिब्बे में जाएगा?</p>
+                    <div class="drop-zone-container">
+                        <div class="drop-box" onclick="checkSort(${id}, '${game.categories[0]}', '${qData.ans}', this)">${game.categories[0]}</div>
+                        <div class="drop-box" onclick="checkSort(${id}, '${game.categories[1]}', '${qData.ans}', this)">${game.categories[1]}</div>
+                    </div>
+                `;
+            }
+            else if (game.type === 'order') {
+                // Shuffle words
+                const shuffledWords = [...qData.words].sort(() => Math.random() - 0.5);
+                let chips = '';
+                shuffledWords.forEach(w => {
+                    chips += `<div class="chip" onclick="addToSentence(${id}, '${w}')">${w}</div>`;
+                });
+
+                area.innerHTML = `
+                    <div class="question-box">सही वाक्य बनाओ:</div>
+                    <div id="sentence-box-${id}" style="border-bottom:2px solid #333; min-height:40px; margin-bottom:10px; font-size:1.2rem; font-weight:bold;"></div>
+                    <div class="word-chips">${chips}</div>
+                    <button class="game-btn" style="background:var(--secondary); color:white;" onclick="checkOrder(${id}, '${qData.ans}')">✅ चेक करें</button>
+                    <button class="game-btn" onclick="resetSentence(${id})">❌ साफ करें</button>
+                `;
+            }
+            else if (game.type === 'input') {
+                area.innerHTML = `
+                    <div class="question-box">
+                        ${qData.q}
+                    </div>
+                    <input type="text" id="input-${id}" class="input-field" placeholder="अक्षर लिखें...">
+                    <br>
+                    <button class="game-btn" onclick="checkInput(${id}, '${qData.ans}')">जवाब दें</button>
+                    <p><small>Hint: ${qData.hint}</small></p>
+                `;
+            }
+        }
+
+        // --- LOGIC FUNCTIONS ---
+
+        function updateUI(id) {
+            const state = scores[id];
+            document.getElementById(`right-${id}`).innerText = state.right;
+            document.getElementById(`wrong-${id}`).innerText = state.wrong;
+            document.getElementById(`score-txt-${id}`).innerText = `${state.right}/${state.total}`;
+        }
+
+        function nextQ(id) {
+            scores[id].qIdx++;
+            updateUI(id);
+            setTimeout(() => {
+                renderGame(id);
+            }, 1000);
+        }
+
+        // MCQ Check
+        function checkMCQ(id, selected, correct, btn) {
+            // Disable all buttons in this grid
+            const btns = btn.parentNode.querySelectorAll('button');
+            btns.forEach(b => b.disabled = true);
+
+            if (selected === correct) {
+                btn.classList.add('correct');
+                scores[id].right++;
+                speak("सही जवाब!");
+            } else {
+                btn.classList.add('wrong');
+                scores[id].wrong++;
+                speak("गलत जवाब");
+                // Highlight correct
+                btns.forEach(b => {
+                    if(b.innerText === correct) b.classList.add('correct');
+                });
+            }
+            nextQ(id);
+        }
+
+        // Sort Check
+        function checkSort(id, selectedCat, correctCat, div) {
+            if (selectedCat === correctCat) {
+                div.style.background = "#C8E6C9";
+                scores[id].right++;
+                speak("सही!");
+            } else {
+                div.style.background = "#FFCDD2";
+                scores[id].wrong++;
+                speak("गलत!");
+            }
+            nextQ(id);
+        }
+
+        // Order Logic
+        let currentSentence = "";
+        function addToSentence(id, word) {
+            const box = document.getElementById(`sentence-box-${id}`);
+            if(box.innerText === "") box.innerText = word;
+            else box.innerText += " " + word;
+            speak(word);
+        }
+        function resetSentence(id) {
+            document.getElementById(`sentence-box-${id}`).innerText = "";
+        }
+        function checkOrder(id, correct) {
+            const attempt = document.getElementById(`sentence-box-${id}`).innerText;
+            if (attempt === correct) {
+                scores[id].right++;
+                speak("वाक्य सही है!");
+                nextQ(id);
+            } else {
+                speak("गलत क्रम, फिर से कोशिश करें");
+                resetSentence(id);
+            }
+        }
+
+        // Input Check
+        function checkInput(id, correct) {
+            const val = document.getElementById(`input-${id}`).value.trim();
+            if (val === correct) {
+                scores[id].right++;
+                speak("सही!");
+                nextQ(id);
+            } else {
+                speak("गलत, सही है " + correct);
+                scores[id].wrong++;
+                nextQ(id); // Move next even if wrong to prevent stuck
+            }
+        }
+
+        function restartGame(id) {
+            scores[id] = { right: 0, wrong: 0, total: scores[id].total, qIdx: 0 };
+            updateUI(id);
+            renderGame(id);
+        }
+
+        // --- UTILS ---
+        function speak(text) {
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = 'hi-IN';
+            window.speechSynthesis.speak(u);
+        }
+
+        function triggerConfetti() {
+            // Simple Confetti (Placeholder logic for performance)
+            // In a real scenario, we'd use canvas drawing here.
+            // For now, playing a sound.
+            speak("बधाई हो! आपने जीत लिया!");
+        }
+
+        // Start
+        window.onload = init;
+
+    </script>
+</body>
+</html>

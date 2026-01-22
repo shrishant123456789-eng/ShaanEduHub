@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shapes & Patterns | ShanEduHub</title>
+    <style>
+        /* --- GENERAL STYLES --- */
+        :root {
+            --primary: #FF6B6B; /* Coral Red */
+            --secondary: #48DBFB; /* Bright Blue */
+            --accent: #Feca57; /* Yellow */
+            --green: #1dd1a1;
+            --purple: #5f27cd;
+            --bg: #fff2cc; /* Light Cream Background */
+            --card-bg: #FFFFFF;
+            --text: #222f3e;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background: linear-gradient(135deg, #ff9ff3, #feca57);
+            color: #222;
+            padding: 25px;
+            text-align: center;
+            border-radius: 0 0 30px 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-bottom: 5px solid #ff6b6b;
+        }
+
+        header h1 { margin: 0; font-size: 2.2em; text-shadow: 2px 2px 0 rgba(255,255,255,0.5); }
+        header p { font-size: 1.2em; margin-top: 10px; font-weight: bold; background: white; display: inline-block; padding: 5px 15px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+
+        /* --- CARDS & SECTIONS --- */
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-left: 6px solid var(--secondary);
+            transition: transform 0.2s;
+        }
+
+        .card:hover { transform: translateY(-3px); }
+
+        h2 { color: var(--purple); border-bottom: 2px dashed #c8d6e5; padding-bottom: 10px; }
+        h3 { color: #ff9f43; margin-top: 20px; }
+
+        /* --- SHAPE VISUALS --- */
+        .shape-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .shape-box {
+            background: #f1f2f6;
+            padding: 15px;
+            text-align: center;
+            border-radius: 15px;
+            border: 2px solid #ddd;
+        }
+
+        .big-emoji { font-size: 3em; display: block; margin-bottom: 5px; }
+
+        .pattern-row {
+            font-size: 2em;
+            background: #eee;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            letter-spacing: 5px;
+            margin: 10px 0;
+        }
+
+        /* --- PRACTICE SECTION UI --- */
+        .quiz-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .set-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: all 0.2s;
+            color: white;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+        }
+
+        .set-btn:active { transform: translateY(2px); box-shadow: none; }
+        .btn-yellow { background-color: #feca57; color: #333; } /* Set 1 */
+        .btn-blue { background-color: #48dbfb; color: #333; } /* Set 2 */
+        .btn-green { background-color: #1dd1a1; color: #333; } /* Set 3 */
+        .btn-purple { background-color: #5f27cd; } /* Set 4 */
+        .btn-red { background-color: #ff6b6b; } /* Set 5 */
+
+        .active-set { border: 3px solid #222; transform: scale(1.05); }
+
+        /* --- QUESTION STYLES --- */
+        .question-box {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 15px;
+            border: 2px solid #f0f0f0;
+        }
+
+        .input-answer {
+            padding: 10px;
+            font-size: 1.1rem;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            width: 150px;
+            text-align: center;
+            outline: none;
+        }
+
+        .input-answer:focus { border-color: var(--secondary); }
+
+        .mcq-options button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 12px;
+            margin: 8px 0;
+            background: #f9f9f9;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .mcq-options button:hover { background: #eef; border-color: var(--secondary); }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+            font-weight: bold;
+        }
+
+        .correct { background-color: #D4EDDA; color: #155724; border: 1px solid #C3E6CB; }
+        .wrong { background-color: #F8D7DA; color: #721c24; border: 1px solid #F5C6CB; }
+
+        /* --- SCOREBOARD --- */
+        .scoreboard {
+            position: sticky;
+            top: 0;
+            background: #222f3e;
+            color: white;
+            padding: 15px;
+            z-index: 100;
+            display: flex;
+            justify-content: space-around;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            font-weight: bold;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background-color: #2D3436;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.8em; }
+            .set-btn { width: 100%; margin-bottom: 5px; }
+            .scoreboard { font-size: 0.8em; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>ShanEduHub 🌟</h1>
+        <p>Class 2 Maths – Shapes & Patterns 🔺🟦🔴</p>
+    </header>
+
+    <div class="container">
+
+        <div class="card">
+            <h2>👋 Hello Kids!</h2>
+            <p>Welcome to the colorful world of <strong>Shapes</strong> and <strong>Patterns</strong>!</p>
+            <p>Look around you. Everything has a shape:</p>
+            <ul>
+                <li>🍕 The pizza slice is a Triangle.</li>
+                <li>🌞 The sun is a Circle.</li>
+                <li>📱 Your phone is a Rectangle.</li>
+            </ul>
+            <p>And <strong>Patterns</strong> are designs that repeat, like stripes on a tiger! 🐯</p>
+        </div>
+
+        <div class="card">
+            <h2>🔹 PART A: 2D Shapes (Flat Shapes)</h2>
+            <p>Flat shapes have only length and breadth. They lay flat on paper.</p>
+            
+            <div class="shape-grid">
+                <div class="shape-box">
+                    <span class="big-emoji">🔴</span>
+                    <strong>Circle</strong><br>
+                    No corners.<br>No sides.<br>It is round.
+                </div>
+                <div class="shape-box">
+                    <span class="big-emoji">🟦</span>
+                    <strong>Square</strong><br>
+                    4 Corners.<br>4 Sides.<br>All sides are Equal.
+                </div>
+                <div class="shape-box">
+                    <span class="big-emoji">➖</span>
+                    <strong>Rectangle</strong><br>
+                    4 Corners.<br>4 Sides.<br>Opposite sides equal.
+                </div>
+                <div class="shape-box">
+                    <span class="big-emoji">🔺</span>
+                    <strong>Triangle</strong><br>
+                    3 Corners.<br>3 Sides.<br>Looks like a mountain.
+                </div>
+                <div class="shape-box">
+                    <span class="big-emoji">🥚</span>
+                    <strong>Oval</strong><br>
+                    No corners.<br>Elongated round.<br>Looks like an egg.
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🔹 3D Shapes (Solid Objects)</h2>
+            <p>These shapes are not flat. You can hold them in your hand!</p>
+            
+            <div class="shape-grid">
+                <div class="shape-box">
+                    <span class="big-emoji">🧊</span>
+                    <strong>Cube</strong><br>
+                    Looks like a dice.<br>All faces are squares.
+                </div>
+                <div class="shape-box">
+                    <span class="big-emoji">🧱</span>
+                    <strong>Cuboid</strong><br>
+                    Looks like a brick/book.<br>Faces are rectangles.
+                </div>
+                <div class="shape-box">
+                    <span class="big-emoji">⚽</span>
+                    <strong>Sphere</strong><br>
+                    Looks like a ball.<br>It rolls easily.
+                </div>
+                <div class="shape-box">
+                    <span class="big-emoji">🛢️</span>
+                    <strong>Cylinder</strong><br>
+                    Looks like a can or battery.<br>Flat top and bottom.
+                </div>
+                <div class="shape-box">
+                    <span class="big-emoji">🍦</span>
+                    <strong>Cone</strong><br>
+                    Looks like an ice-cream cone.<br>Pointy top, round bottom.
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🔹 PART B: Patterns</h2>
+            <p>A pattern is when things repeat in a specific order.</p>
+
+            <h3>1. Shape Patterns</h3>
+            <div class="pattern-row">🔺 🔵 🔺 🔵 🔺 ...</div>
+            <p>What comes next? <strong>Blue Circle (🔵)</strong></p>
+
+            <h3>2. Number Patterns (Skip Counting)</h3>
+            <div class="pattern-row">2, 4, 6, 8, ...</div>
+            <p>We are skipping 1 number. Next is <strong>10</strong>.</p>
+            
+            <h3>3. Colour Patterns</h3>
+            <div class="pattern-row">❤️ 💚 ❤️ 💚 ...</div>
+            <p>Red, Green, Red, Green. Next is <strong>Red ❤️</strong>.</p>
+        </div>
+
+        <div class="card" style="border-left-color: var(--accent);">
+            <h2>👀 Look and Learn (Interactive)</h2>
+            <p>Tap the button to see the answer!</p>
+            
+            <div style="background:#fff; padding:10px; margin-bottom:10px; border:1px solid #ccc; border-radius:5px;">
+                <strong>Q: 🍎 🍌 🍎 🍌 ... What's next?</strong>
+                <button onclick="this.nextElementSibling.innerText = '🍎 Apple'" style="margin-left:10px; padding:5px 10px;">Show Answer</button>
+                <span style="font-weight:bold; color:green; margin-left:10px;"></span>
+            </div>
+
+            <div style="background:#fff; padding:10px; border:1px solid #ccc; border-radius:5px;">
+                <strong>Q: I have 3 sides. Who am I?</strong>
+                <button onclick="this.nextElementSibling.innerText = '🔺 Triangle'" style="margin-left:10px; padding:5px 10px;">Show Answer</button>
+                <span style="font-weight:bold; color:green; margin-left:10px;"></span>
+            </div>
+        </div>
+
+        <div id="practice-section">
+            <h1 style="text-align: center; color: var(--primary);">🔥 Practice Time (50+ Questions)</h1>
+            
+            <div class="scoreboard">
+                <span>📊 Total: <span id="total-q">0</span></span>
+                <span>✅ Correct: <span id="correct-score">0</span></span>
+                <span>❌ Wrong: <span id="wrong-score">0</span></span>
+                <span>📈 Score: <span id="percentage">0%</span></span>
+            </div>
+            <br>
+
+            <div class="quiz-controls">
+                <button class="set-btn btn-yellow" onclick="loadSet(1)">🟡 Set 1: Blanks</button>
+                <button class="set-btn btn-blue" onclick="loadSet(2)">🔵 Set 2: Tap</button>
+                <button class="set-btn btn-green" onclick="loadSet(3)">🟢 Set 3: Match</button>
+                <button class="set-btn btn-purple" onclick="loadSet(4)">🟣 Set 4: Identify</button>
+                <button class="set-btn btn-red" onclick="loadSet(5)">🔴 Set 5: Challenge</button>
+            </div>
+
+            <div id="quiz-container">
+                <div class="card" style="text-align: center; padding: 50px;">
+                    <h3>Select a Practice Set to start! 👆</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="background: #e0f7fa; border-left: 6px solid #00bcd4;">
+            <h2>🎨 Fun with Shapes & Patterns</h2>
+            <p>Try these at home:</p>
+            <ol>
+                <li><strong>Shape Hunt:</strong> Find 5 circular things in your kitchen.</li>
+                <li><strong>Draw:</strong> Draw a robot using only Squares and Rectangles.</li>
+                <li><strong>Beads:</strong> Make a necklace pattern: Red-Blue-Red-Blue.</li>
+            </ol>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>Designed & Created by <strong>SHRISHANT YADAV</strong></p>
+        <p>🌟 ShanEduHub – Smart Learning for Class 2</p>
+        <p>&copy; All Rights Reserved</p>
+    </footer>
+
+    <script>
+        // --- DATA: 50+ UNIQUE QUESTIONS ---
+        const questionSets = {
+            1: [ // Set 1: Fill in the Blanks (10 Q)
+                { id: 101, type: 'input', q: "A triangle has ____ sides.", a: "3", exp: "Triangles have 3 sides." },
+                { id: 102, type: 'input', q: "A square has ____ corners.", a: "4", exp: "Squares have 4 corners." },
+                { id: 103, type: 'input', q: "A circle has ____ sides.", a: "0", exp: "A circle is round, it has zero sides." },
+                { id: 104, type: 'input', q: "A dice looks like a ____.", a: "cube", exp: "A dice is a Cube shape." },
+                { id: 105, type: 'input', q: "A ball looks like a ____.", a: "sphere", exp: "A ball is a Sphere." },
+                { id: 106, type: 'input', q: "Opposite sides of a rectangle are ____.", a: "equal", exp: "Only opposite sides match in a rectangle." },
+                { id: 107, type: 'input', q: "A cone looks like an ____ cream.", a: "ice", exp: "Ice cream cones!" },
+                { id: 108, type: 'input', q: "Complete pattern: 2, 4, 6, ____.", a: "8", exp: "Skip counting by 2." },
+                { id: 109, type: 'input', q: "The shape of an egg is ____.", a: "oval", exp: "An egg is Oval shaped." },
+                { id: 110, type: 'input', q: "A brick is a ____.", a: "cuboid", exp: "A brick has rectangular faces." }
+            ],
+            2: [ // Set 2: Tap Correct Answer (10 Q)
+                { id: 201, type: 'mcq', q: "Which shape is round?", options: ["Triangle", "Square", "Circle"], a: "Circle", exp: "Circles are round." },
+                { id: 202, type: 'mcq', q: "How many corners does an oval have?", options: ["0", "1", "4"], a: "0", exp: "Ovals have no corners." },
+                { id: 203, type: 'mcq', q: "Which object rolls?", options: ["Book", "Ball", "Brick"], a: "Ball", exp: "Spheres roll easily." },
+                { id: 204, type: 'mcq', q: "Identify the Cube:", options: ["Dice", "Coin", "Egg"], a: "Dice", exp: "Dice is a cube." },
+                { id: 205, type: 'mcq', q: "What comes next? A B A B ...", options: ["A", "B", "C"], a: "A", exp: "The pattern repeats A, then B." },
+                { id: 206, type: 'mcq', q: "Which shape has 3 corners?", options: ["Circle", "Triangle", "Rectangle"], a: "Triangle", exp: "Tri = Three." },
+                { id: 207, type: 'mcq', q: "A can of soda is a:", options: ["Cone", "Cylinder", "Sphere"], a: "Cylinder", exp: "Cans are cylinders." },
+                { id: 208, type: 'mcq', q: "Shape of a book page:", options: ["Rectangle", "Circle", "Triangle"], a: "Rectangle", exp: "Pages are rectangular." },
+                { id: 209, type: 'mcq', q: "Pattern: 10, 20, 30, ...", options: ["31", "40", "50"], a: "40", exp: "Skip counting by 10s." },
+                { id: 210, type: 'mcq', q: "Which is a flat shape?", options: ["Sphere", "Square", "Cube"], a: "Square", exp: "Square is 2D (flat)." }
+            ],
+            3: [ // Set 3: Match/Select Pair (10 Q)
+                { id: 301, type: 'mcq', q: "Match: Sun ☀️ matches with?", options: ["Square", "Circle", "Triangle"], a: "Circle", exp: "The sun is circular." },
+                { id: 302, type: 'mcq', q: "Match: Party Hat 🎉 matches with?", options: ["Cone", "Cube", "Cylinder"], a: "Cone", exp: "Hats are cones." },
+                { id: 303, type: 'mcq', q: "Match: Battery 🔋 matches with?", options: ["Sphere", "Cylinder", "Cone"], a: "Cylinder", exp: "Batteries are cylinders." },
+                { id: 304, type: 'mcq', q: "Match: Sandwich (cut in half) matches with?", options: ["Triangle", "Circle", "Oval"], a: "Triangle", exp: "Ideally cut sandwiches are triangles." },
+                { id: 305, type: 'mcq', q: "Match: Door 🚪 matches with?", options: ["Rectangle", "Circle", "Square"], a: "Rectangle", exp: "Doors are rectangles." },
+                { id: 306, type: 'mcq', q: "Match: 5, 10, 15... Next is?", options: ["16", "20", "25"], a: "20", exp: "Table of 5." },
+                { id: 307, type: 'mcq', q: "Match: 🔴 🔵 🔴 ... Next is?", options: ["🔵", "🔴", "🟢"], a: "🔵", exp: "Red, Blue, Red, Blue." },
+                { id: 308, type: 'mcq', q: "Match: Wheel 🎡 matches with?", options: ["Circle", "Square", "Cone"], a: "Circle", exp: "Wheels are round." },
+                { id: 309, type: 'mcq', q: "Match: Box 📦 matches with?", options: ["Cuboid", "Sphere", "Circle"], a: "Cuboid", exp: "Boxes are cuboids." },
+                { id: 310, type: 'mcq', q: "Match: 1, 2, 1, 2... Next is?", options: ["1", "2", "3"], a: "1", exp: "Simple number repeat." }
+            ],
+            4: [ // Set 4: Identify & Choose (Visual) (10 Q)
+                { id: 401, type: 'mcq', q: "Identify this: 🟧", options: ["Square", "Circle", "Triangle"], a: "Square", exp: "Orange square." },
+                { id: 402, type: 'mcq', q: "Identify pattern: ⭐ 🌙 ⭐ 🌙 ...", options: ["⭐", "🌙", "☀️"], a: "⭐", exp: "Star follows moon." },
+                { id: 403, type: 'mcq', q: "Which shape has 4 equal sides?", options: ["Square", "Rectangle", "Triangle"], a: "Square", exp: "All sides equal in square." },
+                { id: 404, type: 'mcq', q: "Identify the odd one: 🔴 🔴 🟦 🔴", options: ["First Red", "The Blue Square", "Last Red"], a: "The Blue Square", exp: "It is the only square/blue item." },
+                { id: 405, type: 'mcq', q: "Complete: ⬆️ ⬇️ ⬆️ ...", options: ["⬇️", "⬅️", "⬆️"], a: "⬇️", exp: "Up, Down, Up, Down." },
+                { id: 406, type: 'mcq', q: "Identify: 🍦 (The shape of the cone)", options: ["Cone", "Sphere", "Cube"], a: "Cone", exp: "Ice cream cone." },
+                { id: 407, type: 'mcq', q: "How many sides in 🔷 (Diamond/Rhombus)?", options: ["3", "4", "5"], a: "4", exp: "It has 4 sides." },
+                { id: 408, type: 'mcq', q: "Identify pattern: 1 1 2 1 1 2 ...", options: ["1", "2", "3"], a: "1", exp: "Sequence restarts with 1." },
+                { id: 409, type: 'mcq', q: "What shape is a coin?", options: ["Sphere", "Circle", "Cube"], a: "Circle", exp: "Flat face is a circle." },
+                { id: 410, type: 'mcq', q: "Identify: 🧱", options: ["Circle", "Cuboid", "Cone"], a: "Cuboid", exp: "Brick is a cuboid." }
+            ],
+            5: [ // Set 5: Challenge Round (10 Q)
+                { id: 501, type: 'mcq', q: "I have 0 corners and I am not flat. Who am I?", options: ["Circle", "Sphere", "Square"], a: "Sphere", exp: "Sphere is 3D and has no corners." },
+                { id: 502, type: 'mcq', q: "Pattern: A A B B A A ...", options: ["A", "B", "C"], a: "B", exp: "Double A, Double B." },
+                { id: 503, type: 'input', q: "10, 9, 8, 7, ____ (Backwards)", a: "6", exp: "Backward counting." },
+                { id: 504, type: 'mcq', q: "A cube has how many faces?", options: ["4", "6", "8"], a: "6", exp: "Top, bottom, 4 sides = 6." },
+                { id: 505, type: 'mcq', q: "Which letter has straight lines only?", options: ["O", "S", "L"], a: "L", exp: "L is made of straight lines." },
+                { id: 506, type: 'mcq', q: "Odd one out: Ball, Orange, Marble, Book", options: ["Ball", "Book", "Orange"], a: "Book", exp: "Book is cuboid, others are spheres." },
+                { id: 507, type: 'input', q: "Triangle (3) + Square (4) = ____ sides.", a: "7", exp: "3 + 4 = 7." },
+                { id: 508, type: 'mcq', q: "If I cut a square in half, I can get two...", options: ["Circles", "Rectangles", "Cones"], a: "Rectangles", exp: "Or Triangles, but Rectangles is an option here." },
+                { id: 509, type: 'mcq', q: "Pattern: Morning, Night, Morning, ...", options: ["Afternoon", "Night", "Morning"], a: "Night", exp: "Cycle of day." },
+                { id: 510, type: 'input', q: "A cylinder has ____ flat faces.", a: "2", exp: "Top and bottom circles." }
+            ]
+        };
+
+        // --- STATE VARIABLES ---
+        let currentSet = 1;
+        let scoreCorrect = 0;
+        let scoreWrong = 0;
+        let totalAttempted = 0;
+
+        // --- FUNCTIONS ---
+
+        function loadSet(setNum) {
+            currentSet = setNum;
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = `<h2>📝 Set ${setNum} Questions</h2>`;
+            
+            // Highlight active button
+            document.querySelectorAll('.set-btn').forEach(btn => btn.classList.remove('active-set'));
+            document.querySelector(`.set-btn:nth-child(${setNum})`).classList.add('active-set');
+
+            // Load questions
+            const questions = questionSets[setNum];
+            questions.forEach(q => {
+                const qDiv = document.createElement('div');
+                qDiv.className = 'question-box';
+                qDiv.id = `qbox-${q.id}`;
+                
+                let inputHTML = '';
+                
+                if (q.type === 'input') {
+                    inputHTML = `
+                        <p><strong>Q. ${q.q}</strong></p>
+                        <input type="text" class="input-answer" id="input-${q.id}" placeholder="Type here...">
+                        <button class="set-btn btn-blue" style="font-size:0.8rem; padding: 5px 15px; margin-left:10px;" onclick="checkInput(${q.id}, '${q.a}', '${q.exp.replace(/'/g, "\\'")}')">Check</button>
+                    `;
+                } else if (q.type === 'mcq') {
+                    let optionsHTML = '';
+                    q.options.forEach(opt => {
+                        optionsHTML += `<button onclick="checkMCQ(${q.id}, '${opt}', '${q.a}', '${q.exp.replace(/'/g, "\\'")}')">${opt}</button>`;
+                    });
+                    inputHTML = `
+                        <p><strong>Q. ${q.q}</strong></p>
+                        <div class="mcq-options" id="opts-${q.id}">
+                            ${optionsHTML}
+                        </div>
+                    `;
+                }
+
+                qDiv.innerHTML = inputHTML + `<div class="feedback" id="feedback-${q.id}"></div>`;
+                container.appendChild(qDiv);
+            });
+        }
+
+        function updateScore() {
+            document.getElementById('correct-score').innerText = scoreCorrect;
+            document.getElementById('wrong-score').innerText = scoreWrong;
+            document.getElementById('total-q').innerText = totalAttempted;
+            
+            let percent = totalAttempted === 0 ? 0 : Math.round((scoreCorrect / totalAttempted) * 100);
+            document.getElementById('percentage').innerText = percent + "%";
+        }
+
+        function showFeedback(id, isCorrect, correctAns, exp) {
+            const fbDiv = document.getElementById(`feedback-${id}`);
+            fbDiv.style.display = 'block';
+            
+            if (isCorrect) {
+                fbDiv.className = 'feedback correct';
+                fbDiv.innerHTML = `🎉 Correct! <br> <small>${exp}</small>`;
+            } else {
+                fbDiv.className = 'feedback wrong';
+                fbDiv.innerHTML = `❌ Wrong. The answer is <strong>${correctAns}</strong>. <br> <small>Reason: ${exp}</small>`;
+            }
+        }
+
+        function checkInput(id, correct, exp) {
+            const userVal = document.getElementById(`input-${id}`).value.trim().toLowerCase();
+            const correctVal = correct.toLowerCase();
+            const box = document.getElementById(`qbox-${id}`);
+
+            // Prevent re-answering
+            if(box.getAttribute('data-answered') === 'true') return;
+            box.setAttribute('data-answered', 'true');
+
+            totalAttempted++;
+            if (userVal === correctVal) {
+                scoreCorrect++;
+                showFeedback(id, true, correct, exp);
+            } else {
+                scoreWrong++;
+                showFeedback(id, false, correct, exp);
+            }
+            updateScore();
+        }
+
+        function checkMCQ(id, selected, correct, exp) {
+            const box = document.getElementById(`qbox-${id}`);
+            
+            // Prevent re-answering
+            if(box.getAttribute('data-answered') === 'true') return;
+            box.setAttribute('data-answered', 'true');
+
+            totalAttempted++;
+            if (selected === correct) {
+                scoreCorrect++;
+                showFeedback(id, true, correct, exp);
+            } else {
+                scoreWrong++;
+                showFeedback(id, false, correct, exp);
+            }
+            updateScore();
+            
+            // Disable buttons visually
+            const opts = document.getElementById(`opts-${id}`).getElementsByTagName('button');
+            for(let btn of opts) {
+                btn.disabled = true;
+                if(btn.innerText === correct) btn.style.background = '#d4edda';
+                else if(btn.innerText === selected) btn.style.background = '#f8d7da';
+            }
+        }
+
+        // Initialize with Set 1
+        window.onload = function() {
+            loadSet(1);
+        };
+
+    </script>
+</body>
+</html>

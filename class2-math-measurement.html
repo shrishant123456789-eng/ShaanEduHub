@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Measurement | ShanEduHub</title>
+    <style>
+        /* --- GENERAL STYLES --- */
+        :root {
+            --primary: #16a085; /* Teal */
+            --secondary: #2980b9; /* Blue */
+            --accent: #f39c12; /* Orange */
+            --purple: #8e44ad;
+            --bg: #e0f7fa; /* Light Blue Background */
+            --card-bg: #FFFFFF;
+            --text: #2c3e50;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background: linear-gradient(135deg, #1abc9c, #16a085);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            border-radius: 0 0 30px 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-bottom: 5px solid #f1c40f;
+        }
+
+        header h1 { margin: 0; font-size: 2.2em; text-shadow: 2px 2px 0 rgba(0,0,0,0.2); }
+        header p { font-size: 1.2em; margin-top: 10px; font-weight: bold; background: rgba(255,255,255,0.2); display: inline-block; padding: 5px 15px; border-radius: 20px; }
+
+        /* --- CARDS & SECTIONS --- */
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-left: 6px solid var(--secondary);
+            transition: transform 0.2s;
+        }
+
+        .card:hover { transform: translateY(-3px); }
+
+        h2 { color: var(--secondary); border-bottom: 2px dashed #bdc3c7; padding-bottom: 10px; }
+        h3 { color: var(--accent); margin-top: 20px; }
+
+        .note-box {
+            padding: 15px;
+            border-radius: 15px;
+            margin: 10px 0;
+            border: 2px solid transparent;
+        }
+
+        .length-box { background: #e8f6f3; border-color: #1abc9c; }
+        .weight-box { background: #fdf2e9; border-color: #e67e22; }
+        .capacity-box { background: #eaf2f8; border-color: #3498db; }
+
+        .visual-emoji { font-size: 2.5em; display: block; margin: 10px 0; }
+
+        /* --- PRACTICE SECTION UI --- */
+        .quiz-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .set-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: all 0.2s;
+            color: white;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+        }
+
+        .set-btn:active { transform: translateY(2px); box-shadow: none; }
+        .btn-teal { background-color: #16a085; }
+        .btn-blue { background-color: #2980b9; }
+        .btn-orange { background-color: #d35400; }
+        .btn-purple { background-color: #8e44ad; }
+        .btn-red { background-color: #c0392b; }
+
+        .active-set { border: 3px solid white; transform: scale(1.05); box-shadow: 0 0 10px rgba(0,0,0,0.2); }
+
+        /* --- QUESTION STYLES --- */
+        .question-box {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 15px;
+            border: 2px solid #ecf0f1;
+        }
+
+        .input-answer {
+            padding: 10px;
+            font-size: 1.1rem;
+            border: 2px solid #bdc3c7;
+            border-radius: 10px;
+            width: 150px;
+            text-align: center;
+            outline: none;
+        }
+
+        .input-answer:focus { border-color: var(--primary); }
+
+        .mcq-options button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 12px;
+            margin: 8px 0;
+            background: #f9f9f9;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .mcq-options button:hover { background: #eef; border-color: var(--secondary); }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+            font-weight: bold;
+        }
+
+        .correct { background-color: #d5f5e3; color: #196f3d; border: 1px solid #abebc6; }
+        .wrong { background-color: #fadbd8; color: #943126; border: 1px solid #f5b7b1; }
+
+        /* --- SCOREBOARD --- */
+        .scoreboard {
+            position: sticky;
+            top: 0;
+            background: #34495e;
+            color: white;
+            padding: 15px;
+            z-index: 100;
+            display: flex;
+            justify-content: space-around;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            font-weight: bold;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.8em; }
+            .set-btn { width: 100%; margin-bottom: 5px; }
+            .scoreboard { font-size: 0.8em; padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>ShanEduHub 🌟</h1>
+        <p>Class 2 Maths – Measurement 📏 ⚖️ 🧪</p>
+    </header>
+
+    <div class="container">
+
+        <div class="card">
+            <h2>👋 Introduction to Measurement</h2>
+            <p><strong>Measurement</strong> helps us find out:</p>
+            <ul>
+                <li>📏 <strong>Length:</strong> How long or short something is.</li>
+                <li>⚖️ <strong>Weight:</strong> How heavy or light something is.</li>
+                <li>🧪 <strong>Capacity:</strong> How much a container can hold.</li>
+            </ul>
+            <p>We use measurement every day, like checking how tall you are or buying milk!</p>
+        </div>
+
+        <div class="card note-box length-box">
+            <h2>2️⃣ Length (How Long?) 📏</h2>
+            <p>We compare objects to see which is <strong>Longer</strong> or <strong>Shorter</strong>.</p>
+            
+            <h3>Measuring Units:</h3>
+            <ul>
+                <li>✋ <strong>Non-Standard:</strong> Using Handspan, Cubes, or Feet. (Not accurate)</li>
+                <li>📏 <strong>Standard:</strong>
+                    <ul>
+                        <li><strong>Centimeter (cm):</strong> For small things (Pencil ✏️, Eraser).</li>
+                        <li><strong>Meter (m):</strong> For big things (Door 🚪, Rope, Saree).</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="card note-box weight-box">
+            <h2>3️⃣ Weight (How Heavy?) ⚖️</h2>
+            <p>Weight tells us if something is <strong>Heavy</strong> or <strong>Light</strong>.</p>
+            <div style="text-align:center;">
+                <span class="visual-emoji">🐘 Heavy | 🐜 Light</span>
+            </div>
+            <ul>
+                <li>On a balance scale, the <strong>heavier</strong> side goes <strong>DOWN</strong> ⬇️.</li>
+                <li>The <strong>lighter</strong> side goes <strong>UP</strong> ⬆️.</li>
+                <li>We buy fruits and vegetables by weight (Kilograms/Grams).</li>
+            </ul>
+        </div>
+
+        <div class="card note-box capacity-box">
+            <h2>4️⃣ Capacity (How Much?) 🥛</h2>
+            <p>Capacity tells us how much liquid (water, milk, juice) a container holds.</p>
+            <ul>
+                <li><strong>Full:</strong> No space left.</li>
+                <li><strong>Empty:</strong> Nothing inside.</li>
+                <li><strong>Litre (L):</strong> We use Litres to measure water, milk, or oil.</li>
+            </ul>
+            <p><em>Example: A bucket 🪣 holds MORE water than a mug ☕.</em></p>
+        </div>
+
+        <div class="card" style="border-left-color: #9b59b6;">
+            <h2>👀 Look and Learn (Tap to see Answer)</h2>
+            
+            <div style="background:#fff; padding:10px; margin-bottom:10px; border:1px solid #ccc; border-radius:5px;">
+                <strong>Q: Which holds more water? 🛁 Bathtub or 🥤 Cup?</strong>
+                <button onclick="this.nextElementSibling.innerText = '🛁 Bathtub'" style="margin-left:10px; padding:5px 10px;">Show Answer</button>
+                <span style="font-weight:bold; color:#8e44ad; margin-left:10px;"></span>
+            </div>
+
+            <div style="background:#fff; padding:10px; border:1px solid #ccc; border-radius:5px;">
+                <strong>Q: Which is heavier? 🚗 Car or 🚲 Cycle?</strong>
+                <button onclick="this.nextElementSibling.innerText = '🚗 Car'" style="margin-left:10px; padding:5px 10px;">Show Answer</button>
+                <span style="font-weight:bold; color:#8e44ad; margin-left:10px;"></span>
+            </div>
+        </div>
+
+        <div id="practice-section">
+            <h1 style="text-align: center; color: var(--text);">🔥 Practice Time (50+ Questions)</h1>
+            
+            <div class="scoreboard">
+                <span>📊 Total: <span id="total-q">0</span></span>
+                <span>✅ Correct: <span id="correct-score">0</span></span>
+                <span>❌ Wrong: <span id="wrong-score">0</span></span>
+                <span>📈 Score: <span id="percentage">0%</span></span>
+            </div>
+            <br>
+
+            <div class="quiz-controls">
+                <button class="set-btn btn-teal" onclick="loadSet(1)">🟡 Set 1: Blanks</button>
+                <button class="set-btn btn-blue" onclick="loadSet(2)">🔵 Set 2: Choice</button>
+                <button class="set-btn btn-orange" onclick="loadSet(3)">🟡 Set 3: Match</button>
+                <button class="set-btn btn-purple" onclick="loadSet(4)">🟠 Set 4: Stories</button>
+                <button class="set-btn btn-red" onclick="loadSet(5)">🔴 Set 5: Expert</button>
+            </div>
+
+            <div id="quiz-container">
+                <div class="card" style="text-align: center; padding: 50px;">
+                    <h3>Select a Practice Set to start! 👆</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="background: #e8f8f5; border-left: 6px solid #1abc9c;">
+            <h2>🎮 Fun Learning Activities</h2>
+            <ol>
+                <li><strong>Home Measure:</strong> Use your handspan ✋ to measure your table. How many hands long is it?</li>
+                <li><strong>Heavy/Light Hunt:</strong> Find one thing heavier than your school bag and one thing lighter.</li>
+                <li><strong>Water Play:</strong> Take a jug and a glass. How many glasses of water fill the jug?</li>
+            </ol>
+        </div>
+
+        <div class="card" style="background: #fff; border-left: 6px solid #f1c40f;">
+            <h2>🎓 Learning Outcomes</h2>
+            <p><strong>Great job! Now you know:</strong></p>
+            <ul>
+                <li>✅ Length (Tall/Short, cm/m).</li>
+                <li>✅ Weight (Heavy/Light).</li>
+                <li>✅ Capacity (More/Less, Litres).</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>Designed & Created by <strong>SHRISHANT YADAV</strong></p>
+        <p>🌟 ShanEduHub – Fun & Smart Learning for Class 2</p>
+        <p>&copy; All Rights Reserved</p>
+    </footer>
+
+    <script>
+        // --- DATA: 50+ UNIQUE QUESTIONS ---
+        const questionSets = {
+            1: [ // Set 1: Fill in the Blanks (10 Q)
+                { id: 101, type: 'input', q: "A pencil is measured in ____ (cm/m).", a: "cm", exp: "Small objects are measured in centimeters (cm)." },
+                { id: 102, type: 'input', q: "An elephant is ____ (heavy/light).", a: "heavy", exp: "Elephants are very big and heavy." },
+                { id: 103, type: 'input', q: "A feather is ____ (heavy/light).", a: "light", exp: "Feathers are very light." },
+                { id: 104, type: 'input', q: "We measure milk in ____ (litres/meters).", a: "litres", exp: "Liquids are measured in Litres." },
+                { id: 105, type: 'input', q: "A bus is ____ (longer/shorter) than a cycle.", a: "longer", exp: "A bus has more length than a cycle." },
+                { id: 106, type: 'input', q: "The heavier side of a see-saw goes ____ (up/down).", a: "down", exp: "Weight pulls the see-saw down." },
+                { id: 107, type: 'input', q: "1 meter is used for ____ (big/small) lengths.", a: "big", exp: "Meters are for long things like ropes or walls." },
+                { id: 108, type: 'input', q: "A bucket holds ____ (more/less) water than a spoon.", a: "more", exp: "A bucket is much bigger." },
+                { id: 109, type: 'input', q: "Your finger is measured in ____ (cm/kg).", a: "cm", exp: "Length is cm, not kg." },
+                { id: 110, type: 'input', q: "If a bottle is empty, it has ____ water.", a: "no", exp: "Empty means nothing inside." }
+            ],
+            2: [ // Set 2: Tap Correct Answer (10 Q)
+                { id: 201, type: 'mcq', q: "Which is Longer? ✏️ Pencil or 🚃 Train?", options: ["Pencil", "Train"], a: "Train", exp: "A train is very long." },
+                { id: 202, type: 'mcq', q: "Which is Heavier? 🍉 Watermelon or 🍇 Grape?", options: ["Watermelon", "Grape"], a: "Watermelon", exp: "Watermelons are big and heavy." },
+                { id: 203, type: 'mcq', q: "Which holds more? 🧴 Bottle or 🛀 Tub?", options: ["Bottle", "Tub"], a: "Tub", exp: "A bathtub holds a lot of water." },
+                { id: 204, type: 'mcq', q: "Unit to measure cloth length?", options: ["Kilogram", "Meter", "Litre"], a: "Meter", exp: "Cloth is measured in meters." },
+                { id: 205, type: 'mcq', q: "Which is Lighter? 🎈 Balloon or 🧱 Brick?", options: ["Balloon", "Brick"], a: "Balloon", exp: "Balloons are filled with air." },
+                { id: 206, type: 'mcq', q: "Best unit for a Notebook length?", options: ["cm", "m", "km"], a: "cm", exp: "Notebooks are small enough for cm." },
+                { id: 207, type: 'mcq', q: "Who is taller? 🦒 Giraffe or 🐈 Cat?", options: ["Giraffe", "Cat"], a: "Giraffe", exp: "Giraffes are very tall animals." },
+                { id: 208, type: 'mcq', q: "Balance Scale: If one side goes up, it is...", options: ["Heavier", "Lighter"], a: "Lighter", exp: "Light things go up." },
+                { id: 209, type: 'mcq', q: "We buy oil in:", options: ["Meters", "Litres", "Feet"], a: "Litres", exp: "Oil is a liquid." },
+                { id: 210, type: 'mcq', q: "Standard unit of length is:", options: ["Handspan", "Meter", "Foot"], a: "Meter", exp: "Handspan varies, Meter is standard." }
+            ],
+            3: [ // Set 3: Match the Following (Logic based) (10 Q)
+                { id: 301, type: 'mcq', q: "Match: Water 💧 matches with?", options: ["cm", "kg", "Litre"], a: "Litre", exp: "Liquids = Litre." },
+                { id: 302, type: 'mcq', q: "Match: Rice 🍚 matches with?", options: ["Weight (kg)", "Length (m)", "Capacity (L)"], a: "Weight (kg)", exp: "We weigh solid food items." },
+                { id: 303, type: 'mcq', q: "Match: Saree 👗 matches with?", options: ["Meter", "Litre", "Gram"], a: "Meter", exp: "Sarees are long cloth (Length)." },
+                { id: 304, type: 'mcq', q: "Match: Eraser matches with?", options: ["Heavy", "Light", "Long"], a: "Light", exp: "Erasers are light objects." },
+                { id: 305, type: 'mcq', q: "Match: Door Height matches with?", options: ["Meter", "Centimeter"], a: "Meter", exp: "Doors are tall (approx 2 meters)." },
+                { id: 306, type: 'mcq', q: "Match: Spoon of medicine matches with?", options: ["Full Bucket", "Small Capacity", "Heavy Weight"], a: "Small Capacity", exp: "Spoons hold very little." },
+                { id: 307, type: 'mcq', q: "Match: Pumpkin 🎃 matches with?", options: ["Light", "Heavy"], a: "Heavy", exp: "Pumpkins are heavy vegetables." },
+                { id: 308, type: 'mcq', q: "Match: Cricket Bat 🏏 matches with?", options: ["Length", "Capacity"], a: "Length", exp: "We measure how long the bat is." },
+                { id: 309, type: 'mcq', q: "Match: Full Glass matches with?", options: ["Empty", "Capacity"], a: "Capacity", exp: "It's about holding liquid." },
+                { id: 310, type: 'mcq', q: "Match: Handspan ✋ matches with?", options: ["Standard Unit", "Non-Standard Unit"], a: "Non-Standard Unit", exp: "Everyone's hand size is different." }
+            ],
+            4: [ // Set 4: Word Problems (10 Q)
+                { id: 401, type: 'mcq', q: "Ram is 100cm tall. Raj is 110cm tall. Who is taller?", options: ["Ram", "Raj"], a: "Raj", exp: "110 is bigger than 100." },
+                { id: 402, type: 'mcq', q: "A jug holds 5 glasses of water. How many glasses for 2 jugs?", options: ["5", "10", "2"], a: "10", exp: "5 + 5 = 10 glasses." },
+                { id: 403, type: 'mcq', q: "Mom bought 2kg potatoes and 1kg onions. Total weight?", options: ["3kg", "2kg", "1kg"], a: "3kg", exp: "2 + 1 = 3kg." },
+                { id: 404, type: 'mcq', q: "A pencil is 10cm. A new pencil is 15cm. Which is longer?", options: ["Old Pencil", "New Pencil"], a: "New Pencil", exp: "15cm > 10cm." },
+                { id: 405, type: 'mcq', q: "Bucket A has 5L water. Bucket B has 8L water. Which has more?", options: ["Bucket A", "Bucket B"], a: "Bucket B", exp: "8L is more than 5L." },
+                { id: 406, type: 'input', q: "If a ribbon is 5 meters long and I cut 2 meters. How much left?", a: "3", exp: "5 - 2 = 3 meters." },
+                { id: 407, type: 'mcq', q: "Box A is lighter than Box B. Which box goes DOWN on the scale?", options: ["Box A", "Box B"], a: "Box B", exp: "Heavier things go down." },
+                { id: 408, type: 'input', q: "I drink 2 bottles of water daily. How many in 2 days?", a: "4", exp: "2 + 2 = 4 bottles." },
+                { id: 409, type: 'mcq', q: "My school bag is heavy. My lunch box is light. Which is easier to lift?", options: ["Bag", "Lunch box"], a: "Lunch box", exp: "Light things are easy to lift." },
+                { id: 410, type: 'mcq', q: "A rope is 10m. A wire is 10cm. Which is longer?", options: ["Rope", "Wire"], a: "Rope", exp: "Meters are much bigger than centimeters." }
+            ],
+            5: [ // Set 5: Challenge Round (10 Q)
+                { id: 501, type: 'mcq', q: "Which tool measures weight?", options: ["Ruler", "Balance Scale", "Cup"], a: "Balance Scale", exp: "Scales measure weight." },
+                { id: 502, type: 'input', q: "100 cm makes ____ meter.", a: "1", exp: "100cm = 1m." },
+                { id: 503, type: 'mcq', q: "Order from Shortest to Longest: Finger, Arm, Leg.", options: ["Finger, Arm, Leg", "Leg, Arm, Finger"], a: "Finger, Arm, Leg", exp: "Finger is smallest, Leg is longest." },
+                { id: 504, type: 'mcq', q: "Which is NOT a unit of length?", options: ["cm", "meter", "litre"], a: "litre", exp: "Litre measures liquid capacity." },
+                { id: 505, type: 'mcq', q: "If I pour water from a small glass to a big jug, the amount of water...", options: ["Changes", "Stays Same"], a: "Stays Same", exp: "The water amount doesn't change, only the container does." },
+                { id: 506, type: 'mcq', q: "Identify the odd one: Apple, Ball, Stone, Water", options: ["Apple", "Water", "Stone"], a: "Water", exp: "Water is a liquid (Capacity), others are solids." },
+                { id: 507, type: 'input', q: "Double of 2kg is ____ kg.", a: "4", exp: "2 + 2 = 4." },
+                { id: 508, type: 'mcq', q: "Can we measure the length of a curved snake with a straight ruler easily?", options: ["Yes", "No"], a: "No", exp: "We need a tape or string for curves." },
+                { id: 509, type: 'mcq', q: "Which is more likely? Drinking 1 Litre of juice or 100 Litres?", options: ["1 Litre", "100 Litres"], a: "1 Litre", exp: "100 Litres is too much!" },
+                { id: 510, type: 'mcq', q: "A feather is big but light. A stone is small but heavy. Does size always equal weight?", options: ["Yes", "No"], a: "No", exp: "Size does not always mean heavier." }
+            ]
+        };
+
+        // --- STATE VARIABLES ---
+        let currentSet = 1;
+        let scoreCorrect = 0;
+        let scoreWrong = 0;
+        let totalAttempted = 0;
+
+        // --- FUNCTIONS ---
+
+        function loadSet(setNum) {
+            currentSet = setNum;
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = `<h2>📝 Set ${setNum} Questions</h2>`;
+            
+            // Highlight active button
+            document.querySelectorAll('.set-btn').forEach(btn => btn.classList.remove('active-set'));
+            document.querySelector(`.set-btn:nth-child(${setNum})`).classList.add('active-set');
+
+            // Load questions
+            const questions = questionSets[setNum];
+            questions.forEach(q => {
+                const qDiv = document.createElement('div');
+                qDiv.className = 'question-box';
+                qDiv.id = `qbox-${q.id}`;
+                
+                let inputHTML = '';
+                
+                if (q.type === 'input') {
+                    inputHTML = `
+                        <p><strong>Q. ${q.q}</strong></p>
+                        <input type="text" class="input-answer" id="input-${q.id}" placeholder="Type here...">
+                        <button class="set-btn btn-blue" style="font-size:0.8rem; padding: 5px 15px; margin-left:10px;" onclick="checkInput(${q.id}, '${q.a}', '${q.exp.replace(/'/g, "\\'")}')">Check</button>
+                    `;
+                } else if (q.type === 'mcq') {
+                    let optionsHTML = '';
+                    q.options.forEach(opt => {
+                        optionsHTML += `<button onclick="checkMCQ(${q.id}, '${opt}', '${q.a}', '${q.exp.replace(/'/g, "\\'")}')">${opt}</button>`;
+                    });
+                    inputHTML = `
+                        <p><strong>Q. ${q.q}</strong></p>
+                        <div class="mcq-options" id="opts-${q.id}">
+                            ${optionsHTML}
+                        </div>
+                    `;
+                }
+
+                qDiv.innerHTML = inputHTML + `<div class="feedback" id="feedback-${q.id}"></div>`;
+                container.appendChild(qDiv);
+            });
+        }
+
+        function updateScore() {
+            document.getElementById('correct-score').innerText = scoreCorrect;
+            document.getElementById('wrong-score').innerText = scoreWrong;
+            document.getElementById('total-q').innerText = totalAttempted;
+            
+            let percent = totalAttempted === 0 ? 0 : Math.round((scoreCorrect / totalAttempted) * 100);
+            document.getElementById('percentage').innerText = percent + "%";
+        }
+
+        function showFeedback(id, isCorrect, correctAns, exp) {
+            const fbDiv = document.getElementById(`feedback-${id}`);
+            fbDiv.style.display = 'block';
+            
+            if (isCorrect) {
+                fbDiv.className = 'feedback correct';
+                fbDiv.innerHTML = `🎉 Correct! <br> <small>${exp}</small>`;
+            } else {
+                fbDiv.className = 'feedback wrong';
+                fbDiv.innerHTML = `❌ Wrong. The answer is <strong>${correctAns}</strong>. <br> <small>Reason: ${exp}</small>`;
+            }
+        }
+
+        function checkInput(id, correct, exp) {
+            const userVal = document.getElementById(`input-${id}`).value.trim().toLowerCase();
+            const correctVal = correct.toLowerCase();
+            const box = document.getElementById(`qbox-${id}`);
+
+            // Prevent re-answering
+            if(box.getAttribute('data-answered') === 'true') return;
+            box.setAttribute('data-answered', 'true');
+
+            totalAttempted++;
+            if (userVal === correctVal) {
+                scoreCorrect++;
+                showFeedback(id, true, correct, exp);
+            } else {
+                scoreWrong++;
+                showFeedback(id, false, correct, exp);
+            }
+            updateScore();
+        }
+
+        function checkMCQ(id, selected, correct, exp) {
+            const box = document.getElementById(`qbox-${id}`);
+            
+            // Prevent re-answering
+            if(box.getAttribute('data-answered') === 'true') return;
+            box.setAttribute('data-answered', 'true');
+
+            totalAttempted++;
+            if (selected === correct) {
+                scoreCorrect++;
+                showFeedback(id, true, correct, exp);
+            } else {
+                scoreWrong++;
+                showFeedback(id, false, correct, exp);
+            }
+            updateScore();
+            
+            // Disable buttons visually
+            const opts = document.getElementById(`opts-${id}`).getElementsByTagName('button');
+            for(let btn of opts) {
+                btn.disabled = true;
+                if(btn.innerText === correct) btn.style.background = '#d5f5e3';
+                else if(btn.innerText === selected) btn.style.background = '#fadbd8';
+            }
+        }
+
+        // Initialize with Set 1
+        window.onload = function() {
+            loadSet(1);
+        };
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 10: Reading & Comprehension | Class 2 English</title>
+    <style>
+        /* 🎨 THEME: Storybook & Reading */
+        :root {
+            --paper: #FFFBF0;         /* Creamy Paper */
+            --ink: #2C3E50;           /* Dark Blue/Grey Text */
+            --primary: #FF9F43;       /* Orange Highlight */
+            --secondary: #54A0FF;     /* Blue Buttons */
+            --accent: #1DD1A1;        /* Green Success */
+            --wrong: #FF6B6B;         /* Red Error */
+            --font: 'Comic Sans MS', 'Comic Neue', cursive, sans-serif;
+            --radius: 20px;
+            --shadow: 0 6px 0 rgba(0,0,0,0.1);
+        }
+
+        * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: var(--font);
+            background-color: #F3E5AB; /* Soft parchment bg */
+            color: var(--ink);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* 🟢 HEADER */
+        header {
+            background: #fff;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 5px solid var(--primary);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        h1 { margin: 0; font-size: 1.6rem; color: var(--secondary); text-shadow: 1px 1px 0 #ddd; }
+        .subtitle { font-size: 0.9rem; margin-top: 5px; color: #555; }
+
+        /* 🧭 CONTAINER */
+        .container {
+            flex: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            width: 100%;
+        }
+
+        /* 🃏 MENU GRID */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .menu-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            text-align: center;
+            border: 4px solid transparent;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .menu-card:active { transform: scale(0.96); box-shadow: 0 2px 0 rgba(0,0,0,0.1); }
+        .menu-card h3 { margin: 10px 0 0; color: var(--ink); font-size: 1.1rem; }
+        .icon { font-size: 2.5rem; display: block; margin-bottom: 5px; }
+
+        /* Card Themes */
+        .c-basic { border-color: var(--accent); background: #E8F5E9; }
+        .c-story { border-color: var(--secondary); background: #E3F2FD; }
+        .c-poem { border-color: #9C27B0; background: #F3E5F5; }
+        .c-mix { border-color: var(--primary); background: #FFF3E0; }
+
+        /* 📖 READING AREA */
+        #read-screen { display: none; }
+        
+        .book-page {
+            background: var(--paper);
+            padding: 25px;
+            border-radius: 10px;
+            border-right: 5px solid #ddd;
+            border-bottom: 5px solid #ccc;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .book-title { color: var(--primary); font-size: 1.5rem; text-align: center; margin-bottom: 15px; text-decoration: underline; }
+        
+        .passage-text {
+            font-size: 1.3rem;
+            line-height: 1.8;
+            color: #333;
+            white-space: pre-line;
+        }
+
+        .vocab-box {
+            background: white; border: 2px dashed var(--secondary);
+            padding: 15px; border-radius: 15px; margin-top: 20px;
+        }
+        .vocab-title { font-weight: bold; color: var(--secondary); display: block; margin-bottom: 5px; }
+
+        /* Controls */
+        .audio-btn {
+            background: var(--secondary); color: white; border: none;
+            padding: 8px 20px; border-radius: 50px; font-size: 1rem;
+            font-family: var(--font); cursor: pointer; float: right;
+            box-shadow: 0 3px 0 #2980b9;
+        }
+        .audio-btn:active { transform: translateY(3px); box-shadow: none; }
+
+        /* 🎮 QUIZ AREA */
+        #quiz-screen { display: none; }
+        
+        .question-card {
+            background: white;
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+            margin-bottom: 20px;
+            border: 3px solid #eee;
+        }
+
+        .q-text { font-size: 1.3rem; font-weight: bold; margin-bottom: 15px; color: var(--ink); }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        @media (min-width: 500px) { .options-grid { grid-template-columns: 1fr 1fr; } }
+
+        .option-btn {
+            background: #f0f0f0;
+            border: 2px solid #ccc;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-family: var(--font);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .correct-anim { background: var(--accent) !important; color: white; border-color: #00b894 !important; }
+        .wrong-anim { background: var(--wrong) !important; color: white; border-color: #d63031 !important; }
+
+        /* 📊 SCOREBOARD */
+        .scoreboard {
+            background: white;
+            border-top: 4px solid var(--primary);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            bottom: 0;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+            z-index: 200;
+        }
+        .score-item span { font-weight: bold; font-size: 1.2rem; }
+
+        /* UTILS */
+        .nav-btn {
+            background: var(--ink); color: white; border: none;
+            padding: 12px 30px; border-radius: 50px; font-size: 1rem;
+            font-family: var(--font); cursor: pointer; width: 100%; margin-top: 10px;
+        }
+        .back-btn {
+            background: none; border: 2px solid #555; padding: 5px 15px;
+            border-radius: 20px; cursor: pointer; margin-bottom: 10px;
+        }
+        .hidden { display: none; }
+
+        /* End Screen */
+        #end-screen { display: none; text-align: center; padding: 40px; }
+        .big-score { font-size: 4rem; color: var(--primary); margin: 20px 0; font-weight: bold; }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>📖 Reading World</h1>
+        <div class="subtitle">Read, Understand & Answer!</div>
+    </header>
+
+    <div class="container">
+        
+        <div id="menu-screen">
+            <div style="background:white; padding:15px; border-radius:15px; border-left:6px solid var(--primary); margin-bottom:20px;">
+                <b>👋 Hello!</b> Reading helps us understand stories. Let's read and answer questions! 🧠
+            </div>
+
+            <div class="menu-grid">
+                <div class="menu-card c-basic" onclick="loadContent('passage1')">
+                    <span class="icon">🐶</span>
+                    <h3>My Pet Dog</h3>
+                    <small>Basic Reading</small>
+                </div>
+                <div class="menu-card c-story" onclick="loadContent('story1')">
+                    <span class="icon">🦅</span>
+                    <h3>Thirsty Crow</h3>
+                    <small>Story Time</small>
+                </div>
+                <div class="menu-card c-poem" onclick="loadContent('poem1')">
+                    <span class="icon">🌱</span>
+                    <h3>The Little Seed</h3>
+                    <small>Poem Reading</small>
+                </div>
+                <div class="menu-card c-mix" onclick="loadContent('mix')">
+                    <span class="icon">🧩</span>
+                    <h3>Mixed Bag</h3>
+                    <small>Advanced Practice</small>
+                </div>
+            </div>
+        </div>
+
+        <div id="read-screen">
+            <button class="back-btn" onclick="goHome()">🏠 Home</button>
+            
+            <div id="book-display" class="book-page">
+                <button class="audio-btn" onclick="readText()">🔊 Read Aloud</button>
+                <h2 id="b-title" class="book-title">Title</h2>
+                <div id="b-text" class="passage-text">...</div>
+                <div id="b-vocab" class="vocab-box"></div>
+                <button class="nav-btn" style="background:var(--accent); margin-top:20px;" onclick="startQuiz()">📝 Start Questions</button>
+            </div>
+
+            <div id="quiz-display" class="hidden">
+                <div class="question-card">
+                    <div style="font-size:0.9rem; color:#888; margin-bottom:5px;">Question <span id="q-num">1</span></div>
+                    <div id="q-text" class="q-text">Loading...</div>
+                    <div id="options-grid" class="options-grid"></div>
+                    <div id="feedback" style="height:30px; margin-top:10px; font-weight:bold;"></div>
+                </div>
+                <button id="next-btn" class="nav-btn hidden" onclick="nextQuestion()">Next Question ➡️</button>
+            </div>
+        </div>
+
+        <div id="end-screen">
+            <h1>🎉 Reading Star!</h1>
+            <p>You understood the text very well!</p>
+            <div class="big-score"><span id="final-score">0</span>%</div>
+            <p>Correct: <span id="final-c">0</span> | Wrong: <span id="final-w">0</span></p>
+            <button class="nav-btn" onclick="goHome()">🏠 Read More</button>
+        </div>
+
+    </div>
+
+    <div class="scoreboard">
+        <div class="score-item" style="color:var(--accent)">✔ <span id="score-c">0</span></div>
+        <div class="score-item" style="color:var(--ink)">📊 <span id="score-p">0%</span></div>
+        <div class="score-item" style="color:var(--wrong)">❌ <span id="score-w">0</span></div>
+    </div>
+
+    <div style="text-align:center; padding:10px; font-size:0.8rem; color:#888; background:white;">
+        Designed & Created by SHRISHANT YADAV
+    </div>
+
+<script>
+    /* 📘 CONTENT DATABASE */
+    const contentData = {
+        passage1: {
+            title: "My Pet Dog",
+            text: "I have a pet dog. His name is Bruno. \nBruno is brown in colour. \nHe loves to play with a ball. \nHe guards my house at night. \nI love Bruno very much.",
+            vocab: [],
+            questions: [
+                { q: "What animal is the pet?", ans: "Dog", opts: ["Cat", "Dog", "Rabbit"] },
+                { q: "What is the dog's name?", ans: "Bruno", opts: ["Tommy", "Bruno", "Rocky"] },
+                { q: "What is Bruno's colour?", ans: "Brown", opts: ["Black", "Brown", "White"] },
+                { q: "What does he play with?", ans: "Ball", opts: ["Doll", "Ball", "Stick"] },
+                { q: "When does he guard the house?", ans: "Night", opts: ["Morning", "Night", "Noon"] },
+                { q: "Does Bruno guard the house?", ans: "Yes", opts: ["Yes", "No"] },
+                { q: "Do I love Bruno?", ans: "Yes", opts: ["Yes", "No"] },
+                { q: "Is Bruno a cat?", ans: "No", opts: ["Yes", "No"] },
+                { q: "Bruno loves to ___.", ans: "Play", opts: ["Play", "Sleep"] },
+                { q: "Bruno is my ___.", ans: "Pet", opts: ["Toy", "Pet"] },
+                { q: "Is Bruno white?", ans: "No", opts: ["Yes", "No"] },
+                { q: "Who guards the house?", ans: "Bruno", opts: ["Me", "Bruno"] },
+                { q: "Short Answer: The dog's name is ___.", ans: "Bruno", opts: ["Bruno", "Tiger"] },
+                { q: "True or False: Bruno is brown.", ans: "True", opts: ["True", "False"] },
+                { q: "True or False: He plays with a doll.", ans: "False", opts: ["True", "False"] }
+            ]
+        },
+        story1: {
+            title: "The Thirsty Crow",
+            text: "One hot summer day, a crow was very thirsty. He looked for water everywhere. He saw a pot under a tree. There was very little water in it. He could not reach the water. He got an idea. He dropped stones into the pot. The water came up. He drank the water and flew away happily.",
+            vocab: ["Thirsty: Needing water", "Idea: A thought", "Stones: Small rocks", "Reached: Touched"],
+            questions: [
+                { q: "Who was thirsty?", ans: "Crow", opts: ["Crow", "Parrot", "Dog"] },
+                { q: "What was the season?", ans: "Summer", opts: ["Winter", "Summer", "Rainy"] },
+                { q: "What did he see under the tree?", ans: "Pot", opts: ["Pot", "Bucket", "Glass"] },
+                { q: "Was the pot full of water?", ans: "No", opts: ["Yes", "No"] },
+                { q: "What did he drop in the pot?", ans: "Stones", opts: ["Leaves", "Stones", "Sand"] },
+                { q: "Did the water come up?", ans: "Yes", opts: ["Yes", "No"] },
+                { q: "How did the crow fly away?", ans: "Happily", opts: ["Sadly", "Happily"] },
+                { q: "The crow was ___.", ans: "Clever", opts: ["Foolish", "Clever"] },
+                { q: "The stones made the water ___.", ans: "Rise", opts: ["Fall", "Rise"] },
+                { q: "True or False: The crow drank water.", ans: "True", opts: ["True", "False"] },
+                { q: "True or False: It was a cold day.", ans: "False", opts: ["True", "False"] },
+                { q: "Short Answer: He saw a ___.", ans: "Pot", opts: ["Pot", "River"] },
+                { q: "What colour is a crow?", ans: "Black", opts: ["Black", "Blue"] },
+                { q: "Where was the pot?", ans: "Under tree", opts: ["On roof", "Under tree"] },
+                { q: "Did he find water?", ans: "Yes", opts: ["Yes", "No"] },
+                { q: "Was the crow hungry?", ans: "No", opts: ["Hungry", "Thirsty"] },
+                { q: "He looked for ___.", ans: "Water", opts: ["Food", "Water"] },
+                { q: "The water was ___.", ans: "Little", opts: ["Little", "Much"] },
+                { q: "One Word: Who drank water?", ans: "Crow", opts: ["Crow", "Cat"] },
+                { q: "Did he use a straw?", ans: "No", opts: ["Yes", "No"] }
+            ]
+        },
+        poem1: {
+            title: "The Little Seed",
+            text: "A little seed for me to sow, \nA little earth to make it grow. 🌱\nA little sun, a little shower, ☀️\nA little while, and then a flower! 🌻",
+            vocab: ["Sow: Plant a seed", "Shower: Rain", "While: Time"],
+            questions: [
+                { q: "What do we sow?", ans: "Seed", opts: ["Stone", "Seed", "Ball"] },
+                { q: "What makes it grow?", ans: "Earth", opts: ["Earth", "Paper", "Box"] },
+                { q: "What comes from the sky?", ans: "Shower", opts: ["Shower", "Seed"] },
+                { q: "What appears at the end?", ans: "Flower", opts: ["Tree", "Flower", "Fruit"] },
+                { q: "Rhymes with 'Sow'?", ans: "Grow", opts: ["Grow", "Sun"] },
+                { q: "Rhymes with 'Shower'?", ans: "Flower", opts: ["Flower", "Rain"] },
+                { q: "Does it need sun?", ans: "Yes", opts: ["Yes", "No"] },
+                { q: "Does it need water (shower)?", ans: "Yes", opts: ["Yes", "No"] },
+                { q: "The seed is ___.", ans: "Little", opts: ["Big", "Little"] },
+                { q: "True or False: We need earth.", ans: "True", opts: ["True", "False"] },
+                { q: "Wait a little ___.", ans: "While", opts: ["Time", "While"] },
+                { q: "Opposite of Little?", ans: "Big", opts: ["Small", "Big"] },
+                { q: "One Word: Plant part.", ans: "Flower", opts: ["Flower", "Car"] },
+                { q: "We put the seed in ___.", ans: "Soil/Earth", opts: ["Water", "Soil/Earth"] },
+                { q: "Is the sun hot?", ans: "Yes", opts: ["Yes", "No"] }
+            ]
+        },
+        mix: {
+            title: "Mixed Practice",
+            text: "Paragraph 1: My School\nMy school is big. It has a garden. We play there.\n\nParagraph 2: Ants\nAnts are small. They work hard. They like sugar.",
+            vocab: ["Mixed questions from short texts"],
+            questions: [
+                { q: "Is the school big?", ans: "Yes", opts: ["Yes", "No"] },
+                { q: "Does the school have a garden?", ans: "Yes", opts: ["Yes", "No"] },
+                { q: "Where do we play?", ans: "Garden", opts: ["Garden", "Road"] },
+                { q: "Are ants big?", ans: "No", opts: ["Yes", "No"] },
+                { q: "Ants are ___.", ans: "Small", opts: ["Big", "Small"] },
+                { q: "Ants work ___.", ans: "Hard", opts: ["Lazy", "Hard"] },
+                { q: "Ants like ___.", ans: "Sugar", opts: ["Salt", "Sugar"] },
+                { q: "School has a ___.", ans: "Garden", opts: ["Pool", "Garden"] },
+                { q: "True or False: Ants are lazy.", ans: "False", opts: ["True", "False"] },
+                { q: "True or False: My school is small.", ans: "False", opts: ["True", "False"] },
+                { q: "One Word: Opposite of Big.", ans: "Small", opts: ["Small", "Tall"] },
+                { q: "One Word: Opposite of Hard.", ans: "Soft", opts: ["Soft", "Heavy"] },
+                { q: "Who works hard?", ans: "Ants", opts: ["Cats", "Ants"] },
+                { q: "Do ants like salt?", ans: "No", opts: ["Yes", "No"] },
+                { q: "We play in the ___.", ans: "Garden", opts: ["Class", "Garden"] },
+                { q: "What insect likes sugar?", ans: "Ant", opts: ["Bee", "Ant"] },
+                { q: "Rhymes with 'Play'?", ans: "Day", opts: ["Day", "Night"] },
+                { q: "Rhymes with 'Small'?", ans: "Tall", opts: ["Tall", "Big"] },
+                { q: "Is sugar sweet?", ans: "Yes", opts: ["Yes", "No"] },
+                { q: "Can ants walk?", ans: "Yes", opts: ["Yes", "No"] },
+                { q: "My school is ___.", ans: "Big", opts: ["Big", "Bad"] },
+                { q: "Ants are ___ insects.", ans: "Busy", opts: ["Busy", "Slow"] },
+                { q: "Colour of sugar?", ans: "White", opts: ["White", "Black"] },
+                { q: "Do we study in school?", ans: "Yes", opts: ["Yes", "No"] },
+                { q: "Do ants have legs?", ans: "Yes", opts: ["Yes", "No"] }
+            ]
+        }
+    };
+
+    /* 🎮 GAME LOGIC */
+    let currentKey = '';
+    let quizQueue = [];
+    let qIndex = 0;
+    let score = { c: 0, w: 0 };
+    let canClick = true;
+
+    // 🔊 TTS
+    function speak(text) {
+        window.speechSynthesis.cancel();
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = 'en-US';
+        msg.rate = 0.8; 
+        msg.pitch = 1.1;
+        window.speechSynthesis.speak(msg);
+    }
+
+    function readText() {
+        if (!currentKey) return;
+        speak(contentData[currentKey].text);
+    }
+
+    // 🧭 NAVIGATION
+    function goHome() {
+        document.getElementById('read-screen').style.display = 'none';
+        document.getElementById('end-screen').style.display = 'none';
+        document.getElementById('menu-screen').style.display = 'block';
+        window.speechSynthesis.cancel();
+    }
+
+    function loadContent(key) {
+        currentKey = key;
+        const data = contentData[key];
+        
+        document.getElementById('menu-screen').style.display = 'none';
+        document.getElementById('read-screen').style.display = 'block';
+        
+        // Setup Book
+        document.getElementById('book-display').style.display = 'block';
+        document.getElementById('quiz-display').style.display = 'none'; // Hide quiz initially
+        
+        document.getElementById('b-title').innerText = data.title;
+        document.getElementById('b-text').innerText = data.text;
+        
+        // Vocab
+        const vBox = document.getElementById('b-vocab');
+        vBox.innerHTML = '';
+        if(data.vocab.length > 0) {
+            vBox.innerHTML = '<span class="vocab-title">📘 New Words:</span>';
+            data.vocab.forEach(w => {
+                vBox.innerHTML += `<div>• ${w}</div>`;
+            });
+            vBox.style.display = 'block';
+        } else {
+            vBox.style.display = 'none';
+        }
+    }
+
+    function startQuiz() {
+        document.getElementById('book-display').style.display = 'none';
+        document.getElementById('quiz-display').style.display = 'block';
+        
+        // Prepare Quiz
+        quizQueue = shuffle([...contentData[currentKey].questions]);
+        qIndex = 0;
+        score = { c: 0, w: 0 };
+        updateScoreboard();
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        if (qIndex >= quizQueue.length) {
+            endGame();
+            return;
+        }
+
+        const q = quizQueue[qIndex];
+        const qText = document.getElementById('q-text');
+        const optGrid = document.getElementById('options-grid');
+        const nextBtn = document.getElementById('next-btn');
+        const feedback = document.getElementById('feedback');
+        const qNum = document.getElementById('q-num');
+
+        // UI Reset
+        qText.innerText = q.q;
+        optGrid.innerHTML = '';
+        nextBtn.classList.add('hidden');
+        feedback.innerText = '';
+        qNum.innerText = qIndex + 1;
+        canClick = true;
+
+        // Speak Question
+        speak(q.q);
+
+        // Options
+        let options = shuffle([...q.opts]);
+        options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(btn, opt, q.ans);
+            optGrid.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(btn, selected, correct) {
+        if (!canClick) return;
+        canClick = false;
+
+        const feedback = document.getElementById('feedback');
+        const nextBtn = document.getElementById('next-btn');
+
+        if (selected === correct) {
+            score.c++;
+            btn.classList.add('correct-anim');
+            feedback.innerHTML = "<span style='color:var(--accent)'>🌟 Great Job! Correct!</span>";
+            speak("Correct! " + selected);
+        } else {
+            score.w++;
+            btn.classList.add('wrong-anim');
+            feedback.innerHTML = "<span style='color:var(--wrong)'>❌ Read Again! Answer: " + correct + "</span>";
+            speak("Wrong. Answer is " + correct);
+            
+            // Highlight Correct
+            const allBtns = document.querySelectorAll('.option-btn');
+            allBtns.forEach(b => {
+                if (b.innerText === correct) b.classList.add('correct-anim');
+            });
+        }
+
+        updateScoreboard();
+        nextBtn.classList.remove('hidden');
+    }
+
+    function nextQuestion() {
+        qIndex++;
+        loadQuestion();
+    }
+
+    function updateScoreboard() {
+        document.getElementById('score-c').innerText = score.c;
+        document.getElementById('score-w').innerText = score.w;
+        const total = score.c + score.w;
+        const pct = total === 0 ? 0 : Math.round((score.c / total) * 100);
+        document.getElementById('score-p').innerText = pct + "%";
+    }
+
+    function endGame() {
+        document.getElementById('read-screen').style.display = 'none';
+        document.getElementById('end-screen').style.display = 'block';
+        
+        const total = score.c + score.w;
+        const pct = total === 0 ? 0 : Math.round((score.c / total) * 100);
+        
+        document.getElementById('final-score').innerText = pct;
+        document.getElementById('final-c').innerText = score.c;
+        document.getElementById('final-w').innerText = score.w;
+    }
+
+    function shuffle(array) {
+        return array.sort(() => Math.random() - 0.5);
+    }
+</script>
+
+</body>
+</html>

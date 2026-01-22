@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 8: Stories (Prose) | Class 2 English</title>
+    <style>
+        /* 🎨 STORYBOOK THEME */
+        :root {
+            --paper: #FFFDF7;         /* Cream Paper */
+            --ink: #2D3436;           /* Dark Text */
+            --primary: #FF9F43;       /* Orange cover */
+            --secondary: #54A0FF;     /* Blue highlights */
+            --accent: #1DD1A1;        /* Green success */
+            --wrong: #EE5253;         /* Red error */
+            --font: 'Comic Sans MS', 'Comic Neue', cursive, sans-serif;
+            --radius: 20px;
+            --shadow: 0 8px 0 rgba(0,0,0,0.1);
+        }
+
+        * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: var(--font);
+            background-color: #ffeaa7; /* Soft yellow bg */
+            color: var(--ink);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* 🟢 HEADER */
+        header {
+            background: var(--primary);
+            padding: 15px;
+            text-align: center;
+            border-bottom: 5px solid #e58e26;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        h1 { margin: 0; font-size: 1.6rem; text-shadow: 2px 2px 0 rgba(0,0,0,0.1); }
+        .subtitle { font-size: 0.9rem; margin-top: 5px; opacity: 0.95; font-weight: bold; }
+
+        /* 🧭 CONTAINER */
+        .container {
+            flex: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            width: 100%;
+        }
+
+        /* 🃏 MENU GRID */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .menu-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            text-align: center;
+            border: 4px solid transparent;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: transform 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .menu-card:active { transform: scale(0.97); box-shadow: 0 4px 0 rgba(0,0,0,0.1); }
+        .menu-card h3 { margin: 10px 0 5px 0; color: var(--ink); font-size: 1.1rem; }
+        .icon { font-size: 2.5rem; display: block; }
+        
+        /* Card Colors */
+        .c-story { border-color: var(--secondary); background: #f0f8ff; }
+        .c-char { border-color: #a29bfe; background: #f3f0ff; }
+        .c-struct { border-color: var(--primary); background: #fff5e6; }
+        .c-mix { border-color: var(--accent); background: #e6fffa; }
+
+        /* 📖 STORY READER AREA */
+        #story-screen { display: none; background: var(--paper); padding: 20px; border-radius: var(--radius); border: 4px solid var(--primary); }
+        
+        .story-title { color: var(--primary); text-align: center; font-size: 1.8rem; margin-bottom: 10px; }
+        .story-text { font-size: 1.3rem; line-height: 1.8; text-align: left; margin-bottom: 20px; }
+        
+        .vocab-box {
+            background: #fff; border: 2px dashed #ccc; padding: 15px; border-radius: 10px; margin: 20px 0;
+        }
+        .vocab-title { font-weight: bold; color: var(--secondary); margin-bottom: 5px; display: block; }
+        .vocab-item { display: inline-block; background: #eee; padding: 5px 10px; border-radius: 15px; margin: 3px; font-size: 0.9rem; }
+
+        .audio-controls { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
+        .audio-btn { background: var(--secondary); color: white; border: none; padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 1rem; font-family: var(--font); }
+
+        /* 🎮 QUIZ AREA */
+        #quiz-screen { display: none; }
+        
+        .question-card {
+            background: white;
+            padding: 25px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+            border: 3px solid #eee;
+            margin-bottom: 20px;
+        }
+
+        .q-text { font-size: 1.4rem; font-weight: bold; margin-bottom: 20px; color: #333; }
+        
+        .options-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+        @media (min-width: 500px) { .options-grid { grid-template-columns: 1fr 1fr; } }
+
+        .option-btn {
+            background: #f1f2f6; border: 3px solid #dfe4ea;
+            padding: 15px; border-radius: 15px;
+            font-size: 1.1rem; font-family: var(--font);
+            cursor: pointer; transition: 0.2s; color: var(--ink);
+        }
+        .option-btn:active { transform: translateY(4px); }
+
+        .correct-anim { background: var(--accent) !important; border-color: #0fb9b1 !important; color: white !important; }
+        .wrong-anim { background: var(--wrong) !important; border-color: #c0392b !important; color: white !important; }
+
+        /* 📊 SCOREBOARD */
+        .scoreboard {
+            background: white; border-top: 4px solid var(--primary);
+            padding: 10px 20px; display: flex; justify-content: space-between;
+            align-items: center; position: sticky; bottom: 0;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.1); z-index: 200;
+        }
+        .score-box { text-align: center; font-weight: bold; }
+        .score-val { font-size: 1.2rem; }
+
+        /* UTILS */
+        .nav-btn {
+            background: var(--ink); color: white; border: none;
+            padding: 12px 25px; border-radius: 50px; font-size: 1rem;
+            font-family: var(--font); cursor: pointer; width: 100%; margin-top: 10px;
+        }
+        .hidden { display: none; }
+        .back-btn { background: none; border: 2px solid #666; padding: 5px 15px; border-radius: 20px; cursor: pointer; margin-bottom: 10px; }
+
+        /* End Screen */
+        #end-screen { display: none; text-align: center; padding: 30px; }
+        .big-score { font-size: 4rem; color: var(--primary); font-weight: bold; }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>📖 Stories & Prose</h1>
+        <div class="subtitle">Read, Understand & Enjoy!</div>
+    </header>
+
+    <div class="container">
+        
+        <div id="menu-screen">
+            <div style="background:white; padding:15px; border-radius:15px; border-left:6px solid var(--primary); margin-bottom:20px;">
+                <b>🧠 Why Stories?</b> Stories help us learn good habits, understand feelings, and improve reading! 📚
+            </div>
+
+            <div class="menu-grid">
+                <div class="menu-card c-story" onclick="openStory('moral')">
+                    <span class="icon">🪓</span>
+                    <h3>Story 1:<br>The Honest Boy</h3>
+                    <small>Moral Story</small>
+                </div>
+                <div class="menu-card c-story" onclick="openStory('animal')">
+                    <span class="icon">🦁</span>
+                    <h3>Story 2:<br>The Lion & Mouse</h3>
+                    <small>Animal Story</small>
+                </div>
+                <div class="menu-card c-story" onclick="openStory('family')">
+                    <span class="icon">👫</span>
+                    <h3>Story 3:<br>Best Friends</h3>
+                    <small>Friendship Story</small>
+                </div>
+                <div class="menu-card c-char" onclick="startQuiz('character')">
+                    <span class="icon">🎭</span>
+                    <h3>Who is this?</h3>
+                    <small>Character Quiz</small>
+                </div>
+                <div class="menu-card c-struct" onclick="startQuiz('structure')">
+                    <span class="icon">🧩</span>
+                    <h3>Start-Middle-End</h3>
+                    <small>Arrange Story</small>
+                </div>
+                <div class="menu-card c-mix" onclick="startQuiz('mix')">
+                    <span class="icon">🎡</span>
+                    <h3>Mixed Practice</h3>
+                    <small>Test Yourself</small>
+                </div>
+            </div>
+        </div>
+
+        <div id="story-screen">
+            <button class="back-btn" onclick="goHome()">🏠 Back</button>
+            <h2 id="st-title" class="story-title">Title</h2>
+            
+            <div class="audio-controls">
+                <button class="audio-btn" onclick="readStory()">🔊 Read Aloud</button>
+                <button class="audio-btn" style="background:#ff7675" onclick="stopAudio()">🛑 Stop</button>
+            </div>
+
+            <div id="st-text" class="story-text">...</div>
+            
+            <div class="vocab-box">
+                <span class="vocab-title">📘 New Words:</span>
+                <div id="st-vocab"></div>
+            </div>
+
+            <button class="nav-btn" style="background:var(--accent)" onclick="startStoryQuiz()">📝 Start Questions</button>
+        </div>
+
+        <div id="quiz-screen">
+            <button class="back-btn" onclick="goHome()">🏠 Quit</button>
+            <div style="background:#eee; height:10px; border-radius:5px; margin-bottom:15px;">
+                <div id="progress-bar" style="height:100%; width:0%; background:var(--primary); transition:0.3s;"></div>
+            </div>
+            
+            <div class="question-card">
+                <div id="q-text" class="q-text">Loading...</div>
+                <div id="options-grid" class="options-grid"></div>
+                <div id="feedback" style="margin-top:10px; font-weight:bold; height:25px;"></div>
+            </div>
+
+            <button id="next-btn" class="nav-btn hidden" onclick="nextQuestion()">Next ➡️</button>
+        </div>
+
+        <div id="end-screen">
+            <h1>🎉 Section Complete!</h1>
+            <p>You are a Story Star! ⭐</p>
+            <div class="big-score"><span id="final-score">0</span>%</div>
+            <p>Correct: <span id="final-c">0</span> | Wrong: <span id="final-w">0</span></p>
+            <button class="nav-btn" onclick="goHome()">🏠 Read More Stories</button>
+        </div>
+
+    </div>
+
+    <div class="scoreboard">
+        <div class="score-box" style="color:var(--accent)">
+            <span>✔</span> <span id="s-correct">0</span>
+        </div>
+        <div class="score-box" style="color:#333">
+            <span>📊</span> <span id="s-pct">0%</span>
+        </div>
+        <div class="score-box" style="color:var(--wrong)">
+            <span>❌</span> <span id="s-wrong">0</span>
+        </div>
+    </div>
+
+    <div style="text-align:center; padding:10px; background:white; font-size:0.8rem; color:#aaa;">
+        Designed & Created by SHRISHANT YADAV
+    </div>
+
+<script>
+    // 📚 STORIES DATA
+    const stories = {
+        moral: {
+            title: "The Honest Woodcutter",
+            text: "Once, a poor woodcutter dropped his axe into a river. He started crying. The River God appeared and showed him a gold axe. 'Is this yours?' asked the God. 'No,' said the woodcutter. Then, God showed a silver axe. 'No,' said the man again. Finally, God showed the old iron axe. 'Yes! This is mine!' shouted the woodcutter. The God was happy with his honesty and gave him all three axes.",
+            vocab: ["Axe: Tool to cut wood", "River: Flowing water", "God: Powerful spirit", "Honest: Telling truth", "Reward: Gift"],
+            questions: [
+                { q: "What did the woodcutter drop?", ans: "Axe", opts: ["Axe", "Ball", "Hat"] },
+                { q: "Where did the axe fall?", ans: "River", opts: ["River", "Road", "House"] },
+                { q: "Who came out of the water?", ans: "River God", opts: ["Fish", "River God", "Frog"] },
+                { q: "Was the woodcutter honest?", ans: "Yes", opts: ["Yes", "No"] },
+                { q: "Which axe was truly his?", ans: "Iron axe", opts: ["Gold axe", "Silver axe", "Iron axe"] },
+                { q: "What did he get as a reward?", ans: "All three axes", opts: ["Gold axe", "Silver axe", "All three axes"] },
+                { q: "What is the moral?", ans: "Be honest", opts: ["Be honest", "Be greedy", "Be lazy"] },
+                { q: "Did he take the Gold axe first?", ans: "No", opts: ["Yes", "No"] },
+                { q: "The woodcutter was ___.", ans: "Poor", opts: ["Rich", "Poor"] },
+                { q: "The River God was ___.", ans: "Happy", opts: ["Angry", "Happy", "Sad"] },
+                { q: "Opposite of Honest is?", ans: "Liar", opts: ["Good", "Liar"] },
+                { q: "An axe is made of?", ans: "Iron", opts: ["Paper", "Iron"] },
+                { q: "Who cried in the story?", ans: "Woodcutter", opts: ["God", "Woodcutter"] },
+                { q: "Did he lie?", ans: "No", opts: ["Yes", "No"] },
+                { q: "Honesty is the best ___.", ans: "Policy", opts: ["Policy", "Game"] }
+            ]
+        },
+        animal: {
+            title: "The Lion and The Mouse",
+            text: "A lion was sleeping in the forest. A little mouse ran over his nose. The lion woke up and caught the mouse. 'Please let me go!' cried the mouse. 'I will help you one day.' The lion laughed but let him go. Later, the lion was caught in a hunter's net. He roared loudly. The mouse heard him, ran to the net, and cut the ropes with his sharp teeth. The lion was free. They became friends.",
+            vocab: ["Forest: Jungle", "Hunter: Person who catches animals", "Net: Rope trap", "Roar: Lion's sound", "Sharp: Can cut easily"],
+            questions: [
+                { q: "Who was sleeping?", ans: "Lion", opts: ["Lion", "Mouse", "Cat"] },
+                { q: "Where did the mouse run?", ans: "On Lion's nose", opts: ["On Lion's nose", "On a tree"] },
+                { q: "The lion was caught in a ___.", ans: "Net", opts: ["Box", "Net", "Bag"] },
+                { q: "Who helped the lion?", ans: "Mouse", opts: ["Hunter", "Mouse", "Rabbit"] },
+                { q: "How did the mouse cut the net?", ans: "With teeth", opts: ["With knife", "With teeth"] },
+                { q: "Did the lion eat the mouse?", ans: "No", opts: ["Yes", "No"] },
+                { q: "The mouse was ___.", ans: "Small", opts: ["Big", "Small"] },
+                { q: "The lion was ___.", ans: "Big", opts: ["Big", "Small"] },
+                { q: "What sound does a lion make?", ans: "Roar", opts: ["Meow", "Roar", "Moo"] },
+                { q: "Who put the net?", ans: "Hunter", opts: ["Farmer", "Hunter"] },
+                { q: "Are they friends now?", ans: "Yes", opts: ["Yes", "No"] },
+                { q: "The lion ___ at the mouse first.", ans: "Laughed", opts: ["Cried", "Laughed"] },
+                { q: "Small friends can be ___.", ans: "Helpful", opts: ["Bad", "Helpful"] },
+                { q: "Teeth of mouse are?", ans: "Sharp", opts: ["Soft", "Sharp"] },
+                { q: "Moral of the story?", ans: "Help others", opts: ["Sleep always", "Help others"] }
+            ]
+        },
+        family: {
+            title: "Rahul and Simi: Best Friends",
+            text: "Rahul and Simi are best friends. They go to the same school. One day, Rahul forgot his lunch box. He was very hungry and sad. Simi saw this. She smiled and said, 'Don't worry Rahul! We can share my lunch.' Simi had two sandwiches. She gave one to Rahul. They ate together happily. Friendship is about sharing and caring.",
+            vocab: ["Lunch: Afternoon food", "Forgot: Did not remember", "Share: Give a part", "Hungry: Need food", "Caring: Being kind"],
+            questions: [
+                { q: "Who are best friends?", ans: "Rahul and Simi", opts: ["Tom and Jerry", "Rahul and Simi"] },
+                { q: "What did Rahul forget?", ans: "Lunch box", opts: ["Bag", "Lunch box", "Bottle"] },
+                { q: "How did Rahul feel first?", ans: "Sad & Hungry", opts: ["Happy", "Sad & Hungry"] },
+                { q: "Who shared the lunch?", ans: "Simi", opts: ["Rahul", "Simi"] },
+                { q: "What was in the lunch?", ans: "Sandwiches", opts: ["Pizza", "Sandwiches"] },
+                { q: "How many sandwiches were there?", ans: "Two", opts: ["One", "Two", "Three"] },
+                { q: "Did they eat together?", ans: "Yes", opts: ["Yes", "No"] },
+                { q: "Friendship is about ___.", ans: "Sharing", opts: ["Fighting", "Sharing"] },
+                { q: "Where do they go?", ans: "School", opts: ["Park", "School"] },
+                { q: "Simi was ___.", ans: "Kind", opts: ["Kind", "Rude"] },
+                { q: "Did Rahul stay hungry?", ans: "No", opts: ["Yes", "No"] },
+                { q: "Opposite of Sad?", ans: "Happy", opts: ["Cry", "Happy"] },
+                { q: "Sharing is a ___ habit.", ans: "Good", opts: ["Bad", "Good"] },
+                { q: "Who smiled?", ans: "Simi", opts: ["Rahul", "Simi"] },
+                { q: "Moral: Help your ___.", ans: "Friends", opts: ["Toys", "Friends"] }
+            ]
+        }
+    };
+
+    // 🧩 EXTRA QUESTIONS (Character, Structure, Mixed) - Total 40+ here
+    const extraQuestions = {
+        character: [
+            { q: "Who is the King of Jungle?", ans: "Lion", opts: ["Lion", "Tiger"] },
+            { q: "Who cut the net?", ans: "Mouse", opts: ["Mouse", "Cat"] },
+            { q: "Who dropped the axe?", ans: "Woodcutter", opts: ["Hunter", "Woodcutter"] },
+            { q: "Who gave the gold axe?", ans: "River God", opts: ["Fairy", "River God"] },
+            { q: "Who shared the sandwich?", ans: "Simi", opts: ["Rahul", "Simi"] },
+            { q: "Who was hungry?", ans: "Rahul", opts: ["Simi", "Rahul"] },
+            { q: "Who caught the lion?", ans: "Hunter", opts: ["Farmer", "Hunter"] },
+            { q: "Who is tiny?", ans: "Mouse", opts: ["Lion", "Mouse"] },
+            { q: "Who is honest?", ans: "Woodcutter", opts: ["Hunter", "Woodcutter"] },
+            { q: "Who is kind?", ans: "Simi", opts: ["Simi", "Hunter"] }
+        ],
+        structure: [
+            { q: "Where does a story start?", ans: "Beginning", opts: ["Beginning", "End"] },
+            { q: "Where is the problem solved?", ans: "End", opts: ["Middle", "End"] },
+            { q: "Characters are introduced in...", ans: "Beginning", opts: ["Beginning", "End"] },
+            { q: "Rahul forgot lunch. This is...", ans: "Problem", opts: ["Problem", "Solution"] },
+            { q: "Simi shared lunch. This is...", ans: "Solution", opts: ["Problem", "Solution"] },
+            { q: "Lion caught in net. Beginning or Middle?", ans: "Middle", opts: ["Beginning", "Middle"] },
+            { q: "Mouse cuts net. Middle or End?", ans: "End", opts: ["Middle", "End"] },
+            { q: "Woodcutter drops axe. Beginning or End?", ans: "Beginning", opts: ["Beginning", "End"] },
+            { q: "God gives reward. Beginning or End?", ans: "End", opts: ["Beginning", "End"] },
+            { q: "What comes first?", ans: "Once upon a time", opts: ["Happily ever after", "Once upon a time"] },
+            { q: "What comes last?", ans: "Moral", opts: ["Title", "Moral"] },
+            { q: "The title is at the ___.", ans: "Top", opts: ["Top", "Bottom"] }
+        ],
+        mix: [
+            // Combine some from stories + generic
+            { q: "Stories teach us ___.", ans: "Good habits", opts: ["Bad habits", "Good habits"] },
+            { q: "Animal stories have ___.", ans: "Talking animals", opts: ["Cars", "Talking animals"] },
+            { q: "Opposite of Start?", ans: "End", opts: ["Middle", "End"] },
+            { q: "Opposite of Day?", ans: "Night", opts: ["Light", "Night"] },
+            { q: "We read stories in a ___.", ans: "Book", opts: ["Book", "Cup"] },
+            { q: "A person who writes story is ___.", ans: "Author", opts: ["Author", "Doctor"] },
+            { q: "Fables are stories with a ___.", ans: "Moral", opts: ["Song", "Moral"] },
+            { q: "Did the lion eat the mouse?", ans: "No", opts: ["Yes", "No"] },
+            { q: "Honesty is ___.", ans: "Good", opts: ["Good", "Bad"] },
+            { q: "Friends ___ each other.", ans: "Help", opts: ["Hit", "Help"] },
+            { q: "Past tense of Go?", ans: "Went", opts: ["Goes", "Went"] },
+            { q: "Past tense of Say?", ans: "Said", opts: ["Says", "Said"] },
+            { q: "Plural of Mouse?", ans: "Mice", opts: ["Mouses", "Mice"] },
+            { q: "Plural of Story?", ans: "Stories", opts: ["Storys", "Stories"] },
+            { q: "Is 'Lion' a Noun?", ans: "Yes", opts: ["Yes", "No"] },
+            { q: "Is 'Run' a Verb?", ans: "Yes", opts: ["Yes", "No"] },
+            { q: "A funny story makes us ___.", ans: "Laugh", opts: ["Cry", "Laugh"] },
+            { q: "A sad story makes us ___.", ans: "Cry", opts: ["Laugh", "Cry"] },
+            { q: "We should read ___.", ans: "Daily", opts: ["Never", "Daily"] },
+            { q: "Simi was a ___ girl.", ans: "Good", opts: ["Bad", "Good"] }
+        ]
+    };
+
+    // 🎮 STATE MANAGEMENT
+    let currentStoryKey = '';
+    let quizQuestions = [];
+    let qIndex = 0;
+    let score = { correct: 0, wrong: 0 };
+    let canClick = true;
+
+    // 🔊 AUDIO ENGINE
+    function speak(text, rate = 0.9) {
+        window.speechSynthesis.cancel();
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = 'en-US';
+        msg.rate = rate; // Slower for kids
+        msg.pitch = 1.1;
+        window.speechSynthesis.speak(msg);
+    }
+
+    function stopAudio() {
+        window.speechSynthesis.cancel();
+    }
+
+    function readStory() {
+        if(!currentStoryKey) return;
+        const text = stories[currentStoryKey].text;
+        speak(text, 0.85);
+    }
+
+    // 🧭 NAVIGATION
+    function goHome() {
+        stopAudio();
+        document.getElementById('story-screen').style.display = 'none';
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('end-screen').style.display = 'none';
+        document.getElementById('menu-screen').style.display = 'block';
+    }
+
+    function openStory(key) {
+        currentStoryKey = key;
+        const data = stories[key];
+        
+        document.getElementById('menu-screen').style.display = 'none';
+        document.getElementById('story-screen').style.display = 'block';
+        
+        document.getElementById('st-title').innerText = data.title;
+        document.getElementById('st-text').innerText = data.text;
+        
+        const vocabContainer = document.getElementById('st-vocab');
+        vocabContainer.innerHTML = '';
+        data.vocab.forEach(v => {
+            const span = document.createElement('span');
+            span.className = 'vocab-item';
+            span.innerText = v;
+            vocabContainer.appendChild(span);
+        });
+        
+        window.scrollTo(0,0);
+    }
+
+    // 🎮 QUIZ LOGIC
+    function startStoryQuiz() {
+        // Load questions from current story
+        quizQuestions = shuffle([...stories[currentStoryKey].questions]);
+        initQuiz();
+    }
+
+    function startQuiz(type) {
+        // Load questions from extra categories
+        if(type === 'mix') {
+            // Combine everything for mix
+            let all = [...extraQuestions.character, ...extraQuestions.structure, ...extraQuestions.mix];
+            // Add a few from stories too
+            all.push(stories.moral.questions[0], stories.animal.questions[0], stories.family.questions[0]);
+            quizQuestions = shuffle(all).slice(0, 25); // 25 random questions
+        } else {
+            quizQuestions = shuffle([...extraQuestions[type]]);
+        }
+        
+        document.getElementById('menu-screen').style.display = 'none';
+        initQuiz();
+    }
+
+    function initQuiz() {
+        stopAudio();
+        document.getElementById('story-screen').style.display = 'none';
+        document.getElementById('quiz-screen').style.display = 'block';
+        
+        qIndex = 0;
+        score = { correct: 0, wrong: 0 };
+        updateScoreboard();
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        if(qIndex >= quizQuestions.length) {
+            endGame();
+            return;
+        }
+
+        const q = quizQuestions[qIndex];
+        const qText = document.getElementById('q-text');
+        const optionsGrid = document.getElementById('options-grid');
+        const feedback = document.getElementById('feedback');
+        const nextBtn = document.getElementById('next-btn');
+        const progressBar = document.getElementById('progress-bar');
+
+        // Reset UI
+        qText.innerText = q.q;
+        optionsGrid.innerHTML = '';
+        feedback.innerText = '';
+        nextBtn.classList.add('hidden');
+        canClick = true;
+
+        // Progress
+        const pct = ((qIndex) / quizQuestions.length) * 100;
+        progressBar.style.width = pct + "%";
+
+        // Speak Question
+        speak(q.q);
+
+        // Options
+        let opts = shuffle([...q.opts]);
+        opts.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(btn, opt, q.ans);
+            optionsGrid.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(btn, selected, correct) {
+        if(!canClick) return;
+        canClick = false;
+
+        const feedback = document.getElementById('feedback');
+        const nextBtn = document.getElementById('next-btn');
+
+        if(selected === correct) {
+            score.correct++;
+            btn.classList.add('correct-anim');
+            feedback.innerText = "🌟 Excellent!";
+            feedback.style.color = "var(--accent)";
+            speak("Correct! " + selected, 1);
+        } else {
+            score.wrong++;
+            btn.classList.add('wrong-anim');
+            feedback.innerText = "❌ Oops! Read Again.";
+            feedback.style.color = "var(--wrong)";
+            speak("Wrong. The answer is " + correct, 1);
+            
+            // Highlight correct
+            const allBtns = document.querySelectorAll('.option-btn');
+            allBtns.forEach(b => {
+                if(b.innerText === correct) b.classList.add('correct-anim');
+            });
+        }
+
+        updateScoreboard();
+        nextBtn.classList.remove('hidden');
+    }
+
+    function nextQuestion() {
+        qIndex++;
+        loadQuestion();
+    }
+
+    function updateScoreboard() {
+        document.getElementById('s-correct').innerText = score.correct;
+        document.getElementById('s-wrong').innerText = score.wrong;
+        const total = score.correct + score.wrong;
+        const pct = total === 0 ? 0 : Math.round((score.correct / total) * 100);
+        document.getElementById('s-pct').innerText = pct + "%";
+    }
+
+    function endGame() {
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('end-screen').style.display = 'block';
+        
+        const total = score.correct + score.wrong;
+        const pct = total === 0 ? 0 : Math.round((score.correct / total) * 100);
+        
+        document.getElementById('final-score').innerText = pct;
+        document.getElementById('final-c').innerText = score.correct;
+        document.getElementById('final-w').innerText = score.wrong;
+        
+        if(pct > 80) speak("Great job! You are a story star!");
+        else speak("Good try! Read the stories again.");
+    }
+
+    function shuffle(array) {
+        return array.sort(() => Math.random() - 0.5);
+    }
+</script>
+
+</body>
+</html>

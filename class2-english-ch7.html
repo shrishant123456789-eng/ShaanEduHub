@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 7: Punctuation & Question Words | Class 2</title>
+    <style>
+        /* 🎨 THEME & VARIABLES */
+        :root {
+            --primary: #FF9F43;       /* Orange */
+            --secondary: #54a0ff;     /* Blue */
+            --accent: #1dd1a1;        /* Green */
+            --wrong: #ff6b6b;         /* Red */
+            --bg: #feca57;            /* Light Yellow BG */
+            --card-bg: #ffffff;
+            --text: #222f3e;
+            --font: 'Comic Sans MS', 'Comic Neue', cursive, sans-serif;
+            --radius: 20px;
+        }
+
+        * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: var(--font);
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* 🟢 HEADER */
+        header {
+            background: #ffffff;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 5px solid var(--primary);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        h1 { margin: 0; font-size: 1.5rem; color: var(--secondary); text-shadow: 1px 1px 0 #ddd; }
+        .subtitle { font-size: 0.9rem; color: #555; margin-top: 5px; }
+
+        /* 🧭 MAIN CONTAINER */
+        .container {
+            flex: 1;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 🃏 MENU GRID */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+        }
+
+        .menu-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            text-align: center;
+            border: 3px solid transparent;
+            box-shadow: 0 5px 0 rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .menu-card:active { transform: scale(0.95); box-shadow: 0 2px 0 rgba(0,0,0,0.1); }
+        .menu-card h3 { margin: 10px 0 0; font-size: 1.1rem; color: var(--text); }
+        .icon { font-size: 2.5rem; display: block; }
+
+        /* Color Coding Sections */
+        .c-caps { border-color: #ff9ff3; }
+        .c-dot { border-color: #feca57; }
+        .c-qmark { border-color: #54a0ff; }
+        .c-excl { border-color: #ff6b6b; }
+        .c-words { border-color: #1dd1a1; }
+        .c-mix { border-color: #5f27cd; color: #5f27cd; }
+
+        /* 🎮 GAME AREA */
+        #game-screen { display: none; }
+
+        /* Learning Box */
+        .learn-box {
+            background: #fff;
+            border-left: 8px solid var(--secondary);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            animation: slideIn 0.5s ease;
+        }
+        
+        .question-card {
+            background: white;
+            padding: 25px;
+            border-radius: var(--radius);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            margin-bottom: 20px;
+            border: 4px solid #fff;
+        }
+
+        .q-text { font-size: 1.5rem; font-weight: bold; margin-bottom: 20px; line-height: 1.5; }
+        .highlight { color: var(--secondary); text-decoration: underline; }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        @media (min-width: 500px) { .options-grid { grid-template-columns: 1fr 1fr; } }
+
+        .option-btn {
+            background: #f1f2f6;
+            border: 2px solid #ced6e0;
+            color: #2f3542;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-family: var(--font);
+            cursor: pointer;
+            box-shadow: 0 4px 0 #dfe4ea;
+            transition: 0.1s;
+        }
+
+        .option-btn:active { transform: translateY(4px); box-shadow: none; }
+
+        /* Feedback Colors */
+        .correct-btn { background: #55efc4 !important; border-color: #00b894 !important; color: #006266 !important; box-shadow: none !important; }
+        .wrong-btn { background: #ff7675 !important; border-color: #d63031 !important; color: #fff !important; box-shadow: none !important; }
+
+        #feedback-area {
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.3rem;
+            height: 30px;
+            margin-top: 15px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .nav-btn {
+            background: var(--text);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-family: var(--font);
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            display: none;
+            box-shadow: 0 5px 0 #000;
+        }
+
+        /* 📊 PROGRESS & SCORE */
+        .progress-bar {
+            background: #ddd;
+            height: 10px;
+            border-radius: 5px;
+            width: 100%;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+        .progress-fill { height: 100%; background: var(--secondary); width: 0%; transition: width 0.3s; }
+
+        .scoreboard {
+            background: #fff;
+            border-top: 4px solid var(--secondary);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1rem;
+            position: sticky;
+            bottom: 0;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+            z-index: 200;
+        }
+        .score-box { text-align: center; }
+        .score-val { font-weight: bold; font-size: 1.2rem; display: block; }
+
+        /* End Screen */
+        #end-screen { display: none; text-align: center; padding: 20px; }
+        .big-score { font-size: 4rem; color: var(--primary); font-weight: bold; }
+
+        /* Animations */
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Home Button */
+        .top-nav { display: flex; justify-content: space-between; margin-bottom: 10px; }
+        .mini-btn { background: none; border: 2px solid #555; padding: 5px 10px; border-radius: 10px; cursor: pointer; font-size: 0.9rem; }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>✏️ Punctuation Park</h1>
+        <div class="subtitle">Capitals, Marks & Questions!</div>
+    </header>
+
+    <div class="container">
+        
+        <div id="menu-screen" class="menu-grid">
+            <div class="menu-card c-caps" onclick="startGame('caps')">
+                <span class="icon">🔠</span>
+                <h3>Capital Letters</h3>
+            </div>
+            <div class="menu-card c-dot" onclick="startGame('fullstop')">
+                <span class="icon">⚫</span>
+                <h3>Full Stop (.)</h3>
+            </div>
+            <div class="menu-card c-qmark" onclick="startGame('qmark')">
+                <span class="icon">❓</span>
+                <h3>Question Mark (?)</h3>
+            </div>
+            <div class="menu-card c-excl" onclick="startGame('excl')">
+                <span class="icon">❗</span>
+                <h3>Exclamation (!)</h3>
+            </div>
+            <div class="menu-card c-words" onclick="startGame('words')">
+                <span class="icon">🤔</span>
+                <h3>Question Words</h3>
+            </div>
+            <div class="menu-card c-mix" onclick="startGame('mix')">
+                <span class="icon">🎡</span>
+                <h3>Mixed Practice</h3>
+            </div>
+        </div>
+
+        <div id="game-screen">
+            <div class="top-nav">
+                <button class="mini-btn" onclick="goHome()">🏠 Home</button>
+                <span id="q-counter" style="align-self:center; font-weight:bold;">1/10</span>
+            </div>
+            
+            <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+
+            <div id="learn-box" class="learn-box"></div>
+
+            <div class="question-card">
+                <div id="q-text" class="q-text">Loading...</div>
+                <div id="options-container" class="options-grid"></div>
+                <div id="feedback-area"></div>
+            </div>
+
+            <button id="next-btn" class="nav-btn" onclick="nextQuestion()">Next Question ➡️</button>
+        </div>
+
+        <div id="end-screen">
+            <h1>🎉 Section Complete!</h1>
+            <div class="big-score"><span id="final-pct">0</span>%</div>
+            <p>Correct: <span id="final-correct">0</span> | Wrong: <span id="final-wrong">0</span></p>
+            <button class="nav-btn" style="display:block; background:var(--secondary);" onclick="goHome()">Play More</button>
+        </div>
+
+    </div>
+
+    <div class="scoreboard">
+        <div class="score-box" style="color:var(--accent)">
+            <span>✔ Correct</span>
+            <span id="score-correct" class="score-val">0</span>
+        </div>
+        <div class="score-box" style="color:var(--text)">
+            <span>📊 Score</span>
+            <span id="score-pct" class="score-val">0%</span>
+        </div>
+        <div class="score-box" style="color:var(--wrong)">
+            <span>❌ Wrong</span>
+            <span id="score-wrong" class="score-val">0</span>
+        </div>
+    </div>
+
+    <div style="text-align:center; background:#fff; padding:5px; font-size:0.8rem; color:#aaa;">
+        Designed & Created by SHRISHANT YADAV
+    </div>
+
+<script>
+    /* 🧠 100+ UNIQUE QUESTIONS DATABASE */
+    const db = [
+        // 🟢 1. CAPITAL LETTERS
+        { cat: 'caps', q: "Which is correct?", ans: "I am happy.", opts: ["i am happy.", "I am happy."], hint: "Start with Capital" },
+        { cat: 'caps', q: "Find the correct name.", ans: "Ravi", opts: ["ravi", "Ravi"], hint: "Names start with Capital" },
+        { cat: 'caps', q: "Which sentence is right?", ans: "She is Gita.", opts: ["She is gita.", "She is Gita."], hint: "Name Capital" },
+        { cat: 'caps', q: "Find the mistake: 'i like tea.'", ans: "i", opts: ["i", "like", "tea"], hint: "First letter" },
+        { cat: 'caps', q: "Which word should be Capital?", ans: "Sunday", opts: ["sunday", "Sunday"], hint: "Days needs capital" },
+        { cat: 'caps', q: "Select correct sentence:", ans: "We live in India.", opts: ["We live in india.", "We live in India."], hint: "Country name" },
+        { cat: 'caps', q: "Is 'delhi' correct?", ans: "No", opts: ["Yes", "No"], hint: "Delhi needs D" },
+        { cat: 'caps', q: "Which is correct?", ans: "My name is Tom.", opts: ["my name is Tom.", "My name is Tom."], hint: "Start Capital" },
+        { cat: 'caps', q: "Find the Capital letter word.", ans: "Monday", opts: ["ball", "Monday"], hint: "Day of week" },
+        { cat: 'caps', q: "Choose correct: ___ play football.", ans: "We", opts: ["we", "We"], hint: "Start" },
+        { cat: 'caps', q: "Correct: 'this is my bag.'", ans: "This", opts: ["This", "this"], hint: "Start" },
+        { cat: 'caps', q: "Which needs a Capital letter?", ans: "London", opts: ["car", "London"], hint: "Place name" },
+        { cat: 'caps', q: "Correct usage of 'I'", ans: "You and I", opts: ["You and i", "You and I"], hint: "I is always Capital" },
+        { cat: 'caps', q: "Select: ___ is my best friend.", ans: "He", opts: ["he", "He"], hint: "Start" },
+        { cat: 'caps', q: "Is 'china' written correctly?", ans: "No", opts: ["Yes", "No"], hint: "China" },
+        { cat: 'caps', q: "Which sentence starts correctly?", ans: "The sun is hot.", opts: ["the sun is hot.", "The sun is hot."], hint: "T needs Capital" },
+
+        // 🟢 2. FULL STOP (.)
+        { cat: 'fullstop', q: "A sentence ends with a ___", ans: "Full Stop (.)", opts: ["Full Stop (.)", "Question Mark (?)"], hint: "Dot" },
+        { cat: 'fullstop', q: "Choose the correct ending:", ans: "I like milk.", opts: ["I like milk", "I like milk."], hint: "Needs dot" },
+        { cat: 'fullstop', q: "The cat runs___", ans: ".", opts: [".", "?"], hint: "Just a statement" },
+        { cat: 'fullstop', q: "Which is a telling sentence?", ans: "I have a pen.", opts: ["I have a pen.", "Do you have a pen?"], hint: "Not asking" },
+        { cat: 'fullstop', q: "Select correct sentence:", ans: "Birds fly.", opts: ["Birds fly", "Birds fly."], hint: "End with ." },
+        { cat: 'fullstop', q: "She is sleeping___", ans: ".", opts: ["?", "."], hint: "Statement" },
+        { cat: 'fullstop', q: "Correct the sentence: 'Go home'", ans: "Go home.", opts: ["Go home?", "Go home."], hint: "Command" },
+        { cat: 'fullstop', q: "Does this need a full stop? 'I am six'", ans: "Yes", opts: ["Yes", "No"], hint: "It is a sentence" },
+        { cat: 'fullstop', q: "He is a doctor___", ans: ".", opts: ["!", "."], hint: "Fact" },
+        { cat: 'fullstop', q: "Choose: We play cricket___", ans: ".", opts: ["?", "."], hint: "Statement" },
+        { cat: 'fullstop', q: "My bag is blue___", ans: ".", opts: ["?", "."], hint: "Statement" },
+        { cat: 'fullstop', q: "It is raining___", ans: ".", opts: ["?", "."], hint: "Statement" },
+        { cat: 'fullstop', q: "I love mom___", ans: ".", opts: ["?", "."], hint: "Statement" },
+        { cat: 'fullstop', q: "The grass is green___", ans: ".", opts: ["?", "."], hint: "Statement" },
+        { cat: 'fullstop', q: "This is a book___", ans: ".", opts: ["?", "."], hint: "Statement" },
+
+        // 🟢 3. QUESTION MARK (?)
+        { cat: 'qmark', q: "Use '?' when we ___.", ans: "Ask something", opts: ["Say something", "Ask something"], hint: "Ask" },
+        { cat: 'qmark', q: "What is your name___", ans: "?", opts: [".", "?"], hint: "Asking name" },
+        { cat: 'qmark', q: "Are you hungry___", ans: "?", opts: [".", "?"], hint: "Asking feeling" },
+        { cat: 'qmark', q: "Identify the question:", ans: "Who are you?", opts: ["I am Tom.", "Who are you?"], hint: "Ends with ?" },
+        { cat: 'qmark', q: "Is this a pen___", ans: "?", opts: [".", "?"], hint: "Asking" },
+        { cat: 'qmark', q: "Can we play___", ans: "?", opts: [".", "?"], hint: "Asking" },
+        { cat: 'qmark', q: "Where is the dog___", ans: "?", opts: [".", "?"], hint: "Asking place" },
+        { cat: 'qmark', q: "Do you like apples___", ans: "?", opts: [".", "?"], hint: "Asking like" },
+        { cat: 'qmark', q: "How are you___", ans: "?", opts: ["!", "?"], hint: "Asking health" },
+        { cat: 'qmark', q: "When is your birthday___", ans: "?", opts: [".", "?"], hint: "Asking time" },
+        { cat: 'qmark', q: "Why are you crying___", ans: "?", opts: [".", "?"], hint: "Asking reason" },
+        { cat: 'qmark', q: "Is it raining___", ans: "?", opts: [".", "?"], hint: "Asking weather" },
+        { cat: 'qmark', q: "Which sentence needs '?'", ans: "Who is he", opts: ["He is Ram", "Who is he"], hint: "Asking" },
+        { cat: 'qmark', q: "Have you seen my bag___", ans: "?", opts: [".", "?"], hint: "Asking" },
+        { cat: 'qmark', q: "May I come in___", ans: "?", opts: [".", "?"], hint: "Asking permission" },
+
+        // 🟢 4. EXCLAMATION (!)
+        { cat: 'excl', q: "Use '!' for ___ feelings.", ans: "Strong", opts: ["Normal", "Strong"], hint: "Excitement" },
+        { cat: 'excl', q: "Wow___", ans: "!", opts: ["?", "!"], hint: "Amazed" },
+        { cat: 'excl', q: "Oh no___", ans: "!", opts: [".", "!"], hint: "Shock" },
+        { cat: 'excl', q: "Happy Birthday___", ans: "!", opts: ["?", "!"], hint: "Wish" },
+        { cat: 'excl', q: "Stop___", ans: "!", opts: ["?", "!"], hint: "Shout" },
+        { cat: 'excl', q: "What a beautiful flower___", ans: "!", opts: ["?", "!"], hint: "Wonder" },
+        { cat: 'excl', q: "Hurrah___ We won.", ans: "!", opts: [".", "!"], hint: "Joy" },
+        { cat: 'excl', q: "Ouch___ That hurt.", ans: "!", opts: ["?", "!"], hint: "Pain" },
+        { cat: 'excl', q: "Help___", ans: "!", opts: [".", "!"], hint: "Scared" },
+        { cat: 'excl', q: "Look out___", ans: "!", opts: ["?", "!"], hint: "Warning" },
+        { cat: 'excl', q: "Well done___", ans: "!", opts: ["?", "!"], hint: "Praise" },
+        { cat: 'excl', q: "How lovely___", ans: "!", opts: ["?", "!"], hint: "Feeling" },
+        { cat: 'excl', q: "Yummy___", ans: "!", opts: ["?", "!"], hint: "Tasty" },
+        { cat: 'excl', q: "Which shows surprise?", ans: "Oh!", opts: ["Oh.", "Oh!"], hint: "!" },
+        { cat: 'excl', q: "Fire___", ans: "!", opts: [".", "!"], hint: "Danger" },
+
+        // 🟢 5. QUESTION WORDS (What, Who, Where, When)
+        { cat: 'words', q: "___ is your name?", ans: "What", opts: ["What", "Who"], hint: "Thing/Name" },
+        { cat: 'words', q: "___ is that boy?", ans: "Who", opts: ["What", "Who"], hint: "Person" },
+        { cat: 'words', q: "___ do you live?", ans: "Where", opts: ["Where", "When"], hint: "Place" },
+        { cat: 'words', q: "___ is your birthday?", ans: "When", opts: ["When", "Who"], hint: "Time" },
+        { cat: 'words', q: "___ is your teacher?", ans: "Who", opts: ["Who", "What"], hint: "Person" },
+        { cat: 'words', q: "___ is this color?", ans: "What", opts: ["What", "Where"], hint: "Thing" },
+        { cat: 'words', q: "___ are my shoes?", ans: "Where", opts: ["Where", "Who"], hint: "Place" },
+        { cat: 'words', q: "___ do you wake up?", ans: "When", opts: ["When", "Where"], hint: "Time" },
+        { cat: 'words', q: "___ is he crying?", ans: "Why", opts: ["Why", "Who"], hint: "Reason" },
+        { cat: 'words', q: "___ is your school?", ans: "Where", opts: ["Where", "Who"], hint: "Place" },
+        { cat: 'words', q: "___ is your best friend?", ans: "Who", opts: ["Who", "What"], hint: "Person" },
+        { cat: 'words', q: "___ is for lunch?", ans: "What", opts: ["What", "Where"], hint: "Thing" },
+        { cat: 'words', q: "___ will father come?", ans: "When", opts: ["When", "Who"], hint: "Time" },
+        { cat: 'words', q: "___ is in the box?", ans: "What", opts: ["What", "Who"], hint: "Thing" },
+        { cat: 'words', q: "___ are you going?", ans: "Where", opts: ["Where", "What"], hint: "Place" },
+        { cat: 'words', q: "___ is talking?", ans: "Who", opts: ["Who", "When"], hint: "Person" },
+        { cat: 'words', q: "___ time is it?", ans: "What", opts: ["What", "Who"], hint: "Time" },
+        { cat: 'words', q: "___ is the park?", ans: "Where", opts: ["Where", "Who"], hint: "Place" },
+        { cat: 'words', q: "___ does school start?", ans: "When", opts: ["When", "Who"], hint: "Time" },
+        { cat: 'words', q: "___ are you sad?", ans: "Why", opts: ["Why", "Where"], hint: "Reason" },
+
+        // 🟢 6. MIXED PRACTICE
+        { cat: 'mix', q: "Select correct sentence:", ans: "Where is Tom?", opts: ["where is tom.", "Where is Tom?"], hint: "Caps + ?" },
+        { cat: 'mix', q: "Select correct sentence:", ans: "I love India.", opts: ["i love india", "I love India."], hint: "Caps + ." },
+        { cat: 'mix', q: "Wow___ What a car___", ans: "! / !", opts: ["! / !", "? / ."], hint: "Excitement" },
+        { cat: 'mix', q: "___ is she crying___", ans: "Why / ?", opts: ["Why / ?", "Who / ."], hint: "Reason + ?" },
+        { cat: 'mix', q: "My name is Raj___", ans: ".", opts: ["?", "."], hint: "Statement" },
+        { cat: 'mix', q: "___ is my bag___", ans: "Where / ?", opts: ["Where / ?", "When / ."], hint: "Place + ?" },
+        { cat: 'mix', q: "Correct: 'are you ok'", ans: "Are you ok?", opts: ["Are you ok?", "Are you ok."], hint: "Caps + ?" },
+        { cat: 'mix', q: "Alas___ The cat died.", ans: "!", opts: ["?", "!"], hint: "Sad feeling" },
+        { cat: 'mix', q: "___ is he?", ans: "Who", opts: ["Who", "What"], hint: "Person" },
+        { cat: 'mix', q: "The sky is blue___", ans: ".", opts: ["?", "."], hint: "Fact" },
+        { cat: 'mix', q: "___ old are you?", ans: "How", opts: ["How", "Who"], hint: "Number" },
+        { cat: 'mix', q: "Correct: 'sunday is fun'", ans: "Sunday is fun.", opts: ["sunday is fun.", "Sunday is fun."], hint: "Caps + ." },
+        { cat: 'mix', q: "Are you happy___", ans: "?", opts: [".", "?"], hint: "Ask" },
+        { cat: 'mix', q: "What a hit___", ans: "!", opts: ["?", "!"], hint: "Exclaim" },
+        { cat: 'mix', q: "___ is the moon?", ans: "Where", opts: ["Where", "Who"], hint: "Place" },
+        { cat: 'mix', q: "Correct: 'i am six.'", ans: "I am six.", opts: ["i am six.", "I am six."], hint: "Caps I" },
+        { cat: 'mix', q: "Do you like tea___", ans: "?", opts: [".", "?"], hint: "Ask" },
+        { cat: 'mix', q: "This is a pen___", ans: ".", opts: ["?", "."], hint: "Tell" },
+        { cat: 'mix', q: "Look___ A snake___", ans: "! / !", opts: ["! / !", "? / ?"], hint: "Warning" },
+        { cat: 'mix', q: "___ is your dad?", ans: "Who", opts: ["Who", "What"], hint: "Person" }
+    ];
+
+    /* 🎮 GAME LOGIC */
+    let currentQuestions = [];
+    let qIndex = 0;
+    let score = { correct: 0, wrong: 0 };
+    let canClick = true;
+
+    // 🔉 TTS
+    function speak(text, isFeedback = false) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.rate = isFeedback ? 1 : 0.8;
+            utterance.pitch = 1.1;
+            window.speechSynthesis.speak(utterance);
+        }
+    }
+
+    // 🎲 Shuffle
+    function shuffle(array) {
+        return array.sort(() => Math.random() - 0.5);
+    }
+
+    // 🚀 Start
+    function startGame(category) {
+        // Filter & Shuffle
+        if (category === 'mix') {
+            currentQuestions = shuffle([...db]).slice(0, 20); // 20 random for mix
+        } else {
+            currentQuestions = shuffle(db.filter(q => q.cat === category));
+        }
+
+        // Setup Intro Text
+        const learnBox = document.getElementById('learn-box');
+        let info = "";
+        if(category === 'caps') info = "💡 <b>Capital Letters</b> are used for Names, Places, 'I', and starting sentences.";
+        if(category === 'fullstop') info = "💡 A <b>Full Stop (.)</b> comes at the end of a telling sentence.";
+        if(category === 'qmark') info = "💡 A <b>Question Mark (?)</b> is used when we ask something.";
+        if(category === 'excl') info = "💡 An <b>Exclamation Mark (!)</b> shows strong feelings (Joy, Shock).";
+        if(category === 'words') info = "💡 <b>Who</b>=Person, <b>What</b>=Thing, <b>Where</b>=Place, <b>When</b>=Time.";
+        if(category === 'mix') info = "💡 Let's practice everything together! Good luck.";
+        learnBox.innerHTML = info;
+
+        // Reset
+        qIndex = 0;
+        score = { correct: 0, wrong: 0 };
+        updateScoreboard();
+        
+        // UI
+        document.getElementById('menu-screen').style.display = 'none';
+        document.getElementById('end-screen').style.display = 'none';
+        document.getElementById('game-screen').style.display = 'block';
+
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        if (qIndex >= currentQuestions.length) {
+            endGame();
+            return;
+        }
+
+        const q = currentQuestions[qIndex];
+        const qText = document.getElementById('q-text');
+        const optsDiv = document.getElementById('options-container');
+        const nextBtn = document.getElementById('next-btn');
+        const feedback = document.getElementById('feedback-area');
+        const counter = document.getElementById('q-counter');
+        const progress = document.getElementById('progress-fill');
+
+        // Reset UI
+        qText.innerHTML = q.q.replace(/___/g, "<span class='highlight'>____</span>");
+        optsDiv.innerHTML = '';
+        nextBtn.style.display = 'none';
+        feedback.style.opacity = '0';
+        canClick = true;
+
+        // Progress
+        counter.innerText = `${qIndex + 1}/${currentQuestions.length}`;
+        progress.style.width = `${((qIndex) / currentQuestions.length) * 100}%`;
+
+        // Speak
+        speak(q.q.replace(/___/g, "blank"));
+
+        // Options
+        const shuffledOpts = shuffle([...q.opts]);
+        shuffledOpts.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(btn, opt, q.ans);
+            optsDiv.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(btn, selected, correct) {
+        if (!canClick) return;
+        canClick = false;
+
+        const feedback = document.getElementById('feedback-area');
+        const nextBtn = document.getElementById('next-btn');
+        const allOpts = document.querySelectorAll('.option-btn');
+
+        if (selected === correct) {
+            score.correct++;
+            btn.classList.add('correct-btn');
+            const rewards = ["🌟 Excellent!", "🎉 Super!", "⭐ Very Good!", "✨ Awesome!"];
+            const msg = rewards[Math.floor(Math.random() * rewards.length)];
+            feedback.innerHTML = `<span style="color:#00b894">${msg}</span>`;
+            speak("Correct! " + msg, true);
+        } else {
+            score.wrong++;
+            btn.classList.add('wrong-btn');
+            const comforts = ["❌ Try Again", "🙂 Keep Learning", "💪 You Can Do It!"];
+            const msg = comforts[Math.floor(Math.random() * comforts.length)];
+            feedback.innerHTML = `<span style="color:#d63031">${msg} Answer: <b>${correct}</b></span>`;
+            speak("Oops. The answer is " + correct, true);
+            
+            // Show correct
+            allOpts.forEach(b => {
+                if(b.innerText === correct) b.classList.add('correct-btn');
+            });
+        }
+
+        feedback.style.opacity = '1';
+        nextBtn.style.display = 'block';
+        updateScoreboard();
+        
+        // Update bar
+        const progress = document.getElementById('progress-fill');
+        progress.style.width = `${((qIndex + 1) / currentQuestions.length) * 100}%`;
+    }
+
+    function nextQuestion() {
+        qIndex++;
+        loadQuestion();
+    }
+
+    function updateScoreboard() {
+        document.getElementById('score-correct').innerText = score.correct;
+        document.getElementById('score-wrong').innerText = score.wrong;
+        const total = score.correct + score.wrong;
+        const pct = total === 0 ? 0 : Math.round((score.correct / total) * 100);
+        document.getElementById('score-pct').innerText = pct + "%";
+    }
+
+    function endGame() {
+        document.getElementById('game-screen').style.display = 'none';
+        document.getElementById('end-screen').style.display = 'block';
+        
+        const total = score.correct + score.wrong;
+        const pct = total === 0 ? 0 : Math.round((score.correct / total) * 100);
+        
+        document.getElementById('final-pct').innerText = pct;
+        document.getElementById('final-correct').innerText = score.correct;
+        document.getElementById('final-wrong').innerText = score.wrong;
+
+        if(pct > 80) speak("Great job! You are a punctuation master!", true);
+        else speak("Good effort! Keep practicing.", true);
+    }
+
+    function goHome() {
+        document.getElementById('game-screen').style.display = 'none';
+        document.getElementById('end-screen').style.display = 'none';
+        document.getElementById('menu-screen').style.display = 'grid';
+        window.speechSynthesis.cancel();
+    }
+</script>
+
+</body>
+</html>

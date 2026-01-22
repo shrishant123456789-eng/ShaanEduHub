@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Addition | ShanEduHub</title>
+    <style>
+        /* --- GENERAL STYLES --- */
+        :root {
+            --primary: #FF6B6B; /* Cheerful Red/Pink */
+            --secondary: #4ECDC4; /* Teal */
+            --highlight: #FFE66D; /* Yellow */
+            --dark: #2D3436;
+            --bg: #F7FFF7; /* Very light green hint */
+            --card-bg: #FFFFFF;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif; /* Child-friendly font */
+            background-color: var(--bg);
+            color: var(--dark);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background: linear-gradient(135deg, var(--secondary), #45B7D1);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 0 0 25px 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        header h1 { margin: 0; font-size: 2.5em; letter-spacing: 1px; text-shadow: 2px 2px 0px rgba(0,0,0,0.1); }
+        header p { font-size: 1.3em; margin-top: 10px; font-weight: bold; background: rgba(255,255,255,0.2); display: inline-block; padding: 5px 15px; border-radius: 20px; }
+
+        /* --- CARDS & SECTIONS --- */
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            border-bottom: 5px solid var(--primary);
+        }
+
+        h2 { color: var(--primary); border-bottom: 2px dashed #eee; padding-bottom: 10px; }
+        h3 { color: #2980b9; margin-top: 20px; }
+
+        .example-box {
+            background-color: #FFF9C4;
+            padding: 15px;
+            border-radius: 15px;
+            border: 2px dashed var(--secondary);
+            margin: 10px 0;
+            font-weight: bold;
+            font-size: 1.1em;
+            text-align: center;
+        }
+
+        .step-box {
+            background: #E3F2FD;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+
+        .highlight { color: var(--primary); font-weight: bold; }
+
+        /* --- PRACTICE SECTION UI --- */
+        .quiz-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .set-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .set-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 10px rgba(0,0,0,0.2); }
+        .btn-green { background-color: #2ECC71; }
+        .btn-blue { background-color: #3498DB; }
+        .btn-yellow { background-color: #F1C40F; color: #333; }
+        .btn-orange { background-color: #E67E22; }
+        .btn-red { background-color: #E74C3C; }
+
+        .active-set { border: 4px solid white; box-shadow: 0 0 0 4px rgba(0,0,0,0.2); }
+
+        /* --- QUESTION STYLES --- */
+        .question-box {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 15px;
+            border: 2px solid #f0f0f0;
+        }
+
+        .input-answer {
+            padding: 10px;
+            font-size: 1.1rem;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            width: 120px;
+            text-align: center;
+        }
+
+        .mcq-options button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 12px;
+            margin: 8px 0;
+            background: #f9f9f9;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .mcq-options button:hover { background: #eef; border-color: var(--secondary); }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+            font-weight: bold;
+        }
+
+        .correct { background-color: #D4EDDA; color: #155724; border: 1px solid #C3E6CB; }
+        .wrong { background-color: #F8D7DA; color: #721c24; border: 1px solid #F5C6CB; }
+
+        /* --- SCOREBOARD --- */
+        .scoreboard {
+            position: sticky;
+            top: 0;
+            background: #2C3E50;
+            color: white;
+            padding: 15px;
+            z-index: 100;
+            display: flex;
+            justify-content: space-around;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            font-weight: bold;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background-color: #2C3E50;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+
+        .tips-box {
+            background: #FFF3E0;
+            border-left: 6px solid #FF9800;
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.8em; }
+            .set-btn { width: 100%; margin-bottom: 5px; }
+            .scoreboard { font-size: 0.9em; padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>ShanEduHub 🎓</h1>
+        <p>Class 2 Mathematics – Addition ➕</p>
+    </header>
+
+    <div class="container">
+
+        <div class="card">
+            <h2>👋 Hello Kids! What is Addition?</h2>
+            <p><strong>Addition</strong> means putting things together. It makes the number BIGGER!</p>
+            <p>Imagine you have toys:</p>
+            <div class="example-box">
+                🧸 2 Teddy Bears + 🧸 1 Teddy Bear = 🧸🧸🧸 3 Teddy Bears
+            </div>
+            <p>We use addition every day! Like adding apples in a basket 🍎 or adding marks in a test 📝.</p>
+        </div>
+
+        <div class="card">
+            <h2>3.1 The Plus Sign (+)</h2>
+            <p>The symbol for addition looks like a cross: <strong style="font-size:1.5em; color:var(--primary);">+</strong></p>
+            <p>It is called <strong>PLUS</strong>.</p>
+            <p>The answer we get after adding is called the <strong>SUM</strong> or <strong>TOTAL</strong>.</p>
+        </div>
+
+        <div class="card">
+            <h2>3.2 Adding Big Numbers (Up to 999)</h2>
+            <p>We know 1-digit numbers (like 5, 8) and 2-digit numbers (like 24, 99). Now let's add <strong>3-digit numbers</strong>!</p>
+            <ul>
+                <li><strong>O</strong> = Ones</li>
+                <li><strong>T</strong> = Tens</li>
+                <li><strong>H</strong> = Hundreds</li>
+            </ul>
+            <p>Always remember: <strong>Start from the Right (Ones place)!</strong> 👉</p>
+        </div>
+
+        <div class="card">
+            <h2>3.3 Addition Without Carry (Simple)</h2>
+            <p>This is when the sum of digits is less than 9. No need to move numbers!</p>
+            <div class="step-box">
+                <strong>Example: 123 + 215</strong><br><br>
+                Step 1 (Ones): 3 + 5 = <strong>8</strong><br>
+                Step 2 (Tens): 2 + 1 = <strong>3</strong><br>
+                Step 3 (Hundreds): 1 + 2 = <strong>3</strong><br>
+                <strong>Answer: 338</strong>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>3.4 Addition With Carry (Grouping) 🔄</h2>
+            <p>Sometimes, when we add, the number gets too big for one room! If the sum is <strong>10 or more</strong>, we must <strong>CARRY</strong> the 1 to the next neighbor.</p>
+            <div class="step-box">
+                <strong>Example: 28 + 14</strong><br><br>
+                Step 1 (Ones): 8 + 4 = <strong>12</strong>.<br>
+                Oh no! 12 has two digits. Keep <strong>2</strong> in Ones place. Carry <strong>1</strong> to Tens place.<br><br>
+                Step 2 (Tens): 2 + 1 + (Carry 1) = <strong>4</strong>.<br>
+                <strong>Answer: 42</strong>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>3.5 Vertical & Horizontal Addition</h2>
+            
+            <h3>Vertical Addition (Standing Up) 🧍</h3>
+            <p>Write numbers one below the other. Keep Ones under Ones, Tens under Tens.</p>
+            <div class="example-box">
+              &nbsp;&nbsp;24<br>
+            + 13<br>
+            -----<br>
+            &nbsp;&nbsp;37
+            </div>
+
+            <h3>Horizontal Addition (Sleeping Line) 🛌</h3>
+            <p>Adding side by side. Useful for mental maths!</p>
+            <div class="example-box">20 + 30 = 50</div>
+        </div>
+
+        <div class="card">
+            <h2>3.7 Word Problems (Stories) 📖</h2>
+            <p>Maths tells stories too! Look for these magic words to know it is Addition:</p>
+            <ul>
+                <li>Total ✅</li>
+                <li>Sum ✅</li>
+                <li>Altogether ✅</li>
+                <li>In all ✅</li>
+            </ul>
+            <p><strong>Example:</strong> Rohan has 5 pens. Tina gives him 4 pens. How many pens <strong>in all</strong>?</p>
+            <p>Answer: 5 + 4 = 9 pens.</p>
+        </div>
+
+        <div class="card">
+            <h2>3.8 Number Line & Mental Maths 🧠</h2>
+            <p><strong>Number Line:</strong> Start at the first number. Jump forward for the second number. Where you land is the answer!</p>
+            <p><strong>Mental Maths:</strong> Try to add in your head without paper. <br>Tip: 10 + 5 is easy (15). 20 + 4 is easy (24).</p>
+        </div>
+
+        <div class="tips-box">
+            <h3>💡 Golden Rules for Addition</h3>
+            <ul>
+                <li>👉 Always start adding from the <strong>Ones</strong> place (Right side).</li>
+                <li>👀 Check if you need to <strong>Carry</strong>. Don't forget the carried number!</li>
+                <li>✍️ Write numbers neatly below each other.</li>
+            </ul>
+        </div>
+
+        <div id="practice-section">
+            <h1 style="text-align: center; color: var(--primary);">🎯 Practice Time!</h1>
+            
+            <div class="scoreboard">
+                <span>📝 Q: <span id="total-q">0</span></span>
+                <span>✅ Right: <span id="correct-score">0</span></span>
+                <span>❌ Wrong: <span id="wrong-score">0</span></span>
+            </div>
+            <br>
+
+            <div class="quiz-controls">
+                <button class="set-btn btn-green" onclick="loadSet(1)">🟢 Set 1: Blanks</button>
+                <button class="set-btn btn-blue" onclick="loadSet(2)">🔵 Set 2: MCQ</button>
+                <button class="set-btn btn-yellow" onclick="loadSet(3)">🟡 Set 3: Type</button>
+                <button class="set-btn btn-orange" onclick="loadSet(4)">🟠 Set 4: Problems</button>
+                <button class="set-btn btn-red" onclick="loadSet(5)">🔴 Set 5: Mixed</button>
+            </div>
+
+            <div id="quiz-container">
+                <div class="card" style="text-align: center; padding: 50px;">
+                    <h3>Click a button above to start practicing! 👆</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="background: #E8F5E9; border-bottom: none;">
+            <h2>🌟 Self Check Summary</h2>
+            <p><strong>Great job! Now you know:</strong></p>
+            <ul>
+                <li>✅ Addition puts things together.</li>
+                <li>✅ How to add big numbers up to 999.</li>
+                <li>✅ How to carry numbers to the next house.</li>
+                <li>✅ How to solve number stories.</li>
+            </ul>
+            <p><em>"Practice makes perfect!"</em></p>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>Designed & Created by <strong>SHRISHANT YADAV</strong></p>
+        <p>&copy; 2026 ShanEduHub – Learning Made Fun</p>
+    </footer>
+
+    <script>
+        // --- DATA: QUESTION BANK (50 QUESTIONS) ---
+        const questionSets = {
+            1: [ // Set 1: Fill in the Blanks (Simple)
+                { id: 101, type: 'input', q: "2 + 3 = ____", a: "5", exp: "Count on fingers: 2, then 3 more makes 5." },
+                { id: 102, type: 'input', q: "5 + 0 = ____", a: "5", exp: "Adding zero means adding nothing. The number stays the same." },
+                { id: 103, type: 'input', q: "10 + 2 = ____", a: "12", exp: "10 and 2 make 12." },
+                { id: 104, type: 'input', q: "The sign for addition is ____ (+ or -)", a: "+", exp: "Plus (+) is for addition." },
+                { id: 105, type: 'input', q: "4 + 4 = ____", a: "8", exp: "Four plus four is eight." },
+                { id: 106, type: 'input', q: "1 more than 9 is ____", a: "10", exp: "After 9 comes 10." },
+                { id: 107, type: 'input', q: "6 + ____ = 7", a: "1", exp: "We need 1 more to reach 7 from 6." },
+                { id: 108, type: 'input', q: "8 + 2 = ____", a: "10", exp: "8 plus 2 equals 10." },
+                { id: 109, type: 'input', q: "____ + 5 = 5", a: "0", exp: "Only 0 added to 5 keeps it 5." },
+                { id: 110, type: 'input', q: "10 + 10 = ____", a: "20", exp: "One ten plus one ten is two tens (20)." }
+            ],
+            2: [ // Set 2: MCQ (Tap Correct Answer)
+                { id: 201, type: 'mcq', q: "100 + 200 = ?", options: ["300", "400", "500"], a: "300", exp: "1 hundred + 2 hundreds = 3 hundreds." },
+                { id: 202, type: 'mcq', q: "24 + 3 = ?", options: ["26", "27", "28"], a: "27", exp: "24... 25, 26, 27." },
+                { id: 203, type: 'mcq', q: "Addition means:", options: ["Taking away", "Putting together", "Breaking"], a: "Putting together", exp: "Addition joins numbers together." },
+                { id: 204, type: 'mcq', q: "15 + 15 = ?", options: ["20", "25", "30"], a: "30", exp: "5+5=10 (carry 1). 1+1+1=3. Answer 30." },
+                { id: 205, type: 'mcq', q: "50 + 50 = ?", options: ["100", "90", "80"], a: "100", exp: "5 tens + 5 tens = 10 tens = 100." },
+                { id: 206, type: 'mcq', q: "Which sum is 10?", options: ["5+4", "6+4", "7+2"], a: "6+4", exp: "6 plus 4 makes 10." },
+                { id: 207, type: 'mcq', q: "123 + 1 = ?", options: ["124", "133", "122"], a: "124", exp: "Just the next number." },
+                { id: 208, type: 'mcq', q: "The answer in addition is called:", options: ["Difference", "Sum", "Left"], a: "Sum", exp: "Sum is the total." },
+                { id: 209, type: 'mcq', q: "40 + 5 =", options: ["45", "54", "405"], a: "45", exp: "Forty-five." },
+                { id: 210, type: 'mcq', q: "25 + 5 =", options: ["20", "30", "35"], a: "30", exp: "25 plus 5 makes 30." }
+            ],
+            3: [ // Set 3: Type Answers (Vertical/Horizontal)
+                { id: 301, type: 'input', q: "25 + 12 = ____", a: "37", exp: "5+2=7, 2+1=3. Answer 37." },
+                { id: 302, type: 'input', q: "40 + 40 = ____", a: "80", exp: "4+4=8, so 40+40=80." },
+                { id: 303, type: 'input', q: "11 + 11 = ____", a: "22", exp: "1+1=2 (ones), 1+1=2 (tens)." },
+                { id: 304, type: 'input', q: "100 + 50 = ____", a: "150", exp: "One hundred fifty." },
+                { id: 305, type: 'input', q: "34 + 6 = ____", a: "40", exp: "4+6=10 (Carry 1). 3+1=4. Answer 40." },
+                { id: 306, type: 'input', q: "150 + 150 = ____", a: "300", exp: "15+15=30, so 150+150=300." },
+                { id: 307, type: 'input', q: "9 + 9 = ____", a: "18", exp: "Double of 9 is 18." },
+                { id: 308, type: 'input', q: "200 + 300 = ____", a: "500", exp: "2+3=5 hundreds." },
+                { id: 309, type: 'input', q: "12 + 8 = ____", a: "20", exp: "2+8=10 (Carry 1)." },
+                { id: 310, type: 'input', q: "99 + 1 = ____", a: "100", exp: "Next number after 99 is 100." }
+            ],
+            4: [ // Set 4: Word Problems
+                { id: 401, type: 'mcq', q: "Ram has 2 cars. Sam gives him 2 more. How many total?", options: ["2", "4", "0"], a: "4", exp: "2 + 2 = 4." },
+                { id: 402, type: 'mcq', q: "3 birds on a tree. 2 more fly in. How many birds now?", options: ["5", "6", "1"], a: "5", exp: "3 + 2 = 5." },
+                { id: 403, type: 'input', q: "A box has 10 pencils. Another box has 10 pencils. Total pencils?", a: "20", exp: "10 + 10 = 20." },
+                { id: 404, type: 'mcq', q: "Tina ate 2 cookies. Mina ate 3 cookies. Total cookies eaten?", options: ["5", "6", "4"], a: "5", exp: "2 + 3 = 5." },
+                { id: 405, type: 'input', q: "Class A has 20 kids. Class B has 20 kids. Total kids?", a: "40", exp: "20 + 20 = 40." },
+                { id: 406, type: 'mcq', q: "I have 5 rupees. Mom gives 5 more. Total?", options: ["10", "15", "55"], a: "10", exp: "5 + 5 = 10." },
+                { id: 407, type: 'input', q: "7 days in a week + 3 extra days. Total days?", a: "10", exp: "7 + 3 = 10." },
+                { id: 408, type: 'mcq', q: "Which word means addition?", options: ["Left", "Total", "Difference"], a: "Total", exp: "Total means putting together." },
+                { id: 409, type: 'input', q: "You have 2 eyes and 2 ears. Total body parts?", a: "4", exp: "2 + 2 = 4." },
+                { id: 410, type: 'mcq', q: "A bus has 10 seats. 5 are empty. How many seats in total?", options: ["10", "15", "5"], a: "10", exp: "The total seats don't change, it is 10." }
+            ],
+            5: [ // Set 5: Mixed Challenge
+                { id: 501, type: 'input', q: "50 + 50 + 50 = ____", a: "150", exp: "Skip counting by 50s." },
+                { id: 502, type: 'mcq', q: "125 + 125 = ?", options: ["200", "250", "300"], a: "250", exp: "25+25=50. 100+100=200." },
+                { id: 503, type: 'input', q: "8 + 8 + 8 = ____", a: "24", exp: "Three eights make 24." },
+                { id: 504, type: 'mcq', q: "What must be added to 70 to get 100?", options: ["20", "30", "40"], a: "30", exp: "70 + 30 = 100." },
+                { id: 505, type: 'input', q: "Biggest 2 digit number + 1 = ____", a: "100", exp: "99 + 1 = 100." },
+                { id: 506, type: 'mcq', q: "25 + 0 = ?", options: ["25", "0", "250"], a: "25", exp: "Adding zero changes nothing." },
+                { id: 507, type: 'input', q: "Double of 50 is ____", a: "100", exp: "50 + 50 = 100." },
+                { id: 508, type: 'mcq', q: "Which is 200 + 40 + 5?", options: ["245", "254", "425"], a: "245", exp: "Expanded form sum." },
+                { id: 509, type: 'input', q: "1 + 2 + 3 + 4 = ____", a: "10", exp: "1+2=3, 3+3=6, 6+4=10." },
+                { id: 510, type: 'mcq', q: "If today is 10th, what date is 2 days later?", options: ["11th", "12th", "13th"], a: "12th", exp: "10 + 2 = 12." }
+            ]
+        };
+
+        // --- STATE VARIABLES ---
+        let currentSet = 1;
+        let scoreCorrect = 0;
+        let scoreWrong = 0;
+        let totalAttempted = 0;
+
+        // --- FUNCTIONS ---
+
+        function loadSet(setNum) {
+            currentSet = setNum;
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = `<h2>📝 Set ${setNum} Questions</h2>`;
+            
+            // Highlight active button
+            document.querySelectorAll('.set-btn').forEach(btn => btn.classList.remove('active-set'));
+            document.querySelector(`.set-btn:nth-child(${setNum})`).classList.add('active-set');
+
+            // Load questions
+            const questions = questionSets[setNum];
+            questions.forEach(q => {
+                const qDiv = document.createElement('div');
+                qDiv.className = 'question-box';
+                qDiv.id = `qbox-${q.id}`;
+                
+                let inputHTML = '';
+                
+                if (q.type === 'input') {
+                    inputHTML = `
+                        <p><strong>Q. ${q.q}</strong></p>
+                        <input type="text" class="input-answer" id="input-${q.id}" placeholder="?">
+                        <button class="set-btn btn-blue" style="font-size:0.8rem; padding: 8px 20px; margin-left:10px;" onclick="checkInput(${q.id}, '${q.a}', '${q.exp.replace(/'/g, "\\'")}')">Check</button>
+                    `;
+                } else if (q.type === 'mcq') {
+                    let optionsHTML = '';
+                    q.options.forEach(opt => {
+                        optionsHTML += `<button onclick="checkMCQ(${q.id}, '${opt}', '${q.a}', '${q.exp.replace(/'/g, "\\'")}')">${opt}</button>`;
+                    });
+                    inputHTML = `
+                        <p><strong>Q. ${q.q}</strong></p>
+                        <div class="mcq-options" id="opts-${q.id}">
+                            ${optionsHTML}
+                        </div>
+                    `;
+                }
+
+                qDiv.innerHTML = inputHTML + `<div class="feedback" id="feedback-${q.id}"></div>`;
+                container.appendChild(qDiv);
+            });
+        }
+
+        function updateScore() {
+            document.getElementById('correct-score').innerText = scoreCorrect;
+            document.getElementById('wrong-score').innerText = scoreWrong;
+            document.getElementById('total-q').innerText = totalAttempted;
+        }
+
+        function showFeedback(id, isCorrect, correctAns, exp) {
+            const fbDiv = document.getElementById(`feedback-${id}`);
+            fbDiv.style.display = 'block';
+            
+            if (isCorrect) {
+                fbDiv.className = 'feedback correct';
+                fbDiv.innerHTML = `🎉 Correct! <br> <small>${exp}</small>`;
+            } else {
+                fbDiv.className = 'feedback wrong';
+                fbDiv.innerHTML = `❌ Wrong. The answer is <strong>${correctAns}</strong>. <br> <small>Reason: ${exp}</small>`;
+            }
+        }
+
+        function checkInput(id, correct, exp) {
+            const userVal = document.getElementById(`input-${id}`).value.trim();
+            const correctVal = correct;
+            const box = document.getElementById(`qbox-${id}`);
+
+            // Prevent re-answering
+            if(box.getAttribute('data-answered') === 'true') return;
+            box.setAttribute('data-answered', 'true');
+
+            totalAttempted++;
+            if (userVal === correctVal) {
+                scoreCorrect++;
+                showFeedback(id, true, correct, exp);
+            } else {
+                scoreWrong++;
+                showFeedback(id, false, correct, exp);
+            }
+            updateScore();
+        }
+
+        function checkMCQ(id, selected, correct, exp) {
+            const box = document.getElementById(`qbox-${id}`);
+            
+            // Prevent re-answering
+            if(box.getAttribute('data-answered') === 'true') return;
+            box.setAttribute('data-answered', 'true');
+
+            totalAttempted++;
+            if (selected === correct) {
+                scoreCorrect++;
+                showFeedback(id, true, correct, exp);
+            } else {
+                scoreWrong++;
+                showFeedback(id, false, correct, exp);
+            }
+            updateScore();
+            
+            // Disable buttons visually
+            const opts = document.getElementById(`opts-${id}`).getElementsByTagName('button');
+            for(let btn of opts) {
+                btn.disabled = true;
+                if(btn.innerText === correct) btn.style.background = '#D4EDDA';
+                else if(btn.innerText === selected) btn.style.background = '#F8D7DA';
+            }
+        }
+
+        // Initialize with Set 1
+        window.onload = function() {
+            loadSet(1);
+        };
+
+    </script>
+</body>
+</html>

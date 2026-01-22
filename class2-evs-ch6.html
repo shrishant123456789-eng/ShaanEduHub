@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💧🌬️ Class 2 EVS – Chapter 6: Water & Air</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Comic+Neue:wght@400;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --water-blue: #29b6f6;
+            --deep-blue: #0288d1;
+            --air-white: #e1f5fe;
+            --cloud-grey: #b0bec5;
+            --sun-yellow: #ffeb3b;
+            --text-dark: #37474f;
+            --success: #00c853;
+            --error: #d50000;
+            --bg-gradient: linear-gradient(135deg, #e0f7fa 0%, #ffffff 100%);
+        }
+
+        * { box-sizing: border-box; user-select: none; }
+
+        body {
+            font-family: 'Comic Neue', cursive;
+            background: var(--bg-gradient);
+            margin: 0;
+            padding: 0;
+            color: var(--text-dark);
+        }
+
+        /* --- Header --- */
+        header {
+            background: linear-gradient(to right, #4fc3f7, #0288d1);
+            padding: 20px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-family: 'Fredoka One', cursive;
+            margin: 0;
+            font-size: 2.2rem;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+            letter-spacing: 1px;
+            cursor: default;
+        }
+        
+        h1 span { display: inline-block; transition: transform 0.3s; }
+        h1 span:hover { transform: translateY(-5px) scale(1.1); color: var(--sun-yellow); }
+
+        .header-emojis { margin-top: 10px; }
+        .header-emojis span {
+            font-size: 2.5rem;
+            display: inline-block;
+            margin: 0 8px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .header-emojis span:nth-child(even) { animation-delay: 1.5s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* --- Layout --- */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* --- Section 1: Notes --- */
+        .notes-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border: 3px solid var(--water-blue);
+        }
+
+        .section-title {
+            font-family: 'Fredoka One', cursive;
+            color: var(--deep-blue);
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        /* Cursive Font for Notes */
+        .cursive-text {
+            font-family: 'Patrick Hand', cursive;
+            font-size: 1.5rem;
+            line-height: 1.6;
+            color: #455a64;
+        }
+
+        /* Accordion Style */
+        .accordion {
+            background-color: var(--air-white);
+            color: var(--deep-blue);
+            cursor: pointer;
+            padding: 15px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 1.3rem;
+            font-family: 'Fredoka One', cursive;
+            transition: 0.4s;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 6px solid var(--water-blue);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .active, .accordion:hover {
+            background-color: var(--water-blue);
+            color: white;
+        }
+
+        .panel {
+            padding: 0 18px;
+            background-color: white;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 15px;
+            text-align: center;
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .icon-card {
+            background: #f1f8e9;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            border: 1px solid #c5e1a5;
+        }
+        .emoji-lg { font-size: 2.5rem; display: block; margin-bottom: 5px; }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 2px dashed var(--deep-blue);
+            cursor: help;
+            color: var(--deep-blue);
+            font-weight: bold;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 240px;
+            background-color: #37474f;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 5;
+            bottom: 130%;
+            left: 50%;
+            margin-left: -120px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-family: 'Comic Neue';
+            font-size: 1rem;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+        }
+
+        .tooltip:hover .tooltiptext { visibility: visible; opacity: 1; }
+
+        /* --- Section 2: Game Area --- */
+        .game-section {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border: 3px solid var(--cloud-grey);
+            text-align: center;
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-around;
+            background: var(--air-white);
+            padding: 12px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--deep-blue);
+            border: 2px solid var(--water-blue);
+        }
+
+        .level-selector { margin-bottom: 20px; }
+
+        .level-btn {
+            padding: 10px 20px;
+            font-family: 'Fredoka One';
+            border: none;
+            border-radius: 20px;
+            margin: 5px;
+            cursor: pointer;
+            background: #eceff1;
+            color: #546e7a;
+            transition: 0.3s;
+            box-shadow: 0 3px 0 #cfd8dc;
+        }
+
+        .level-btn.active-level {
+            background: var(--water-blue);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 4px 0 #0277bd;
+        }
+
+        .question-card {
+            background: #e0f2f1;
+            padding: 25px;
+            border-radius: 20px;
+            min-height: 250px;
+            position: relative;
+            border: 2px dashed #26a69a;
+        }
+
+        .audio-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: white;
+            border: 2px solid var(--water-blue);
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .q-text {
+            font-size: 1.6rem;
+            margin: 20px 0;
+            font-weight: bold;
+            color: var(--text-dark);
+        }
+
+        /* Options Grid */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .option-btn {
+            background: white;
+            border: 3px solid #b2dfdb;
+            padding: 15px;
+            border-radius: 15px;
+            font-family: 'Comic Neue';
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100px;
+            font-weight: bold;
+        }
+
+        .option-btn:hover {
+            border-color: var(--water-blue);
+            background: #e0f7fa;
+            transform: translateY(-3px);
+        }
+        
+        .opt-emoji { font-size: 2.2rem; margin-bottom: 5px; }
+
+        /* Input Field Style */
+        .input-answer {
+            padding: 15px;
+            font-size: 1.4rem;
+            border-radius: 10px;
+            border: 3px solid var(--water-blue);
+            width: 80%;
+            text-align: center;
+            font-family: 'Comic Neue';
+            margin-bottom: 15px;
+            outline: none;
+        }
+
+        .submit-btn {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 20px;
+            font-size: 1.2rem;
+            font-family: 'Fredoka One';
+            cursor: pointer;
+            box-shadow: 0 4px 0 #00a040;
+        }
+        .submit-btn:active { transform: translateY(4px); box-shadow: none; }
+
+        /* Feedback Modal */
+        .feedback-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 0 100px rgba(0,0,0,0.5);
+            z-index: 1000;
+            text-align: center;
+            display: none;
+            border: 6px solid;
+            width: 90%;
+            max-width: 400px;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 999;
+            display: none;
+            backdrop-filter: blur(4px);
+        }
+
+        .fb-emoji { font-size: 5rem; display: block; margin-bottom: 10px; animation: pop 0.5s; }
+        
+        @keyframes pop { 0% { transform: scale(0); } 70% { transform: scale(1.2); } 100% { transform: scale(1); } }
+
+        .next-btn {
+            background: var(--deep-blue);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.3rem;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-family: 'Fredoka One';
+            box-shadow: 0 4px 0 #01579b;
+        }
+        .next-btn:active { transform: translateY(4px); box-shadow: none; }
+
+        /* --- Footer --- */
+        footer {
+            background: #263238;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            border-top-left-radius: 30px;
+            border-top-right-radius: 30px;
+        }
+        
+        footer p { margin: 5px 0; transition: transform 0.3s; }
+        footer p:hover { transform: scale(1.05); color: var(--water-blue); }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            h1 { font-size: 1.5rem; }
+            .option-btn { font-size: 1.1rem; padding: 10px; }
+            .header-emojis span { font-size: 1.8rem; }
+            .cursive-text { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>
+        <span>💧</span> <span>C</span><span>l</span><span>a</span><span>s</span><span>s</span> <span>2</span> <span>E</span><span>V</span><span>S</span> <span>🌬️</span><br>
+        Chapter 6: Water & Air
+    </h1>
+    <div class="header-emojis">
+        <span>🌊</span><span>🌦️</span><span>🌬️</span><span>🏞️</span><span>💧</span>
+    </div>
+</header>
+
+<main class="container">
+
+    <section class="notes-section">
+        <h2 class="section-title">📖 Let's Learn!</h2>
+        
+        <button class="accordion">1. Uses of Water 💧</button>
+        <div class="panel cursive-text">
+            <p>Water is very precious. All living things need water.</p>
+            <div class="icon-grid">
+                <div class="icon-card"><span class="emoji-lg">🚰</span><strong>Drinking</strong><br>To stay healthy</div>
+                <div class="icon-card"><span class="emoji-lg">🍲</span><strong>Cooking</strong><br>To make food</div>
+                <div class="icon-card"><span class="emoji-lg">🛁</span><strong>Bathing</strong><br>To stay clean</div>
+                <div class="icon-card"><span class="emoji-lg">🌱</span><strong>Plants</strong><br>To grow big</div>
+            </div>
+        </div>
+
+        <button class="accordion">2. Sources of Water 🌊</button>
+        <div class="panel cursive-text">
+            <p>Where do we get water from?</p>
+            <ul>
+                <li><strong>Rain 🌧️:</strong> The main source. It is natural.</li>
+                <li><strong>River 🏞️:</strong> Rainwater flows into rivers.</li>
+                <li><strong>Well 🕳️:</strong> We get underground water from wells.</li>
+                <li><strong>Tap 🚰:</strong> Clean water comes to our home in taps.</li>
+            </ul>
+        </div>
+
+        <button class="accordion">3. Saving Water 💦</button>
+        <div class="panel cursive-text">
+            <p>Do not waste water!</p>
+            <ul>
+                <li>Close the tap while brushing teeth. 🪥</li>
+                <li>Use a bucket to bathe (Don't use shower!). 🪣</li>
+                <li>Collect rainwater for plants. 🌧️</li>
+            </ul>
+            <p><span class="tooltip">💡 Fun Fact<span class="tooltiptext">A dripping tap can waste 30 litres of water in a month! Fix it!</span></span></p>
+        </div>
+
+        <button class="accordion">4. Clean Air 🌬️</button>
+        <div class="panel cursive-text">
+            <p>Air is all around us. We cannot see it, but we can feel it.</p>
+            <ul>
+                <li>We need air to <strong>Breathe</strong>. 🫁</li>
+                <li>Plants keep the air fresh and clean. 🌳</li>
+                <li><strong>Pollution:</strong> Dirty air (smoke) makes us sick. 🏭😷</li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="game-section" id="exercise-area">
+        <h2 class="section-title">🎮 Water & Air Quiz</h2>
+        
+        <div class="score-board">
+            <span>⭐ Stars: <span id="star-count">0</span></span>
+            <span>✅ Score: <span id="score">0</span></span>
+            <span>📝 Left: <span id="q-left">50</span></span>
+        </div>
+
+        <div class="level-selector">
+            <button class="level-btn active-level" onclick="setLevel(1)">Level 1 (Basic)</button>
+            <button class="level-btn" onclick="setLevel(2)">Level 2 (Thinker)</button>
+            <button class="level-btn" onclick="setLevel(3)">Level 3 (Genius)</button>
+        </div>
+
+        <div class="question-card" id="question-container">
+            <button class="audio-btn" onclick="readQuestion()">🔊</button>
+            <div id="q-image" style="font-size:4rem; margin-bottom:15px;"></div>
+            <div class="q-text" id="q-text">Loading...</div>
+            
+            <div id="interaction-area">
+                </div>
+        </div>
+    </section>
+
+</main>
+
+<div class="overlay" id="overlay"></div>
+<div class="feedback-modal" id="feedback-modal">
+    <span class="fb-emoji" id="fb-emoji">🎉</span>
+    <h2 id="fb-title">Correct!</h2>
+    <p id="fb-msg">You are doing great!</p>
+    <button class="next-btn" onclick="nextQuestion()">Next Question ➡</button>
+</div>
+
+<footer>
+    <p>Designed & Created by <strong>SHRISHANT YADAV</strong></p>
+    <p>© 2026 ShanEduHub</p>
+</footer>
+
+<script>
+    // --- Data: 50+ Unique Questions ---
+    const allQuestions = [
+        // LEVEL 1: Basic (Identify Sources & Uses)
+        { id: 1, level: 1, type: 'img', q: "Tap the RIVER.", opts: [{t:"River", i:"🏞️"}, {t:"Tap", i:"🚰"}, {t:"Bucket", i:"🪣"}], ans: "River" },
+        { id: 2, level: 1, type: 'img', q: "Tap the WELL (Underground water).", opts: [{t:"Well", i:"🕳️"}, {t:"Cloud", i:"☁️"}], ans: "Well" },
+        { id: 3, level: 1, type: 'img', q: "Tap the RAIN.", opts: [{t:"Rain", i:"🌧️"}, {t:"Sun", i:"☀️"}], ans: "Rain" },
+        { id: 4, level: 1, type: 'img', q: "Tap the TAP.", opts: [{t:"Tap", i:"🚰"}, {t:"River", i:"🌊"}], ans: "Tap" },
+        { id: 5, level: 1, type: 'mcq', q: "We drink ___ to stay healthy.", opts: [{t:"Water", i:"💧"}, {t:"Sand", i:"🏜️"}], ans: "Water" },
+        { id: 6, level: 1, type: 'mcq', q: "Plants need ___ to grow.", opts: [{t:"Water", i:"💧"}, {t:"Toys", i:"🧸"}], ans: "Water" },
+        { id: 7, level: 1, type: 'img', q: "Which is BATHING?", opts: [{t:"Bathing", i:"🛁"}, {t:"Cooking", i:"🍲"}], ans: "Bathing" },
+        { id: 8, level: 1, type: 'img', q: "Which is COOKING?", opts: [{t:"Cooking", i:"🍳"}, {t:"Cleaning", i:"🧹"}], ans: "Cooking" },
+        { id: 9, level: 1, type: 'img', q: "Which is CLEANING?", opts: [{t:"Cleaning", i:"🧼"}, {t:"Sleeping", i:"🛌"}], ans: "Cleaning" },
+        { id: 10, level: 1, type: 'tf', q: "We can live without water.", opts: [{t:"True", i:"🌵"}, {t:"False", i:"❌"}], ans: "False" },
+        { id: 11, level: 1, type: 'img', q: "Identify AIR (Wind).", opts: [{t:"Wind", i:"🌬️"}, {t:"Rock", i:"🪨"}], ans: "Wind" },
+        { id: 12, level: 1, type: 'tf', q: "Air is all around us.", opts: [{t:"True", i:"✅"}, {t:"False", i:"❌"}], ans: "True" },
+        { id: 13, level: 1, type: 'mcq', q: "Clean air gives us...", opts: [{t:"Oxygen", i:"🌬️"}, {t:"Dust", i:"🌫️"}], ans: "Oxygen" },
+        { id: 14, level: 1, type: 'img', q: "Tap the glass of water.", opts: [{t:"Water", i:"🥛"}, {t:"Bread", i:"🍞"}], ans: "Water" },
+        { id: 15, level: 1, type: 'mcq', q: "Fish live in...", opts: [{t:"Water", i:"🌊"}, {t:"Tree", i:"🌳"}], ans: "Water" },
+
+        // LEVEL 2: Intermediate (Saving Water & Effects)
+        { id: 16, level: 2, type: 'mcq', q: "Turn off the ___ while brushing.", opts: [{t:"Tap", i:"🚰"}, {t:"Light", i:"💡"}], ans: "Tap" },
+        { id: 17, level: 2, type: 'img', q: "Which saves water?", opts: [{t:"Bucket Bath", i:"🪣"}, {t:"Long Shower", i:"🚿"}], ans: "Bucket Bath" },
+        { id: 18, level: 2, type: 'img', q: "Collect rainwater in...", opts: [{t:"Tank/Bucket", i:"🛢️"}, {t:"Sieve", i:"🕸️"}], ans: "Tank/Bucket" },
+        { id: 19, level: 2, type: 'tf', q: "We should waste water.", opts: [{t:"True", i:"👎"}, {t:"False", i:"✅"}], ans: "False" },
+        { id: 20, level: 2, type: 'input', q: "Name one source of water.", ans: ["river", "rain", "well", "tap", "lake", "pond"] },
+        { id: 21, level: 2, type: 'match', q: "Match: Bathing → ___", opts: [{t:"Tub/Bathroom", i:"🛁"}, {t:"Kitchen", i:"🍳"}], ans: "Tub/Bathroom" },
+        { id: 22, level: 2, type: 'match', q: "Match: Cooking → ___", opts: [{t:"Kitchen/Pot", i:"🍲"}, {t:"Garden", i:"🏡"}], ans: "Kitchen/Pot" },
+        { id: 23, level: 2, type: 'tf', q: "Clean air keeps us healthy.", opts: [{t:"True", i:"🥰"}, {t:"False", i:"🤧"}], ans: "True" },
+        { id: 24, level: 2, type: 'img', q: "Which causes illness?", opts: [{t:"Dirty Air", i:"🏭"}, {t:"Fresh Air", i:"🌳"}], ans: "Dirty Air" },
+        { id: 25, level: 2, type: 'mcq', q: "Polluted water causes...", opts: [{t:"Diseases", i:"🤢"}, {t:"Happiness", i:"😁"}], ans: "Diseases" },
+        { id: 26, level: 2, type: 'img', q: "Tap the source of Underground water.", opts: [{t:"Well", i:"🕳️"}, {t:"Cloud", i:"☁️"}], ans: "Well" },
+        { id: 27, level: 2, type: 'tf', q: "Rainwater is natural.", opts: [{t:"True", i:"✅"}, {t:"False", i:"❌"}], ans: "True" },
+        { id: 28, level: 2, type: 'mcq', q: "We should fix leaking...", opts: [{t:"Taps", i:"🚰"}, {t:"Chairs", i:"🪑"}], ans: "Taps" },
+        { id: 29, level: 2, type: 'tf', q: "We can see air.", opts: [{t:"True", i:"👀"}, {t:"False", i:"🌫️"}], ans: "False" },
+        { id: 30, level: 2, type: 'img', q: "Identify Polluted Water.", opts: [{t:"Dirty Pond", i:"🛢️"}, {t:"Clean Glass", i:"🥛"}], ans: "Dirty Pond" },
+        { id: 31, level: 2, type: 'mcq', q: "Water helps plants...", opts: [{t:"Grow", i:"🌱"}, {t:"Run", i:"🏃"}], ans: "Grow" },
+        { id: 32, level: 2, type: 'mcq', q: "We clean utensils with...", opts: [{t:"Water", i:"💧"}, {t:"Air", i:"💨"}], ans: "Water" },
+        { id: 33, level: 2, type: 'input', q: "What do we breathe?", ans: ["air", "oxygen"] },
+        { id: 34, level: 2, type: 'mcq', q: "Smoke makes the air...", opts: [{t:"Dirty", i:"🌫️"}, {t:"Clean", i:"✨"}], ans: "Dirty" },
+        { id: 35, level: 2, type: 'match', q: "Match: Rain → ___", opts: [{t:"Clouds", i:"☁️"}, {t:"Ground", i:"🟤"}], ans: "Clouds" },
+
+        // LEVEL 3: Advanced (Logic & Reasoning)
+        { id: 36, level: 3, type: 'mcq', q: "Why save water?", opts: [{t:"It is precious", i:"💎"}, {t:"It is useless", i:"🗑️"}], ans: "It is precious" },
+        { id: 37, level: 3, type: 'mcq', q: "Air pollution hurts our...", opts: [{t:"Health/Lungs", i:"🫁"}, {t:"Shoes", i:"👟"}], ans: "Health/Lungs" },
+        { id: 38, level: 3, type: 'img', q: "Tap the sign of FRESH air.", opts: [{t:"Trees/Park", i:"🌳"}, {t:"Traffic/Smoke", i:"🚗"}], ans: "Trees/Park" },
+        { id: 39, level: 3, type: 'img', q: "Tap the sign of DIRTY air.", opts: [{t:"Factory Smoke", i:"🏭"}, {t:"Garden", i:"🌻"}], ans: "Factory Smoke" },
+        { id: 40, level: 3, type: 'match', q: "Match: Drinking → ___", opts: [{t:"Glass", i:"🥛"}, {t:"Bucket", i:"🪣"}], ans: "Glass" },
+        { id: 41, level: 3, type: 'match', q: "Match: Plants → ___", opts: [{t:"Watering Can", i:"🚿"}, {t:"Plate", i:"🍽️"}], ans: "Watering Can" },
+        { id: 42, level: 3, type: 'mcq', q: "Animals need clean water to...", opts: [{t:"Drink", i:"👅"}, {t:"Read", i:"📖"}], ans: "Drink" },
+        { id: 43, level: 3, type: 'tf', q: "Air is needed for all living beings.", opts: [{t:"True", i:"🌍"}, {t:"False", i:"❌"}], ans: "True" },
+        { id: 44, level: 3, type: 'input', q: "Name something that needs water to live.", ans: ["human", "animal", "plant", "bird", "tree", "fish"] },
+        { id: 45, level: 3, type: 'mcq', q: "Save water, Save...", opts: [{t:"Life/Earth", i:"🌏"}, {t:"Plastic", i:"🥤"}], ans: "Life/Earth" },
+        { id: 46, level: 3, type: 'mcq', q: "When water is boiled, it becomes...", opts: [{t:"Safe to drink", i:"✅"}, {t:"Dirty", i:"❌"}], ans: "Safe to drink" },
+        { id: 47, level: 3, type: 'img', q: "Which activity WASTES water?", opts: [{t:"Open Tap", i:"🚰💧"}, {t:"Closed Tap", i:"🚰"}], ans: "Open Tap" },
+        { id: 48, level: 3, type: 'input', q: "What comes from clouds?", ans: ["rain", "water"] },
+        { id: 49, level: 3, type: 'mcq', q: "Plants give us fresh...", opts: [{t:"Air", i:"🌬️"}, {t:"Noise", i:"🔊"}], ans: "Air" },
+        { id: 50, level: 3, type: 'tf', q: "We should throw trash in the river.", opts: [{t:"True", i:"🗑️"}, {t:"False", i:"❌"}], ans: "False" }
+    ];
+
+    // --- State ---
+    let currentLevel = 1;
+    let currentQuestions = [];
+    let currentQIndex = 0;
+    let score = 0;
+    let stars = 0;
+
+    // --- Init ---
+    document.addEventListener("DOMContentLoaded", () => {
+        setupAccordions();
+        setLevel(1);
+    });
+
+    function setupAccordions() {
+        const acc = document.getElementsByClassName("accordion");
+        for (let i = 0; i < acc.length; i++) {
+            acc[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                const panel = this.nextElementSibling;
+                if (panel.style.maxHeight) {
+                    panel.style.maxHeight = null;
+                } else {
+                    panel.style.maxHeight = panel.scrollHeight + "px";
+                }
+            });
+        }
+    }
+
+    // --- Game Logic ---
+    function setLevel(lvl) {
+        currentLevel = lvl;
+        // Update Buttons
+        document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active-level'));
+        document.querySelectorAll('.level-btn')[lvl-1].classList.add('active-level');
+        
+        // Filter & Shuffle
+        currentQuestions = allQuestions.filter(q => q.level === lvl).sort(() => Math.random() - 0.5);
+        currentQIndex = 0;
+        
+        updateUI();
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        if (currentQIndex >= currentQuestions.length) {
+            showLevelComplete();
+            return;
+        }
+
+        const q = currentQuestions[currentQIndex];
+        const container = document.getElementById('interaction-area');
+        container.innerHTML = '';
+        
+        document.getElementById('q-text').innerText = `${currentQIndex + 1}. ${q.q}`;
+        document.getElementById('q-image').innerText = q.type === 'img' ? '🖼️' : (q.type === 'input' ? '✍️' : '❓');
+
+        // Handle Input Type vs Button Types
+        if (q.type === 'input') {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'input-answer';
+            input.placeholder = "Type answer here...";
+            input.id = 'user-input';
+            
+            const btn = document.createElement('button');
+            btn.className = 'submit-btn';
+            btn.innerText = "Check Answer";
+            btn.onclick = () => checkInputAnswer(q.ans);
+            
+            container.appendChild(input);
+            container.appendChild(document.createElement('br'));
+            container.appendChild(btn);
+        } else {
+            const grid = document.createElement('div');
+            grid.className = 'options-grid';
+            
+            // Shuffle options
+            const shuffled = [...q.opts].sort(() => Math.random() - 0.5);
+            
+            shuffled.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerHTML = `<span class="opt-emoji">${opt.i}</span>${opt.t}`;
+                btn.onclick = () => checkButtonAnswer(opt.t, q.ans);
+                grid.appendChild(btn);
+            });
+            container.appendChild(grid);
+        }
+    }
+
+    function checkButtonAnswer(selected, correct) {
+        handleFeedback(selected === correct, correct);
+    }
+
+    function checkInputAnswer(correctArr) {
+        const userVal = document.getElementById('user-input').value.toLowerCase().trim();
+        // Check if userVal exists in the allowed answers array
+        const isCorrect = correctArr.includes(userVal);
+        // Pass a nice formatted string of correct answers for display
+        handleFeedback(isCorrect, correctArr[0].toUpperCase()); 
+    }
+
+    function handleFeedback(isCorrect, correctDisplay) {
+        const modal = document.getElementById('feedback-modal');
+        const overlay = document.getElementById('overlay');
+        const title = document.getElementById('fb-title');
+        const msg = document.getElementById('fb-msg');
+        const emoji = document.getElementById('fb-emoji');
+
+        modal.style.display = 'block';
+        overlay.style.display = 'block';
+
+        if (isCorrect) {
+            title.innerText = "Awesome! 🎉";
+            title.style.color = "#00c853";
+            msg.innerText = "That is the correct answer!";
+            emoji.innerText = "💧";
+            modal.style.borderColor = "#00c853";
+            score += 10;
+            if (score % 50 === 0) stars++;
+            speak("Correct! Good job.");
+        } else {
+            title.innerText = "Oops! 😅";
+            title.style.color = "#d50000";
+            msg.innerText = `The correct answer was: ${correctDisplay}`;
+            emoji.innerText = "🤔";
+            modal.style.borderColor = "#d50000";
+            speak("Wrong answer. Try again.");
+        }
+        updateUI();
+    }
+
+    function nextQuestion() {
+        document.getElementById('feedback-modal').style.display = 'none';
+        document.getElementById('overlay').style.display = 'none';
+        currentQIndex++;
+        loadQuestion();
+    }
+
+    function showLevelComplete() {
+        const modal = document.getElementById('feedback-modal');
+        const overlay = document.getElementById('overlay');
+        modal.style.display = 'block';
+        overlay.style.display = 'block';
+        
+        document.getElementById('fb-title').innerText = "Level Complete! 🏆";
+        document.getElementById('fb-msg').innerText = "You are a Water & Air Hero!";
+        document.getElementById('fb-emoji').innerText = "🌟";
+        
+        const nextBtn = document.querySelector('.next-btn');
+        nextBtn.innerText = "Close";
+        nextBtn.onclick = () => {
+             modal.style.display = 'none';
+             overlay.style.display = 'none';
+             nextBtn.innerText = "Next Question ➡";
+             nextBtn.onclick = nextQuestion; 
+        };
+        speak("Level Complete. Excellent work!");
+    }
+
+    function updateUI() {
+        document.getElementById('score').innerText = score;
+        document.getElementById('star-count').innerText = stars;
+        document.getElementById('q-left').innerText = (currentQuestions.length - currentQIndex);
+    }
+
+    function readQuestion() {
+        const text = currentQuestions[currentQIndex].q;
+        speak(text);
+    }
+
+    function speak(text) {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.pitch = 1.1;
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
+        }
+    }
+</script>
+
+</body>
+</html>

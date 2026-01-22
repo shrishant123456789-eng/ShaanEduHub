@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mental Maths | ShanEduHub</title>
+    <style>
+        /* --- GENERAL STYLES --- */
+        :root {
+            --primary: #8E44AD; /* Purple (Brain/Logic) */
+            --secondary: #F1C40F; /* Yellow (Energy) */
+            --accent: #E74C3C; /* Red */
+            --green: #2ECC71; /* Success */
+            --blue: #3498DB;
+            --bg: #F4ECF7; /* Light Purple Background */
+            --card-bg: #FFFFFF;
+            --text: #2C3E50;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background: linear-gradient(135deg, #8E44AD, #9B59B6);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            border-radius: 0 0 30px 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-bottom: 5px solid #F1C40F;
+        }
+
+        header h1 { margin: 0; font-size: 2.2em; text-shadow: 2px 2px 0 rgba(0,0,0,0.2); }
+        header p { font-size: 1.2em; margin-top: 10px; font-weight: bold; background: rgba(255,255,255,0.2); display: inline-block; padding: 5px 15px; border-radius: 20px; }
+
+        /* --- CARDS & SECTIONS --- */
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-left: 6px solid var(--primary);
+            transition: transform 0.2s;
+        }
+
+        .card:hover { transform: translateY(-3px); }
+
+        h2 { color: var(--primary); border-bottom: 2px dashed #D2B4DE; padding-bottom: 10px; }
+        h3 { color: var(--blue); margin-top: 20px; }
+
+        .note-box {
+            background: #E8F8F5;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #1ABC9C;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .brain-teaser {
+            font-size: 1.2em;
+            background: #FEF9E7;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 5px solid #F1C40F;
+            margin: 10px 0;
+        }
+
+        /* --- PRACTICE SECTION UI --- */
+        .quiz-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .set-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: all 0.2s;
+            color: white;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+        }
+
+        .set-btn:active { transform: translateY(2px); box-shadow: none; }
+        .btn-yellow { background-color: #F1C40F; color: #333; }
+        .btn-blue { background-color: #3498DB; }
+        .btn-green { background-color: #2ECC71; }
+        .btn-orange { background-color: #E67E22; }
+        .btn-purple { background-color: #9B59B6; }
+
+        .active-set { border: 3px solid #2C3E50; transform: scale(1.05); box-shadow: 0 0 10px rgba(0,0,0,0.2); }
+
+        /* --- QUESTION STYLES --- */
+        .question-box {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 15px;
+            border: 2px solid #ECF0F1;
+        }
+
+        .input-answer {
+            padding: 10px;
+            font-size: 1.1rem;
+            border: 2px solid #BDC3C7;
+            border-radius: 10px;
+            width: 150px;
+            text-align: center;
+            outline: none;
+        }
+        .input-answer:focus { border-color: var(--primary); }
+
+        .mcq-options button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 12px;
+            margin: 8px 0;
+            background: #F9F9F9;
+            border: 2px solid #EEE;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+        .mcq-options button:hover { background: #EEF; border-color: var(--primary); }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+            font-weight: bold;
+        }
+        .correct { background-color: #D5F5E3; color: #196F3D; border: 1px solid #ABEBC6; }
+        .wrong { background-color: #FADBD8; color: #943126; border: 1px solid #F5B7B1; }
+
+        /* --- SCOREBOARD --- */
+        .scoreboard {
+            position: sticky;
+            top: 0;
+            background: #2C3E50;
+            color: white;
+            padding: 15px;
+            z-index: 100;
+            display: flex;
+            justify-content: space-around;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            font-weight: bold;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background-color: #2C3E50;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.8em; }
+            .set-btn { width: 100%; margin-bottom: 5px; }
+            .scoreboard { font-size: 0.8em; padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>ShanEduHub 🌟</h1>
+        <p>Class 2 Maths – Mental Maths 🧠 💡</p>
+    </header>
+
+    <div class="container">
+
+        <div class="card">
+            <h2>👋 What is Mental Maths?</h2>
+            <p>Mental Maths means solving questions <strong>in your mind</strong> quickly, without using a pen and paper! 🚀</p>
+            <p>It makes your brain strong and helps you calculate fast.</p>
+            <div class="note-box">
+                Can you solve: <strong>10 + 10 = ?</strong><br>
+                Yes! It's 20! That's Mental Maths!
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>1️⃣ Quick Addition & Subtraction ➕➖</h2>
+            <p><strong>Trick:</strong> Break the numbers!</p>
+            <ul>
+                <li><strong>23 + 12</strong> &rarr; Add Tens (20+10 = 30), Add Ones (3+2 = 5) &rarr; Answer: <strong>35</strong></li>
+                <li><strong>50 - 20</strong> &rarr; Just do 5 - 2 = 3, then add zero &rarr; Answer: <strong>30</strong></li>
+                <li><strong>Double:</strong> 5 + 5 = 10, 10 + 10 = 20.</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>2️⃣ Number Patterns & Tricks 🔢</h2>
+            <p>Look for the secret rule in numbers!</p>
+            <ul>
+                <li><strong>Skip Counting by 2:</strong> 2, 4, 6, 8, 10...</li>
+                <li><strong>Skip Counting by 5:</strong> 5, 10, 15, 20... (Ends in 0 or 5)</li>
+                <li><strong>Skip Counting by 10:</strong> 10, 20, 30, 40... (Ends in 0)</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>3️⃣ Logical Thinking 🧐</h2>
+            <div class="brain-teaser">
+                <strong>Riddle:</strong><br>
+                "I am a number bigger than 8 but smaller than 10. Who am I?"<br>
+                Answer: <strong>9</strong>!
+            </div>
+            <p>Use clues to find the answer. Compare using Big (>) or Small (<).</p>
+        </div>
+
+        <div class="card" style="border-left-color: #E74C3C;">
+            <h2>👀 Look and Learn (Tap to see Answer)</h2>
+            
+            <div style="background:#fff; padding:10px; margin-bottom:10px; border:1px solid #ccc; border-radius:5px;">
+                <strong>Q: 🍎 + 🍎 = 4. What is 🍎?</strong>
+                <button onclick="this.nextElementSibling.innerText = '2'" style="margin-left:10px; padding:5px 10px;">Show Answer</button>
+                <span style="font-weight:bold; color:#E74C3C; margin-left:10px;"></span>
+            </div>
+
+            <div style="background:#fff; padding:10px; border:1px solid #ccc; border-radius:5px;">
+                <strong>Q: What comes next? 1, 2, 1, 2, __</strong>
+                <button onclick="this.nextElementSibling.innerText = '1'" style="margin-left:10px; padding:5px 10px;">Show Answer</button>
+                <span style="font-weight:bold; color:#E74C3C; margin-left:10px;"></span>
+            </div>
+        </div>
+
+        <div id="practice-section">
+            <h1 style="text-align: center; color: var(--text);">🔥 Practice Time (50+ Questions)</h1>
+            
+            <div class="scoreboard">
+                <span>📊 Total: <span id="total-q">0</span></span>
+                <span>✅ Correct: <span id="correct-score">0</span></span>
+                <span>❌ Wrong: <span id="wrong-score">0</span></span>
+                <span>📈 Score: <span id="percentage">0%</span></span>
+            </div>
+            <br>
+
+            <div class="quiz-controls">
+                <button class="set-btn btn-yellow" onclick="loadSet(1)">🟡 Set 1: Quick Math</button>
+                <button class="set-btn btn-blue" onclick="loadSet(2)">🔵 Set 2: Patterns</button>
+                <button class="set-btn btn-green" onclick="loadSet(3)">🟢 Set 3: Logic</button>
+                <button class="set-btn btn-orange" onclick="loadSet(4)">🟠 Set 4: Puzzles</button>
+                <button class="set-btn btn-purple" onclick="loadSet(5)">🟣 Set 5: Expert</button>
+            </div>
+
+            <div id="quiz-container">
+                <div class="card" style="text-align: center; padding: 50px;">
+                    <h3>Select a Practice Set to start! 👆</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="background: #E8F8F5; border-left: 6px solid #1ABC9C;">
+            <h2>🎮 Fun Learning Activities</h2>
+            <ol>
+                <li><strong>Math Race:</strong> Ask a friend "2 + 2?" and answer fast!</li>
+                <li><strong>Car Plate Game:</strong> Add the numbers on car number plates you see outside.</li>
+                <li><strong>Grocery Hero:</strong> Help mom calculate the bill for milk and bread mentally.</li>
+            </ol>
+        </div>
+
+        <div class="card" style="background: #fff; border-left: 6px solid #F1C40F;">
+            <h2>🎓 Learning Outcomes</h2>
+            <p><strong>Great job! Now you can:</strong></p>
+            <ul>
+                <li>✅ Add and Subtract quickly in your mind.</li>
+                <li>✅ Find patterns in numbers.</li>
+                <li>✅ Solve math riddles.</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>Designed & Created by <strong>SHRISHANT YADAV</strong></p>
+        <p>🌟 ShanEduHub – Fun & Smart Learning for Class 2</p>
+        <p>&copy; All Rights Reserved</p>
+    </footer>
+
+    <script>
+        // --- DATA: 50+ UNIQUE QUESTIONS ---
+        const questionSets = {
+            1: [ // Set 1: Quick Addition & Subtraction (10 Q)
+                { id: 101, type: 'input', q: "10 + 10 = ?", a: "20", exp: "1 ten + 1 ten = 2 tens." },
+                { id: 102, type: 'input', q: "25 + 5 = ?", a: "30", exp: "Count 5 after 25." },
+                { id: 103, type: 'input', q: "50 - 10 = ?", a: "40", exp: "5 tens minus 1 ten is 4 tens." },
+                { id: 104, type: 'input', q: "20 + 20 = ?", a: "40", exp: "Double of 20 is 40." },
+                { id: 105, type: 'input', q: "15 - 5 = ?", a: "10", exp: "Take away the 5 ones." },
+                { id: 106, type: 'input', q: "100 + 1 = ?", a: "101", exp: "The number after 100." },
+                { id: 107, type: 'input', q: "30 + 30 = ?", a: "60", exp: "3 + 3 = 6, so 30 + 30 = 60." },
+                { id: 108, type: 'input', q: "40 - 20 = ?", a: "20", exp: "4 tens minus 2 tens." },
+                { id: 109, type: 'input', q: "99 + 1 = ?", a: "100", exp: "Completes the hundred." },
+                { id: 110, type: 'input', q: "12 + 12 = ?", a: "24", exp: "Double of 12." }
+            ],
+            2: [ // Set 2: Number Tricks/Patterns (10 Q)
+                { id: 201, type: 'mcq', q: "2, 4, 6, 8, __", options: ["9", "10"], a: "10", exp: "Skip counting by 2." },
+                { id: 202, type: 'mcq', q: "5, 10, 15, __", options: ["20", "25"], a: "20", exp: "Skip counting by 5." },
+                { id: 203, type: 'mcq', q: "10, 20, 30, __", options: ["31", "40"], a: "40", exp: "Skip counting by 10." },
+                { id: 204, type: 'mcq', q: "1, 3, 5, __", options: ["6", "7"], a: "7", exp: "Odd numbers pattern." },
+                { id: 205, type: 'mcq', q: "100, 90, 80, __", options: ["70", "60"], a: "70", exp: "Counting backwards by 10." },
+                { id: 206, type: 'mcq', q: "11, 22, 33, __", options: ["44", "55"], a: "44", exp: "Repeating digits pattern." },
+                { id: 207, type: 'mcq', q: "Smallest 2-digit number?", options: ["10", "11"], a: "10", exp: "10 is the first 2-digit number." },
+                { id: 208, type: 'mcq', q: "Largest 2-digit number?", options: ["90", "99"], a: "99", exp: "After 99 comes 100 (3 digits)." },
+                { id: 209, type: 'mcq', q: "What comes between 18 and 20?", options: ["19", "21"], a: "19", exp: "18, 19, 20." },
+                { id: 210, type: 'mcq', q: "Complete: 50, 55, 60, __", options: ["65", "70"], a: "65", exp: "Adding 5 each time." }
+            ],
+            3: [ // Set 3: Logical Thinking (10 Q)
+                { id: 301, type: 'input', q: "I am 20 + 5. Who am I?", a: "25", exp: "20 plus 5 is 25." },
+                { id: 302, type: 'input', q: "Number before 100?", a: "99", exp: "99 comes just before 100." },
+                { id: 303, type: 'mcq', q: "How many tens in 54?", options: ["5", "4"], a: "5", exp: "5 is in the tens place." },
+                { id: 304, type: 'mcq', q: "Which is bigger: 50 or 500?", options: ["50", "500"], a: "500", exp: "3 digits > 2 digits." },
+                { id: 305, type: 'mcq', q: "Which is EVEN?", options: ["5", "8"], a: "8", exp: "Even numbers end in 0, 2, 4, 6, 8." },
+                { id: 306, type: 'mcq', q: "Which is ODD?", options: ["10", "11"], a: "11", exp: "Odd numbers end in 1, 3, 5, 7, 9." },
+                { id: 307, type: 'input', q: "Double of 4 is ____.", a: "8", exp: "4 + 4 = 8." },
+                { id: 308, type: 'input', q: "Half of 10 is ____.", a: "5", exp: "5 + 5 = 10." },
+                { id: 309, type: 'mcq', q: "3 tens and 2 ones make?", options: ["32", "23"], a: "32", exp: "30 + 2 = 32." },
+                { id: 310, type: 'mcq', q: "I am less than 10 but more than 8.", options: ["9", "7"], a: "9", exp: "9 is between 8 and 10." }
+            ],
+            4: [ // Set 4: Fun Math/Puzzles (10 Q)
+                { id: 401, type: 'input', q: "🍎 + 🍎 = 4. What is 🍎?", a: "2", exp: "2 + 2 = 4." },
+                { id: 402, type: 'input', q: "🚗 has 4 wheels. How many wheels on 2 cars?", a: "8", exp: "4 + 4 = 8." },
+                { id: 403, type: 'input', q: "A square has ____ sides.", a: "4", exp: "Squares have 4 equal sides." },
+                { id: 404, type: 'input', q: "A triangle has ____ corners.", a: "3", exp: "Tri-angle means 3 angles/corners." },
+                { id: 405, type: 'input', q: "🖐️ + 🖐️ = ____ fingers.", a: "10", exp: "5 + 5 = 10." },
+                { id: 406, type: 'input', q: "How many zeroes in 100?", a: "2", exp: "One zero, two zeroes." },
+                { id: 407, type: 'mcq', q: "Shape of a ball?", options: ["Circle", "Sphere"], a: "Sphere", exp: "A 3D ball is a sphere." },
+                { id: 408, type: 'mcq', q: "Shape of a dice?", options: ["Square", "Cube"], a: "Cube", exp: "A 3D box is a cube." },
+                { id: 409, type: 'input', q: "Days in a week?", a: "7", exp: "Mon-Sun is 7 days." },
+                { id: 410, type: 'input', q: "Fingers on one hand?", a: "5", exp: "We have 5 fingers." }
+            ],
+            5: [ // Set 5: Expert/Mixed (10 Q)
+                { id: 501, type: 'input', q: "100 - 50 = ?", a: "50", exp: "Half of 100 is 50." },
+                { id: 502, type: 'input', q: "5 x 2 = ?", a: "10", exp: "5 two times is 10." },
+                { id: 503, type: 'mcq', q: "Odd one out: 2, 4, 5, 8", options: ["5", "8"], a: "5", exp: "5 is the only odd number." },
+                { id: 504, type: 'input', q: "Number after 99?", a: "100", exp: "99 + 1 = 100." },
+                { id: 505, type: 'input', q: "20 + 20 - 10 = ?", a: "30", exp: "40 minus 10 is 30." },
+                { id: 506, type: 'mcq', q: "Pattern: A, B, A, B, __", options: ["A", "B"], a: "A", exp: "The pattern repeats A then B." },
+                { id: 507, type: 'input', q: "Months in a year?", a: "12", exp: "Jan to Dec is 12 months." },
+                { id: 508, type: 'input', q: "10 + 10 + 10 = ?", a: "30", exp: "3 tens make 30." },
+                { id: 509, type: 'mcq', q: "Biggest number: 89, 98, 90", options: ["98", "89"], a: "98", exp: "9 tens and 8 ones is the biggest." },
+                { id: 510, type: 'input', q: "50 paise + 50 paise = ____ Rupee.", a: "1", exp: "100 paise make 1 Rupee." }
+            ]
+        };
+
+        // --- STATE VARIABLES ---
+        let currentSet = 1;
+        let scoreCorrect = 0;
+        let scoreWrong = 0;
+        let totalAttempted = 0;
+
+        // --- FUNCTIONS ---
+
+        function loadSet(setNum) {
+            currentSet = setNum;
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = `<h2>📝 Set ${setNum} Questions</h2>`;
+            
+            // Highlight active button
+            document.querySelectorAll('.set-btn').forEach(btn => btn.classList.remove('active-set'));
+            document.querySelector(`.set-btn:nth-child(${setNum})`).classList.add('active-set');
+
+            // Load questions
+            const questions = questionSets[setNum];
+            questions.forEach(q => {
+                const qDiv = document.createElement('div');
+                qDiv.className = 'question-box';
+                qDiv.id = `qbox-${q.id}`;
+                
+                let inputHTML = '';
+                
+                if (q.type === 'input') {
+                    inputHTML = `
+                        <p><strong>Q. ${q.q}</strong></p>
+                        <input type="text" class="input-answer" id="input-${q.id}" placeholder="?">
+                        <button class="set-btn btn-blue" style="font-size:0.8rem; padding: 5px 15px; margin-left:10px;" onclick="checkInput(${q.id}, '${q.a}', '${q.exp.replace(/'/g, "\\'")}')">Check</button>
+                    `;
+                } else if (q.type === 'mcq') {
+                    let optionsHTML = '';
+                    q.options.forEach(opt => {
+                        optionsHTML += `<button onclick="checkMCQ(${q.id}, '${opt}', '${q.a}', '${q.exp.replace(/'/g, "\\'")}')">${opt}</button>`;
+                    });
+                    inputHTML = `
+                        <p><strong>Q. ${q.q}</strong></p>
+                        <div class="mcq-options" id="opts-${q.id}">
+                            ${optionsHTML}
+                        </div>
+                    `;
+                }
+
+                qDiv.innerHTML = inputHTML + `<div class="feedback" id="feedback-${q.id}"></div>`;
+                container.appendChild(qDiv);
+            });
+        }
+
+        function updateScore() {
+            document.getElementById('correct-score').innerText = scoreCorrect;
+            document.getElementById('wrong-score').innerText = scoreWrong;
+            document.getElementById('total-q').innerText = totalAttempted;
+            
+            let percent = totalAttempted === 0 ? 0 : Math.round((scoreCorrect / totalAttempted) * 100);
+            document.getElementById('percentage').innerText = percent + "%";
+        }
+
+        function showFeedback(id, isCorrect, correctAns, exp) {
+            const fbDiv = document.getElementById(`feedback-${id}`);
+            fbDiv.style.display = 'block';
+            
+            if (isCorrect) {
+                fbDiv.className = 'feedback correct';
+                fbDiv.innerHTML = `🎉 Correct! <br> <small>${exp}</small>`;
+            } else {
+                fbDiv.className = 'feedback wrong';
+                fbDiv.innerHTML = `❌ Wrong. The answer is <strong>${correctAns}</strong>. <br> <small>Reason: ${exp}</small>`;
+            }
+        }
+
+        function checkInput(id, correct, exp) {
+            const userVal = document.getElementById(`input-${id}`).value.trim().toLowerCase();
+            const correctVal = correct.toLowerCase();
+            const box = document.getElementById(`qbox-${id}`);
+
+            // Prevent re-answering
+            if(box.getAttribute('data-answered') === 'true') return;
+            box.setAttribute('data-answered', 'true');
+
+            totalAttempted++;
+            if (userVal === correctVal) {
+                scoreCorrect++;
+                showFeedback(id, true, correct, exp);
+            } else {
+                scoreWrong++;
+                showFeedback(id, false, correct, exp);
+            }
+            updateScore();
+        }
+
+        function checkMCQ(id, selected, correct, exp) {
+            const box = document.getElementById(`qbox-${id}`);
+            
+            // Prevent re-answering
+            if(box.getAttribute('data-answered') === 'true') return;
+            box.setAttribute('data-answered', 'true');
+
+            totalAttempted++;
+            if (selected === correct) {
+                scoreCorrect++;
+                showFeedback(id, true, correct, exp);
+            } else {
+                scoreWrong++;
+                showFeedback(id, false, correct, exp);
+            }
+            updateScore();
+            
+            // Disable buttons visually
+            const opts = document.getElementById(`opts-${id}`).getElementsByTagName('button');
+            for(let btn of opts) {
+                btn.disabled = true;
+                if(btn.innerText === correct) btn.style.background = '#D5F5E3';
+                else if(btn.innerText === selected) btn.style.background = '#FADBD8';
+            }
+        }
+
+        // Initialize with Set 1
+        window.onload = function() {
+            loadSet(1);
+        };
+
+    </script>
+</body>
+</html>

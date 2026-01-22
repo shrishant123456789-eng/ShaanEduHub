@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Class 1 GK Games - Shan EduHub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FFB300; /* Yellow */
+            --secondary: #4CAF50; /* Green */
+            --accent: #FF5722; /* Orange */
+            --info: #2196F3; /* Blue */
+            --bg: #F0F8FF;
+            --text: #333;
+            --white: #ffffff;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: 'Comic Neue', sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            padding: 0;
+            padding-bottom: 80px; /* Space for footer */
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3 { font-family: 'Fredoka One', cursive; margin: 0; }
+
+        /* HEADER */
+        header {
+            background: var(--primary);
+            color: var(--white);
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-title { font-size: 1.5rem; text-shadow: 1px 1px 0px #d68f00; }
+        .sub-title { font-size: 0.9rem; opacity: 0.9; }
+
+        /* GAME GRID */
+        .container { max-width: 800px; margin: 0 auto; padding: 15px; }
+        
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+        }
+
+        .game-card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-bottom: 5px solid #eee;
+        }
+
+        .game-card:active { transform: scale(0.95); }
+        .game-card.completed { border-bottom: 5px solid var(--secondary); background: #f1fff1; }
+        
+        .game-emoji { font-size: 2.5rem; display: block; margin-bottom: 5px; }
+        .game-title { font-size: 1rem; font-weight: bold; line-height: 1.2; color: #444; }
+        .game-status { font-size: 0.8rem; color: #888; margin-top: 5px; }
+
+        /* GAME OVERLAY / PLAY AREA */
+        #game-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--bg);
+            z-index: 200;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            background: var(--white);
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .close-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-family: 'Fredoka One';
+            cursor: pointer;
+        }
+
+        .game-area {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* GAME COMPONENTS */
+        .question-box {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 15px;
+            width: 100%;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 0px rgba(0,0,0,0.1);
+            border: 2px solid var(--primary);
+        }
+        
+        .question-text { font-size: 1.3rem; margin-bottom: 5px; font-weight: bold; }
+        .question-sub { font-size: 1rem; color: #666; font-style: italic; }
+
+        /* OPTION BUTTONS (MCQ / IDENTIFY) */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            width: 100%;
+        }
+        
+        .option-btn {
+            background: var(--white);
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100px;
+            box-shadow: 0 4px 0 #ccc;
+        }
+
+        .option-btn:active { transform: translateY(4px); box-shadow: 0 0 0 #ccc; }
+        .option-btn.correct { background: #E8F5E9; border-color: var(--secondary); box-shadow: 0 4px 0 #2E7D32; }
+        .option-btn.wrong { background: #FFEBEE; border-color: var(--accent); animation: shake 0.5s; }
+
+        /* SORTING GAME */
+        .sort-bins { display: flex; justify-content: space-around; width: 100%; margin-top: 20px; }
+        .bin {
+            width: 45%;
+            padding: 20px;
+            border: 3px dashed #ccc;
+            border-radius: 15px;
+            text-align: center;
+            background: rgba(255,255,255,0.5);
+        }
+        .draggable-item {
+            font-size: 3rem;
+            padding: 10px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+
+        /* MEMORY GAME */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            width: 100%;
+        }
+        .memory-card {
+            aspect-ratio: 1;
+            background: var(--primary);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            color: transparent;
+            transition: transform 0.3s;
+        }
+        .memory-card.flipped { background: white; color: black; border: 2px solid var(--primary); transform: rotateY(180deg); }
+
+        /* SCORE BOARD */
+        .score-board {
+            display: flex;
+            gap: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        /* ANIMATIONS */
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-10px); }
+            100% { transform: translateX(0); }
+        }
+
+        @keyframes confetti {
+            0% { transform: translateY(0) rotate(0); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px; height: 10px;
+            background: red;
+            top: -10px;
+            z-index: 300;
+        }
+
+        /* FOOTER */
+        footer {
+            position: fixed;
+            bottom: 0; width: 100%;
+            background: var(--white);
+            border-top: 1px solid #ddd;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            z-index: 100;
+        }
+        .nav-item { text-align: center; color: #888; font-size: 0.7rem; text-decoration: none; }
+        .nav-item span { display: block; font-size: 1.5rem; margin-bottom: 2px; }
+        .nav-item.active { color: var(--primary); }
+
+        /* FEEDBACK POPUP */
+        .feedback-popup {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+            z-index: 250;
+            display: none;
+            width: 80%;
+        }
+        .feedback-popup h2 { margin: 10px 0; }
+        .next-btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            margin-top: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #2E7D32;
+        }
+        .next-btn:active { transform: translateY(4px); box-shadow: none; }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-title">Shan EduHub</div>
+        <div class="sub-title">Class 1 GK Games • 50 Interactive Tasks</div>
+    </header>
+
+    <div class="container">
+        <div style="background: #e0e0e0; border-radius: 10px; height: 15px; margin-bottom: 20px; overflow: hidden;">
+            <div id="total-progress" style="background: var(--secondary); width: 0%; height: 100%; transition: width 0.5s;"></div>
+        </div>
+        
+        <h2 style="margin-bottom: 15px; color: var(--primary);">Choose a Game 🎮</h2>
+        <div class="game-grid" id="game-list">
+            </div>
+    </div>
+
+    <div id="game-modal">
+        <div class="modal-header">
+            <span id="active-game-title" style="font-weight: bold; font-size: 1.1rem;">Game Title</span>
+            <button class="close-btn" onclick="closeGame()">❌ Exit</button>
+        </div>
+        
+        <div class="game-area">
+            <div class="score-board">
+                <span style="color: var(--secondary);">✅ <span id="score-right">0</span></span>
+                <span style="color: var(--accent);">❌ <span id="score-wrong">0</span></span>
+                <span>⭐ <span id="score-star">0</span></span>
+            </div>
+
+            <div id="game-content">
+                </div>
+        </div>
+
+        <div id="feedback-popup" class="feedback-popup">
+            <div id="feedback-emoji" style="font-size: 3rem;"></div>
+            <h2 id="feedback-text"></h2>
+            <p id="feedback-sub"></p>
+            <button class="next-btn" onclick="nextQuestion()">Next ➡️</button>
+        </div>
+    </div>
+
+    <footer>
+        <a href="#" class="nav-item"><span>🏠</span>Home</a>
+        <a href="#" class="nav-item"><span>📘</span>Learn</a>
+        <a href="#" class="nav-item active"><span>🎮</span>Games</a>
+        <a href="#" class="nav-item"><span>👨‍👩‍👧</span>Parents</a>
+    </footer>
+
+    <script>
+        // --- GAME DATA DATABASE (50 Games Structure) ---
+        // Types: 'mcq' (Multiple Choice), 'sort' (Category A vs B), 'tf' (True/False), 'memory' (Pairs)
+        
+        const gamesDB = [
+            { id: 1, title: "Myself Identity", emoji: "🧍‍♂️", type: "mcq", data: [
+                { q: "What do you call your father's father?", h: "अपने पापा के पापा को क्या कहते हैं?", opts: ["Grandfather", "Uncle", "Brother"], a: 0 },
+                { q: "I am a girl. I am your...", h: "मैं एक लड़की हूँ। मैं आपकी...", opts: ["Brother", "Sister", "Father"], a: 1 }
+            ]},
+            { id: 2, title: "Body Parts Puzzle", emoji: "🧠", type: "mcq", data: [
+                { q: "Which body part helps you run?", h: "कौन सा अंग दौड़ने में मदद करता है?", opts: ["Legs 🦵", "Hands ✋", "Nose 👃"], a: 0 },
+                { q: "What is inside your head?", h: "आपके सिर के अंदर क्या है?", opts: ["Stomach", "Brain 🧠", "Heart"], a: 1 }
+            ]},
+            { id: 3, title: "Five Senses Detective", emoji: "🔍", type: "mcq", data: [
+                { q: "We smell with our...", h: "हम सूंघते हैं...", opts: ["Eyes 👀", "Nose 👃", "Ears 👂"], a: 1 },
+                { q: "Ice cream tastes...", h: "आइसक्रीम का स्वाद कैसा होता है?", opts: ["Sweet 🍦", "Salty 🧂", "Bitter"], a: 0 }
+            ]},
+            { id: 4, title: "Healthy Habits Race", emoji: "🪥", type: "sort", cats: ["Good 👍", "Bad 👎"], items: [
+                { txt: "Brushing", em: "🪥", cat: 0 }, { txt: "Eating Junk", em: "🍔", cat: 1 },
+                { txt: "Bathing", em: "🚿", cat: 0 }, { txt: "Fighting", em: "👊", cat: 1 }
+            ]},
+            { id: 5, title: "Family Match", emoji: "👨‍👩‍👧", type: "memory", pairs: ["👴", "👵", "👨", "👩", "👦", "👧"] },
+            { id: 6, title: "Friends & Neighbours", emoji: "🏘️", type: "mcq", data: [
+                { q: "Who lives near your house?", h: "आपके घर के पास कौन रहता है?", opts: ["Neighbour", "Teacher", "Doctor"], a: 0 },
+                { q: "We play with...", h: "हम किसके साथ खेलते हैं?", opts: ["Friends", "Strangers", "Thieves"], a: 0 }
+            ]},
+            { id: 7, title: "Community Helpers", emoji: "🦸‍♂️", type: "mcq", data: [
+                { q: "Who catches thieves?", h: "चोरों को कौन पकड़ता है?", opts: ["Policeman 👮", "Doctor 👨‍⚕️", "Teacher 👩‍🏫"], a: 0 },
+                { q: "Who grows crops?", h: "फसल कौन उगाता है?", opts: ["Farmer 👨‍🌾", "Pilot 👨‍✈️", "Cobbler"], a: 0 }
+            ]},
+            { id: 8, title: "My Home Builder", emoji: "🏠", type: "mcq", data: [
+                { q: "Where do we cook food?", h: "हम खाना कहाँ पकाते हैं?", opts: ["Kitchen 🍳", "Bathroom 🛁", "Bedroom 🛏️"], a: 0 },
+                { q: "A house made of mud is...", h: "मिट्टी का बना घर...", opts: ["Kutcha House", "Pucca House", "Flat"], a: 0 }
+            ]},
+            { id: 9, title: "School Explorer", emoji: "🏫", type: "tf", data: [
+                { q: "We should run in the classroom.", h: "कक्षा में दौड़ना चाहिए।", a: false },
+                { q: "We read books in the library.", h: "हम पुस्तकालय में किताबें पढ़ते हैं।", a: true }
+            ]},
+            { id: 10, title: "Things We Use", emoji: "🧺", type: "sort", cats: ["School 🎒", "Kitchen 🍳"], items: [
+                { txt: "Pencil", em: "✏️", cat: 0 }, { txt: "Pan", em: "🍳", cat: 1 },
+                { txt: "Book", em: "📚", cat: 0 }, { txt: "Knife", em: "🔪", cat: 1 }
+            ]},
+            { id: 11, title: "Plant Detectives", emoji: "🌱", type: "mcq", data: [
+                { q: "Big and strong plants are called...", h: "मजबूत पौधों को कहते हैं...", opts: ["Trees 🌳", "Herbs 🌿", "Shrubs"], a: 0 },
+                { q: "Rose plant is a...", h: "गुलाब का पौधा है...", opts: ["Shrub", "Tree", "Herb"], a: 0 }
+            ]},
+            { id: 12, title: "Plant Parts Lab", emoji: "🌿", type: "mcq", data: [
+                { q: "Which part is under the ground?", h: "जमीन के नीचे कौन सा भाग होता है?", opts: ["Root 🥕", "Leaf 🍃", "Flower 🌸"], a: 0 },
+                { q: "Which part makes food?", h: "खाना कौन बनाता है?", opts: ["Leaf 🍃", "Root", "Stem"], a: 0 }
+            ]},
+            { id: 13, title: "Plant Uses Factory", emoji: "🏭", type: "mcq", data: [
+                { q: "We get paper from...", h: "कागज किससे मिलता है?", opts: ["Bamboo 🎋", "Rose 🌹", "Grass"], a: 0 },
+                { q: "Tulsi is used as...", h: "तुलसी का उपयोग होता है...", opts: ["Medicine 💊", "Wood", "Paper"], a: 0 }
+            ]},
+            { id: 14, title: "Animal Kingdom", emoji: "🦁", type: "sort", cats: ["Wild 🌳", "Domestic 🏠"], items: [
+                { txt: "Lion", em: "🦁", cat: 0 }, { txt: "Cow", em: "🐄", cat: 1 },
+                { txt: "Tiger", em: "🐯", cat: 0 }, { txt: "Dog", em: "🐕", cat: 1 }
+            ]},
+            { id: 15, title: "Animal Homes", emoji: "🏡", type: "mcq", data: [
+                { q: "A dog lives in a...", h: "कुत्ता कहाँ रहता है?", opts: ["Kennel 🏠", "Den ⛰️", "Shed"], a: 0 },
+                { q: "A lion lives in a...", h: "शेर कहाँ रहता है?", opts: ["Den ⛰️", "Stable", "Nest"], a: 0 }
+            ]},
+            // ... Mapping remaining games to generic templates for demo purposes ...
+            // In a real production, each would have unique data like above.
+        ];
+
+        // Fill up to 50 games with templates for the demo to show the full list UI
+        const extraTitles = [
+            "Baby Animal Memory", "Food Plate Designer", "Water Saver Hero", "Transport Adventure", "Traffic Rules Sim",
+            "Communication Quest", "Seasons Watcher", "Day & Night", "Good Habits", "Cleanliness Quest",
+            "Safety Rules", "Drawing Fun", "Match Following", "Fill Blanks", "Action Rhymes",
+            "Emoji Story", "Who Am I?", "Odd One Out", "True / False", "Rapid Fire",
+            "Picture MCQ", "Sound Match", "Find & Label", "Puzzle Jigsaw", "Mystery Box",
+            "Spot Difference", "Sorting Hat", "Memory Card", "Adventure Map", "Build Plate",
+            "Story Sequence", "Quiz Wheel", "Daily Life", "Parent Mode", "Badge Adventure"
+        ];
+
+        let idCounter = 16;
+        extraTitles.forEach(t => {
+            // Randomly assign a game type
+            const types = ['mcq', 'tf', 'sort', 'memory'];
+            const rType = types[Math.floor(Math.random() * types.length)];
+            
+            // Create dummy data so they are playable
+            let dummyData = {};
+            if(rType === 'mcq') dummyData = { data: [{q: "Example Question for " + t, h: "उदाहरण प्रश्न", opts: ["Option A", "Option B"], a: 0}]};
+            if(rType === 'tf') dummyData = { data: [{q: "Is this " + t + "?", h: "क्या यह सच है?", a: true}]};
+            if(rType === 'sort') dummyData = { cats: ["Type A", "Type B"], items: [{txt:"Item 1", em:"1️⃣", cat:0}, {txt:"Item 2", em:"2️⃣", cat:1}]};
+            if(rType === 'memory') dummyData = { pairs: ["🍎", "🍌", "🍇", "🍊"] };
+
+            gamesDB.push({ id: idCounter++, title: t, emoji: "🎮", type: rType, ...dummyData });
+        });
+
+        // --- STATE MANAGEMENT ---
+        let currentGame = null;
+        let currentLevel = 0;
+        let score = { right: 0, wrong: 0, stars: 0 };
+        let progress = JSON.parse(localStorage.getItem('shanGkProgress')) || {};
+
+        // --- INITIALIZATION ---
+        window.onload = function() {
+            renderGameList();
+            updateTotalProgress();
+        };
+
+        function renderGameList() {
+            const list = document.getElementById('game-list');
+            list.innerHTML = '';
+            gamesDB.forEach(game => {
+                const isDone = progress[game.id] ? 'completed' : '';
+                const status = progress[game.id] ? '⭐ Completed' : 'Tap to Play';
+                const html = `
+                    <div class="game-card ${isDone}" onclick="openGame(${game.id})">
+                        <span class="game-emoji">${game.emoji}</span>
+                        <div class="game-title">${game.title}</div>
+                        <div class="game-status">${status}</div>
+                    </div>
+                `;
+                list.innerHTML += html;
+            });
+        }
+
+        function updateTotalProgress() {
+            const completedCount = Object.keys(progress).length;
+            const percent = (completedCount / gamesDB.length) * 100;
+            document.getElementById('total-progress').style.width = percent + "%";
+        }
+
+        // --- GAME ENGINE ---
+        function openGame(id) {
+            currentGame = gamesDB.find(g => g.id === id);
+            currentLevel = 0;
+            score = { right: 0, wrong: 0, stars: 0 };
+            updateScoreUI();
+            
+            document.getElementById('game-modal').style.display = 'flex';
+            document.getElementById('active-game-title').innerText = currentGame.emoji + " " + currentGame.title;
+            
+            loadLevel();
+        }
+
+        function closeGame() {
+            document.getElementById('game-modal').style.display = 'none';
+            renderGameList();
+            updateTotalProgress();
+        }
+
+        function updateScoreUI() {
+            document.getElementById('score-right').innerText = score.right;
+            document.getElementById('score-wrong').innerText = score.wrong;
+            document.getElementById('score-star').innerText = score.stars;
+        }
+
+        function loadLevel() {
+            const container = document.getElementById('game-content');
+            container.innerHTML = '';
+            document.getElementById('feedback-popup').style.display = 'none';
+
+            // Speak instruction (Basic implementation)
+            if ('speechSynthesis' in window) {
+                // let utterance = new SpeechSynthesisUtterance("Let's play " + currentGame.title);
+                // window.speechSynthesis.speak(utterance);
+            }
+
+            // RENDER BASED ON TYPE
+            if (currentGame.type === 'mcq' || currentGame.type === 'tf') {
+                if (currentLevel >= currentGame.data.length) { finishGame(); return; }
+                renderMCQ(currentGame.data[currentLevel]);
+            } 
+            else if (currentGame.type === 'sort') {
+                renderSort();
+            }
+            else if (currentGame.type === 'memory') {
+                renderMemory();
+            }
+        }
+
+        // --- RENDERERS ---
+
+        function renderMCQ(qData) {
+            const c = document.getElementById('game-content');
+            
+            // Question
+            let html = `
+                <div class="question-box">
+                    <div class="question-text">${qData.q}</div>
+                    <div class="question-sub">${qData.h}</div>
+                </div>
+            `;
+
+            // Options
+            html += `<div class="options-grid">`;
+            if (currentGame.type === 'tf') {
+                html += `<button class="option-btn" onclick="checkMCQ(true, ${qData.a})">✅ True / सही</button>`;
+                html += `<button class="option-btn" onclick="checkMCQ(false, ${qData.a})">❌ False / गलत</button>`;
+            } else {
+                qData.opts.forEach((opt, idx) => {
+                    html += `<button class="option-btn" onclick="checkMCQ(${idx}, ${qData.a})">${opt}</button>`;
+                });
+            }
+            html += `</div>`;
+            c.innerHTML = html;
+        }
+
+        function renderSort() {
+            // Simplified Sorting: Show 1 item, user taps Left or Right Bin
+            if (currentLevel >= currentGame.items.length) { finishGame(); return; }
+            const item = currentGame.items[currentLevel];
+            const cats = currentGame.cats;
+            
+            const html = `
+                <div style="text-align:center">
+                    <h3>Sort this item! / इसे सही जगह डालें</h3>
+                    <div class="draggable-item">${item.em}<br>${item.txt}</div>
+                    <div class="sort-bins">
+                        <div class="bin" onclick="checkSort(0, ${item.cat})" style="border-color:var(--primary)">${cats[0]}</div>
+                        <div class="bin" onclick="checkSort(1, ${item.cat})" style="border-color:var(--info)">${cats[1]}</div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('game-content').innerHTML = html;
+        }
+
+        function renderMemory() {
+            const pairs = [...currentGame.pairs, ...currentGame.pairs]; // Duplicate
+            // Shuffle
+            if(currentLevel === 0) { // Only shuffle on start
+                pairs.sort(() => Math.random() - 0.5);
+                currentGame.shuffledPairs = pairs;
+                currentGame.found = [];
+                currentGame.flipped = []; // indices
+            }
+
+            let html = `<div class="memory-grid">`;
+            currentGame.shuffledPairs.forEach((emoji, idx) => {
+                const isFound = currentGame.found.includes(idx);
+                const isFlipped = currentGame.flipped.includes(idx) || isFound;
+                const content = isFlipped ? emoji : "?";
+                const cls = isFlipped ? "memory-card flipped" : "memory-card";
+                const style = isFound ? "opacity:0.5" : "";
+                
+                html += `<div class="${cls}" style="${style}" onclick="flipCard(${idx})">${content}</div>`;
+            });
+            html += `</div>`;
+            document.getElementById('game-content').innerHTML = html;
+        }
+
+        // --- LOGIC HANDLERS ---
+
+        function checkMCQ(selected, correct) {
+            const btns = document.querySelectorAll('.option-btn');
+            
+            if (selected === correct) {
+                btns[selected === true ? 0 : selected === false ? 1 : selected].classList.add('correct');
+                handleSuccess();
+            } else {
+                btns[selected === true ? 0 : selected === false ? 1 : selected].classList.add('wrong');
+                handleFailure("Oops! Try Again.");
+            }
+        }
+
+        function checkSort(selectedBin, correctBin) {
+            if (selectedBin === correctBin) {
+                handleSuccess();
+            } else {
+                handleFailure("Wrong Bin!");
+            }
+        }
+
+        function flipCard(idx) {
+            if (currentGame.flipped.length >= 2 || currentGame.flipped.includes(idx) || currentGame.found.includes(idx)) return;
+            
+            currentGame.flipped.push(idx);
+            renderMemory();
+
+            if (currentGame.flipped.length === 2) {
+                const idx1 = currentGame.flipped[0];
+                const idx2 = currentGame.flipped[1];
+                
+                if (currentGame.shuffledPairs[idx1] === currentGame.shuffledPairs[idx2]) {
+                    // Match
+                    setTimeout(() => {
+                        currentGame.found.push(idx1, idx2);
+                        currentGame.flipped = [];
+                        renderMemory();
+                        score.right++;
+                        updateScoreUI();
+                        if (currentGame.found.length === currentGame.shuffledPairs.length) {
+                            finishGame();
+                        }
+                    }, 500);
+                } else {
+                    // No Match
+                    setTimeout(() => {
+                        currentGame.flipped = [];
+                        renderMemory();
+                    }, 1000);
+                }
+            }
+        }
+
+        // --- FEEDBACK SYSTEM ---
+
+        function handleSuccess() {
+            score.right++;
+            score.stars += 10;
+            updateScoreUI();
+            fireConfetti();
+            
+            const msgs = ["Great Job! 🎉", "Awesome! 🌟", "Correct! ✅"];
+            showPopup("😃", msgs[Math.floor(Math.random()*msgs.length)], "Well done!", true);
+        }
+
+        function handleFailure(reason) {
+            score.wrong++;
+            updateScoreUI();
+            if (navigator.vibrate) navigator.vibrate(200); // Mobile vibration
+            showPopup("😢", "Oops!", reason, false);
+        }
+
+        function showPopup(emoji, title, sub, isCorrect) {
+            const popup = document.getElementById('feedback-popup');
+            document.getElementById('feedback-emoji').innerText = emoji;
+            document.getElementById('feedback-text').innerText = title;
+            document.getElementById('feedback-sub').innerText = sub;
+            popup.style.display = 'block';
+            
+            const btn = popup.querySelector('.next-btn');
+            if (isCorrect) {
+                btn.onclick = nextQuestion;
+                btn.innerText = "Next ➡️";
+            } else {
+                btn.onclick = () => { popup.style.display = 'none'; }; // Retry
+                btn.innerText = "Try Again 🔄";
+            }
+        }
+
+        function nextQuestion() {
+            currentLevel++;
+            loadLevel();
+        }
+
+        function finishGame() {
+            progress[currentGame.id] = true;
+            localStorage.setItem('shanGkProgress', JSON.stringify(progress));
+            
+            document.getElementById('game-content').innerHTML = `
+                <div style="text-align:center; animation: pop 0.5s;">
+                    <div style="font-size:5rem;">🏆</div>
+                    <h2 style="color:var(--secondary)">Game Completed!</h2>
+                    <p>You earned ${score.stars} Stars!</p>
+                    <button class="option-btn" style="background:var(--primary); color:white; width:100%" onclick="closeGame()">Back to Menu</button>
+                </div>
+            `;
+            fireConfetti();
+        }
+
+        // --- UTILS ---
+        function fireConfetti() {
+            for(let i=0; i<30; i++) {
+                const conf = document.createElement('div');
+                conf.classList.add('confetti');
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.background = ['red', 'blue', 'green', 'yellow'][Math.floor(Math.random()*4)];
+                conf.style.animationDuration = (Math.random() * 2 + 1) + 's';
+                document.body.appendChild(conf);
+                setTimeout(() => conf.remove(), 3000);
+            }
+        }
+
+    </script>
+</body>
+</html>

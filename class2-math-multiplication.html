@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiplication | ShanEduHub</title>
+    <style>
+        /* --- GENERAL STYLES --- */
+        :root {
+            --primary: #FF9F43; /* Energetic Orange */
+            --secondary: #54A0FF; /* Bright Blue */
+            --accent: #FDCB6E; /* Yellow */
+            --success: #2ECC71; /* Green */
+            --error: #FF6B6B; /* Red */
+            --bg: #FEF9E7; /* Creamy Yellow Background */
+            --card-bg: #FFFFFF;
+            --text: #2D3436;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif; /* Child-friendly font */
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background: linear-gradient(135deg, #FDB827, #FF9F43);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            border-radius: 0 0 30px 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-bottom: 5px solid #E67E22;
+        }
+
+        header h1 { margin: 0; font-size: 2.5em; text-shadow: 2px 2px 0 rgba(0,0,0,0.1); }
+        header p { font-size: 1.3em; margin-top: 10px; font-weight: bold; background: rgba(255,255,255,0.3); display: inline-block; padding: 5px 15px; border-radius: 20px; }
+
+        /* --- CARDS & SECTIONS --- */
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-left: 6px solid var(--secondary);
+            transition: transform 0.2s;
+        }
+
+        .card:hover { transform: translateY(-3px); }
+
+        h2 { color: var(--primary); border-bottom: 2px dashed #ffeaa7; padding-bottom: 10px; }
+        h3 { color: #0984e3; margin-top: 20px; }
+
+        .example-box {
+            background-color: #E3F2FD;
+            padding: 15px;
+            border-radius: 15px;
+            border: 2px dashed #90CAF9;
+            margin: 15px 0;
+            font-weight: bold;
+            font-size: 1.1em;
+            text-align: center;
+        }
+
+        .visual-group {
+            font-size: 2em;
+            letter-spacing: 5px;
+        }
+
+        .highlight { color: #d63031; font-weight: bold; }
+
+        /* --- PRACTICE SECTION UI --- */
+        .quiz-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .set-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: all 0.2s;
+            color: white;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+        }
+
+        .set-btn:active { transform: translateY(2px); box-shadow: none; }
+        .btn-green { background-color: #27ae60; }
+        .btn-blue { background-color: #2980b9; }
+        .btn-yellow { background-color: #f1c40f; color: #333; }
+        .btn-orange { background-color: #e67e22; }
+        .btn-red { background-color: #c0392b; }
+
+        .active-set { border: 3px solid white; box-shadow: 0 0 0 3px rgba(0,0,0,0.2); transform: scale(1.05); }
+
+        /* --- QUESTION STYLES --- */
+        .question-box {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 15px;
+            border: 2px solid #f0f0f0;
+        }
+
+        .input-answer {
+            padding: 10px;
+            font-size: 1.1rem;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            width: 120px;
+            text-align: center;
+            outline: none;
+        }
+
+        .input-answer:focus { border-color: var(--secondary); }
+
+        .mcq-options button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 12px;
+            margin: 8px 0;
+            background: #f9f9f9;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .mcq-options button:hover { background: #eef; border-color: var(--secondary); }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+            font-weight: bold;
+        }
+
+        .correct { background-color: #D4EDDA; color: #155724; border: 1px solid #C3E6CB; }
+        .wrong { background-color: #F8D7DA; color: #721c24; border: 1px solid #F5C6CB; }
+
+        /* --- SCOREBOARD --- */
+        .scoreboard {
+            position: sticky;
+            top: 0;
+            background: #6c5ce7;
+            color: white;
+            padding: 15px;
+            z-index: 100;
+            display: flex;
+            justify-content: space-around;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            font-weight: bold;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background-color: #2D3436;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+
+        .tips-box {
+            background: #E8F5E9;
+            border-left: 6px solid #2ECC71;
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.8em; }
+            .set-btn { width: 100%; margin-bottom: 5px; }
+            .scoreboard { font-size: 0.85em; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>ShanEduHub 🎓</h1>
+        <p>Class 2 Mathematics – Multiplication ✖️</p>
+    </header>
+
+    <div class="container">
+
+        <div class="card">
+            <h2>👋 Hello Kids! What is Multiplication?</h2>
+            <p><strong>Multiplication</strong> is a magic way to add numbers very fast! 🚀</p>
+            <p>It means adding the <strong>same number</strong> again and again.</p>
+            <div class="example-box">
+                🍎🍎 + 🍎🍎 + 🍎🍎 = 6 Apples<br>
+                Instead of adding 2 + 2 + 2, we say:<br>
+                <strong>3 groups of 2 = 6</strong>
+            </div>
+            <p>We use it when we have equal groups, like boxes of chocolates 🍫 or rows of chairs 🪑.</p>
+        </div>
+
+        <div class="card">
+            <h2>3.1 The "Times" Sign (×)</h2>
+            <p>The symbol for multiplication looks like an 'X': <strong style="font-size:1.5em; color:var(--primary);">×</strong></p>
+            <p>We call it <strong>Times</strong>.</p>
+            <p><strong>3 × 2</strong> means "3 times 2".</p>
+        </div>
+
+        <div class="card">
+            <h2>3.2 Repeated Addition ➕➕➕</h2>
+            <p>Multiplication is just adding the same number many times.</p>
+            <p>Look at this pattern:</p>
+            <div class="example-box">
+                2 + 2 + 2 + 2 = 8<br>
+                This is <strong>4 times 2</strong>.<br>
+                So, 4 × 2 = 8
+            </div>
+            <p>See? Multiplication is shorter and faster! ⚡</p>
+        </div>
+
+        <div class="card">
+            <h2>3.3 Groups and Pictures 🖼️</h2>
+            <p>Let's make groups!</p>
+            
+            <h3>Example: 3 Groups of 3 Stars</h3>
+            <div class="example-box">
+                Group 1: ⭐⭐⭐<br>
+                Group 2: ⭐⭐⭐<br>
+                Group 3: ⭐⭐⭐<br>
+                <br>
+                3 + 3 + 3 = 9<br>
+                <strong>3 × 3 = 9</strong>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>3.4 & 3.5 Multiplication Tables (2 to 10) 📊</h2>
+            <p>Tables help us calculate without counting on fingers every time. You should learn tables from 2 to 10!</p>
+            <p><strong>Fun Patterns:</strong></p>
+            <ul>
+                <li><strong>Table of 2:</strong> Skip counting by 2 (2, 4, 6, 8...).</li>
+                <li><strong>Table of 5:</strong> Numbers always end in 0 or 5 (5, 10, 15, 20...).</li>
+                <li><strong>Table of 10:</strong> Just put a '0' after the number (10, 20, 30...).</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>3.6 Simple Sums</h2>
+            <p>We can write multiplication in two ways:</p>
+            
+            <table style="width:100%; text-align:center;">
+                <tr>
+                    <td><strong>Horizontal (Sleeping)</strong></td>
+                    <td><strong>Vertical (Standing)</strong></td>
+                </tr>
+                <tr>
+                    <td><div class="example-box">4 × 3 = 12</div></td>
+                    <td>
+                        <div class="example-box">
+                           &nbsp;&nbsp;4<br>
+                         × 3<br>
+                         ----<br>
+                           12
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="card">
+            <h2>3.7 Word Problems (Stories) 📖</h2>
+            <p>Look for these magic words to know it is Multiplication:</p>
+            <ul>
+                <li>Each ✅ (e.g., Each box has 5 pens)</li>
+                <li>Groups ✅</li>
+                <li>Total ✅ (when groups are equal)</li>
+            </ul>
+            <p><strong>Example:</strong> There are 4 cars. Each car has 4 wheels. How many wheels in total?</p>
+            <p>Answer: 4 × 4 = 16 wheels.</p>
+        </div>
+
+        <div class="tips-box">
+            <h3>💡 Multiplication Tips</h3>
+            <ul>
+                <li>👉 Make equal groups to understand better.</li>
+                <li>👉 5 × 2 is same as 2 × 5. You can swap numbers!</li>
+                <li>👉 Any number multiplied by 0 is always <strong>0</strong>. (5 × 0 = 0)</li>
+                <li>👉 Any number multiplied by 1 is the <strong>same number</strong>. (5 × 1 = 5)</li>
+            </ul>
+        </div>
+
+        <div id="practice-section">
+            <h1 style="text-align: center; color: var(--primary);">🎯 Practice Time!</h1>
+            
+            <div class="scoreboard">
+                <span>📝 Q: <span id="total-q">0</span></span>
+                <span>✅ Right: <span id="correct-score">0</span></span>
+                <span>❌ Wrong: <span id="wrong-score">0</span></span>
+            </div>
+            <br>
+
+            <div class="quiz-controls">
+                <button class="set-btn btn-green" onclick="loadSet(1)">🟢 Set 1: Blanks</button>
+                <button class="set-btn btn-blue" onclick="loadSet(2)">🔵 Set 2: MCQ</button>
+                <button class="set-btn btn-yellow" onclick="loadSet(3)">🟡 Set 3: Type</button>
+                <button class="set-btn btn-orange" onclick="loadSet(4)">🟠 Set 4: Stories</button>
+                <button class="set-btn btn-red" onclick="loadSet(5)">🔴 Set 5: Mixed</button>
+            </div>
+
+            <div id="quiz-container">
+                <div class="card" style="text-align: center; padding: 50px;">
+                    <h3>Click a button above to start practicing! 👆</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="background: #E1F5FE; border-bottom: none; border-left: 6px solid #03A9F4;">
+            <h2>🌟 Self Check Summary</h2>
+            <p><strong>Great job! Now you know:</strong></p>
+            <ul>
+                <li>✅ Multiplication is repeated addition.</li>
+                <li>✅ How to use tables to solve sums.</li>
+                <li>✅ How to solve word problems about "groups" and "each".</li>
+            </ul>
+            <p><em>"Keep practicing tables every day!"</em></p>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>Designed & Created by <strong>SHRISHANT YADAV</strong></p>
+        <p>&copy; 2026 ShanEduHub – Learning Made Fun</p>
+    </footer>
+
+    <script>
+        // --- DATA: QUESTION BANK (50 QUESTIONS) ---
+        const questionSets = {
+            1: [ // Set 1: Fill in the Blanks (Repeated Addition)
+                { id: 101, type: 'input', q: "2 + 2 + 2 = 3 × ____", a: "2", exp: "We are adding the number 2 three times." },
+                { id: 102, type: 'input', q: "5 + 5 = 2 × ____", a: "5", exp: "Two groups of 5." },
+                { id: 103, type: 'input', q: "4 + 4 + 4 + 4 = ____ × 4", a: "4", exp: "There are 4 fours." },
+                { id: 104, type: 'input', q: "3 + 3 + 3 = ____", a: "9", exp: "3 times 3 equals 9." },
+                { id: 105, type: 'input', q: "10 + 10 = 2 × ____", a: "10", exp: "Two tens make 20." },
+                { id: 106, type: 'input', q: "6 + 6 + 6 = 3 × 6 = ____", a: "18", exp: "3 times 6 is 18." },
+                { id: 107, type: 'input', q: "Any number multiplied by 0 is ____", a: "0", exp: "Example: 5 × 0 = 0." },
+                { id: 108, type: 'input', q: "1 × 9 = ____", a: "9", exp: "1 times any number is that number." },
+                { id: 109, type: 'input', q: "0 + 0 + 0 = 3 × ____", a: "0", exp: "Adding zeros gives zero." },
+                { id: 110, type: 'input', q: "Complete the pattern: 2, 4, 6, ____", a: "8", exp: "Skip counting by 2." }
+            ],
+            2: [ // Set 2: MCQ (Tables & Visuals)
+                { id: 201, type: 'mcq', q: "3 × 5 = ?", options: ["15", "12", "10"], a: "15", exp: "3 groups of 5 make 15." },
+                { id: 202, type: 'mcq', q: "Which is equal to 4 + 4 + 4?", options: ["4 × 3", "3 × 4", "4 × 4"], a: "3 × 4", exp: "There are 3 groups of 4." },
+                { id: 203, type: 'mcq', q: "5 × 10 = ?", options: ["50", "15", "510"], a: "50", exp: "5 tens make 50." },
+                { id: 204, type: 'mcq', q: "Look at the stars: ⭐⭐   ⭐⭐. Total?", options: ["2", "4", "6"], a: "4", exp: "2 groups of 2 = 4." },
+                { id: 205, type: 'mcq', q: "2 × 8 = ?", options: ["16", "18", "14"], a: "16", exp: "Table of 2: 2,4,6,8,10,12,14,16." },
+                { id: 206, type: 'mcq', q: "4 × 0 = ?", options: ["4", "0", "40"], a: "0", exp: "Zero times anything is zero." },
+                { id: 207, type: 'mcq', q: "6 × 3 = ?", options: ["18", "9", "12"], a: "18", exp: "6+6+6 = 18." },
+                { id: 208, type: 'mcq', q: "What comes next in table of 5? 5, 10, 15, __", options: ["16", "20", "25"], a: "20", exp: "Skip count by 5." },
+                { id: 209, type: 'mcq', q: "9 × 1 = ?", options: ["1", "9", "10"], a: "9", exp: "One group of 9." },
+                { id: 210, type: 'mcq', q: "Which shows 3 groups of 2?", options: ["3+2", "2+2+2", "3+3"], a: "2+2+2", exp: "Adding 2 three times." }
+            ],
+            3: [ // Set 3: Type Answer (Direct Sums)
+                { id: 301, type: 'input', q: "4 × 5 = ____", a: "20", exp: "4 fives make 20." },
+                { id: 302, type: 'input', q: "2 × 9 = ____", a: "18", exp: "Double of 9 is 18." },
+                { id: 303, type: 'input', q: "5 × 5 = ____", a: "25", exp: "5 fives make 25." },
+                { id: 304, type: 'input', q: "10 × 3 = ____", a: "30", exp: "10 threes make 30." },
+                { id: 305, type: 'input', q: "3 × 3 = ____", a: "9", exp: "3 threes make 9." },
+                { id: 306, type: 'input', q: "7 × 2 = ____", a: "14", exp: "7 twos make 14." },
+                { id: 307, type: 'input', q: "8 × 1 = ____", a: "8", exp: "Anything times 1 is itself." },
+                { id: 308, type: 'input', q: "0 × 100 = ____", a: "0", exp: "Zero times anything is zero." },
+                { id: 309, type: 'input', q: "6 × 2 = ____", a: "12", exp: "Double of 6 is 12." },
+                { id: 310, type: 'input', q: "5 × 4 = ____", a: "20", exp: "5 fours make 20." }
+            ],
+            4: [ // Set 4: Word Problems
+                { id: 401, type: 'mcq', q: "A car has 4 wheels. How many wheels do 2 cars have?", options: ["8", "6", "4"], a: "8", exp: "2 × 4 = 8." },
+                { id: 402, type: 'mcq', q: "3 boxes. Each box has 5 pencils. Total pencils?", options: ["15", "8", "10"], a: "15", exp: "3 × 5 = 15." },
+                { id: 403, type: 'input', q: "A cat has 2 ears. How many ears do 4 cats have?", a: "8", exp: "4 × 2 = 8." },
+                { id: 404, type: 'mcq', q: "There are 2 hands. Each hand has 5 fingers. Total fingers?", options: ["10", "7", "20"], a: "10", exp: "2 × 5 = 10." },
+                { id: 405, type: 'input', q: "You buy 3 chocolates. Each costs 2 rupees. Total cost?", a: "6", exp: "3 × 2 = 6." },
+                { id: 406, type: 'mcq', q: "4 groups of 10 boys. How many boys?", options: ["40", "14", "4"], a: "40", exp: "4 × 10 = 40." },
+                { id: 407, type: 'input', q: "There are 5 days in a school week. Total days in 2 weeks?", a: "10", exp: "2 × 5 = 10." },
+                { id: 408, type: 'mcq', q: "Which word means multiplication?", options: ["Left", "Times", "Difference"], a: "Times", exp: "'Times' means multiply." },
+                { id: 409, type: 'input', q: "1 spider has 8 legs. How many legs do 0 spiders have?", a: "0", exp: "0 × 8 = 0." },
+                { id: 410, type: 'mcq', q: "A tricycle has 3 wheels. How many wheels on 3 tricycles?", options: ["9", "6", "3"], a: "9", exp: "3 × 3 = 9." }
+            ],
+            5: [ // Set 5: Mixed Challenge
+                { id: 501, type: 'input', q: "2 × 2 × 2 = ____", a: "8", exp: "2×2=4, then 4×2=8." },
+                { id: 502, type: 'mcq', q: "Which is bigger? 3×4 or 2×5?", options: ["3×4", "2×5", "Same"], a: "3×4", exp: "12 is bigger than 10." },
+                { id: 503, type: 'input', q: "Double of 10 is ____", a: "20", exp: "2 × 10 = 20." },
+                { id: 504, type: 'mcq', q: "I am a number. Multiply me by 5 and I stay the same. Who am I?", options: ["0", "1", "5"], a: "0", exp: "0 × 5 = 0." },
+                { id: 505, type: 'input', q: "10 × 10 = ____", a: "100", exp: "10 tens make 100." },
+                { id: 506, type: 'mcq', q: "How many legs for 3 dogs?", options: ["12", "10", "15"], a: "12", exp: "3 × 4 = 12." },
+                { id: 507, type: 'input', q: "7 × 0 = ____", a: "0", exp: "Zero times anything is zero." },
+                { id: 508, type: 'mcq', q: "If 2 × 3 = 6, then 3 × 2 = ?", options: ["6", "5", "8"], a: "6", exp: "Order does not matter." },
+                { id: 509, type: 'input', q: "5 pairs of shoes = ____ shoes", a: "10", exp: "Pair means 2. So 5 × 2 = 10." },
+                { id: 510, type: 'mcq', q: "Which table has numbers ending in 0, 2, 4, 6, 8?", options: ["Table of 2", "Table of 5", "Table of 3"], a: "Table of 2", exp: "Even numbers pattern." }
+            ]
+        };
+
+        // --- STATE VARIABLES ---
+        let currentSet = 1;
+        let scoreCorrect = 0;
+        let scoreWrong = 0;
+        let totalAttempted = 0;
+
+        // --- FUNCTIONS ---
+
+        function loadSet(setNum) {
+            currentSet = setNum;
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = `<h2>📝 Set ${setNum} Questions</h2>`;
+            
+            // Highlight active button
+            document.querySelectorAll('.set-btn').forEach(btn => btn.classList.remove('active-set'));
+            document.querySelector(`.set-btn:nth-child(${setNum})`).classList.add('active-set');
+
+            // Load questions
+            const questions = questionSets[setNum];
+            questions.forEach(q => {
+                const qDiv = document.createElement('div');
+                qDiv.className = 'question-box';
+                qDiv.id = `qbox-${q.id}`;
+                
+                let inputHTML = '';
+                
+                if (q.type === 'input') {
+                    inputHTML = `
+                        <p><strong>Q. ${q.q}</strong></p>
+                        <input type="text" class="input-answer" id="input-${q.id}" placeholder="?">
+                        <button class="set-btn btn-blue" style="font-size:0.8rem; padding: 8px 20px; margin-left:10px;" onclick="checkInput(${q.id}, '${q.a}', '${q.exp.replace(/'/g, "\\'")}')">Check</button>
+                    `;
+                } else if (q.type === 'mcq') {
+                    let optionsHTML = '';
+                    q.options.forEach(opt => {
+                        optionsHTML += `<button onclick="checkMCQ(${q.id}, '${opt}', '${q.a}', '${q.exp.replace(/'/g, "\\'")}')">${opt}</button>`;
+                    });
+                    inputHTML = `
+                        <p><strong>Q. ${q.q}</strong></p>
+                        <div class="mcq-options" id="opts-${q.id}">
+                            ${optionsHTML}
+                        </div>
+                    `;
+                }
+
+                qDiv.innerHTML = inputHTML + `<div class="feedback" id="feedback-${q.id}"></div>`;
+                container.appendChild(qDiv);
+            });
+        }
+
+        function updateScore() {
+            document.getElementById('correct-score').innerText = scoreCorrect;
+            document.getElementById('wrong-score').innerText = scoreWrong;
+            document.getElementById('total-q').innerText = totalAttempted;
+        }
+
+        function showFeedback(id, isCorrect, correctAns, exp) {
+            const fbDiv = document.getElementById(`feedback-${id}`);
+            fbDiv.style.display = 'block';
+            
+            if (isCorrect) {
+                fbDiv.className = 'feedback correct';
+                fbDiv.innerHTML = `🎉 Correct! <br> <small>${exp}</small>`;
+            } else {
+                fbDiv.className = 'feedback wrong';
+                fbDiv.innerHTML = `❌ Wrong. The answer is <strong>${correctAns}</strong>. <br> <small>Reason: ${exp}</small>`;
+            }
+        }
+
+        function checkInput(id, correct, exp) {
+            const userVal = document.getElementById(`input-${id}`).value.trim();
+            const correctVal = correct;
+            const box = document.getElementById(`qbox-${id}`);
+
+            // Prevent re-answering
+            if(box.getAttribute('data-answered') === 'true') return;
+            box.setAttribute('data-answered', 'true');
+
+            totalAttempted++;
+            if (userVal === correctVal) {
+                scoreCorrect++;
+                showFeedback(id, true, correct, exp);
+            } else {
+                scoreWrong++;
+                showFeedback(id, false, correct, exp);
+            }
+            updateScore();
+        }
+
+        function checkMCQ(id, selected, correct, exp) {
+            const box = document.getElementById(`qbox-${id}`);
+            
+            // Prevent re-answering
+            if(box.getAttribute('data-answered') === 'true') return;
+            box.setAttribute('data-answered', 'true');
+
+            totalAttempted++;
+            if (selected === correct) {
+                scoreCorrect++;
+                showFeedback(id, true, correct, exp);
+            } else {
+                scoreWrong++;
+                showFeedback(id, false, correct, exp);
+            }
+            updateScore();
+            
+            // Disable buttons visually
+            const opts = document.getElementById(`opts-${id}`).getElementsByTagName('button');
+            for(let btn of opts) {
+                btn.disabled = true;
+                if(btn.innerText === correct) btn.style.background = '#D4EDDA';
+                else if(btn.innerText === selected) btn.style.background = '#F8D7DA';
+            }
+        }
+
+        // Initialize with Set 1
+        window.onload = function() {
+            loadSet(1);
+        };
+
+    </script>
+</body>
+</html>

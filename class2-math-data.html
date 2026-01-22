@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Handling | ShanEduHub</title>
+    <style>
+        /* --- GENERAL STYLES --- */
+        :root {
+            --primary: #FF9F43; /* Orange */
+            --secondary: #54A0FF; /* Blue */
+            --accent: #FF6B6B; /* Red */
+            --green: #2ECC71; /* Green */
+            --purple: #5F27CD;
+            --bg: #FEF9E7; /* Light Yellow Background */
+            --card-bg: #FFFFFF;
+            --text: #222F3E;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background: linear-gradient(135deg, #FF9F43, #F368E0);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            border-radius: 0 0 30px 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-bottom: 5px solid #EE5253;
+        }
+
+        header h1 { margin: 0; font-size: 2.2em; text-shadow: 2px 2px 0 rgba(0,0,0,0.2); }
+        header p { font-size: 1.2em; margin-top: 10px; font-weight: bold; background: rgba(255,255,255,0.3); display: inline-block; padding: 5px 15px; border-radius: 20px; }
+
+        /* --- CARDS & SECTIONS --- */
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-left: 6px solid var(--secondary);
+            transition: transform 0.2s;
+        }
+
+        .card:hover { transform: translateY(-3px); }
+
+        h2 { color: var(--purple); border-bottom: 2px dashed #C8D6E5; padding-bottom: 10px; }
+        h3 { color: var(--accent); margin-top: 20px; }
+
+        /* --- PICTOGRAPH VISUALS (CSS) --- */
+        .picto-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 1.2em;
+        }
+        .picto-table td, .picto-table th {
+            border: 2px solid #ddd;
+            padding: 10px;
+            text-align: left;
+            vertical-align: middle;
+        }
+        .picto-table th { background: #f1f2f6; text-align: center; }
+        .picto-row-label { font-weight: bold; width: 30%; background: #fff3e0; }
+        .picto-data { letter-spacing: 5px; background: #fff; font-size: 1.5em; }
+
+        /* --- PRACTICE SECTION UI --- */
+        .quiz-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .set-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: all 0.2s;
+            color: white;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+        }
+
+        .set-btn:active { transform: translateY(2px); box-shadow: none; }
+        .btn-yellow { background-color: #F1C40F; color: #333; }
+        .btn-blue { background-color: #54A0FF; }
+        .btn-green { background-color: #2ECC71; }
+        .btn-orange { background-color: #FF9F43; }
+        .btn-red { background-color: #FF6B6B; }
+
+        .active-set { border: 3px solid #222; transform: scale(1.05); box-shadow: 0 0 10px rgba(0,0,0,0.2); }
+
+        /* --- QUESTION STYLES --- */
+        .question-box {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 15px;
+            border: 2px solid #F1F2F6;
+        }
+
+        .input-answer {
+            padding: 10px;
+            font-size: 1.1rem;
+            border: 2px solid #CCC;
+            border-radius: 10px;
+            width: 150px;
+            text-align: center;
+            outline: none;
+        }
+        .input-answer:focus { border-color: var(--secondary); }
+
+        .mcq-options button {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 12px;
+            margin: 8px 0;
+            background: #F9F9F9;
+            border: 2px solid #EEE;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+        .mcq-options button:hover { background: #EEF; border-color: var(--secondary); }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+            font-weight: bold;
+        }
+        .correct { background-color: #D5F5E3; color: #196F3D; border: 1px solid #ABEBC6; }
+        .wrong { background-color: #FADBD8; color: #943126; border: 1px solid #F5B7B1; }
+
+        /* --- SCOREBOARD --- */
+        .scoreboard {
+            position: sticky;
+            top: 0;
+            background: #222F3E;
+            color: white;
+            padding: 15px;
+            z-index: 100;
+            display: flex;
+            justify-content: space-around;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            font-weight: bold;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background-color: #222F3E;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.8em; }
+            .set-btn { width: 100%; margin-bottom: 5px; }
+            .scoreboard { font-size: 0.8em; padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>ShanEduHub 🌟</h1>
+        <p>Class 2 Maths – Data Handling 📊</p>
+    </header>
+
+    <div class="container">
+
+        <div class="card">
+            <h2>👋 What is Data?</h2>
+            <p><strong>Data</strong> is a collection of information.</p>
+            <p>Imagine counting your toys 🧸, books 📚, or fruits 🍎. The numbers you get are called <strong>Data</strong>.</p>
+            <p>We use data to compare things (Who has more? Who has less?).</p>
+        </div>
+
+        <div class="card">
+            <h2>1️⃣ What is a Pictograph? 🖼️</h2>
+            <p>A <strong>Pictograph</strong> uses pictures to show data.</p>
+            <p>It helps us count easily by looking at symbols!</p>
+            
+            <h3>Example: Fruits in a Basket</h3>
+            <table class="picto-table">
+                <tr>
+                    <td class="picto-row-label">Apple 🍎</td>
+                    <td class="picto-data">🍎 🍎 🍎 (3)</td>
+                </tr>
+                <tr>
+                    <td class="picto-row-label">Banana 🍌</td>
+                    <td class="picto-data">🍌 🍌 (2)</td>
+                </tr>
+            </table>
+            <p>👉 We can see there are <strong>more Apples</strong> than Bananas!</p>
+        </div>
+
+        <div class="card">
+            <h2>2️⃣ Counting Objects 🔢</h2>
+            <p>We count objects to answer questions.</p>
+            <div style="text-align:center; font-size:2em; margin:10px;">
+                🐱 🐱 🐱 🐶 🐶
+            </div>
+            <ul>
+                <li>Total Animals = 5</li>
+                <li>Cats = 3</li>
+                <li>Dogs = 2</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>3️⃣ Reading Charts 📉</h2>
+            <p>When looking at a chart, ask:</p>
+            <ul>
+                <li><strong>Most:</strong> Which row is the longest?</li>
+                <li><strong>Least:</strong> Which row is the shortest?</li>
+                <li><strong>Total:</strong> Count everything together.</li>
+            </ul>
+        </div>
+
+        <div class="card" style="border-left-color: #F368E0;">
+            <h2>👀 Look and Learn (Interactive)</h2>
+            
+            <div style="background:#fff; padding:10px; margin-bottom:10px; border:1px solid #ccc; border-radius:5px;">
+                <div style="font-size:1.5em; text-align:center;">⭐⭐⭐</div>
+                <strong>Q: How many stars?</strong>
+                <button onclick="this.nextElementSibling.innerText = '3 Stars'" style="margin-left:10px; padding:5px 10px;">Show Answer</button>
+                <span style="font-weight:bold; color:#F368E0; margin-left:10px;"></span>
+            </div>
+
+            <div style="background:#fff; padding:10px; border:1px solid #ccc; border-radius:5px;">
+                <strong>Q: Which has more? 🍎🍎 or 🍌?</strong>
+                <button onclick="this.nextElementSibling.innerText = 'Apples (🍎)'" style="margin-left:10px; padding:5px 10px;">Show Answer</button>
+                <span style="font-weight:bold; color:#F368E0; margin-left:10px;"></span>
+            </div>
+        </div>
+
+        <div id="practice-section">
+            <h1 style="text-align: center; color: var(--text);">🔥 Practice Time (50+ Questions)</h1>
+            
+            <div class="scoreboard">
+                <span>📊 Total: <span id="total-q">0</span></span>
+                <span>✅ Correct: <span id="correct-score">0</span></span>
+                <span>❌ Wrong: <span id="wrong-score">0</span></span>
+                <span>📈 Score: <span id="percentage">0%</span></span>
+            </div>
+            <br>
+
+            <div class="quiz-controls">
+                <button class="set-btn btn-yellow" onclick="loadSet(1)">🟡 Set 1: Count</button>
+                <button class="set-btn btn-blue" onclick="loadSet(2)">🔵 Set 2: Choice</button>
+                <button class="set-btn btn-green" onclick="loadSet(3)">🟢 Set 3: Match</button>
+                <button class="set-btn btn-orange" onclick="loadSet(4)">🟠 Set 4: Stories</button>
+                <button class="set-btn btn-red" onclick="loadSet(5)">🔴 Set 5: Expert</button>
+            </div>
+
+            <div id="quiz-container">
+                <div class="card" style="text-align: center; padding: 50px;">
+                    <h3>Select a Practice Set to start! 👆</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="background: #E0F7FA; border-left: 6px solid #00BCD4;">
+            <h2>🎮 Fun Learning Activities</h2>
+            <ol>
+                <li><strong>Toy Count:</strong> Line up all your cars or dolls. Count them and make a list!</li>
+                <li><strong>Class Survey:</strong> Ask 5 friends their favorite color. Write down the numbers.</li>
+                <li><strong>Fruit Bowl:</strong> Count how many bananas and apples are in your kitchen.</li>
+            </ol>
+        </div>
+
+        <div class="card" style="background: #fff; border-left: 6px solid #2ECC71;">
+            <h2>🎓 Learning Outcomes</h2>
+            <p><strong>Great job! Now you can:</strong></p>
+            <ul>
+                <li>✅ Read simple pictographs.</li>
+                <li>✅ Count objects in a group.</li>
+                <li>✅ Compare data (More vs Less).</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>Designed & Created by <strong>SHRISHANT YADAV</strong></p>
+        <p>🌟 ShanEduHub – Fun & Smart Learning for Class 2</p>
+        <p>&copy; All Rights Reserved</p>
+    </footer>
+
+    <script>
+        // --- DATA: 50+ UNIQUE QUESTIONS ---
+        const questionSets = {
+            1: [ // Set 1: Fill in the Blanks (Counting Visuals)
+                { id: 101, type: 'input', q: "Count the stars: ⭐ ⭐ ⭐ ⭐", a: "4", exp: "There are 4 stars." },
+                { id: 102, type: 'input', q: "Count the apples: 🍎 🍎", a: "2", exp: "There are 2 apples." },
+                { id: 103, type: 'input', q: "Count the balls: ⚽ ⚽ ⚽ ⚽ ⚽", a: "5", exp: "There are 5 balls." },
+                { id: 104, type: 'input', q: "Count the cats: 🐱", a: "1", exp: "There is 1 cat." },
+                { id: 105, type: 'input', q: "Count the trees: 🌲 🌲 🌲", a: "3", exp: "There are 3 trees." },
+                { id: 106, type: 'input', q: "Count the hearts: ❤️ ❤️ ❤️ ❤️ ❤️ ❤️", a: "6", exp: "There are 6 hearts." },
+                { id: 107, type: 'input', q: "Count the flowers: 🌸 🌸", a: "2", exp: "There are 2 flowers." },
+                { id: 108, type: 'input', q: "Count the cars: 🚗 🚗 🚗 🚗", a: "4", exp: "There are 4 cars." },
+                { id: 109, type: 'input', q: "Count the fish: 🐟 🐟 🐟 🐟 🐟 🐟 🐟", a: "7", exp: "There are 7 fish." },
+                { id: 110, type: 'input', q: "Count the suns: ☀️ ☀️ ☀️", a: "3", exp: "There are 3 suns." }
+            ],
+            2: [ // Set 2: MCQ (Interpreting Data)
+                { id: 201, type: 'mcq', q: "Chart: 🍎🍎 (Red), 🍏🍏🍏 (Green). Which has more?", options: ["Green Apples", "Red Apples"], a: "Green Apples", exp: "3 Green is more than 2 Red." },
+                { id: 202, type: 'mcq', q: "Data: 5 Boys, 3 Girls. Who is less?", options: ["Boys", "Girls"], a: "Girls", exp: "3 is less than 5." },
+                { id: 203, type: 'mcq', q: "Look: 🖊️🖊️🖊️. How many pens?", options: ["3", "4"], a: "3", exp: "Count: 1, 2, 3." },
+                { id: 204, type: 'mcq', q: "Who has the MOST toys?<br>Ram: 🧸🧸<br>Sam: 🧸🧸🧸🧸", options: ["Ram", "Sam"], a: "Sam", exp: "Sam has 4, Ram has 2." },
+                { id: 205, type: 'mcq', q: "If 1 ⭐ = 1 Star, then ⭐⭐⭐ = ?", options: ["3 Stars", "5 Stars"], a: "3 Stars", exp: "Simple counting." },
+                { id: 206, type: 'mcq', q: "Which group is equal to 4?<br>A: 🎈🎈<br>B: 🎈🎈🎈🎈", options: ["A", "B"], a: "B", exp: "Group B has 4 balloons." },
+                { id: 207, type: 'mcq', q: "Data: 2 Dogs, 2 Cats. Are they equal?", options: ["Yes", "No"], a: "Yes", exp: "2 is equal to 2." },
+                { id: 208, type: 'mcq', q: "Look: 🍪🍪🍪🍪🍪. If I eat 2, how many left?", options: ["3", "2"], a: "3", exp: "5 - 2 = 3." },
+                { id: 209, type: 'mcq', q: "Which is the smallest number? 2, 5, 1.", options: ["2", "1", "5"], a: "1", exp: "1 is the smallest." },
+                { id: 210, type: 'mcq', q: "Total fruits: 🍌 + 🍎 = ?", options: ["2 Fruits", "3 Fruits"], a: "2 Fruits", exp: "1 Banana + 1 Apple = 2 Fruits." }
+            ],
+            3: [ // Set 3: Match / Logic (10 Q)
+                { id: 301, type: 'mcq', q: "Match: 🔴🔴🔴 matches with?", options: ["Number 3", "Number 2"], a: "Number 3", exp: "There are 3 dots." },
+                { id: 302, type: 'mcq', q: "Match: 5 Fingers matches with?", options: ["🖐️", "✌️"], a: "🖐️", exp: "Hand shows 5 fingers." },
+                { id: 303, type: 'mcq', q: "Match: 'Data' means?", options: ["Information", "Drawing"], a: "Information", exp: "Data is info we count." },
+                { id: 304, type: 'mcq', q: "Match: Pictograph matches with?", options: ["Picture Graph", "Number List"], a: "Picture Graph", exp: "Uses pictures." },
+                { id: 305, type: 'mcq', q: "Match: 🐰🐰 + 🐰 matches with?", options: ["3 Rabbits", "2 Rabbits"], a: "3 Rabbits", exp: "2 + 1 = 3." },
+                { id: 306, type: 'mcq', q: "Match: Least means?", options: ["Smallest amount", "Biggest amount"], a: "Smallest amount", exp: "Least is minimum." },
+                { id: 307, type: 'mcq', q: "Match: Most means?", options: ["Biggest amount", "Smallest amount"], a: "Biggest amount", exp: "Most is maximum." },
+                { id: 308, type: 'mcq', q: "Match: 🧊🧊🧊🧊 matches with?", options: ["4 Ice cubes", "5 Ice cubes"], a: "4 Ice cubes", exp: "Count is 4." },
+                { id: 309, type: 'mcq', q: "Match: Tally mark ||| matches with?", options: ["3", "4"], a: "3", exp: "3 vertical lines." },
+                { id: 310, type: 'mcq', q: "Match: Empty box matches with?", options: ["0", "1"], a: "0", exp: "Empty means zero." }
+            ],
+            4: [ // Set 4: Word Problems (10 Q)
+                { id: 401, type: 'mcq', q: "Tom has 3 pens. Jerry has 2 pens. Total pens?", options: ["5", "6"], a: "5", exp: "3 + 2 = 5." },
+                { id: 402, type: 'input', q: "There are 4 boys and 4 girls. Total children?", a: "8", exp: "4 + 4 = 8." },
+                { id: 403, type: 'mcq', q: "I have 5 chocolates. I eat 1. How many in data now?", options: ["4", "5"], a: "4", exp: "5 - 1 = 4." },
+                { id: 404, type: 'mcq', q: "Class A: 10 kids. Class B: 20 kids. Which class is bigger?", options: ["Class A", "Class B"], a: "Class B", exp: "20 is more than 10." },
+                { id: 405, type: 'input', q: "Box has 2 red balls and 1 blue ball. Total balls?", a: "3", exp: "2 + 1 = 3." },
+                { id: 406, type: 'mcq', q: "Data: 5 cars, 2 bikes. How many more cars?", options: ["3", "2"], a: "3", exp: "5 - 2 = 3 more cars." },
+                { id: 407, type: 'mcq', q: "Garden has 6 roses and 4 tulips. Which flower is less?", options: ["Tulips", "Roses"], a: "Tulips", exp: "4 is less than 6." },
+                { id: 408, type: 'input', q: "Zoo has 1 Lion, 1 Tiger, 1 Bear. Total animals?", a: "3", exp: "1 + 1 + 1 = 3." },
+                { id: 409, type: 'mcq', q: "If each 🍦 stands for 2 ice creams, then 🍦🍦 = ?", options: ["4", "2"], a: "4", exp: "2 + 2 = 4." },
+                { id: 410, type: 'mcq', q: "Morning: 2 eggs. Evening: 2 eggs. Total eggs eaten?", options: ["4", "0"], a: "4", exp: "2 + 2 = 4." }
+            ],
+            5: [ // Set 5: Expert/Mixed (10 Q)
+                { id: 501, type: 'mcq', q: "Look at chart:<br>A: ⭐⭐<br>B: ⭐⭐⭐⭐<br>How many more stars in B?", options: ["2", "1"], a: "2", exp: "4 - 2 = 2." },
+                { id: 502, type: 'input', q: "Count total legs: 🐕 🐕 (Hint: 1 dog = 4 legs)", a: "8", exp: "4 + 4 = 8." },
+                { id: 503, type: 'mcq', q: "Which day had most rain?<br>Mon: 💧<br>Tue: 💧💧💧", options: ["Tuesday", "Monday"], a: "Tuesday", exp: "3 drops > 1 drop." },
+                { id: 504, type: 'mcq', q: "If 🍎 = 10 apples. Then 🍎🍎 = ?", options: ["20", "2"], a: "20", exp: "10 + 10 = 20." },
+                { id: 505, type: 'mcq', q: "Complete pattern: 🔴, 🔵, 🔴, 🔵, __", options: ["🔴", "🔵"], a: "🔴", exp: "Red follows Blue." },
+                { id: 506, type: 'mcq', q: "Data: 5, 8, 2, 9. Max value?", options: ["9", "8"], a: "9", exp: "9 is the biggest number." },
+                { id: 507, type: 'input', q: "3 books + 4 books = ____ books.", a: "7", exp: "3 + 4 = 7." },
+                { id: 508, type: 'mcq', q: "Is 'Happy' a data number?", options: ["No", "Yes"], a: "No", exp: "Happy is a feeling, not a number." },
+                { id: 509, type: 'mcq', q: "You have 2 shoes (1 pair). How many shoes in 2 pairs?", options: ["4", "2"], a: "4", exp: "2 + 2 = 4." },
+                { id: 510, type: 'mcq', q: "Total fingers in 1 hand vs 2 hands?", options: ["5 vs 10", "5 vs 5"], a: "5 vs 10", exp: "1 hand = 5, 2 hands = 10." }
+            ]
+        };
+
+        // --- STATE VARIABLES ---
+        let currentSet = 1;
+        let scoreCorrect = 0;
+        let scoreWrong = 0;
+        let totalAttempted = 0;
+
+        // --- FUNCTIONS ---
+
+        function loadSet(setNum) {
+            currentSet = setNum;
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = `<h2>📝 Set ${setNum} Questions</h2>`;
+            
+            // Highlight active button
+            document.querySelectorAll('.set-btn').forEach(btn => btn.classList.remove('active-set'));
+            document.querySelector(`.set-btn:nth-child(${setNum})`).classList.add('active-set');
+
+            // Load questions
+            const questions = questionSets[setNum];
+            questions.forEach(q => {
+                const qDiv = document.createElement('div');
+                qDiv.className = 'question-box';
+                qDiv.id = `qbox-${q.id}`;
+                
+                let inputHTML = '';
+                
+                if (q.type === 'input') {
+                    inputHTML = `
+                        <p><strong>Q. ${q.q}</strong></p>
+                        <input type="text" class="input-answer" id="input-${q.id}" placeholder="?">
+                        <button class="set-btn btn-blue" style="font-size:0.8rem; padding: 5px 15px; margin-left:10px;" onclick="checkInput(${q.id}, '${q.a}', '${q.exp.replace(/'/g, "\\'")}')">Check</button>
+                    `;
+                } else if (q.type === 'mcq') {
+                    let optionsHTML = '';
+                    q.options.forEach(opt => {
+                        optionsHTML += `<button onclick="checkMCQ(${q.id}, '${opt}', '${q.a}', '${q.exp.replace(/'/g, "\\'")}')">${opt}</button>`;
+                    });
+                    inputHTML = `
+                        <p><strong>Q. ${q.q}</strong></p>
+                        <div class="mcq-options" id="opts-${q.id}">
+                            ${optionsHTML}
+                        </div>
+                    `;
+                }
+
+                qDiv.innerHTML = inputHTML + `<div class="feedback" id="feedback-${q.id}"></div>`;
+                container.appendChild(qDiv);
+            });
+        }
+
+        function updateScore() {
+            document.getElementById('correct-score').innerText = scoreCorrect;
+            document.getElementById('wrong-score').innerText = scoreWrong;
+            document.getElementById('total-q').innerText = totalAttempted;
+            
+            let percent = totalAttempted === 0 ? 0 : Math.round((scoreCorrect / totalAttempted) * 100);
+            document.getElementById('percentage').innerText = percent + "%";
+        }
+
+        function showFeedback(id, isCorrect, correctAns, exp) {
+            const fbDiv = document.getElementById(`feedback-${id}`);
+            fbDiv.style.display = 'block';
+            
+            if (isCorrect) {
+                fbDiv.className = 'feedback correct';
+                fbDiv.innerHTML = `🎉 Correct! <br> <small>${exp}</small>`;
+            } else {
+                fbDiv.className = 'feedback wrong';
+                fbDiv.innerHTML = `❌ Wrong. The answer is <strong>${correctAns}</strong>. <br> <small>Reason: ${exp}</small>`;
+            }
+        }
+
+        function checkInput(id, correct, exp) {
+            const userVal = document.getElementById(`input-${id}`).value.trim().toLowerCase();
+            const correctVal = correct.toLowerCase();
+            const box = document.getElementById(`qbox-${id}`);
+
+            // Prevent re-answering
+            if(box.getAttribute('data-answered') === 'true') return;
+            box.setAttribute('data-answered', 'true');
+
+            totalAttempted++;
+            if (userVal === correctVal) {
+                scoreCorrect++;
+                showFeedback(id, true, correct, exp);
+            } else {
+                scoreWrong++;
+                showFeedback(id, false, correct, exp);
+            }
+            updateScore();
+        }
+
+        function checkMCQ(id, selected, correct, exp) {
+            const box = document.getElementById(`qbox-${id}`);
+            
+            // Prevent re-answering
+            if(box.getAttribute('data-answered') === 'true') return;
+            box.setAttribute('data-answered', 'true');
+
+            totalAttempted++;
+            if (selected === correct) {
+                scoreCorrect++;
+                showFeedback(id, true, correct, exp);
+            } else {
+                scoreWrong++;
+                showFeedback(id, false, correct, exp);
+            }
+            updateScore();
+            
+            // Disable buttons visually
+            const opts = document.getElementById(`opts-${id}`).getElementsByTagName('button');
+            for(let btn of opts) {
+                btn.disabled = true;
+                if(btn.innerText === correct) btn.style.background = '#D5F5E3';
+                else if(btn.innerText === selected) btn.style.background = '#FADBD8';
+            }
+        }
+
+        // Initialize with Set 1
+        window.onload = function() {
+            loadSet(1);
+        };
+
+    </script>
+</body>
+</html>
