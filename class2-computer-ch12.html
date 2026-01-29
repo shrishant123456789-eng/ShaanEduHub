@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 2 Computer: Revision & Fun</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Chewy&family=Nunito:wght@400;700&display=swap');
+
+        :root {
+            --primary: #FF9F43;       /* Fun Orange */
+            --secondary: #54a0ff;     /* Sky Blue */
+            --accent: #1dd1a1;        /* Bright Green */
+            --danger: #ff6b6b;        /* Red */
+            --purple: #5f27cd;        /* Deep Purple */
+            --bg: #fff2cc;            /* Light Yellow BG */
+            --white: #ffffff;
+            --dark: #222f3e;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg);
+            background-image: radial-gradient(var(--secondary) 15%, transparent 16%);
+            background-size: 35px 35px;
+            margin: 0;
+            padding: 0;
+            color: var(--dark);
+            user-select: none;
+            padding-bottom: 80px;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background: linear-gradient(135deg, var(--purple), var(--secondary));
+            color: white;
+            padding: 15px;
+            text-align: center;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+            box-shadow: 0 10px 0 rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 { margin: 0; font-family: 'Chewy', cursive; font-size: 2.5rem; letter-spacing: 2px; text-shadow: 3px 3px 0 rgba(0,0,0,0.2); }
+        .sub-title { font-size: 1.2rem; opacity: 0.95; font-weight: bold; margin-top: 5px; }
+
+        /* --- NAV --- */
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 25px 0;
+            padding: 0 10px;
+        }
+
+        .nav-btn {
+            background: var(--white);
+            border: none;
+            color: var(--dark);
+            padding: 12px 35px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #b2bec3;
+            font-family: 'Chewy', cursive;
+            transition: transform 0.1s;
+            flex: 1;
+            max-width: 200px;
+        }
+
+        .nav-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #b2bec3; }
+        .nav-btn.active { background: var(--accent); color: white; box-shadow: 0 6px 0 #10ac84; }
+        .nav-btn.active:active { box-shadow: 0 2px 0 #10ac84; }
+
+        /* --- SECTIONS --- */
+        .section {
+            display: none;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 15px;
+            animation: slideUp 0.5s ease-out;
+        }
+        .section.active { display: block; }
+
+        /* --- REVISION CARDS --- */
+        .rev-card {
+            background: var(--white);
+            border-radius: 25px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 0 rgba(0,0,0,0.05);
+            border-left: 10px solid var(--primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rev-title {
+            font-family: 'Chewy', cursive;
+            font-size: 2rem;
+            color: var(--purple);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .rev-text { font-size: 1.2rem; line-height: 1.6; color: #555; }
+        .highlight { background: #fff2cc; padding: 2px 8px; border-radius: 8px; font-weight: bold; color: #d35400; }
+        
+        .mini-task {
+            background: #dff9fb; padding: 15px; border-radius: 15px;
+            margin-top: 15px; border: 2px dashed var(--secondary);
+            text-align: center; font-weight: bold; color: var(--dark);
+        }
+
+        /* --- GAME UI --- */
+        .score-panel {
+            background: var(--dark);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+        }
+
+        .progress-container { background: #fff; height: 18px; border-radius: 10px; margin-bottom: 20px; border: 3px solid var(--dark); overflow: hidden; }
+        .progress-bar { height: 100%; width: 0%; background: repeating-linear-gradient(45deg, var(--accent), var(--accent) 10px, #16a085 10px, #16a085 20px); transition: width 0.5s; }
+
+        .question-card {
+            background: var(--white);
+            border-radius: 25px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 0 rgba(0,0,0,0.1);
+            min-height: 350px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border: 5px solid var(--primary);
+        }
+
+        .q-text { font-size: 1.6rem; color: var(--dark); margin-bottom: 20px; font-weight: bold; font-family: 'Nunito', sans-serif; }
+        .q-emoji { font-size: 5rem; display: block; margin-bottom: 20px; animation: bounce 2s infinite; }
+
+        .options-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-top: 15px; }
+
+        .opt-btn {
+            background: #f1f2f6;
+            border: 3px solid #dfe4ea;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: transform 0.1s;
+            font-family: 'Nunito', sans-serif;
+            color: #555;
+            font-weight: bold;
+            box-shadow: 0 4px 0 #ccc;
+        }
+
+        .opt-btn:active { transform: translateY(4px); box-shadow: none; }
+        .opt-btn.correct { background: var(--accent); color: white; border-color: #10ac84; box-shadow: 0 4px 0 #10ac84; }
+        .opt-btn.wrong { background: var(--danger); color: white; border-color: #eb3b5a; box-shadow: 0 4px 0 #eb3b5a; animation: shake 0.4s; }
+
+        /* Arrange / Match styles */
+        .match-container { display: flex; justify-content: space-around; gap: 10px; margin-top: 20px; }
+        .match-box { padding: 10px; border: 2px solid #ccc; border-radius: 10px; width: 45%; cursor: pointer; }
+        .match-box.selected { border-color: var(--secondary); background: #e7f5ff; }
+
+        /* --- ANIMATIONS --- */
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        @keyframes pop { 0% { transform: scale(0); } 80% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+        /* --- MODAL --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none; justify-content: center; align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white; padding: 30px; border-radius: 25px;
+            text-align: center; width: 85%; max-width: 350px;
+            animation: pop 0.4s; border: 6px solid var(--secondary);
+        }
+        .feedback-emoji { font-size: 5rem; display: block; margin-bottom: 10px; }
+        .feedback-title { font-size: 2.5rem; margin: 0; font-family: 'Chewy', cursive; }
+        .next-btn {
+            background: var(--dark); color: white; border: none;
+            padding: 12px 35px; border-radius: 50px; font-size: 1.2rem;
+            margin-top: 20px; cursor: pointer; font-family: 'Chewy', cursive;
+            box-shadow: 0 4px 0 black;
+        }
+        .next-btn:active { transform: translateY(4px); box-shadow: none; }
+
+        /* --- FOOTER --- */
+        footer {
+            background: var(--dark); color: white; text-align: center;
+            padding: 15px; font-size: 0.8rem; position: fixed;
+            bottom: 0; width: 100%; border-top: 4px solid var(--primary);
+            z-index: 90;
+        }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>💻 Mega Revision</h1>
+    <div class="sub-title">Class 2 • Chapter 12 • Practice & Fun</div>
+</header>
+
+<div class="nav-container">
+    <button class="nav-btn active" onclick="switchTab('learn')">📘 Revision</button>
+    <button class="nav-btn" onclick="switchTab('play')">🎮 Big Quiz</button>
+</div>
+
+<div id="learn-section" class="section active">
+    
+    <div class="rev-card" style="border-left-color: var(--primary);">
+        <div class="rev-title">🖥️ Parts of a Computer</div>
+        <p class="rev-text">
+            Let's remember our computer friends! <br>
+            • <b>Monitor:</b> Looks like a TV 📺. Shows pictures.<br>
+            • <b>CPU:</b> The brain 🧠. Does all the thinking.<br>
+            • <b>Keyboard:</b> Has many keys to type ⌨️.<br>
+            • <b>Mouse:</b> Helps to point and click 🖱️.<br>
+            • <b>Printer:</b> Prints work on paper 🖨️.
+        </p>
+        <div class="mini-task">👉 Can you point to the CPU in your mind?</div>
+    </div>
+
+    <div class="rev-card" style="border-left-color: var(--secondary);">
+        <div class="rev-title">⌨️ Keyboard & Mouse Magic</div>
+        <p class="rev-text">
+            <b>Keyboard:</b><br>
+            • Alphabet Keys (A-Z) to type names.<br>
+            • Number Keys (0-9) to type age.<br>
+            • Enter Key ↵ to go to next line.<br>
+            • Spacebar is the longest key!<br><br>
+            <b>Mouse:</b><br>
+            • Left Click to select 👆.<br>
+            • Double Click to open.<br>
+            • Scroll wheel moves page up/down.
+        </p>
+    </div>
+
+    <div class="rev-card" style="border-left-color: var(--accent);">
+        <div class="rev-title">🎨 Fun with Paint</div>
+        <p class="rev-text">
+            We love drawing! Remember the tools?<br>
+            • <b>Pencil ✏️:</b> Free drawing.<br>
+            • <b>Eraser 🧼:</b> Rubs out mistakes.<br>
+            • <b>Fill Color 🪣:</b> Fills color in shapes.<br>
+            • <b>Brush 🖌️:</b> Paints thick lines.<br>
+            <i>"Drawing makes us creative!"</i>
+        </p>
+    </div>
+
+    <div class="rev-card" style="border-left-color: var(--danger);">
+        <div class="rev-title">🛡️ Be Safe & Smart</div>
+        <p class="rev-text">
+            • Sit straight on your chair 🪑.<br>
+            • Don't eat or drink near computer 🍔🚫.<br>
+            • Don't touch wires ⚡.<br>
+            • Ask parents before going online 🌐.<br>
+            • Keep passwords secret 🔐.
+        </p>
+        <div class="mini-task">👉 Show a thumbs up if you follow rules! 👍</div>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 40px;">
+        <button class="nav-btn" style="background: var(--purple); color: white; transform: scale(1.1);" onclick="switchTab('play')">Start Grand Quiz! 🚀</button>
+    </div>
+</div>
+
+<div id="play-section" class="section">
+    <div class="score-panel">
+        <div>⭐ <span id="star-count">0</span></div>
+        <div>✅ <span id="score-count">0</span> | ❌ <span id="wrong-count">0</span></div>
+        <div id="pct-score">0%</div>
+    </div>
+    
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <div class="question-card" id="game-area">
+        </div>
+</div>
+
+<div class="modal-overlay" id="feedback-modal">
+    <div class="modal-content">
+        <span class="feedback-emoji" id="modal-emoji">🌟</span>
+        <h2 class="feedback-title" id="modal-title">Excellent!</h2>
+        <button class="next-btn" onclick="nextQuestion()">Next ➡</button>
+    </div>
+</div>
+
+<footer>
+    Designed & Created by SHRISHANT YADAV<br>
+    2026 – ShanEduHub
+</footer>
+
+<script>
+/* =========================================================
+   DATABASE: 60+ UNIQUE QUESTIONS (FULL REVISION)
+   ========================================================= */
+const questions = [
+    // --- PARTS OF COMPUTER (1-10) ---
+    { t: 'mcq', q: "I look like a TV. Who am I?", a: "Monitor", o: ["Mouse", "Monitor", "CPU"], e: "📺" },
+    { t: 'mcq', q: "I am the brain of the computer.", a: "CPU", o: ["Keyboard", "CPU", "Printer"], e: "🧠" },
+    { t: 'identify', q: "Identify the Mouse:", a: "🖱️", o: ["⌨️", "🖱️", "🖨️"], e: "🐭" },
+    { t: 'mcq', q: "Which part is used to type?", a: "Keyboard", o: ["Speaker", "Keyboard", "Screen"], e: "⌨️" },
+    { t: 'tf', q: "A printer prints on paper.", a: "True", e: "📄" },
+    { t: 'mcq', q: "Speakers help us to ________.", a: "Listen", o: ["See", "Listen", "Type"], e: "🔊" },
+    { t: 'identify', q: "Identify the Printer:", a: "🖨️", o: ["🖱️", "🖨️", "💻"], e: "🖨️" },
+    { t: 'match', q: "Match: CPU", a: "Brain", o: ["Hand", "Brain", "Face"], e: "⚙️" },
+    { t: 'tf', q: "The monitor is an output device.", a: "True", e: "🖥️" },
+    { t: 'mcq', q: "We keep the mouse on a ________.", a: "Mouse Pad", o: ["Book", "Mouse Pad", "Floor"], e: "⬛" },
+
+    // --- KEYBOARD (11-20) ---
+    { t: 'mcq', q: "The longest key is ________.", a: "Spacebar", o: ["Enter", "Spacebar", "Shift"], e: "📏" },
+    { t: 'mcq', q: "Which key moves to the next line?", a: "Enter", o: ["Delete", "Enter", "Alt"], e: "↵" },
+    { t: 'identify', q: "Find the Number Key:", a: "5", o: ["A", "5", "Space"], e: "🔢" },
+    { t: 'mcq', q: "To type capital letters, use ________.", a: "Caps Lock", o: ["Tab", "Caps Lock", "Esc"], e: "🔠" },
+    { t: 'tf', q: "There are 2 Enter keys on most keyboards.", a: "True", e: "⌨️" },
+    { t: 'arrange', q: "Arrange: KEY - BOARD", a: "KEYBOARD", o: ["KEYBOARD", "BOARDKEY"], e: "🎹" },
+    { t: 'mcq', q: "Backspace erases text to the ________.", a: "Left", o: ["Right", "Left", "Up"], e: "🔙" },
+    { t: 'mcq', q: "Arrow keys are used to ________.", a: "Move Cursor", o: ["Delete", "Move Cursor", "Save"], e: "↔️" },
+    { t: 'tf', q: "We should hit keys very hard.", a: "False", e: "🔨" },
+    { t: 'mcq', q: "Which key cancels a command?", a: "Esc", o: ["Ctrl", "Esc", "Shift"], e: "❌" },
+
+    // --- MOUSE (21-30) ---
+    { t: 'mcq', q: "A mouse usually has ________ buttons.", a: "2 or 3", o: ["1", "2 or 3", "10"], e: "🖱️" },
+    { t: 'mcq', q: "Pressing the left button once is ________.", a: "Click", o: ["Double Click", "Click", "Scroll"], e: "👆" },
+    { t: 'identify', q: "Identify Scroll Wheel:", a: "⚙️", o: ["👈", "⚙️", "👉"], e: "🎡" },
+    { t: 'mcq', q: "To open a program, we use ________.", a: "Double Click", o: ["Right Click", "Double Click", "Drag"], e: "✌️" },
+    { t: 'tf', q: "We use the mouse to point at things.", a: "True", e: "👉" },
+    { t: 'match', q: "Match: RIGHT CLICK", a: "Menu", o: ["Select", "Menu", "Draw"], e: "📋" },
+    { t: 'mcq', q: "Drag and Drop is used to ________ items.", a: "Move", o: ["Delete", "Move", "Copy"], e: "🚚" },
+    { t: 'tf', q: "The mouse pointer looks like an arrow.", a: "True", e: "↖️" },
+    { t: 'mcq', q: "Scroll wheel moves the page ________.", a: "Up/Down", o: ["Left/Right", "Up/Down", "Round"], e: "↕️" },
+    { t: 'identify', q: "Correct way to hold mouse:", a: "Gentle", o: ["Tight", "Gentle", "Upside Down"], e: "✋" },
+
+    // --- PAINT & DRAWING (31-40) ---
+    { t: 'mcq', q: "Which program is used to draw?", a: "Paint", o: ["Word", "Paint", "Excel"], e: "🎨" },
+    { t: 'identify', q: "Identify Pencil Tool:", a: "✏️", o: ["🖌️", "✏️", "🧼"], e: "✏️" },
+    { t: 'mcq', q: "To fill color in a circle, use ________.", a: "Fill Tool", o: ["Brush", "Fill Tool", "Eraser"], e: "🪣" },
+    { t: 'mcq', q: "Eraser tool is used to ________.", a: "Remove mistakes", o: ["Draw lines", "Remove mistakes", "Save"], e: "🧼" },
+    { t: 'tf', q: "We can draw shapes like squares in Paint.", a: "True", e: "🟥" },
+    { t: 'mcq', q: "Where do we pick colors from?", a: "Color Palette", o: ["Ribbon", "Color Palette", "File"], e: "🌈" },
+    { t: 'arrange', q: "Arrange: FILE - SAVE", a: "FILE SAVE", o: ["FILE SAVE", "SAVE FILE"], e: "💾" },
+    { t: 'mcq', q: "Brush tool makes ________ lines.", a: "Thick", o: ["Thin", "Thick", "Invisible"], e: "🖌️" },
+    { t: 'identify', q: "Identify Text Tool:", a: "A", o: ["B", "A", "P"], e: "🔤" },
+    { t: 'tf', q: "Drawing in Paint is difficult.", a: "False", e: "😄" },
+
+    // --- SAFETY & ETIQUETTE (41-50) ---
+    { t: 'mcq', q: "Sit ________ in front of the computer.", a: "Straight", o: ["Bent", "Straight", "Sleeping"], e: "🪑" },
+    { t: 'tf', q: "It is safe to pull wires.", a: "False", e: "⚡" },
+    { t: 'mcq', q: "Keep food and drinks ________.", a: "Away", o: ["On keyboard", "Away", "On CPU"], e: "🍔" },
+    { t: 'mcq', q: "Using computer for too long hurts ________.", a: "Eyes", o: ["Ears", "Eyes", "Nose"], e: "👀" },
+    { t: 'identify', q: "Safe Habit:", a: "Clean Hands", o: ["Wet Hands", "Clean Hands", "Sticky Hands"], e: "🧼" },
+    { t: 'match', q: "Match: WIRES", a: "Don't Touch", o: ["Play", "Don't Touch", "Cut"], e: "🔌" },
+    { t: 'mcq', q: "Ask ________ before using internet.", a: "Parents", o: ["Strangers", "Parents", "Nobody"], e: "👪" },
+    { t: 'tf', q: "We should share passwords with friends.", a: "False", e: "🔐" },
+    { t: 'arrange', q: "Arrange: BE - SAFE", a: "BE SAFE", o: ["BE SAFE", "SAFE BE"], e: "🛡️" },
+    { t: 'mcq', q: "Computer room should be ________.", a: "Clean", o: ["Dirty", "Wet", "Clean"], e: "✨" },
+
+    // --- OS & INTERNET (51-65) ---
+    { t: 'mcq', q: "Windows is an ________.", a: "Operating System", o: ["Input", "Operating System", "Game"], e: "🪟" },
+    { t: 'mcq', q: "Small pictures on desktop are ________.", a: "Icons", o: ["Files", "Icons", "Photos"], e: "🖼️" },
+    { t: 'identify', q: "Identify Start Button:", a: "Start", o: ["Stop", "Start", "Pause"], e: "🔘" },
+    { t: 'mcq', q: "Internet connects computers ________.", a: "Worldwide", o: ["In one room", "Worldwide", "Never"], e: "🌐" },
+    { t: 'tf', q: "We can watch cartoons on the internet.", a: "True", e: "🎬" },
+    { t: 'mcq', q: "Google helps us ________.", a: "Search", o: ["Draw", "Search", "Sleep"], e: "🔍" },
+    { t: 'match', q: "Match: YOUTUBE", a: "Videos", o: ["Music", "Videos", "Books"], e: "▶️" },
+    { t: 'mcq', q: "Do not talk to ________ online.", a: "Strangers", o: ["Friends", "Teachers", "Strangers"], e: "🚫" },
+    { t: 'identify', q: "Which bar is at the bottom?", a: "Taskbar", o: ["Titlebar", "Taskbar", "Scrollbar"], e: "⬇️" },
+    { t: 'mcq', q: "Booting means starting the ________.", a: "Computer", o: ["Car", "Computer", "Fan"], e: "🚀" },
+    { t: 'tf', q: "We can use internet to learn.", a: "True", e: "📚" },
+    { t: 'mcq', q: "To close a window, click ________.", a: "X", o: ["-", "X", "+"], e: "❎" },
+    { t: 'arrange', q: "Arrange: ON - LINE", a: "ONLINE", o: ["ONLINE", "LINEON"], e: "📶" },
+    { t: 'mcq', q: "Which key deletes from left?", a: "Backspace", o: ["Delete", "Backspace", "Space"], e: "⬅️" },
+    { t: 'tf', q: "Computers never get tired.", a: "True", e: "🤖" }
+];
+
+/* =========================================================
+   GAME LOGIC ENGINE
+   ========================================================= */
+let currentQIndex = 0;
+let score = 0;
+let wrong = 0;
+let stars = 0;
+let shuffledQ = [];
+
+function initGame() {
+    shuffledQ = questions.sort(() => Math.random() - 0.5);
+    currentQIndex = 0;
+    score = 0;
+    wrong = 0;
+    stars = 0;
+    updateUI();
+    loadQuestion();
+}
+
+function switchTab(tab) {
+    document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+    
+    document.getElementById(tab + '-section').classList.add('active');
+    document.querySelector(`button[onclick="switchTab('${tab}')"]`).classList.add('active');
+
+    if(tab === 'play') {
+        initGame();
+    }
+}
+
+function loadQuestion() {
+    if (currentQIndex >= shuffledQ.length) {
+        showFinalScore();
+        return;
+    }
+
+    const q = shuffledQ[currentQIndex];
+    const area = document.getElementById('game-area');
+    
+    // Progress
+    const pct = ((currentQIndex) / shuffledQ.length) * 100;
+    document.getElementById('progress-bar').style.width = pct + "%";
+
+    let html = ``;
+    if(q.e) html += `<span class="q-emoji">${q.e}</span>`;
+    
+    let title = `Q${currentQIndex + 1}: `;
+    if(q.t === 'identify') title = "Identify: ";
+    if(q.t === 'arrange') title = "Arrange: ";
+    
+    html += `<div class="q-text">${title}${q.q}</div>`;
+
+    // Render Options
+    if (q.t === 'mcq' || q.t === 'identify' || q.t === 'match' || q.t === 'arrange') {
+        html += `<div class="options-grid">`;
+        let opts = q.o.sort(() => Math.random() - 0.5);
+        opts.forEach(opt => {
+            html += `<button class="opt-btn" onclick="check('${opt}', '${q.a}', this)">${opt}</button>`;
+        });
+        html += `</div>`;
+    } 
+    else if (q.t === 'tf') {
+        html += `<div class="options-grid">`;
+        html += `<button class="opt-btn" onclick="check('True', '${q.a}', this)">True ✅</button>`;
+        html += `<button class="opt-btn" onclick="check('False', '${q.a}', this)">False ❌</button>`;
+        html += `</div>`;
+    }
+
+    area.innerHTML = html;
+}
+
+// --- LOGIC FUNCTIONS ---
+
+function check(selected, correct, btn) {
+    if (selected === correct) {
+        btn.classList.add('correct');
+        handleResult(true);
+    } else {
+        btn.classList.add('wrong');
+        handleResult(false);
+    }
+}
+
+// --- RESULT HANDLING ---
+
+function handleResult(isCorrect) {
+    if (isCorrect) {
+        score++;
+        stars += 5;
+        updateUI();
+        showModal(true);
+    } else {
+        wrong++;
+        updateUI();
+        showModal(false);
+    }
+}
+
+function updateUI() {
+    document.getElementById('score-count').innerText = score;
+    document.getElementById('wrong-count').innerText = wrong;
+    document.getElementById('star-count').innerText = stars;
+    
+    let total = currentQIndex + 1;
+    let attempts = score + wrong;
+    let pct = attempts === 0 ? 0 : Math.round((score / attempts) * 100);
+    document.getElementById('pct-score').innerText = pct + "%";
+}
+
+function showModal(isSuccess) {
+    const modal = document.getElementById('feedback-modal');
+    const title = document.getElementById('modal-title');
+    const emoji = document.getElementById('modal-emoji');
+
+    if (isSuccess) {
+        title.innerText = "Excellent!";
+        title.style.color = "#1dd1a1";
+        emoji.innerText = "⭐";
+    } else {
+        title.innerText = "Try Again ❌";
+        title.style.color = "#ff6b6b";
+        emoji.innerText = "😊";
+    }
+
+    modal.style.display = 'flex';
+}
+
+function nextQuestion() {
+    document.getElementById('feedback-modal').style.display = 'none';
+    currentQIndex++;
+    loadQuestion();
+}
+
+function showFinalScore() {
+    const area = document.getElementById('game-area');
+    area.innerHTML = `
+        <div style="font-size:5rem;">🏆</div>
+        <h2 style="font-family:'Chewy', cursive; font-size:2.5rem;">Game Over!</h2>
+        <p style="font-size:1.5rem;">Score: <b>${score}</b></p>
+        <p style="font-size:1.5rem;">Stars: <b>${stars} ⭐</b></p>
+        <button class="nav-btn" onclick="initGame()" style="background:var(--secondary);">Play Again 🔄</button>
+    `;
+    document.getElementById('progress-bar').style.width = "100%";
+}
+</script>
+
+</body>
+</html>

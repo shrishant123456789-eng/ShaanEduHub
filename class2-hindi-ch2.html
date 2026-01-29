@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>कक्षा 2 - हिंदी: शब्द पहचान व शब्द भंडार</title>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #54a0ff; /* Soft Blue */
+            --secondary: #ff9f43; /* Orange */
+            --accent: #1dd1a1; /* Green */
+            --danger: #ff6b6b; /* Red */
+            --text: #2c3e50;
+            --bg: #f7f1e3;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Baloo 2', cursive;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            padding-bottom: 120px; /* Space for score panel */
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        /* Header Design */
+        header {
+            background: linear-gradient(135deg, var(--primary), #2e86de);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            border-radius: 0 0 30px 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+        }
+
+        h1 { margin: 0; font-size: 2.2rem; text-shadow: 2px 2px rgba(0,0,0,0.1); }
+        .subtitle { font-size: 1.1rem; opacity: 0.95; margin-top: 5px; }
+
+        /* Card System */
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            border-left: 8px solid var(--secondary);
+            transition: transform 0.2s;
+        }
+
+        .card:hover { transform: translateY(-3px); }
+
+        h2 { color: var(--secondary); border-bottom: 2px dashed #eee; padding-bottom: 8px; font-size: 1.8rem; }
+        
+        .concept-box {
+            background: #fff9e6;
+            border: 2px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 15px;
+            margin: 10px 0;
+        }
+
+        .highlight { color: var(--danger); font-weight: 800; }
+        .example { color: var(--primary); font-weight: 800; }
+
+        ul { padding-left: 20px; }
+        li { margin-bottom: 8px; }
+
+        /* Quiz Section Styles */
+        .quiz-header {
+            text-align: center;
+            background: var(--accent);
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            margin: 40px 0 20px 0;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border-top: 5px solid var(--primary);
+        }
+
+        .q-text { font-size: 1.3rem; font-weight: 600; margin-bottom: 15px; }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background: #f1f2f6;
+            border: 2px solid #dfe4ea;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            font-family: 'Baloo 2', cursive;
+            transition: all 0.2s;
+            text-align: left;
+            position: relative;
+        }
+
+        .option-btn:hover { background: #eccc68; border-color: #eccc68; color: white; }
+
+        .option-btn.correct {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .option-btn.wrong {
+            background: var(--danger);
+            border-color: var(--danger);
+            color: white;
+            opacity: 0.8;
+        }
+
+        .feedback-msg {
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 1rem;
+            min-height: 20px;
+        }
+
+        /* Score Panel */
+        #score-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            padding: 10px 15px;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+            border-top: 5px solid var(--primary);
+        }
+
+        .score-box { text-align: center; }
+        .score-val { font-size: 1.4rem; font-weight: 800; display: block; line-height: 1; }
+        .score-lbl { font-size: 0.8rem; color: #7f8c8d; }
+
+        .progress-track {
+            flex-grow: 1;
+            margin: 0 20px;
+            background: #dfe6e9;
+            height: 12px;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+            width: 0%;
+            transition: width 0.5s ease-out;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #bdc3c7;
+            font-size: 0.9rem;
+            margin-top: 50px;
+        }
+
+        /* Animation */
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .pop-anim { animation: pop 0.3s ease; }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .options-grid { grid-template-columns: 1fr; }
+            h1 { font-size: 1.8rem; }
+            #score-panel { flex-wrap: wrap; }
+            .progress-track { order: 3; width: 100%; margin: 10px 0 0 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>कक्षा 2 - हिंदी 📘</h1>
+        <div class="subtitle">अध्याय 2: शब्द पहचान व शब्द भंडार 🧠</div>
+    </header>
+
+    <div class="container">
+        
+        <div id="notes-section">
+            
+            <div class="card">
+                <h2>1️⃣ भूमिका (Introduction) 👋</h2>
+                <p>नमस्ते प्यारे बच्चों! 🌟 आज हम शब्दों के जादू को समझेंगे। सोचो, अगर शब्द नहीं होते, तो हम अपनी बात कैसे कहते? 🤷‍♂️</p>
+                <p>जब हम वर्णों (अक्षरों) को सही तरीके से जोड़ते हैं, तो <strong>'शब्द'</strong> बनते हैं। जैसे 'क' + 'म' + 'ल' मिलकर बनता है <strong>'कमल'</strong> 🪷। आओ, शब्दों के खजाने को खोलें!</p>
+            </div>
+
+            <div class="card">
+                <h2>2️⃣ चित्र देखकर शब्द पहचान 🖼️</h2>
+                <p>बच्चों, हम किसी भी चीज़ को देखकर उसका नाम बता सकते हैं।</p>
+                <div class="concept-box">
+                    <ul>
+                        <li>अगर आप एक गोल, लाल और मीठा फल देखते हैं, तो आप कहते हैं – <strong>सेब (Apple)</strong> 🍎</li>
+                        <li>अगर आसमान में चमकता हुआ गोला देखते हैं, तो कहते हैं – <strong>सूरज (Sun)</strong> ☀️</li>
+                        <li>बारिश में हम जो ओढ़ते हैं – <strong>छाता (Umbrella)</strong> ☔</li>
+                    </ul>
+                </div>
+                <p>चीज़ों को देखकर उनका सही नाम जानना ही 'शब्द पहचान' है।</p>
+            </div>
+
+            <div class="card">
+                <h2>3️⃣ एक शब्द → अनेक अर्थ (Magic Words) ✨</h2>
+                <p>कभी-कभी एक ही शब्द के दो अलग-अलग मतलब होते हैं। है न मज़ेदार?</p>
+                <ul>
+                    <li><strong>हार:</strong> एक होता है 'गले का हार' 📿 और एक होता है 'खेल में हार जाना' 😞।</li>
+                    <li><strong>पर:</strong> एक होता है 'पक्षी के पर (पंख)' 🕊️ और एक होता है 'मेज पर (ऊपर)'।</li>
+                    <li><strong>जल:</strong> एक मतलब 'पानी' 💧 और एक मतलब 'हाथ जल जाना' 🔥।</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>4️⃣ शब्दों का सही प्रयोग ✅</h2>
+                <p>शब्दों को सही जगह रखना बहुत ज़रूरी है, वरना बात समझ नहीं आएगी।</p>
+                <div class="concept-box">
+                    <p>❌ <em>गलत:</em> "है खाता राम खाना।" (अजीब लग रहा है न?)</p>
+                    <p>✅ <em>सही:</em> "राम खाना खाता है।" (यह बिल्कुल सही है! 👍)</p>
+                </div>
+                <p>हमेशा बोलते समय सोचो कि शब्द सही क्रम में हैं या नहीं।</p>
+            </div>
+
+            <div class="card">
+                <h2>5️⃣ संज्ञा (नाम वाले शब्द) 🏷️</h2>
+                <p>दुनिया में हर चीज़ का एक नाम होता है। <strong>नाम को ही संज्ञा कहते हैं।</strong></p>
+                <ul>
+                    <li>🧑 <strong>व्यक्ति का नाम:</strong> राम, सीता, मोहन, दादी।</li>
+                    <li>🦁 <strong>जानवर का नाम:</strong> शेर, कुत्ता, बिल्ली।</li>
+                    <li>🏰 <strong>जगह का नाम:</strong> स्कूल, घर, दिल्ली, बगीचा।</li>
+                    <li>🎁 <strong>वस्तु का नाम:</strong> किताब, पेन, कुर्सी, गेंद।</li>
+                </ul>
+                <p>याद रखो: <strong>"नाम = संज्ञा"</strong></p>
+            </div>
+
+            <div class="card">
+                <h2>6️⃣ सर्वनाम (सबका नाम) 🔄</h2>
+                <p>बार-बार नाम लेना अच्छा नहीं लगता। इसलिए हम नाम की जगह कुछ और शब्द लगाते हैं। इन्हें <strong>सर्वनाम</strong> कहते हैं।</p>
+                <p>जैसे: "राम अच्छा लड़का है। <strong>वह</strong> स्कूल जाता है।"</p>
+                <p>यहाँ हमने राम की जगह <strong>'वह'</strong> बोला।</p>
+                <div class="concept-box">
+                    <strong>मुख्य सर्वनाम:</strong> मैं, तुम, वह, यह, हम, आप, उसका।
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>7️⃣ क्रिया (काम वाले शब्द) 🏃</h2>
+                <p>हम दिन भर कुछ न कुछ करते हैं। जो शब्द हमें काम के बारे में बताते हैं, वे <strong>क्रिया</strong> हैं।</p>
+                <ul>
+                    <li>खाना 🍲, पीना 🥤, सोना 😴</li>
+                    <li>दौड़ना 🏃, पढ़ना 📖, खेलना 🏏</li>
+                    <li>हँसना 😄, रोना 😭</li>
+                </ul>
+                <p>जिस शब्द से पता चले कि <strong>"काम हो रहा है"</strong>, वह क्रिया है।</p>
+            </div>
+
+            <div class="card">
+                <h2>8️⃣ विशेषण (गुण बताने वाले शब्द) 🌟</h2>
+                <p>कुछ शब्द हमें बताते हैं कि कोई चीज़ <strong>कैसी</strong> है। इन्हें <strong>विशेषण</strong> कहते हैं।</p>
+                <ul>
+                    <li><strong>लाल</strong> सेब 🍎 (सेब कैसा है? लाल)</li>
+                    <li><strong>गर्म</strong> चाय ☕ (चाय कैसी है? गर्म)</li>
+                    <li><strong>मोटा</strong> हाथी 🐘 (हाथी कैसा है? मोटा)</li>
+                    <li><strong>मीठा</strong> आम 🥭 (आम कैसा है? मीठा)</li>
+                </ul>
+                <p>रंग, आकार, स्वाद बताने वाले शब्द ही विशेषण हैं।</p>
+            </div>
+
+        </div>
+
+        <div id="quiz-section">
+            <div class="quiz-header">
+                <h2 style="color:white; border:none; margin:0;">अभ्यास का समय (Practice Time) 🎯</h2>
+                <p style="margin:0;">नीचे दिए गए 50 प्रश्नों के सही उत्तर चुनें!</p>
+            </div>
+            
+            <div id="questions-container">
+                </div>
+        </div>
+
+        <footer>
+            Designed & Created by SHRISHANT YADAV<br>
+            2026 – ShanEduHub
+        </footer>
+
+    </div>
+
+    <div id="score-panel">
+        <div class="score-box">
+            <span class="score-val" id="correct-count" style="color:var(--accent)">0</span>
+            <span class="score-lbl">सही ✅</span>
+        </div>
+        <div class="score-box">
+            <span class="score-val" id="wrong-count" style="color:var(--danger)">0</span>
+            <span class="score-lbl">गलत ❌</span>
+        </div>
+        <div class="progress-track">
+            <div class="progress-fill" id="progress-bar"></div>
+        </div>
+        <div class="score-box">
+            <span class="score-val" id="star-rating">⭐ 0</span>
+            <span class="score-lbl">सितारे</span>
+        </div>
+        <div class="score-box" style="margin-left: 10px;">
+            <span class="score-val" id="percentage">0%</span>
+        </div>
+    </div>
+
+    <script>
+        // 50+ UNIQUE QUESTIONS DATABASE
+        const questionBank = [
+            // --- संज्ञा (Noun) ---
+            { id: 1, q: "'राम स्कूल जाता है।' इस वाक्य में संज्ञा (नाम) कौन सा है?", options: ["जाता", "राम", "है", "वह"], ans: 1 },
+            { id: 2, q: "इनमें से कौन सा शब्द एक जानवर का नाम है?", options: ["शेर", "दौड़ना", "लाल", "तुम"], ans: 0 },
+            { id: 3, q: "इनमें से किसी जगह (Place) का नाम चुनें:", options: ["पानी", "बगीचा", "मीठा", "हँसना"], ans: 1 },
+            { id: 4, q: "जो शब्द किसी वस्तु का नाम हो, उसे क्या कहते हैं?", options: ["क्रिया", "संज्ञा", "विशेषण", "सर्वनाम"], ans: 1 },
+            { id: 5, q: "चित्र (विवरण): 'जिससे हम लिखते हैं'। उसका नाम क्या है?", options: ["कलम", "कुर्सी", "पंखा", "जूता"], ans: 0 },
+            { id: 6, q: "इनमें से संज्ञा शब्द कौन सा नहीं है?", options: ["किताब", "दिल्ली", "खेलना", "रवि"], ans: 2 },
+            { id: 7, q: "'मेज' (Table) किस प्रकार का शब्द है?", options: ["संज्ञा", "क्रिया", "विशेषण", "कोई नहीं"], ans: 0 },
+
+            // --- सर्वनाम (Pronoun) ---
+            { id: 8, q: "राम मेरा दोस्त है। ____ बहुत अच्छा है। (सही शब्द भरें)", options: ["तुम", "वह", "मैं", "हम"], ans: 1 },
+            { id: 9, q: "जो शब्द संज्ञा की जगह आते हैं, उन्हें क्या कहते हैं?", options: ["क्रिया", "सर्वनाम", "संज्ञा", "वर्ण"], ans: 1 },
+            { id: 10, q: "इनमें से सर्वनाम पहचानिए:", options: ["सीता", "हम", "दौड़ना", "सुंदर"], ans: 1 },
+            { id: 11, q: "'मैं खाना खा रहा हूँ।' इसमें सर्वनाम क्या है?", options: ["खाना", "खा", "मैं", "हूँ"], ans: 2 },
+            { id: 12, q: "सही सर्वनाम चुनें: '____ क्या कर रहे हो?'", options: ["मैं", "तुम", "वह", "हम"], ans: 1 },
+            { id: 13, q: "क्या 'रमेश' एक सर्वनाम है?", options: ["हाँ", "नहीं", "पता नहीं", "शायद"], ans: 1 },
+            { id: 14, q: "'यह मेरी किताब है।' इसमें सर्वनाम शब्द है:", options: ["किताब", "मेरी", "यह", "है"], ans: 2 },
+
+            // --- क्रिया (Verb) ---
+            { id: 15, q: "इनमें से 'काम वाला शब्द' (Action Word) कौन सा है?", options: ["दौड़ना", "लड़का", "कुर्सी", "हरा"], ans: 0 },
+            { id: 16, q: "पक्षी आकाश में ____ रहे हैं।", options: ["उड़", "सो", "खा", "चल"], ans: 0 },
+            { id: 17, q: "चित्र (विवरण): 'बच्चा बिस्तर पर लेटा है, आँखें बंद हैं'। वह क्या कर रहा है?", options: ["नाच रहा है", "सो रहा है", "रो रहा है", "खा रहा है"], ans: 1 },
+            { id: 18, q: "मोहन ने पानी ____।", options: ["खाया", "पिया", "सोया", "काटा"], ans: 1 },
+            { id: 19, q: "इनमें से क्रिया शब्द चुनें:", options: ["सुंदर", "रोना", "मेज", "आप"], ans: 1 },
+            { id: 20, q: "मछली पानी में क्या करती है?", options: ["उड़ती है", "तैरती है", "दौड़ती है", "लिखती है"], ans: 1 },
+            { id: 21, q: "'लिखना' एक ____ है।", options: ["संज्ञा", "क्रिया", "विशेषण", "सर्वनाम"], ans: 1 },
+
+            // --- विशेषण (Adjective) ---
+            { id: 22, q: "सेब का रंग ____ होता है। (गुण बताएँ)", options: ["लाल", "नीला", "काला", "सफेद"], ans: 0 },
+            { id: 23, q: "'चाय गर्म है।' इसमें विशेषण (गुण) शब्द कौन सा है?", options: ["चाय", "गर्म", "है", "कोई नहीं"], ans: 1 },
+            { id: 24, q: "हाथी बहुत ____ जानवर है।", options: ["छोटा", "बड़ा", "पतला", "हल्का"], ans: 1 },
+            { id: 25, q: "नींबू का स्वाद कैसा होता है?", options: ["मीठा", "खट्टा", "कड़वा", "नमकीन"], ans: 1 },
+            { id: 26, q: "'सुंदर फूल'। इसमें विशेषण क्या है?", options: ["फूल", "सुंदर", "दोनों", "कोई नहीं"], ans: 1 },
+            { id: 27, q: "इनमें से विशेषण शब्द पहचानें:", options: ["मीठा", "आम", "खाना", "लड़का"], ans: 0 },
+            { id: 28, q: "कौआ ____ होता है।", options: ["सफेद", "काला", "हरा", "लाल"], ans: 1 },
+
+            // --- शब्द पहचान (Picture & Vocab) ---
+            { id: 29, q: "बारिश में हम क्या इस्तेमाल करते हैं?", options: ["स्वेटर", "छाता", "धूप का चश्मा", "टोपी"], ans: 1 },
+            { id: 30, q: "जो हमें स्कूल में पढ़ाते हैं, उन्हें क्या कहते हैं?", options: ["डॉक्टर", "अध्यापक (शिक्षक)", "दर्जी", "धोबी"], ans: 1 },
+            { id: 31, q: "सब्जियों का राजा किसे कहते हैं?", options: ["आलू", "भिंडी", "टमाटर", "बैंगन"], ans: 0 },
+            { id: 32, q: "दिवाली पर हम क्या जलाते हैं?", options: ["पानी", "दीये", "किताबें", "पत्ते"], ans: 1 },
+            { id: 33, q: "चित्र (विवरण): 'आसमान में रात को चमकता है'।", options: ["सूरज", "चाँद", "बादल", "पक्षी"], ans: 1 },
+            
+            // --- एक शब्द - अनेक अर्थ / सही शब्द ---
+            { id: 34, q: "'जल' का दूसरा मतलब क्या है?", options: ["आग", "पानी", "हवा", "मिट्टी"], ans: 1 },
+            { id: 35, q: "'हार' शब्द का एक मतलब 'पराजय' है, तो दूसरा मतलब क्या है?", options: ["जीत", "माला (गले की)", "सोना", "रोना"], ans: 1 },
+            { id: 36, q: "सही शब्द चुनें: 'मुझे ____ लग रही है।' (Food)", options: ["प्यास", "भूख", "नींद", "धूप"], ans: 1 },
+            { id: 37, q: "सही वाक्य चुनें:", options: ["मैं जाता हूँ घर।", "घर मैं जाता हूँ।", "मैं घर जाता हूँ।", "जाता हूँ घर मैं।"], ans: 2 },
+            { id: 38, q: "सही वाक्य चुनें:", options: ["लड़की खेल रहा है।", "लड़की खेल रही है।", "लड़की खेल रहे हैं।", "लड़की खेलता है।"], ans: 1 },
+
+            // --- Mixed / Logic ---
+            { id: 39, q: "इनमें से बेमेल (Odd one out) शब्द चुनें:", options: ["केला", "आम", "सेब", "आलू"], ans: 3 }, // आलू सब्जी है
+            { id: 40, q: "इनमें से बेमेल शब्द चुनें:", options: ["कार", "बस", "साइकिल", "किताब"], ans: 3 }, // किताब वाहन नहीं है
+            { id: 41, q: "घोड़ा कहाँ रहता है?", options: ["गुफा में", "अस्तबल में", "घर में", "पानी में"], ans: 1 },
+            { id: 42, q: "जो कपड़े सिलता है, उसे क्या कहते हैं?", options: ["मोची", "दर्जी", "धोबी", "माली"], ans: 1 },
+            { id: 43, q: "सप्ताह (Week) में कितने दिन होते हैं?", options: ["पाँच", "सात", "दस", "बारह"], ans: 1 },
+            { id: 44, q: "'ठंडा' का विलोम (Ulta) शब्द क्या है?", options: ["गर्म", "नरम", "साफ", "गीला"], ans: 0 },
+            { id: 45, q: "'दिन' का विलोम शब्द क्या है?", options: ["सुबह", "शाम", "रात", "दोपहर"], ans: 2 },
+            
+            // --- Challenge ---
+            { id: 46, q: "'बिल्ली मेज के नीचे है।' इस वाक्य में 'नीचे' क्या बता रहा है?", options: ["नाम", "जगह/स्थिति", "काम", "गुण"], ans: 1 },
+            { id: 47, q: "सही मिलान: डॉक्टर -> ?", options: ["पढ़ाता है", "इलाज करता है", "गाड़ी चलाता है", "कपड़े धोता है"], ans: 1 },
+            { id: 48, q: "रिक्त स्थान: तोता ____ रंग का होता है।", options: ["लाल", "हरा", "काला", "नीला"], ans: 1 },
+            { id: 49, q: "इनमें से कौन सा शब्द सही लिखा है?", options: ["स्कुल", "सकूल", "स्कूल", "सकुल"], ans: 2 },
+            { id: 50, q: "हम आँखों से क्या करते हैं?", options: ["सुनते हैं", "सूंघते हैं", "देखते हैं", "चलते हैं"], ans: 2 }
+        ];
+
+        // Game Variables
+        let correctScore = 0;
+        let wrongScore = 0;
+        let totalAnswered = 0;
+        const totalQuestions = questionBank.length;
+
+        // Render Questions
+        const quizContainer = document.getElementById('questions-container');
+
+        function initQuiz() {
+            questionBank.forEach((q, index) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.innerHTML = `
+                    <div class="q-text">प्रश्न ${index + 1}: ${q.q}</div>
+                    <div class="options-grid" id="opt-grid-${q.id}"></div>
+                    <div class="feedback-msg" id="feedback-${q.id}"></div>
+                `;
+
+                const optGrid = card.querySelector(`#opt-grid-${q.id}`);
+                
+                q.options.forEach((opt, optIndex) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerText = opt;
+                    btn.onclick = () => checkAnswer(q.id, optIndex, q.ans, btn);
+                    optGrid.appendChild(btn);
+                });
+
+                quizContainer.appendChild(card);
+            });
+        }
+
+        function checkAnswer(qId, selectedIndex, correctIndex, btnElement) {
+            const grid = document.getElementById(`opt-grid-${qId}`);
+            const buttons = grid.getElementsByClassName('option-btn');
+            const feedback = document.getElementById(`feedback-${qId}`);
+
+            // Prevent changing answer
+            for(let btn of buttons) {
+                btn.disabled = true;
+                btn.style.cursor = 'default';
+            }
+
+            if(selectedIndex === correctIndex) {
+                btnElement.classList.add('correct');
+                btnElement.classList.add('pop-anim');
+                feedback.innerText = "शाबाश! बिल्कुल सही! 🎉";
+                feedback.style.color = "var(--accent)";
+                correctScore++;
+            } else {
+                btnElement.classList.add('wrong');
+                buttons[correctIndex].classList.add('correct'); // Show correct answer
+                feedback.innerText = "ओह! गलत हो गया। सही उत्तर हरे रंग में है।";
+                feedback.style.color = "var(--danger)";
+                wrongScore++;
+            }
+
+            totalAnswered++;
+            updateScoreBoard();
+        }
+
+        function updateScoreBoard() {
+            const percentage = Math.round((correctScore / totalQuestions) * 100);
+            
+            document.getElementById('correct-count').innerText = correctScore;
+            document.getElementById('wrong-count').innerText = wrongScore;
+            document.getElementById('percentage').innerText = percentage + "%";
+            document.getElementById('progress-bar').style.width = percentage + "%";
+
+            let stars = "0";
+            if (percentage > 20) stars = "⭐";
+            if (percentage > 40) stars = "⭐⭐";
+            if (percentage > 60) stars = "⭐⭐⭐";
+            if (percentage > 80) stars = "⭐⭐⭐⭐";
+            if (percentage === 100) stars = "⭐⭐⭐⭐⭐";
+            
+            document.getElementById('star-rating').innerText = stars;
+        }
+
+        // Start
+        initQuiz();
+
+    </script>
+</body>
+</html>

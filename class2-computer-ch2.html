@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 2 Computer: Chapter 2 - Parts of a Computer</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Nunito:wght@400;700&display=swap');
+
+        :root {
+            --primary: #FF6B6B;       /* Coral Red */
+            --secondary: #4ECDC4;     /* Teal */
+            --accent: #FFE66D;        /* Yellow */
+            --purple: #6C5CE7;        /* Soft Purple */
+            --dark: #2D3436;
+            --light: #F7FFF7;
+            --success: #00B894;
+            --error: #FF7675;
+            --card-shadow: 0 8px 0 rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #E0F7FA;
+            background-image: radial-gradient(#B2EBF2 20%, transparent 20%);
+            background-size: 25px 25px;
+            margin: 0;
+            padding: 0;
+            color: var(--dark);
+            user-select: none;
+            padding-bottom: 70px; /* Space for footer */
+        }
+
+        /* --- HEADER --- */
+        header {
+            background: linear-gradient(135deg, var(--purple), #A29BFE);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 { margin: 0; font-family: 'Comic Neue', cursive; font-size: 2.2rem; text-shadow: 2px 2px 0 rgba(0,0,0,0.1); }
+        .sub-title { font-size: 1rem; opacity: 0.9; margin-top: 5px; font-weight: bold; letter-spacing: 1px; }
+
+        /* --- NAVIGATION --- */
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .nav-btn {
+            background: white;
+            border: none;
+            color: var(--dark);
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 0 #ccc;
+            font-family: 'Comic Neue', cursive;
+        }
+
+        .nav-btn:active { transform: translateY(5px); box-shadow: none; }
+        .nav-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 5px 0 #c0392b;
+        }
+
+        /* --- SECTIONS --- */
+        .section {
+            display: none;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 15px;
+            animation: fadeIn 0.5s ease-out;
+        }
+        .section.active { display: block; }
+
+        /* --- NOTE CARDS --- */
+        .note-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: var(--card-shadow);
+            border: 2px solid #eee;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .note-card::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; height: 100%; width: 8px;
+            background: var(--secondary);
+        }
+
+        .note-title { font-size: 1.5rem; color: var(--purple); font-weight: bold; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; font-family: 'Comic Neue', cursive; }
+        .note-text { font-size: 1.1rem; line-height: 1.7; color: #444; }
+        .highlight { background: #FFF3CD; padding: 2px 6px; border-radius: 5px; font-weight: bold; color: #D35400; }
+        .emoji-big { font-size: 3rem; float: right; margin-left: 10px; filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.1)); }
+
+        /* --- GAME UI --- */
+        .game-header {
+            background: var(--dark);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+        }
+
+        .progress-track { width: 100%; height: 12px; background: #dfe6e9; border-radius: 10px; margin-bottom: 25px; overflow: hidden; border: 2px solid white; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--success), var(--secondary)); transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        .question-card {
+            background: white;
+            border-radius: 25px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-top: 6px solid var(--accent);
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .q-text { font-size: 1.6rem; color: #2d3436; margin-bottom: 30px; font-weight: bold; font-family: 'Comic Neue', cursive; }
+        .q-img { font-size: 5rem; display: block; margin-bottom: 20px; animation: bounce 2s infinite; }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .opt-btn {
+            background: #f1f2f6;
+            border: 2px solid #dfe4ea;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Nunito', sans-serif;
+            color: #555;
+            font-weight: bold;
+        }
+
+        .opt-btn:hover { background: var(--secondary); color: white; border-color: var(--secondary); transform: translateY(-3px); }
+        .opt-btn:active { transform: translateY(0); }
+
+        .opt-btn.correct { background: var(--success) !important; color: white !important; border-color: #009476 !important; }
+        .opt-btn.wrong { background: var(--error) !important; color: white !important; border-color: #c0392b !important; animation: shake 0.4s; }
+
+        /* Arrange / Match Specifics */
+        .drop-area { 
+            background: #FEF9E7; border: 2px dashed #F1C40F; 
+            padding: 15px; border-radius: 10px; margin-bottom: 15px; 
+            min-height: 50px; font-size: 1.3rem; color: var(--purple); font-weight: bold;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .word-bank { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        .word-chip { background: var(--primary); color: white; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 0 #c0392b; transition: transform 0.1s; }
+        .word-chip:active { transform: translateY(4px); box-shadow: none; }
+
+        /* --- ANIMATIONS --- */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes bounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        @keyframes pop { 0% { transform: scale(0); } 80% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+        /* --- MODAL --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none; justify-content: center; align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background: white; padding: 30px; border-radius: 25px;
+            text-align: center; width: 90%; max-width: 350px;
+            animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            border: 5px solid var(--accent);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .feedback-emoji { font-size: 5rem; display: block; margin-bottom: 15px; }
+        .feedback-title { font-size: 2rem; margin: 0; font-family: 'Comic Neue', cursive; }
+        .next-btn {
+            background: var(--dark); color: white; border: none;
+            padding: 12px 30px; border-radius: 50px; font-size: 1.1rem;
+            margin-top: 20px; cursor: pointer; font-weight: bold;
+            box-shadow: 0 5px 0 #000; transition: transform 0.1s;
+        }
+        .next-btn:active { transform: translateY(5px); box-shadow: none; }
+
+        /* --- FOOTER --- */
+        footer {
+            background: #2D3436; color: #dfe6e9; text-align: center;
+            padding: 15px; font-size: 0.8rem; position: fixed;
+            bottom: 0; width: 100%; border-top: 4px solid var(--primary);
+            z-index: 90;
+        }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🖥️ Parts of a Computer</h1>
+    <div class="sub-title">Class 2 • Chapter 2 • Let's Learn & Play!</div>
+</header>
+
+<div class="nav-container">
+    <button class="nav-btn active" onclick="switchTab('learn')">📘 Learn (Notes)</button>
+    <button class="nav-btn" onclick="switchTab('play')">🎮 Play (Quiz)</button>
+</div>
+
+<div id="learn-section" class="section active">
+    
+    <div class="note-card" style="border-color: var(--primary);">
+        <div class="note-title"><span class="emoji-big">🖥️</span> The Monitor</div>
+        <p class="note-text">
+            It looks like a <span class="highlight">TV screen</span>. <br>
+            It shows us whatever we do on the computer.<br>
+            We can see cartoons, movies, photos, and words on it.
+        </p>
+    </div>
+
+    <div class="note-card" style="border-color: var(--secondary);">
+        <div class="note-title"><span class="emoji-big">🧠</span> The CPU</div>
+        <p class="note-text">
+            CPU stands for <span class="highlight">Central Processing Unit</span>.<br>
+            It is called the <b>BRAIN</b> of the computer.<br>
+            It does all the calculations and thinking. It is inside a box called the CPU Cabinet.
+        </p>
+    </div>
+
+    <div class="note-card" style="border-color: var(--accent);">
+        <div class="note-title"><span class="emoji-big">⌨️</span> The Keyboard</div>
+        <p class="note-text">
+            It has many small buttons called <span class="highlight">Keys</span>.<br>
+            We use it to <b>TYPE</b> letters, numbers, and words.<br>
+            Just like we use a pencil to write on paper, we use a keyboard to write on a computer.
+        </p>
+    </div>
+
+    <div class="note-card" style="border-color: var(--purple);">
+        <div class="note-title"><span class="emoji-big">🖱️</span> The Mouse</div>
+        <p class="note-text">
+            It is a pointing device. It has <span class="highlight">2 or 3 buttons</span> and a scroll wheel.<br>
+            It helps us to draw pictures and play games.<br>
+            When we move the mouse, an arrow (pointer) moves on the monitor.
+        </p>
+    </div>
+
+    <div class="note-card">
+        <div class="note-title">🔌 Additional Parts</div>
+        <p class="note-text">
+            <b>🖨️ Printer:</b> It prints your work on paper (Hard Copy).<br><br>
+            <b>🔊 Speakers:</b> They help us to listen to music and sounds.<br><br>
+            <b>🔋 UPS:</b> It keeps the computer ON for some time when electricity goes off.<br><br>
+            <b>🎤 Microphone:</b> We use it to record our voice or talk to others.<br><br>
+            <b>📠 Scanner:</b> It copies photos from paper into the computer.<br><br>
+            <b>📷 Webcam:</b> It is a camera used for video calls.
+        </p>
+    </div>
+
+    <div class="note-card" style="border-color: var(--success);">
+        <div class="note-title">🔄 Input & Output</div>
+        <p class="note-text">
+            <b>📥 Input Devices:</b> Parts that tell the computer what to do. <br>
+            <i>Examples:</i> Keyboard (Typing), Mouse (Clicking), Microphone (Talking).<br><br>
+            
+            <b>📤 Output Devices:</b> Parts that show us the result. <br>
+            <i>Examples:</i> Monitor (Shows pictures), Printer (Gives paper), Speakers (Give sound).<br><br>
+
+            <b>💾 Storage Devices:</b> Places where computer saves work. <br>
+            <i>Examples:</i> Hard Disk, Pen Drive, CD/DVD.
+        </p>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 40px;">
+        <button class="nav-btn" style="background: var(--purple); color: white;" onclick="switchTab('play')">I am ready to Play! 🚀</button>
+    </div>
+</div>
+
+<div id="play-section" class="section">
+    <div class="game-header">
+        <div>⭐ <span id="star-count">0</span></div>
+        <div style="font-size: 1.2rem;">SCORE: <span id="score-count">0</span></div>
+        <div id="pct-score">0%</div>
+    </div>
+    
+    <div class="progress-track">
+        <div class="progress-fill" id="progress-bar"></div>
+    </div>
+
+    <div class="question-card" id="game-area">
+        </div>
+</div>
+
+<div class="modal-overlay" id="feedback-modal">
+    <div class="modal-content">
+        <span class="feedback-emoji" id="modal-emoji">🌟</span>
+        <h2 class="feedback-title" id="modal-title">Excellent!</h2>
+        <button class="next-btn" onclick="nextQuestion()">Next Question ➡</button>
+    </div>
+</div>
+
+<footer>
+    Designed & Created by SHRISHANT YADAV<br>
+    2026 – ShanEduHub
+</footer>
+
+<script>
+/* =========================================================
+   DATABASE: 60+ UNIQUE QUESTIONS
+   ========================================================= */
+const questions = [
+    // --- MAIN PARTS (MONITOR) ---
+    { t: 'mcq', q: "Which part looks like a TV?", a: "Monitor", o: ["Monitor", "Mouse", "CPU", "Printer"], img: "📺" },
+    { t: 'mcq', q: "The Monitor is an ________ device.", a: "Output", o: ["Input", "Output", "Storage", "Processing"] },
+    { t: 'tf', q: "We can watch movies on the Monitor.", a: "True" },
+    { t: 'mcq', q: "The monitor shows us ________.", a: "Everything", o: ["Nothing", "Only numbers", "Everything", "Only sound"] },
+    { t: 'arrange', q: "Arrange: SCREEN - TV - LIKE - A", a: "LIKE A TV SCREEN", parts: ["LIKE", "SCREEN", "A", "TV"], img: "🖥️" },
+
+    // --- MAIN PARTS (CPU) ---
+    { t: 'mcq', q: "Who is the Brain of the computer?", a: "CPU", o: ["Monitor", "Keyboard", "CPU", "Mouse"], img: "🧠" },
+    { t: 'mcq', q: "CPU stands for Central ________ Unit.", a: "Processing", o: ["Playing", "Processing", "Printing", "Power"] },
+    { t: 'tf', q: "The CPU does all the calculations.", a: "True" },
+    { t: 'mcq', q: "Where is the CPU located?", a: "Inside CPU Box", o: ["On the Monitor", "Inside CPU Box", "Under the Mouse", "In the Keyboard"] },
+    { t: 'identify', q: "Identify the 'Brain':", a: "CPU", o: ["CPU", "Monitor", "Mouse", "Speaker"], img: "⚙️" },
+
+    // --- MAIN PARTS (KEYBOARD) ---
+    { t: 'mcq', q: "Which part is used for typing?", a: "Keyboard", o: ["Mouse", "Monitor", "Keyboard", "Scanner"], img: "⌨️" },
+    { t: 'mcq', q: "The buttons on a keyboard are called ________.", a: "Keys", o: ["Coins", "Keys", "Switches", "Locks"] },
+    { t: 'tf', q: "A keyboard has only 10 keys.", a: "False" },
+    { t: 'mcq', q: "To write your name, you need a ________.", a: "Keyboard", o: ["Printer", "Keyboard", "Speaker", "Mouse"] },
+    { t: 'arrange', q: "Arrange: KEYS - MANY - HAS - IT", a: "IT HAS MANY KEYS", parts: ["KEYS", "HAS", "MANY", "IT"] },
+
+    // --- MAIN PARTS (MOUSE) ---
+    { t: 'mcq', q: "It is a pointing device.", a: "Mouse", o: ["Keyboard", "CPU", "Mouse", "Monitor"], img: "🖱️" },
+    { t: 'mcq', q: "A mouse usually has ________ buttons.", a: "2 or 3", o: ["10 or 20", "2 or 3", "100", "0"] },
+    { t: 'tf', q: "A mouse helps us draw pictures.", a: "True" },
+    { t: 'mcq', q: "We keep the mouse on a ________.", a: "Mouse Pad", o: ["Paper", "Mouse Pad", "Chair", "Floor"] },
+    { t: 'mcq', q: "When we move the mouse, the ________ moves.", a: "Pointer", o: ["Monitor", "Pointer", "Keyboard", "Wire"] },
+
+    // --- ADDITIONAL PARTS (PRINTER/SCANNER) ---
+    { t: 'mcq', q: "It prints your work on paper.", a: "Printer", o: ["Scanner", "Printer", "Monitor", "Speaker"], img: "🖨️" },
+    { t: 'mcq', q: "The output on paper is called ________.", a: "Hard Copy", o: ["Soft Copy", "Hard Copy", "Rough Copy", "Fair Copy"] },
+    { t: 'mcq', q: "It copies a photo into the computer.", a: "Scanner", o: ["Printer", "Scanner", "Mouse", "Speaker"], img: "📠" },
+    { t: 'match', q: "Match: PRINTER", a: "Paper Output", o: ["Clicking", "Paper Output", "Thinking", "Typing"] },
+    { t: 'tf', q: "A printer eats the paper.", a: "False" },
+
+    // --- ADDITIONAL PARTS (SOUND/UPS/OTHERS) ---
+    { t: 'mcq', q: "Which part gives us sound?", a: "Speakers", o: ["Monitor", "Mouse", "Speakers", "Scanner"], img: "🔊" },
+    { t: 'mcq', q: "We use a ________ to record voice.", a: "Microphone", o: ["Headphone", "Microphone", "Telephone", "Gramophone"], img: "🎤" },
+    { t: 'mcq', q: "What keeps the computer ON without electricity?", a: "UPS", o: ["CPU", "UPS", "USA", "USB"], img: "🔋" },
+    { t: 'tf', q: "UPS stands for Uninterrupted Power Supply.", a: "True" },
+    { t: 'mcq', q: "Which part is used for video calls?", a: "Webcam", o: ["Scanner", "Webcam", "Printer", "Mouse"], img: "📷" },
+    
+    // --- INPUT / OUTPUT CONCEPTS ---
+    { t: 'mcq', q: "Keyboard is an ________ device.", a: "Input", o: ["Input", "Output", "Storage", "Thinking"] },
+    { t: 'mcq', q: "Monitor is an ________ device.", a: "Output", o: ["Input", "Output", "Storage", "Thinking"] },
+    { t: 'mcq', q: "Mouse is an ________ device.", a: "Input", o: ["Input", "Output", "Storage", "Result"] },
+    { t: 'mcq', q: "Printer is an ________ device.", a: "Output", o: ["Input", "Output", "Entering", "Thinking"] },
+    { t: 'mcq', q: "Microphone is an ________ device.", a: "Input", o: ["Input", "Output", "Display", "Result"] },
+    { t: 'tf', q: "Input devices tell computer what to do.", a: "True" },
+    { t: 'tf', q: "Output devices show the result.", a: "True" },
+
+    // --- STORAGE & GENERAL ---
+    { t: 'mcq', q: "Which is a storage device?", a: "Pen Drive", o: ["Mouse", "Pen Drive", "Monitor", "Wire"], img: "💾" },
+    { t: 'mcq', q: "Where does a computer save files?", a: "Hard Disk", o: ["Hard Disk", "Keyboard", "Screen", "Mouse Pad"] },
+    { t: 'mcq', q: "A CD is valid ________ device.", a: "Storage", o: ["Input", "Storage", "Output", "Typing"] },
+    { t: 'arrange', q: "Arrange: SAVE - WE - DATA", a: "WE SAVE DATA", parts: ["DATA", "WE", "SAVE"] },
+    
+    // --- MIXED BAG / SCENARIOS ---
+    { t: 'mcq', q: "To play a game, I use ________.", a: "Mouse/Keyboard", o: ["Printer", "Scanner", "Mouse/Keyboard", "Mic"] },
+    { t: 'mcq', q: "To listen to a song privately, I use ________.", a: "Headphones", o: ["Speakers", "Headphones", "Printer", "UPS"], img: "🎧" },
+    { t: 'tf', q: "The scroll wheel is on the keyboard.", a: "False" },
+    { t: 'match', q: "Match: KEYBOARD", a: "Typing", o: ["Pointing", "Typing", "Printing", "Thinking"] },
+    { t: 'match', q: "Match: MOUSE", a: "Clicking", o: ["Typing", "Clicking", "Saving", "Thinking"] },
+    { t: 'identify', q: "Identify: 🎤", a: "Microphone", o: ["Speaker", "Microphone", "Mouse", "Webcam"] },
+    { t: 'identify', q: "Identify: 🖨️", a: "Printer", o: ["Scanner", "Printer", "Monitor", "CPU"] },
+    
+    // --- FILL IN THE BLANKS (MCQ STYLE) ---
+    { t: 'mcq', q: "A mouse has a ________ wheel.", a: "Scroll", o: ["Roll", "Scroll", "Ball", "Spin"] },
+    { t: 'mcq', q: "We see ________ copy on the monitor.", a: "Soft", o: ["Hard", "Soft", "Rough", "Wet"] },
+    { t: 'mcq', q: "________ helps to put photos in computer.", a: "Scanner", o: ["Printer", "Scanner", "Speaker", "UPS"] },
+    { t: 'mcq', q: "________ makes the computer work when power fails.", a: "UPS", o: ["CPU", "UPS", "GPS", "USB"] },
+    { t: 'mcq', q: "We can ________ songs on speakers.", a: "Hear", o: ["See", "Hear", "Type", "Draw"] },
+
+    // --- MORE PRACTICE ---
+    { t: 'tf', q: "A webcam is like a digital camera.", a: "True" },
+    { t: 'tf', q: "Speakers are Input devices.", a: "False" },
+    { t: 'arrange', q: "Arrange: IS - BRAIN - CPU - THE", a: "CPU IS THE BRAIN", parts: ["THE", "CPU", "IS", "BRAIN"] },
+    { t: 'mcq', q: "Which key is the longest?", a: "Spacebar", o: ["Enter", "Spacebar", "Shift", "Esc"] }, // Bonus knowledge often in Ch2
+    { t: 'mcq', q: "To click, we press the ________ button.", a: "Mouse", o: ["CPU", "Keyboard", "Mouse", "Screen"] },
+    { t: 'mcq', q: "Computers store data in ________.", a: "Memory", o: ["Stomach", "Memory", "Head", "Pocket"] },
+    { t: 'match', q: "Match: MONITOR", a: "Display", o: ["Sound", "Display", "Print", "Click"] },
+    { t: 'match', q: "Match: CPU", a: "Thinking", o: ["Display", "Thinking", "Typing", "Pointing"] },
+    { t: 'tf', q: "We cannot touch software.", a: "True" },
+    { t: 'mcq', q: "The wire of the mouse connects to the ________.", a: "CPU", o: ["Monitor", "CPU", "Printer", "Speaker"] }
+];
+
+/* =========================================================
+   GAME LOGIC ENGINE
+   ========================================================= */
+let currentQIndex = 0;
+let score = 0;
+let wrong = 0;
+let stars = 0;
+let shuffledQ = [];
+let userArrange = []; // For arrange questions
+
+function initGame() {
+    // Shuffle questions
+    shuffledQ = questions.sort(() => Math.random() - 0.5);
+    currentQIndex = 0;
+    score = 0;
+    wrong = 0;
+    stars = 0;
+    updateUI();
+    loadQuestion();
+}
+
+function switchTab(tab) {
+    document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+    
+    document.getElementById(tab + '-section').classList.add('active');
+    document.querySelector(`button[onclick="switchTab('${tab}')"]`).classList.add('active');
+
+    if(tab === 'play') {
+        initGame();
+    }
+}
+
+function loadQuestion() {
+    if (currentQIndex >= shuffledQ.length) {
+        showFinalScore();
+        return;
+    }
+
+    const q = shuffledQ[currentQIndex];
+    const area = document.getElementById('game-area');
+    
+    // Progress Bar
+    const pct = ((currentQIndex) / shuffledQ.length) * 100;
+    document.getElementById('progress-bar').style.width = pct + "%";
+
+    // Base HTML
+    let html = ``;
+    if(q.img && q.t !== 'identify') html += `<div class="q-img">${q.img}</div>`;
+    
+    // Question Text
+    let qPrefix = q.t === 'identify' ? "Identify this part:" : `Q${currentQIndex + 1}:`;
+    html += `<div class="q-text">${qPrefix} ${q.q}</div>`;
+
+    // Render by Type
+    if (q.t === 'mcq' || q.t === 'identify') {
+        html += `<div class="options-grid">`;
+        let opts = q.o.sort(() => Math.random() - 0.5);
+        opts.forEach(opt => {
+            html += `<button class="opt-btn" onclick="check('${opt}', '${q.a}', this)">${opt}</button>`;
+        });
+        html += `</div>`;
+    } 
+    else if (q.t === 'tf') {
+        html += `<div class="options-grid">`;
+        html += `<button class="opt-btn" onclick="check('True', '${q.a}', this)">True ✅</button>`;
+        html += `<button class="opt-btn" onclick="check('False', '${q.a}', this)">False ❌</button>`;
+        html += `</div>`;
+    }
+    else if (q.t === 'match') {
+        // Simple Match: Select the correct pair for the displayed item
+        html += `<p style="color:#666; margin-bottom:10px;">Select the correct function/meaning:</p>`;
+        html += `<div class="options-grid">`;
+        let opts = q.o.sort(() => Math.random() - 0.5);
+        opts.forEach(opt => {
+            html += `<button class="opt-btn" onclick="check('${opt}', '${q.a}', this)">${opt}</button>`;
+        });
+        html += `</div>`;
+    }
+    else if (q.t === 'arrange') {
+        userArrange = [];
+        html += `<div class="drop-area" id="dropZone">Tap words below 👇</div>`;
+        html += `<div class="word-bank">`;
+        let parts = q.parts.sort(() => Math.random() - 0.5);
+        parts.forEach(w => {
+            html += `<div class="word-chip" onclick="moveWord(this, '${w}')">${w}</div>`;
+        });
+        html += `</div>`;
+        html += `<button class="nav-btn" style="margin-top:20px; background:var(--purple); color:white;" onclick="checkArrange('${q.a}')">Check Answer ✅</button>`;
+        html += `<button class="nav-btn" style="margin-top:20px; margin-left:10px; font-size:0.9rem; background:#95a5a6; color:white;" onclick="resetArrange()">Reset 🔄</button>`;
+    }
+
+    area.innerHTML = html;
+}
+
+// --- CHECK LOGIC ---
+
+function check(selected, correct, btn) {
+    if (selected === correct) {
+        btn.classList.add('correct');
+        handleResult(true);
+    } else {
+        btn.classList.add('wrong');
+        handleResult(false);
+    }
+}
+
+// Arrange Logic
+function moveWord(el, word) {
+    userArrange.push(word);
+    el.style.display = 'none';
+    const zone = document.getElementById('dropZone');
+    if(userArrange.length === 1) zone.innerText = "";
+    zone.innerText += (userArrange.length > 1 ? " " : "") + word;
+}
+
+function resetArrange() {
+    userArrange = [];
+    loadQuestion();
+}
+
+function checkArrange(correct) {
+    if(userArrange.join(" ") === correct) {
+        handleResult(true);
+    } else {
+        handleResult(false);
+    }
+}
+
+// --- RESULT HANDLERS ---
+
+function handleResult(isCorrect) {
+    if (isCorrect) {
+        score++;
+        stars += 10;
+        updateUI();
+        showModal(true);
+    } else {
+        wrong++;
+        updateUI();
+        showModal(false);
+    }
+}
+
+function updateUI() {
+    document.getElementById('score-count').innerText = score;
+    document.getElementById('star-count').innerText = stars;
+    
+    let total = currentQIndex + 1;
+    let attempts = score + wrong;
+    let pct = attempts === 0 ? 0 : Math.round((score / attempts) * 100);
+    document.getElementById('pct-score').innerText = pct + "%";
+}
+
+function showModal(isSuccess) {
+    const modal = document.getElementById('feedback-modal');
+    const title = document.getElementById('modal-title');
+    const emoji = document.getElementById('modal-emoji');
+
+    if (isSuccess) {
+        title.innerText = "Excellent!";
+        title.style.color = "var(--success)";
+        emoji.innerText = "⭐";
+    } else {
+        title.innerText = "Try Again!";
+        title.style.color = "var(--error)";
+        emoji.innerText = "😊";
+    }
+
+    modal.style.display = 'flex';
+}
+
+function nextQuestion() {
+    document.getElementById('feedback-modal').style.display = 'none';
+    currentQIndex++;
+    loadQuestion();
+}
+
+function showFinalScore() {
+    const area = document.getElementById('game-area');
+    area.innerHTML = `
+        <div style="font-size:4rem;">🏆</div>
+        <h2 style="font-family:'Comic Neue', cursive;">Game Over!</h2>
+        <p style="font-size:1.2rem;">You answered <b>${score}</b> questions correctly.</p>
+        <p style="font-size:1.2rem;">Stars Earned: <b>${stars} ⭐</b></p>
+        <button class="nav-btn" onclick="initGame()" style="background:var(--success); color:white;">Play Again 🔄</button>
+    `;
+    document.getElementById('progress-bar').style.width = "100%";
+}
+
+// Initialize on load
+// switchTab('learn'); // Default
+</script>
+
+</body>
+</html>

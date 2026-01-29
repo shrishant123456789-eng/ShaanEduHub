@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Class 2 Computer: 10 Game Mega Pack</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Nunito:wght@400;700&display=swap');
+
+        :root {
+            --primary: #FF9F43;
+            --secondary: #54a0ff;
+            --accent: #1dd1a1;
+            --danger: #ff6b6b;
+            --purple: #5f27cd;
+            --dark: #222f3e;
+            --light: #fff;
+            --shadow: 0 6px 0 rgba(0,0,0,0.15);
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #feca57;
+            background-image: radial-gradient(rgba(255,255,255,0.3) 15%, transparent 16%);
+            background-size: 30px 30px;
+            margin: 0;
+            padding: 0;
+            color: var(--dark);
+            user-select: none;
+            padding-bottom: 80px;
+            overflow-x: hidden;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background: linear-gradient(180deg, var(--secondary), #2e86de);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        h1 { margin: 0; font-family: 'Fredoka', cursive; font-size: 1.8rem; letter-spacing: 1px; text-shadow: 2px 2px 0 rgba(0,0,0,0.2); }
+        .sub-title { font-size: 0.9rem; opacity: 0.95; font-weight: bold; margin-top: 5px; }
+
+        /* --- MENU --- */
+        #game-menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .game-card {
+            background: var(--light);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            border: 4px solid transparent;
+            transition: transform 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-card:active { transform: translateY(4px); box-shadow: 0 2px 0 rgba(0,0,0,0.15); }
+        .game-card:hover { border-color: var(--accent); }
+        .card-icon { font-size: 3rem; display: block; margin-bottom: 10px; animation: float 3s infinite ease-in-out; }
+        .card-title { font-family: 'Fredoka'; font-weight: bold; color: var(--dark); font-size: 1.1rem; line-height: 1.2; }
+        .card-badge { position: absolute; top: 5px; right: 5px; background: var(--danger); color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 10px; }
+
+        /* --- GAME AREA --- */
+        #game-area {
+            display: none;
+            max-width: 700px;
+            margin: 20px auto;
+            background: var(--light);
+            border-radius: 30px;
+            padding: 20px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            min-height: 450px;
+            position: relative;
+            border: 6px solid var(--purple);
+        }
+
+        /* --- HUD --- */
+        .hud {
+            display: flex;
+            justify-content: space-between;
+            background: #dfe6e9;
+            padding: 10px 20px;
+            border-radius: 50px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            border: 2px solid #b2bec3;
+        }
+        .hud-item { display: flex; align-items: center; gap: 5px; }
+        .progress-bar-container { height: 12px; background: #eee; border-radius: 6px; margin-bottom: 20px; border: 2px solid #ccc; overflow: hidden; }
+        .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--secondary)); transition: width 0.4s; }
+
+        /* --- QUESTION STYLES --- */
+        .q-container { text-align: center; animation: slideIn 0.4s ease-out; }
+        .q-emoji { font-size: 4rem; display: block; margin-bottom: 15px; animation: pop 0.5s; }
+        .q-text { font-size: 1.6rem; font-family: 'Fredoka', cursive; color: var(--dark); margin-bottom: 20px; line-height: 1.4; }
+
+        /* --- INTERACTION TYPES --- */
+        
+        /* 1. Options Grid (MCQ, Identify) */
+        .options-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 15px; margin-top: 15px; }
+        .opt-btn {
+            background: #fff; border: 2px solid #eee; border-bottom: 5px solid #ddd;
+            padding: 15px; border-radius: 15px; font-size: 1.2rem; cursor: pointer;
+            font-family: 'Nunito', sans-serif; font-weight: bold; color: #555;
+            transition: all 0.1s;
+        }
+        .opt-btn:active { transform: translateY(4px); border-bottom-width: 2px; }
+        .opt-btn.correct { background: var(--accent); color: white; border-color: #10ac84; }
+        .opt-btn.wrong { background: var(--danger); color: white; border-color: #c0392b; animation: shake 0.4s; }
+
+        /* 2. Drag & Drop (Sorting/Matching) */
+        .drag-container { min-height: 150px; background: #f1f2f6; border: 3px dashed #ccc; border-radius: 15px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 15px; margin-bottom: 15px; align-items: center; }
+        .drag-item { background: var(--secondary); color: white; padding: 10px 20px; border-radius: 30px; font-weight: bold; cursor: grab; box-shadow: 0 4px 0 #2980b9; user-select: none; }
+        .drag-item:active { cursor: grabbing; transform: scale(0.95); }
+        .drop-target { border-color: var(--secondary); background: #e7f3ff; }
+
+        /* 3. Typing Area */
+        .typing-box {
+            font-family: monospace; font-size: 2rem; letter-spacing: 5px; 
+            border: 3px solid var(--dark); padding: 15px; border-radius: 10px; 
+            width: 80%; margin: 0 auto 20px auto; text-align: center; background: #fff;
+        }
+        .keyboard-area { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; }
+        .key { width: 40px; height: 40px; background: #eee; border-radius: 5px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; box-shadow: 0 3px 0 #bbb; }
+        .key:active { transform: translateY(3px); box-shadow: none; }
+
+        /* 4. Paint Canvas */
+        .canvas-area { border: 2px solid #333; background: #fff; cursor: crosshair; touch-action: none; margin: 0 auto; display: block; border-radius: 10px; }
+        .color-palette { display: flex; justify-content: center; gap: 10px; margin-top: 10px; }
+        .color-swatch { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        
+        /* CONTROLS */
+        .controls { display: flex; justify-content: center; gap: 10px; margin-top: 25px; border-top: 2px solid #eee; padding-top: 15px; }
+        .ctrl-btn { padding: 10px 25px; border: none; border-radius: 50px; font-weight: bold; color: white; cursor: pointer; box-shadow: 0 4px 0 rgba(0,0,0,0.2); display: flex; align-items: center; gap: 5px; }
+        .btn-home { background: #636e72; }
+        .btn-speak { background: #0984e3; }
+        .btn-next { background: var(--purple); display: none; }
+
+        /* MODAL */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        .modal-content { background: white; padding: 30px; border-radius: 30px; text-align: center; width: 85%; max-width: 350px; animation: pop 0.4s; border: 6px solid var(--accent); box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+        .modal-emoji { font-size: 6rem; display: block; margin-bottom: 10px; }
+        .modal-title { font-size: 2rem; font-family: 'Fredoka'; margin: 0 0 10px 0; color: var(--dark); }
+
+        /* FOOTER */
+        footer {
+            background: var(--dark); color: white; text-align: center;
+            padding: 15px; font-size: 0.8rem; position: fixed; bottom: 0; width: 100%; z-index: 90; border-top: 4px solid var(--secondary);
+        }
+
+        /* ANIMATIONS */
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes pop { 0% { transform: scale(0); } 80% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>💻 Computer Mega Pack</h1>
+    <div class="sub-title">10 Games • 500 Tasks • Class 2</div>
+</header>
+
+<div id="game-menu">
+    </div>
+
+<div id="game-area">
+    <div class="hud">
+        <div class="hud-item">⭐ <span id="score-val">0</span></div>
+        <div class="hud-item">🎮 <span id="game-title-hud">Game 1</span></div>
+        <div class="hud-item">📊 <span id="progress-val">1/50</span></div>
+    </div>
+    <div class="progress-bar-container"><div class="progress-bar" id="progress-fill"></div></div>
+
+    <div id="question-container" class="q-container">
+        </div>
+
+    <div class="controls">
+        <button class="ctrl-btn btn-home" onclick="goHome()">🏠 Home</button>
+        <button class="ctrl-btn btn-speak" onclick="readQuestion()">🔊 Read</button>
+        <button class="ctrl-btn btn-next" id="next-btn" onclick="nextTask()">Next ➡</button>
+    </div>
+</div>
+
+<div id="feedback-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-emoji" id="modal-emoji">🌟</div>
+        <h2 class="modal-title" id="modal-title">Excellent!</h2>
+        <button class="ctrl-btn btn-next" style="display:inline-flex; margin-top:15px; width:auto;" onclick="closeModal()">Continue ▶</button>
+    </div>
+</div>
+
+<footer>
+    Designed & Created by SHRISHANT YADAV<br>
+    2026 – ShanEduHub
+</footer>
+
+<script>
+/* ==========================================================================
+   DATA ENGINE: 10 GAMES x 50 TASKS = 500 UNIQUE TASKS
+   ========================================================================== */
+
+const GAMES = [
+    { id: 0, title: "Parts Adventure", icon: "🖥️", color: "#FF6B6B" },
+    { id: 1, title: "Typing Mania", icon: "⌨️", color: "#4ECDC4" },
+    { id: 2, title: "Mouse Mastery", icon: "🖱️", color: "#FFE66D" },
+    { id: 3, title: "Creativity Lab", icon: "🎨", color: "#FF9F43" },
+    { id: 4, title: "HW vs SW Quiz", icon: "📀", color: "#54A0FF" },
+    { id: 5, title: "OS Adventure", icon: "🤖", color: "#A29BFE" },
+    { id: 6, title: "Internet Lab", icon: "🌐", color: "#6C5CE7" },
+    { id: 7, title: "Listen & Type", icon: "🎧", color: "#FD79A8" },
+    { id: 8, title: "Safety Mission", icon: "🛡️", color: "#00B894" },
+    { id: 9, title: "Ultimate Master", icon: "🏆", color: "#2D3436" }
+];
+
+// Knowledge Base for Generation
+const KB = {
+    parts: [
+        {name:"Monitor", icon:"📺", type:"Output"}, {name:"CPU", icon:"🧠", type:"Process"},
+        {name:"Keyboard", icon:"⌨️", type:"Input"}, {name:"Mouse", icon:"🖱️", type:"Input"},
+        {name:"Printer", icon:"🖨️", type:"Output"}, {name:"Speaker", icon:"🔊", type:"Output"},
+        {name:"Headphone", icon:"🎧", type:"Output"}, {name:"Scanner", icon:"📠", type:"Input"}
+    ],
+    keys: ["Enter", "Spacebar", "Shift", "Caps Lock", "Backspace", "Delete", "Arrow Keys", "Esc"],
+    os: ["Windows", "Android", "Linux", "iOS"],
+    tools: ["Pencil", "Eraser", "Brush", "Fill Color", "Text", "Shapes"],
+    safe: [
+        {txt:"Sit Straight", type:"Good"}, {txt:"Pull Wires", type:"Bad"}, 
+        {txt:"Eat Food", type:"Bad"}, {txt:"Ask Parents", type:"Good"},
+        {txt:"Clean Hands", type:"Good"}, {txt:"Hit Keys", type:"Bad"}
+    ]
+};
+
+/* ==========================================================================
+   STATE MANAGEMENT
+   ========================================================================== */
+let state = {
+    gameId: 0,
+    qIndex: 0,
+    score: 0,
+    tasks: [],
+    currentTask: null,
+    userInput: "" // For typing/drawing
+};
+
+/* ==========================================================================
+   INITIALIZATION
+   ========================================================================== */
+window.onload = function() {
+    renderMenu();
+};
+
+function renderMenu() {
+    const menu = document.getElementById('game-menu');
+    menu.innerHTML = "";
+    GAMES.forEach(game => {
+        const card = document.createElement('div');
+        card.className = 'game-card';
+        card.style.borderBottomColor = game.color;
+        card.innerHTML = `
+            <span class="card-icon">${game.icon}</span>
+            <div class="card-title">${game.title}</div>
+            <span class="card-badge">50 Tasks</span>
+        `;
+        card.onclick = () => startGame(game.id);
+        menu.appendChild(card);
+    });
+    document.getElementById('game-menu').style.display = 'grid';
+    document.getElementById('game-area').style.display = 'none';
+}
+
+function startGame(id) {
+    state.gameId = id;
+    state.qIndex = 0;
+    state.score = 0;
+    state.tasks = generateTasks(id);
+    
+    document.getElementById('game-menu').style.display = 'none';
+    document.getElementById('game-area').style.display = 'block';
+    document.getElementById('game-title-hud').innerText = GAMES[id].title;
+    
+    updateHUD();
+    loadTask();
+}
+
+function goHome() {
+    renderMenu();
+}
+
+/* ==========================================================================
+   TASK GENERATOR (THE ENGINE)
+   ========================================================================== */
+function generateTasks(gameId) {
+    let tasks = [];
+    const total = 50;
+    
+    for(let i=0; i<total; i++) {
+        let task = {};
+        
+        // --- GAME 1: PARTS ADVENTURE ---
+        if(gameId === 0) {
+            let item = randArr(KB.parts);
+            let type = i % 3;
+            if(type === 0) {
+                task = { type: 'mcq', q: `Identify the <b>${item.name}</b>:`, ans: item.icon, opts: shuffle([item.icon, randIcon(), randIcon()]) };
+            } else if (type === 1) {
+                task = { type: 'mcq', q: `What is this? <br>${item.icon}`, ans: item.name, opts: shuffle([item.name, randArr(KB.parts).name, randArr(KB.parts).name]) };
+            } else {
+                task = { type: 'tf', q: `${item.icon} is an ${item.type} device.`, ans: "True", icon: item.icon };
+                if(Math.random() > 0.5) { task.q = `${item.icon} is a Storage device.`; task.ans = "False"; }
+            }
+        }
+        
+        // --- GAME 2: TYPING MANIA ---
+        else if(gameId === 1) {
+            let words = ["CAT", "DOG", "CPU", "MOUSE", "KEY", "JAVA", "HTML", "DATA", "FILE", "SAVE"];
+            let word = words[i % words.length];
+            task = { type: 'typing', q: `Type the word:`, ans: word, icon: "⌨️" };
+        }
+        
+        // --- GAME 3: MOUSE MASTERY ---
+        else if(gameId === 2) {
+            let actions = ["Click", "Double Click", "Right Click", "Drag"];
+            let act = actions[i % 4];
+            task = { type: 'mcq', q: `Which finger is used for <b>${act}</b>?`, ans: (act==="Right Click"?"Middle":"Index"), opts: ["Index", "Middle", "Thumb"], icon: "🖱️" };
+            if(i % 5 === 0) task = { type: 'action', q: "Click the Button below!", ans: "click", icon: "👇" };
+        }
+        
+        // --- GAME 4: CREATIVITY LAB (Simulated) ---
+        else if(gameId === 3) {
+            let colors = ["Red", "Blue", "Green", "Yellow"];
+            let col = colors[i % 4];
+            task = { type: 'mcq', q: `Select the <b>${col}</b> color bucket.`, ans: col, opts: shuffle(colors), icon: "🎨" };
+        }
+        
+        // --- GAME 5: HW vs SW ---
+        else if(gameId === 4) {
+            let isHW = Math.random() > 0.5;
+            let item = isHW ? randArr(KB.parts) : {name: randArr(["Paint","Windows","Game"]), icon: "💿"};
+            task = { type: 'mcq', q: `Is <b>${item.name}</b> Hardware or Software?`, ans: (isHW ? "Hardware" : "Software"), opts: ["Hardware", "Software"], icon: item.icon };
+        }
+        
+        // --- GAME 8: SAFETY ---
+        else if(gameId === 8) {
+            let rule = randArr(KB.safe);
+            task = { type: 'mcq', q: `Is this Good or Bad?<br>"${rule.txt}"`, ans: rule.type, opts: ["Good", "Bad"], icon: "🛡️" };
+        }
+        
+        // --- GAME 9: ULTIMATE MASTER ---
+        else if(gameId === 9) {
+            // Mix of all logic
+            let item = randArr(KB.parts);
+            task = { type: 'mcq', q: `Review: Find <b>${item.name}</b>`, ans: item.icon, opts: shuffle([item.icon, randIcon(), randIcon()]), icon: "🏆" };
+        }
+        
+        // --- GENERIC FILLER FOR OTHERS ---
+        else {
+            let k = randArr(KB.keys);
+            task = { type: 'mcq', q: `Find the <b>${k}</b> key function.`, ans: "Type/Action", opts: ["Type/Action", "Eat", "Sleep"], icon: "❓" };
+        }
+        
+        tasks.push(task);
+    }
+    return tasks;
+}
+
+function randArr(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function randIcon() { return randArr(KB.parts).icon; }
+function shuffle(array) { return array.sort(() => Math.random() - 0.5); }
+
+/* ==========================================================================
+   RENDER & INTERACTION
+   ========================================================================== */
+function loadTask() {
+    if(state.qIndex >= state.tasks.length) {
+        finishGame();
+        return;
+    }
+
+    const t = state.tasks[state.qIndex];
+    state.currentTask = t;
+    const container = document.getElementById('question-container');
+    document.getElementById('next-btn').style.display = 'none';
+    
+    // Reset inputs
+    state.userInput = "";
+
+    // Base HTML
+    let html = `<div class="q-emoji">${t.icon || '💻'}</div>`;
+    html += `<div class="q-text">${t.q}</div>`;
+
+    // Render based on Type
+    if(t.type === 'mcq' || t.type === 'tf') {
+        html += `<div class="options-grid">`;
+        t.opts = t.type === 'tf' ? ["True", "False"] : t.opts;
+        t.opts.forEach(opt => {
+            // Handle emoji in options
+            let display = opt; 
+            html += `<button class="opt-btn" onclick="checkAnswer(this, '${opt}')">${display}</button>`;
+        });
+        html += `</div>`;
+    }
+    else if(t.type === 'typing') {
+        html += `<div class="typing-box" id="type-display">_</div>`;
+        html += `<div class="keyboard-area">`;
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').forEach(char => {
+            html += `<div class="key" onclick="typeChar('${char}')">${char}</div>`;
+        });
+        html += `<div class="key" style="width:80px; background:#ff7675; color:white;" onclick="delChar()">DEL</div>`;
+        html += `</div>`;
+        html += `<div style="margin-top:10px;"><button class="ctrl-btn btn-speak" onclick="checkTyping()">Check ✅</button></div>`;
+    }
+    else if(t.type === 'action') {
+        html += `<button class="opt-btn" style="font-size:2rem; padding:30px;" onclick="checkAnswer(this, 'click')">CLICK ME!</button>`;
+    }
+
+    container.innerHTML = html;
+    speak(t.q.replace(/<[^>]*>/g, ''));
+}
+
+/* ==========================================================================
+   LOGIC HANDLERS
+   ========================================================================== */
+function checkAnswer(btn, val) {
+    if(document.getElementById('next-btn').style.display === 'inline-flex') return;
+
+    if(val === state.currentTask.ans) {
+        btn.classList.add('correct');
+        handleSuccess();
+    } else {
+        btn.classList.add('wrong');
+        speak("Try Again!");
+    }
+}
+
+// Typing Logic
+function typeChar(char) {
+    if(state.userInput.length < state.currentTask.ans.length) {
+        state.userInput += char;
+        document.getElementById('type-display').innerText = state.userInput;
+    }
+}
+function delChar() {
+    state.userInput = state.userInput.slice(0, -1);
+    document.getElementById('type-display').innerText = state.userInput || "_";
+}
+function checkTyping() {
+    if(state.userInput === state.currentTask.ans) {
+        handleSuccess();
+    } else {
+        document.getElementById('type-display').style.borderColor = 'red';
+        speak("Check spelling");
+    }
+}
+
+function handleSuccess() {
+    state.score++;
+    updateHUD();
+    speak("Excellent!");
+    
+    // Modal Feedback
+    const emojis = ["⭐", "🌟", "🏆", "🎉", "🍬"];
+    document.getElementById('modal-emoji').innerText = emojis[Math.floor(Math.random()*emojis.length)];
+    document.getElementById('feedback-modal').style.display = 'flex';
+}
+
+function nextTask() {
+    closeModal();
+    state.qIndex++;
+    loadTask();
+}
+
+function closeModal() {
+    document.getElementById('feedback-modal').style.display = 'none';
+    if(document.getElementById('next-btn').style.display === 'none' && state.qIndex < 50) {
+        // Only if manually closed without next button logic
+    }
+}
+
+function updateHUD() {
+    document.getElementById('score-val').innerText = state.score;
+    document.getElementById('progress-val').innerText = `${state.qIndex + 1}/50`;
+    document.getElementById('progress-fill').style.width = `${((state.qIndex) / 50) * 100}%`;
+}
+
+function finishGame() {
+    const area = document.getElementById('question-container');
+    area.innerHTML = `
+        <div style="font-size:5rem;">🏆</div>
+        <h2 style="font-family:'Fredoka'">Game Completed!</h2>
+        <p style="font-size:1.5rem;">Score: ${state.score} / 50</p>
+        <p>You are a Computer Champ!</p>
+        <button class="ctrl-btn btn-home" style="margin:20px auto;" onclick="goHome()">Back to Menu</button>
+    `;
+    document.querySelector('.controls').style.display = 'none';
+    document.getElementById('progress-fill').style.width = '100%';
+}
+
+/* ==========================================================================
+   UTILITIES
+   ========================================================================== */
+function speak(text) {
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.rate = 0.9;
+        msg.pitch = 1.1;
+        window.speechSynthesis.speak(msg);
+    }
+}
+
+function readQuestion() {
+    if(state.currentTask) speak(state.currentTask.q.replace(/<[^>]*>/g, ''));
+}
+
+</script>
+</body>
+</html>

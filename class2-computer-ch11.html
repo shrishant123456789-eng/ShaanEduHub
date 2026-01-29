@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 2 Computer: Introduction to Internet</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Nunito:wght@400;700&display=swap');
+
+        :root {
+            --primary: #0984e3;       /* Internet Blue */
+            --secondary: #00cec9;     /* Cyan */
+            --accent: #fdcb6e;        /* Yellow */
+            --danger: #ff7675;        /* Red */
+            --purple: #6c5ce7;        /* Fun Purple */
+            --bg: #dfe6e9;            /* Light Grey */
+            --white: #ffffff;
+            --dark: #2d3436;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #dff9fb;
+            background-image: radial-gradient(var(--secondary) 15%, transparent 16%);
+            background-size: 35px 35px;
+            margin: 0;
+            padding: 0;
+            color: var(--dark);
+            user-select: none;
+            padding-bottom: 80px;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--purple));
+            color: white;
+            padding: 15px;
+            text-align: center;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+            box-shadow: 0 10px 0 rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 { margin: 0; font-family: 'Fredoka', cursive; font-size: 2.2rem; letter-spacing: 1px; text-shadow: 2px 2px 0 rgba(0,0,0,0.1); }
+        .sub-title { font-size: 1.1rem; opacity: 0.95; font-weight: bold; margin-top: 5px; }
+
+        /* --- NAV --- */
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 25px 0;
+            padding: 0 10px;
+        }
+
+        .nav-btn {
+            background: var(--white);
+            border: none;
+            color: var(--dark);
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #b2bec3;
+            font-family: 'Fredoka', cursive;
+            transition: transform 0.1s;
+            flex: 1;
+            max-width: 200px;
+        }
+
+        .nav-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #b2bec3; }
+        .nav-btn.active { background: var(--secondary); color: white; box-shadow: 0 6px 0 #00b894; }
+
+        /* --- SECTIONS --- */
+        .section {
+            display: none;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 15px;
+            animation: slideUp 0.5s ease-out;
+        }
+        .section.active { display: block; }
+
+        /* --- NOTE CARDS --- */
+        .note-card {
+            background: var(--white);
+            border-radius: 25px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 0 rgba(0,0,0,0.05);
+            border-left: 8px solid var(--primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .note-title {
+            font-family: 'Fredoka', cursive;
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .note-text { font-size: 1.2rem; line-height: 1.6; color: #555; }
+        .highlight { background: #fff2cc; padding: 2px 8px; border-radius: 8px; font-weight: bold; color: #e58e26; }
+        
+        .safe-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
+        .safe-box { padding: 15px; border-radius: 10px; text-align: center; font-weight: bold; cursor: default; }
+        .box-good { background: #e6fffa; border: 2px solid #00b894; color: #006b5f; }
+        .box-bad { background: #fff5f5; border: 2px solid var(--danger); color: #c0392b; }
+
+        /* --- GAME UI --- */
+        .score-panel {
+            background: var(--dark);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+        }
+
+        .progress-container { background: #fff; height: 15px; border-radius: 10px; margin-bottom: 20px; border: 3px solid var(--dark); overflow: hidden; }
+        .progress-bar { height: 100%; width: 0%; background: repeating-linear-gradient(45deg, var(--primary), var(--primary) 10px, #74b9ff 10px, #74b9ff 20px); transition: width 0.5s; }
+
+        .question-card {
+            background: var(--white);
+            border-radius: 25px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 0 rgba(0,0,0,0.1);
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border: 5px solid var(--purple);
+        }
+
+        .q-text { font-size: 1.6rem; color: var(--dark); margin-bottom: 20px; font-weight: bold; font-family: 'Fredoka', cursive; }
+        .q-emoji { font-size: 5rem; display: block; margin-bottom: 20px; animation: bounce 2s infinite; }
+
+        .options-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-top: 15px; }
+
+        .opt-btn {
+            background: #f1f2f6;
+            border: 3px solid #dfe4ea;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: transform 0.1s;
+            font-family: 'Nunito', sans-serif;
+            color: #555;
+            font-weight: bold;
+            box-shadow: 0 4px 0 #ccc;
+        }
+
+        .opt-btn:active { transform: translateY(4px); box-shadow: none; }
+        .opt-btn.correct { background: var(--secondary); color: white; border-color: #00b894; box-shadow: 0 4px 0 #00b894; }
+        .opt-btn.wrong { background: var(--danger); color: white; border-color: #d63031; box-shadow: 0 4px 0 #d63031; animation: shake 0.4s; }
+
+        /* Arrange / Drag Simulation */
+        .step-container { display: flex; flex-direction: column; gap: 10px; }
+        .step-box { background: #ffeaa7; padding: 10px; border: 2px dashed #fdcb6e; border-radius: 10px; font-weight: bold; cursor: pointer; }
+
+        /* --- ANIMATIONS --- */
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        @keyframes pop { 0% { transform: scale(0); } 80% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+        /* --- MODAL --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none; justify-content: center; align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white; padding: 30px; border-radius: 25px;
+            text-align: center; width: 85%; max-width: 350px;
+            animation: pop 0.4s; border: 6px solid var(--secondary);
+        }
+        .feedback-emoji { font-size: 5rem; display: block; margin-bottom: 10px; }
+        .feedback-title { font-size: 2.5rem; margin: 0; font-family: 'Fredoka', cursive; }
+        .next-btn {
+            background: var(--dark); color: white; border: none;
+            padding: 12px 35px; border-radius: 50px; font-size: 1.2rem;
+            margin-top: 20px; cursor: pointer; font-family: 'Fredoka', cursive;
+            box-shadow: 0 4px 0 black;
+        }
+        .next-btn:active { transform: translateY(4px); box-shadow: none; }
+
+        /* --- FOOTER --- */
+        footer {
+            background: var(--dark); color: white; text-align: center;
+            padding: 15px; font-size: 0.8rem; position: fixed;
+            bottom: 0; width: 100%; border-top: 4px solid var(--primary);
+            z-index: 90;
+        }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🌐 Internet World</h1>
+    <div class="sub-title">Class 2 • Chapter 11 • Safe & Fun</div>
+</header>
+
+<div class="nav-container">
+    <button class="nav-btn active" onclick="switchTab('learn')">📘 Read Story</button>
+    <button class="nav-btn" onclick="switchTab('play')">🎮 Play Quiz</button>
+</div>
+
+<div id="learn-section" class="section active">
+    
+    <div class="note-card" style="border-left-color: var(--primary);">
+        <div class="note-title">🌐 What is Internet?</div>
+        <p class="note-text">
+            Imagine a huge spider web that connects the whole world!<br>
+            The <span class="highlight">Internet</span> is a big network that connects all computers together.<br>
+            Because of it, you can talk to friends, watch cartoons, and learn new things from home 🏠.
+        </p>
+    </div>
+
+    <div class="note-card" style="border-left-color: var(--secondary);">
+        <div class="note-title">✨ Magic of Internet</div>
+        <p class="note-text">
+            What can we do online?<br>
+            • <b>Learn:</b> Read books and solve sums 📚.<br>
+            • <b>Watch:</b> See funny videos and cartoons 🎥.<br>
+            • <b>Play:</b> Enjoy fun games 🎮.<br>
+            • <b>Listen:</b> Hear your favorite songs 🎵.
+        </p>
+    </div>
+
+    <div class="note-card" style="border-left-color: var(--purple);">
+        <div class="note-title">🌍 Websites</div>
+        <p class="note-text">
+            A website is like a shop or a house on the internet.<br>
+            • <b>Google</b> helps us find answers 🔍.<br>
+            • <b>YouTube</b> shows us videos 🎬.<br>
+            • <b>Wikipedia</b> gives us information 📖.<br>
+            <i>"Just type the name, and you are there!"</i>
+        </p>
+    </div>
+
+    <div class="note-card" style="border-left-color: var(--danger);">
+        <div class="note-title">🔒 Be Safe Online</div>
+        <p class="note-text">
+            The internet is big, so we must be careful.<br>
+            • Always <b>Ask Parents</b> before opening a website 👨‍👩‍👧.<br>
+            • Do not talk to <b>Strangers</b> ❌.<br>
+            • Keep your name and address <b>Secret</b> 🤐.<br>
+            <i>"Safe internet is happy internet!"</i> 😃
+        </p>
+    </div>
+
+    <div class="note-card" style="border-left-color: var(--accent);">
+        <div class="note-title">👍 Good vs 👎 Bad</div>
+        <div class="safe-grid">
+            <div class="box-good">
+                👍 Good Use<br>
+                Learning<br>Drawing<br>Watching Cartoons
+            </div>
+            <div class="box-bad">
+                👎 Bad Use<br>
+                Talking to Strangers<br>Opening Bad Sites<br>Giving Password
+            </div>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 40px;">
+        <button class="nav-btn" style="background: var(--primary); color: white;" onclick="switchTab('play')">I'm Ready to Surf! 🚀</button>
+    </div>
+</div>
+
+<div id="play-section" class="section">
+    <div class="score-panel">
+        <div>⭐ <span id="star-count">0</span></div>
+        <div>✅ <span id="score-count">0</span> | ❌ <span id="wrong-count">0</span></div>
+        <div id="pct-score">0%</div>
+    </div>
+    
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <div class="question-card" id="game-area">
+        </div>
+</div>
+
+<div class="modal-overlay" id="feedback-modal">
+    <div class="modal-content">
+        <span class="feedback-emoji" id="modal-emoji">🌟</span>
+        <h2 class="feedback-title" id="modal-title">Excellent!</h2>
+        <button class="next-btn" onclick="nextQuestion()">Next ➡</button>
+    </div>
+</div>
+
+<footer>
+    Designed & Created by SHRISHANT YADAV<br>
+    2026 – ShanEduHub
+</footer>
+
+<script>
+/* =========================================================
+   DATABASE: 60+ UNIQUE QUESTIONS
+   ========================================================= */
+const questions = [
+    // --- BASIC DEFINITION (1-10) ---
+    { t: 'mcq', q: "The Internet connects computers all over the ________.", a: "World", o: ["Room", "World", "Table"], e: "🌐" },
+    { t: 'tf', q: "Internet is a network of computers.", a: "True", e: "🕸️" },
+    { t: 'mcq', q: "We can use internet to ________ new things.", a: "Learn", o: ["Eat", "Learn", "Sleep"], e: "📚" },
+    { t: 'identify', q: "Which symbol represents the globe/internet?", a: "🌐", o: ["🏠", "🌐", "🚗"], e: "🌍" },
+    { t: 'mcq', q: "Does internet help us send messages?", a: "Yes", o: ["Yes", "No"], e: "📧" },
+    { t: 'arrange', q: "Arrange: NET - WORK", a: "NETWORK", o: ["NETWORK", "WORKNET"], e: "🔗" },
+    { t: 'mcq', q: "Internet is like a big ________ library.", a: "Online", o: ["Offline", "Online", "Closed"], e: "💻" },
+    { t: 'tf', q: "We need a computer or phone for internet.", a: "True", e: "📱" },
+    { t: 'match', q: "Match: CONNECT", a: "Computers", o: ["Food", "Computers", "Trees"], e: "🔌" },
+    { t: 'mcq', q: "Internet works ________.", a: "Fast", o: ["Slow", "Fast", "Never"], e: "🚀" },
+
+    // --- USES OF INTERNET (11-20) ---
+    { t: 'mcq', q: "We can watch ________ on the internet.", a: "Cartoons", o: ["Pizza", "Cartoons", "Shoes"], e: "📺" },
+    { t: 'tf', q: "We can listen to songs online.", a: "True", e: "🎵" },
+    { t: 'identify', q: "Where can we find information?", a: "Google", o: ["Paint", "Google", "Calculator"], e: "🔍" },
+    { t: 'mcq', q: "Internet helps us do our ________.", a: "Homework", o: ["Lunch", "Homework", "Bath"], e: "📝" },
+    { t: 'match', q: "Match: WATCH", a: "Videos", o: ["Books", "Videos", "Songs"], e: "🎬" },
+    { t: 'mcq', q: "We can play ________ games online.", a: "Educational", o: ["Boring", "Educational", "Broken"], e: "🎮" },
+    { t: 'tf', q: "We can book tickets on the internet.", a: "True", e: "🎟️" },
+    { t: 'mcq', q: "Internet helps us talk to friends who are ________.", a: "Far away", o: ["Sleeping", "Far away", "Eating"], e: "📞" },
+    { t: 'identify', q: "Which activity uses internet?", a: "Video Call", o: ["Drawing on paper", "Video Call", "Sleeping"], e: "📹" },
+    { t: 'mcq', q: "We can learn ________ on the internet.", a: "Drawing", o: ["Running", "Drawing", "Swimming"], e: "🎨" },
+
+    // --- WEBSITES (21-30) ---
+    { t: 'mcq', q: "A place on the internet is called a ________.", a: "Website", o: ["Shop", "Website", "Market"], e: "🏠" },
+    { t: 'identify', q: "Which website shows videos?", a: "YouTube", o: ["Google", "YouTube", "Paint"], e: "▶️" },
+    { t: 'mcq', q: "Google helps us ________ things.", a: "Search", o: ["Hide", "Search", "Break"], e: "🔎" },
+    { t: 'tf', q: "Every website has a name.", a: "True", e: "🏷️" },
+    { t: 'mcq', q: "Which website is good for learning?", a: "Wikipedia", o: ["Game Site", "Wikipedia", "Fake Site"], e: "📖" },
+    { t: 'arrange', q: "Arrange: WEB - SITE", a: "WEBSITE", o: ["WEBSITE", "SITEWEB"], e: "🖥️" },
+    { t: 'match', q: "Match: GOOGLE", a: "Search Engine", o: ["Video Player", "Search Engine", "Music"], e: "🔬" },
+    { t: 'tf', q: "We can open websites using a browser.", a: "True", e: "🦊" },
+    { t: 'mcq', q: "To open a site, we need its ________.", a: "Address", o: ["Color", "Address", "Shape"], e: "📍" },
+    { t: 'mcq', q: "www stands for World Wide ________.", a: "Web", o: ["Web", "Walk", "Wait"], e: "🕸️" },
+
+    // --- SAFETY RULES (31-45) ---
+    { t: 'mcq', q: "Always ask ________ before using internet.", a: "Parents", o: ["Strangers", "Parents", "No one"], e: "👪" },
+    { t: 'tf', q: "You should share your password with everyone.", a: "False", e: "🔐" },
+    { t: 'mcq', q: "Do not talk to ________ online.", a: "Strangers", o: ["Friends", "Teachers", "Strangers"], e: "👤" },
+    { t: 'identify', q: "Safe Habit:", a: "Asking Mom", o: ["Talking to stranger", "Asking Mom", "Clicking bad link"], e: "🙋" },
+    { t: 'mcq', q: "Keep your address ________.", a: "Secret", o: ["Public", "Secret", "Open"], e: "🤫" },
+    { t: 'arrange', q: "Arrange: ASK - FIRST", a: "ASK FIRST", o: ["ASK FIRST", "FIRST ASK"], e: "🗣️" },
+    { t: 'mcq', q: "If you see something scary, tell ________.", a: "Teacher", o: ["Nobody", "Teacher", "Stranger"], e: "🆘" },
+    { t: 'tf', q: "Clicking unknown links is safe.", a: "False", e: "⚠️" },
+    { t: 'mcq', q: "A secret word to open your account is called ________.", a: "Password", o: ["Game", "Password", "Mouse"], e: "🔑" },
+    { t: 'match', q: "Match: STRANGER", a: "Danger", o: ["Friend", "Danger", "Fun"], e: "🚫" },
+    { t: 'mcq', q: "Should you share your photo with strangers?", a: "No", o: ["Yes", "No"], e: "📸" },
+    { t: 'tf', q: "Safe websites make us happy.", a: "True", e: "😃" },
+    { t: 'mcq', q: "Internet safety is ________.", a: "Important", o: ["Boring", "Important", "Bad"], e: "🛡️" },
+    { t: 'identify', q: "Unsafe Habit:", a: "Sharing Password", o: ["Learning", "Sharing Password", "Watching Cartoons"], e: "🔓" },
+    { t: 'mcq', q: "Only visit ________ websites.", a: "Safe", o: ["Safe", "Scary", "Bad"], e: "✅" },
+
+    // --- GOOD VS BAD & SCENARIOS (46-60) ---
+    { t: 'match', q: "Match: GOOD USE", a: "Study", o: ["Study", "Fight", "Steal"], e: "👍" },
+    { t: 'match', q: "Match: BAD USE", a: "Talking to Strangers", o: ["Learning", "Talking to Strangers", "Drawing"], e: "👎" },
+    { t: 'mcq', q: "Ravi wants to play a game. He should ________.", a: "Ask Dad", o: ["Play secretly", "Ask Dad", "Break computer"], e: "🕹️" },
+    { t: 'tf', q: "We should use internet all day.", a: "False", e: "⏳" },
+    { t: 'mcq', q: "Sita wants to learn drawing. She can use ________.", a: "YouTube", o: ["Calculator", "YouTube", "Notepad"], e: "🎨" },
+    { t: 'arrange', q: "Arrange: LEARN - FUN", a: "LEARN FUN", o: ["LEARN FUN", "FUN LEARN"], e: "🥳" },
+    { t: 'identify', q: "Which is a good habit?", a: "Watching Science Video", o: ["Watching scary movie", "Watching Science Video", "Chatting with stranger"], e: "🧪" },
+    { t: 'mcq', q: "Bad internet habits make us ________.", a: "Unsafe", o: ["Smart", "Unsafe", "Strong"], e: "😰" },
+    { t: 'tf', q: "We can download anything we want.", a: "False", e: "📥" },
+    { t: 'mcq', q: "Internet is a tool for ________.", a: "Knowledge", o: ["Fighting", "Knowledge", "Sleeping"], e: "🧠" },
+    { t: 'mcq', q: "Playing games is okay for a ________ time.", a: "Short", o: ["Long", "Short", "Forever"], e: "⏲️" },
+    { t: 'match', q: "Match: ONLINE", a: "Connected", o: ["Connected", "Broken", "Off"], e: "📶" },
+    { t: 'mcq', q: "We can read news on the ________.", a: "Internet", o: ["Oven", "Internet", "Fan"], e: "📰" },
+    { t: 'tf', q: "Internet helps us do projects.", a: "True", e: "📊" },
+    { t: 'mcq', q: "Always close the website after ________.", a: "Using", o: ["Breaking", "Using", "Hiding"], e: "❎" },
+    { t: 'identify', q: "Identify safe device:", a: "Parents' Phone", o: ["Stranger's Phone", "Parents' Phone", "Broken Phone"], e: "📱" }
+];
+
+/* =========================================================
+   GAME LOGIC ENGINE
+   ========================================================= */
+let currentQIndex = 0;
+let score = 0;
+let wrong = 0;
+let stars = 0;
+let shuffledQ = [];
+
+function initGame() {
+    shuffledQ = questions.sort(() => Math.random() - 0.5);
+    currentQIndex = 0;
+    score = 0;
+    wrong = 0;
+    stars = 0;
+    updateUI();
+    loadQuestion();
+}
+
+function switchTab(tab) {
+    document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+    
+    document.getElementById(tab + '-section').classList.add('active');
+    document.querySelector(`button[onclick="switchTab('${tab}')"]`).classList.add('active');
+
+    if(tab === 'play') {
+        initGame();
+    }
+}
+
+function loadQuestion() {
+    if (currentQIndex >= shuffledQ.length) {
+        showFinalScore();
+        return;
+    }
+
+    const q = shuffledQ[currentQIndex];
+    const area = document.getElementById('game-area');
+    
+    // Progress
+    const pct = ((currentQIndex) / shuffledQ.length) * 100;
+    document.getElementById('progress-bar').style.width = pct + "%";
+
+    let html = ``;
+    if(q.e) html += `<span class="q-emoji">${q.e}</span>`;
+    
+    let title = `Q${currentQIndex + 1}: `;
+    if(q.t === 'identify') title = "Identify: ";
+    if(q.t === 'arrange') title = "Put in Order: ";
+    
+    html += `<div class="q-text">${title}${q.q}</div>`;
+
+    // Render Options
+    if (q.t === 'mcq' || q.t === 'identify' || q.t === 'match' || q.t === 'arrange') {
+        html += `<div class="options-grid">`;
+        let opts = q.o.sort(() => Math.random() - 0.5);
+        opts.forEach(opt => {
+            html += `<button class="opt-btn" onclick="check('${opt}', '${q.a}', this)">${opt}</button>`;
+        });
+        html += `</div>`;
+    } 
+    else if (q.t === 'tf') {
+        html += `<div class="options-grid">`;
+        html += `<button class="opt-btn" onclick="check('True', '${q.a}', this)">True ✅</button>`;
+        html += `<button class="opt-btn" onclick="check('False', '${q.a}', this)">False ❌</button>`;
+        html += `</div>`;
+    }
+
+    area.innerHTML = html;
+}
+
+// --- LOGIC FUNCTIONS ---
+
+function check(selected, correct, btn) {
+    if (selected === correct) {
+        btn.classList.add('correct');
+        handleResult(true);
+    } else {
+        btn.classList.add('wrong');
+        handleResult(false);
+    }
+}
+
+// --- RESULT HANDLING ---
+
+function handleResult(isCorrect) {
+    if (isCorrect) {
+        score++;
+        stars += 5;
+        updateUI();
+        showModal(true);
+    } else {
+        wrong++;
+        updateUI();
+        showModal(false);
+    }
+}
+
+function updateUI() {
+    document.getElementById('score-count').innerText = score;
+    document.getElementById('wrong-count').innerText = wrong;
+    document.getElementById('star-count').innerText = stars;
+    
+    let total = currentQIndex + 1;
+    let attempts = score + wrong;
+    let pct = attempts === 0 ? 0 : Math.round((score / attempts) * 100);
+    document.getElementById('pct-score').innerText = pct + "%";
+}
+
+function showModal(isSuccess) {
+    const modal = document.getElementById('feedback-modal');
+    const title = document.getElementById('modal-title');
+    const emoji = document.getElementById('modal-emoji');
+
+    if (isSuccess) {
+        title.innerText = "Excellent!";
+        title.style.color = "#00b894";
+        emoji.innerText = "⭐";
+    } else {
+        title.innerText = "Try Again ❌";
+        title.style.color = "#d63031";
+        emoji.innerText = "😊";
+    }
+
+    modal.style.display = 'flex';
+}
+
+function nextQuestion() {
+    document.getElementById('feedback-modal').style.display = 'none';
+    currentQIndex++;
+    loadQuestion();
+}
+
+function showFinalScore() {
+    const area = document.getElementById('game-area');
+    area.innerHTML = `
+        <div style="font-size:5rem;">🏆</div>
+        <h2 style="font-family:'Fredoka', cursive; font-size:2.5rem;">Game Over!</h2>
+        <p style="font-size:1.5rem;">Score: <b>${score}</b></p>
+        <p style="font-size:1.5rem;">Stars: <b>${stars} ⭐</b></p>
+        <button class="nav-btn" onclick="initGame()" style="background:var(--secondary);">Play Again 🔄</button>
+    `;
+    document.getElementById('progress-bar').style.width = "100%";
+}
+</script>
+
+</body>
+</html>

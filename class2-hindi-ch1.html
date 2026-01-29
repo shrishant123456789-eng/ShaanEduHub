@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>कक्षा 2 - हिंदी: वर्ण ज्ञान व मात्रा</title>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF6B6B;
+            --secondary: #4ECDC4;
+            --accent: #FFE66D;
+            --dark: #2C3E50;
+            --light: #F7F9FC;
+            --success: #2ECC71;
+            --error: #E74C3C;
+        }
+
+        body {
+            font-family: 'Baloo 2', cursive;
+            background-color: #f0f4f8;
+            color: var(--dark);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 100px; /* Space for footer/score */
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            border-radius: 0 0 25px 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        h1 { margin: 0; font-size: 2.5rem; text-shadow: 2px 2px 0px rgba(0,0,0,0.1); }
+        .subtitle { font-size: 1.2rem; opacity: 0.9; }
+
+        /* Section Cards */
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            border-left: 8px solid var(--secondary);
+            transition: transform 0.2s;
+        }
+        
+        .card:hover { transform: translateY(-3px); }
+
+        h2 { color: var(--primary); border-bottom: 2px dashed #eee; padding-bottom: 10px; }
+        h3 { color: #555; background: #eef; padding: 5px 10px; border-radius: 8px; display: inline-block; }
+
+        .highlight-box {
+            background-color: #fff9c4;
+            padding: 15px;
+            border-radius: 12px;
+            border: 2px solid #fbc02d;
+            margin: 10px 0;
+            font-size: 1.1rem;
+        }
+
+        .letter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .letter-item {
+            background: var(--light);
+            border: 2px solid var(--secondary);
+            text-align: center;
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: var(--dark);
+        }
+
+        .matra-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .matra-table td {
+            border: 2px solid #eee;
+            padding: 10px;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+        .matra-row:nth-child(even) { background-color: #f9f9f9; }
+
+        /* Quiz Styles */
+        .quiz-container {
+            margin-top: 40px;
+        }
+
+        .question-card {
+            background: #fff;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border-top: 5px solid var(--secondary);
+        }
+
+        .q-text { font-size: 1.3rem; font-weight: 600; margin-bottom: 15px; }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .option-btn {
+            background: var(--light);
+            border: 2px solid #ddd;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            font-family: 'Baloo 2', cursive;
+            transition: all 0.2s;
+            text-align: left;
+        }
+
+        .option-btn:hover { background: #e3e8ef; }
+
+        .option-btn.correct {
+            background: #d4edda;
+            border-color: var(--success);
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        .option-btn.wrong {
+            background: #f8d7da;
+            border-color: var(--error);
+            color: var(--error);
+            opacity: 0.7;
+        }
+
+        .feedback-msg {
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 1rem;
+            min-height: 25px;
+        }
+
+        /* Score Panel */
+        #score-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            padding: 10px 20px;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+            border-top: 4px solid var(--primary);
+        }
+
+        .score-item { text-align: center; }
+        .score-val { font-size: 1.2rem; font-weight: 800; display: block; }
+        .score-label { font-size: 0.8rem; color: #777; }
+
+        .progress-container {
+            flex-grow: 1;
+            margin: 0 20px;
+            background: #eee;
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--success);
+            width: 0%;
+            transition: width 0.5s;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+            font-size: 0.9rem;
+            margin-top: 50px;
+            margin-bottom: 80px;
+        }
+
+        /* Animations */
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .pop-anim { animation: pop 0.3s ease; }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8rem; }
+            .options-grid { grid-template-columns: 1fr; }
+            .score-label { display: none; }
+            #score-panel { padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>कक्षा 2 - हिंदी 📘</h1>
+        <div class="subtitle">अध्याय 1: वर्ण ज्ञान व मात्रा ✍️</div>
+    </header>
+
+    <div class="container">
+        
+        <div id="notes-section">
+            
+            <div class="card">
+                <h2>1️⃣ भूमिका (Introduction) 👋</h2>
+                <p>नमस्ते प्यारे बच्चों! 🌟 कैसे हैं आप? आज हम एक बहुत ही मजेदार सफर पर चलेंगे। यह सफर है <strong>शब्दों और आवाजों</strong> का!</p>
+                <p>क्या आपको पता है, जब हम बात करते हैं, तो हमारे मुँह से जो आवाजें निकलती हैं, उन्हें लिखने के लिए हमें <strong>'वर्ण'</strong> (Letters) की जरूरत होती है। आज हम इन्ही जादुई अक्षरों से दोस्ती करेंगे। तैयार हो? चलो शुरू करें!</p>
+            </div>
+
+            <div class="card">
+                <h2>2️⃣ स्वर (Swar) – हमारी आवाजें 🗣️</h2>
+                <p>बच्चों, स्वर वो अक्षर होते हैं जिन्हें बोलने के लिए किसी की मदद नहीं चाहिए। ये खुद राजा हैं! 👑</p>
+                <div class="highlight-box">
+                    <strong>ये कुल 11 होते हैं (और 2 अयोगवाह):</strong>
+                </div>
+                <div class="letter-grid">
+                    <div class="letter-item">अ</div>
+                    <div class="letter-item">आ</div>
+                    <div class="letter-item">इ</div>
+                    <div class="letter-item">ई</div>
+                    <div class="letter-item">उ</div>
+                    <div class="letter-item">ऊ</div>
+                    <div class="letter-item">ऋ</div>
+                    <div class="letter-item">ए</div>
+                    <div class="letter-item">ऐ</div>
+                    <div class="letter-item">ओ</div>
+                    <div class="letter-item">औ</div>
+                </div>
+                <p>📍 <strong>अं</strong> (अनुस्वार) और <strong>अः</strong> (विसर्ग) भी इनके साथ रहते हैं।</p>
+                <p><em>उदाहरण:</em> <strong>अ</strong> से अनार 🍎, <strong>आ</strong> से आम 🥭, <strong>ई</strong> से ईख।</p>
+            </div>
+
+            <div class="card">
+                <h2>3️⃣ व्यंजन (Vyanjan) 🧩</h2>
+                <p>व्यंजन वो अक्षर हैं जो स्वरों की मदद के बिना नहीं बोले जा सकते। ये स्वरों के दोस्त हैं। 🤝</p>
+                <p>जैसे: जब हम बोलते हैं <strong>'क'</strong>, तो ध्यान से सुनो... अंत में <strong>'अ'</strong> की आवाज आती है न? (क् + अ = क)।</p>
+                
+                <h3>मुख्य व्यंजन:</h3>
+                <div class="letter-grid" style="grid-template-columns: repeat(5, 1fr);">
+                    <div class="letter-item">क</div><div class="letter-item">ख</div><div class="letter-item">ग</div><div class="letter-item">घ</div><div class="letter-item">ङ</div>
+                    <div class="letter-item">च</div><div class="letter-item">छ</div><div class="letter-item">ज</div><div class="letter-item">झ</div><div class="letter-item">ञ</div>
+                    <div class="letter-item">ट</div><div class="letter-item">ठ</div><div class="letter-item">ड</div><div class="letter-item">ढ</div><div class="letter-item">ण</div>
+                    <div class="letter-item">त</div><div class="letter-item">थ</div><div class="letter-item">द</div><div class="letter-item">ध</div><div class="letter-item">न</div>
+                    <div class="letter-item">प</div><div class="letter-item">फ</div><div class="letter-item">ब</div><div class="letter-item">भ</div><div class="letter-item">म</div>
+                </div>
+                <p>और फिर हमारे दोस्त: <strong>य, र, ल, व, श, ष, स, ह</strong>।</p>
+            </div>
+
+            <div class="card">
+                <h2>4️⃣ संयुक्त अक्षर (Joint Letters) 🔗</h2>
+                <p>कभी-कभी दो व्यंजन आपस में पक्के दोस्त बन जाते हैं और एक हो जाते हैं। उन्हें हम <strong>संयुक्त अक्षर</strong> कहते हैं।</p>
+                <ul>
+                    <li><strong>क्ष</strong> (क्षत्रिय) = यह <strong>क</strong> और <strong>ष</strong> से मिलकर बना है।</li>
+                    <li><strong>त्र</strong> (त्रिशूल) = यह <strong>त</strong> और <strong>र</strong> से मिलकर बना है। 🔱</li>
+                    <li><strong>ज्ञ</strong> (ज्ञानी) = यह <strong>ज</strong> और <strong>ञ</strong> का जोड़ है। 🧠</li>
+                    <li><strong>श्र</strong> (श्रम) = यह <strong>श</strong> और <strong>र</strong> की दोस्ती है।</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h2>5️⃣ मात्रा ज्ञान (Magic of Matras) ✨</h2>
+                <p>यह सबसे जरूरी हिस्सा है! जब कोई <strong>स्वर</strong> किसी <strong>व्यंजन</strong> से मिलता है, तो वह अपना रूप बदल लेता है। उस बदले हुए रूप को <strong>'मात्रा'</strong> कहते हैं।</p>
+                <p>चलो देखते हैं कि <strong>'क'</strong> के साथ मात्राएँ कैसे जादू करती हैं:</p>
+
+                <table class="matra-table">
+                    <tr style="background:var(--accent);">
+                        <th>स्वर</th>
+                        <th>मात्रा</th>
+                        <th>'क' के साथ</th>
+                        <th>शब्द (उदाहरण)</th>
+                    </tr>
+                    <tr class="matra-row">
+                        <td>अ</td>
+                        <td>(कोई नहीं)</td>
+                        <td>क</td>
+                        <td>कमल 🪷</td>
+                    </tr>
+                    <tr class="matra-row">
+                        <td>आ</td>
+                        <td>ा</td>
+                        <td>का</td>
+                        <td>कान 👂</td>
+                    </tr>
+                    <tr class="matra-row">
+                        <td>इ</td>
+                        <td>ि</td>
+                        <td>कि</td>
+                        <td>किताब 📖</td>
+                    </tr>
+                    <tr class="matra-row">
+                        <td>ई</td>
+                        <td>ी</td>
+                        <td>की</td>
+                        <td>कील 📌</td>
+                    </tr>
+                    <tr class="matra-row">
+                        <td>उ</td>
+                        <td>ु</td>
+                        <td>कु</td>
+                        <td>कुत्ता 🐕</td>
+                    </tr>
+                    <tr class="matra-row">
+                        <td>ऊ</td>
+                        <td>ू</td>
+                        <td>कू</td>
+                        <td>कूलर 💨</td>
+                    </tr>
+                    <tr class="matra-row">
+                        <td>ऋ</td>
+                        <td>ृ</td>
+                        <td>कृ</td>
+                        <td>कृषि (खेती) 🌾</td>
+                    </tr>
+                    <tr class="matra-row">
+                        <td>ए</td>
+                        <td>े</td>
+                        <td>के</td>
+                        <td>केला 🍌</td>
+                    </tr>
+                    <tr class="matra-row">
+                        <td>ऐ</td>
+                        <td>ै</td>
+                        <td>कै</td>
+                        <td>कैमरा 📷</td>
+                    </tr>
+                    <tr class="matra-row">
+                        <td>ओ</td>
+                        <td>ो</td>
+                        <td>को</td>
+                        <td>कोट 🧥</td>
+                    </tr>
+                    <tr class="matra-row">
+                        <td>औ</td>
+                        <td>ौ</td>
+                        <td>कौ</td>
+                        <td>कौआ 🐦</td>
+                    </tr>
+                    <tr class="matra-row">
+                        <td>अं</td>
+                        <td>ं</td>
+                        <td>कं</td>
+                        <td>कंगन 💍</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="card">
+                <h2>6️⃣ बारहखड़ी (Barahkhadi) 🎼</h2>
+                <p>जब हम एक व्यंजन पर सारी मात्राएँ एक के बाद एक लगाते हैं, तो एक गाना बन जाता है! इसे बारहखड़ी कहते हैं।</p>
+                <div class="highlight-box" style="text-align: center;">
+                    <strong>क का कि की कु कू के कै को कौ कं कः</strong>
+                </div>
+                <p>इसी तरह हम ख, ग, घ... सबकी बारहखड़ी बना सकते हैं। जोर से बोलकर पढ़ो, बहुत मजा आएगा!</p>
+            </div>
+
+            <div class="card">
+                <h2>7️⃣ सही उच्चारण (Pronunciation Tips) 📢</h2>
+                <ul>
+                    <li>✅ <strong>इ (छोटी)</strong> को जल्दी बोलो (झटके से)। जैसे: <em>दिन</em>।</li>
+                    <li>✅ <strong>ई (बड़ी)</strong> को थोड़ा खींच कर बोलो। जैसे: <em>दीन</em>।</li>
+                    <li>✅ <strong>श</strong> और <strong>स</strong> में अंतर है। 'श' (शलगम) में सीटी जैसी आवाज आती है।</li>
+                    <li>✅ पढ़ते समय मात्राओं पर पूरा ध्यान दो।</li>
+                </ul>
+            </div>
+
+        </div>
+
+        <div id="quiz-section" class="quiz-container">
+            <h2 style="text-align:center;">अभ्यास का समय! (Practice Time) 🎯</h2>
+            <p style="text-align:center;">नीचे दिए गए प्रश्नों के सही उत्तर चुनें:</p>
+            
+            <div id="questions-container">
+                </div>
+        </div>
+
+        <footer>
+            Designed & Created by SHRISHANT YADAV<br>
+            2026 – ShanEduHub
+        </footer>
+
+    </div>
+
+    <div id="score-panel">
+        <div class="score-item">
+            <span class="score-val" id="correct-count" style="color:var(--success)">0</span>
+            <span class="score-label">सही ✅</span>
+        </div>
+        <div class="score-item">
+            <span class="score-val" id="wrong-count" style="color:var(--error)">0</span>
+            <span class="score-label">गलत ❌</span>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        <div class="score-item">
+            <span class="score-val" id="star-rating">⭐ 0</span>
+            <span class="score-label">सितारे</span>
+        </div>
+        <div class="score-item" style="margin-left: 10px;">
+            <span class="score-val" id="percentage">0%</span>
+        </div>
+    </div>
+
+    <script>
+        // Database of 50 Unique Questions
+        // Types: MCQ, Fill Blanks, True/False, Identification, Logic
+        const questionBank = [
+            // --- Swar & Vyanjan Basics ---
+            { id: 1, q: "हिंदी वर्णमाला का पहला स्वर कौन सा है?", options: ["आ", "अ", "इ", "क"], ans: 1 },
+            { id: 2, q: "'ई' के ठीक बाद कौन सा स्वर आता है?", options: ["इ", "ऊ", "उ", "ए"], ans: 2 },
+            { id: 3, q: "इनमें से व्यंजन (Vyanjan) कौन सा है?", options: ["अ", "उ", "म", "ओ"], ans: 2 },
+            { id: 4, q: "क, ख, ग, __ । खाली जगह में क्या आएगा?", options: ["घ", "ङ", "च", "छ"], ans: 0 },
+            { id: 5, q: "इनमें से स्वर (Vowel) पहचानिए:", options: ["क", "ल", "ई", "प"], ans: 2 },
+            
+            // --- Matra Identification (Simple) ---
+            { id: 6, q: "'का' में कौन सी मात्रा लगी है?", options: ["इ की मात्रा", "आ की मात्रा", "उ की मात्रा", "ओ की मात्रा"], ans: 1 },
+            { id: 7, q: "'दिन' शब्द में 'द' पर कौन सी मात्रा है?", options: ["बड़ी ई (ी)", "छोटी इ (ि)", "ए (े)", "आ (ा)"], ans: 1 },
+            { id: 8, q: "'पूरा' शब्द में 'प' पर कौन सी मात्रा है?", options: ["छोटा उ (ु)", "बड़ा ऊ (ू)", "ओ (ो)", "औ (ौ)"], ans: 1 },
+            { id: 9, q: "'केला' शब्द में 'क' पर कौन सी मात्रा है?", options: ["ऐ (ै)", "ए (े)", "इ (ि)", "ई (ी)"], ans: 1 },
+            { id: 10, q: "इनमें से किस शब्द में 'ओ' (ो) की मात्रा है?", options: ["कौआ", "मोर", "बैल", "काम"], ans: 1 },
+
+            // --- Word Formation & Logic ---
+            { id: 11, q: "म + ा + ल + ा = ?", options: ["मल", "माल", "माला", "मिला"], ans: 2 },
+            { id: 12, q: "क + ि + त + ा + ब = ?", options: ["कताब", "किताब", "कीताब", "कुताब"], ans: 1 },
+            { id: 13, q: "सही शब्द चुनें: (Picture: 🌹 Rose)", options: ["गुलाब", "गलाब", "गूलाब", "गोलाब"], ans: 0 },
+            { id: 14, q: "सही शब्द चुनें: (Picture: ☀️ Sun)", options: ["सूरज", "सुरज", "सरज", "सैरज"], ans: 0 },
+            { id: 15, q: "सही क्रम क्या है? (ली + छ + म)", options: ["छलीम", "मछली", "लीछम", "मलीछ"], ans: 1 },
+
+            // --- Sanyukt Akshar ---
+            { id: 16, q: "'क्ष' (क्षत्रिय) किन दो अक्षरों से बना है?", options: ["क + ष", "त + र", "ज + ञ", "श + र"], ans: 0 },
+            { id: 17, q: "'त्र' (त्रिशूल) किन दो अक्षरों से बना है?", options: ["त + र", "प + र", "ट + र", "क + र"], ans: 0 },
+            { id: 18, q: "'ज्ञानी' शब्द का पहला अक्षर क्या है?", options: ["क्ष", "त्र", "ज्ञ", "श्र"], ans: 2 },
+            { id: 19, q: "इनमें से संयुक्त अक्षर कौन सा है?", options: ["क", "म", "त्र", "ल"], ans: 2 },
+            { id: 20, q: "'श्रम' शब्द में 'श्र' किससे बना है?", options: ["स + र", "श + र", "ष + र", "क्ष + र"], ans: 1 },
+
+            // --- Matra Application (Medium) ---
+            { id: 21, q: "सही वर्तनी (Spelling) चुनें:", options: ["सैनिक", "सेनिक", "सानिक", "सौनिक"], ans: 0 },
+            { id: 22, q: "सही वर्तनी चुनें:", options: ["पोध", "पौधा", "पाधा", "पुधा"], ans: 1 },
+            { id: 23, q: "किस शब्द में कोई मात्रा नहीं है?", options: ["कमल", "काम", "कोमल", "किला"], ans: 0 },
+            { id: 24, q: "'मृग' शब्द में 'म' के नीचे क्या लगा है?", options: ["र", "ऋ की मात्रा (ृ)", "उ की मात्रा", "हलंत"], ans: 1 },
+            { id: 25, q: "'कंगन' में 'क' के ऊपर क्या है?", options: ["चन्द्रबिन्दु", "अनुस्वार (बिंदु)", "विसर्ग", "कुछ नहीं"], ans: 1 },
+
+            // --- Barahkhadi & Patterns ---
+            { id: 26, q: "क, का, कि, की, कु, __ । अगला क्या होगा?", options: ["के", "कू", "कृ", "कै"], ans: 1 },
+            { id: 27, q: "प, पा, पि, पी... इस क्रम में 'पी' के बाद क्या आएगा?", options: ["पु", "पे", "पै", "पो"], ans: 0 },
+            { id: 28, q: "'च' की बारहखड़ी में 'चे' के बाद क्या आता है?", options: ["चो", "चौ", "चै", "चं"], ans: 2 },
+            { id: 29, q: "इनमें से 'औ' (ौ) की मात्रा वाला शब्द पहचानें:", options: ["औरत", "ओर", "आरत", "एरावत"], ans: 0 },
+            { id: 30, q: "सही मिलान: 'ऐ' की मात्रा कैसी दिखती है?", options: ["े", "ै", "ो", "ा"], ans: 1 },
+
+            // --- Fill in the Blanks ---
+            { id: 31, q: "आसमान का रंग ____ होता है।", options: ["नीला", "निला", "नेला", "नौला"], ans: 0 },
+            { id: 32, q: "मछली ____ में रहती है।", options: ["जाल", "जल", "जालू", "जेल"], ans: 1 },
+            { id: 33, q: "हमें रोज ____ खाना चाहिए।", options: ["फल", "फाल", "फेल", "फोल"], ans: 0 },
+            { id: 34, q: "राजा के सिर पर ____ होता है।", options: ["मकुट", "मुकुट", "मूकुट", "मोकुट"], ans: 1 },
+            { id: 35, q: "बगीचे में ____ खिले हैं।", options: ["फूल", "फुल", "फैल", "फोल"], ans: 0 },
+
+            // --- True / False (Logic based) ---
+            { id: 36, q: "क्या 'अनार' शब्द में 'आ' की मात्रा है? (दूसरे अक्षर पर)", options: ["हाँ", "नहीं", "पता नहीं", "शायद"], ans: 0 },
+            { id: 37, q: "क्या 'इ' और 'ई' की मात्रा एक जैसी होती है?", options: ["हाँ", "नहीं", "दोनों सही", "कोई नहीं"], ans: 1 },
+            { id: 38, q: "व्यंजन स्वरों की मदद के बिना बोले जा सकते हैं। सही या गलत?", options: ["सही", "गलत", "कभी-कभी", "हमेशा"], ans: 1 },
+            { id: 39, q: "'कृषि' शब्द में 'ऋ' की मात्रा है। सही या गलत?", options: ["सही", "गलत", "नहीं पता", "शायद"], ans: 0 },
+            { id: 40, q: "हिंदी वर्णमाला 'ज्ञ' पर खत्म होती है।", options: ["सही", "गलत", "नहीं", "हाँ"], ans: 3 }, // Generally speaking for kids
+
+            // --- Advanced Identification ---
+            { id: 41, q: "चित्र पहचानो (🐘): इसे हिंदी में क्या कहते हैं?", options: ["हाथी", "हथी", "हाथि", "हाथू"], ans: 0 },
+            { id: 42, q: "चित्र पहचानो (🏠): इसे हिंदी में क्या कहते हैं?", options: ["घर", "घार", "घिर", "घुर"], ans: 0 },
+            { id: 43, q: "शब्द बनाओ: ब + र + ग + द", options: ["बरगद", "बारगद", "बर्गद", "बरगाद"], ans: 0 },
+            { id: 44, q: "कौन सा शब्द 'स' से शुरू नहीं होता?", options: ["सपेरा", "सड़क", "शहर", "सरल"], ans: 2 }, // Shahar starts with Sha
+            { id: 45, q: "इनमें से कौन सा एक 'फल' नहीं है?", options: ["आम", "केला", "आलू", "सेब"], ans: 2 },
+
+            // --- Tricky & Mix ---
+            { id: 46, q: "'प्रातः' शब्द में अंत में क्या लगा है?", options: ["अनुस्वार", "विसर्ग (:)", "हलंत", "चंद्रबिंदु"], ans: 1 },
+            { id: 47, q: "अं (बिंदु) वाला शब्द चुनें:", options: ["हंस", "हँस", "हस", "हास"], ans: 0 },
+            { id: 48, q: "चंद्रबिंदु (ँ) वाला शब्द चुनें:", options: ["आंख", "अंक", "अतः", "आम"], ans: 0 },
+            { id: 49, q: "ऋतु शब्द में पहला अक्षर क्या है?", options: ["र", "रि", "ऋ", "रू"], ans: 2 },
+            { id: 50, q: "वर्णमाला को सही क्रम में लगाओ: ग, क, ख, घ", options: ["क, ख, ग, घ", "ख, ग, घ, क", "ग, घ, क, ख", "घ, ग, ख, क"], ans: 0 }
+        ];
+
+        // Game State
+        let correctScore = 0;
+        let wrongScore = 0;
+        let answeredQuestions = new Set();
+        const totalQuestions = questionBank.length;
+
+        // Render Questions
+        const questionsContainer = document.getElementById('questions-container');
+
+        questionBank.forEach((qData, index) => {
+            const qCard = document.createElement('div');
+            qCard.className = 'question-card';
+            qCard.id = `q-card-${qData.id}`;
+
+            const qText = document.createElement('div');
+            qText.className = 'q-text';
+            qText.innerText = `प्रश्न ${index + 1}: ${qData.q}`;
+
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = 'options-grid';
+
+            qData.options.forEach((opt, optIndex) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(qData.id, optIndex, qData.ans, btn, optionsDiv);
+                optionsDiv.appendChild(btn);
+            });
+
+            const feedback = document.createElement('div');
+            feedback.className = 'feedback-msg';
+            feedback.id = `feedback-${qData.id}`;
+
+            qCard.appendChild(qText);
+            qCard.appendChild(optionsDiv);
+            qCard.appendChild(feedback);
+            questionsContainer.appendChild(qCard);
+        });
+
+        function checkAnswer(qId, selectedIndex, correctIndex, btnElement, container) {
+            if (answeredQuestions.has(qId)) return; // Prevent multiple clicks
+
+            answeredQuestions.add(qId);
+            const feedbackEl = document.getElementById(`feedback-${qId}`);
+            
+            // Disable all buttons in this card
+            const allBtns = container.querySelectorAll('.option-btn');
+            allBtns.forEach(b => b.disabled = true);
+
+            if (selectedIndex === correctIndex) {
+                // Correct
+                btnElement.classList.add('correct');
+                feedbackEl.innerText = "शाबाश! बिल्कुल सही उत्तर! 🎉";
+                feedbackEl.style.color = "var(--success)";
+                correctScore++;
+                playAnim(btnElement);
+            } else {
+                // Wrong
+                btnElement.classList.add('wrong');
+                // Highlight correct one
+                allBtns[correctIndex].classList.add('correct');
+                feedbackEl.innerText = "ओह! गलत उत्तर। सही उत्तर हरे रंग में है।";
+                feedbackEl.style.color = "var(--error)";
+                wrongScore++;
+            }
+
+            updateScoreBoard();
+        }
+
+        function playAnim(element) {
+            element.classList.add('pop-anim');
+            setTimeout(() => element.classList.remove('pop-anim'), 300);
+        }
+
+        function updateScoreBoard() {
+            const totalAnswered = correctScore + wrongScore;
+            const percentage = Math.round((correctScore / totalQuestions) * 100);
+            
+            document.getElementById('correct-count').innerText = correctScore;
+            document.getElementById('wrong-count').innerText = wrongScore;
+            document.getElementById('percentage').innerText = percentage + "%";
+            document.getElementById('progress-bar').style.width = percentage + "%";
+
+            // Calculate Stars
+            let stars = "0";
+            if (percentage > 20) stars = "⭐";
+            if (percentage > 40) stars = "⭐⭐";
+            if (percentage > 60) stars = "⭐⭐⭐";
+            if (percentage > 80) stars = "⭐⭐⭐⭐";
+            if (percentage === 100) stars = "⭐⭐⭐⭐⭐";
+            
+            document.getElementById('star-rating').innerText = stars;
+        }
+
+    </script>
+</body>
+</html>

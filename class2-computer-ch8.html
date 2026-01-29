@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 2 Computer: Operating System</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Nunito:wght@400;700&display=swap');
+
+        :root {
+            --primary: #54a0ff;       /* Bright Blue */
+            --secondary: #ff9f43;     /* Orange */
+            --accent: #1dd1a1;        /* Green */
+            --danger: #ff6b6b;        /* Red */
+            --purple: #5f27cd;        /* Purple */
+            --dark: #222f3e;
+            --light: #c8d6e5;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #dff9fb;
+            background-image: radial-gradient(var(--primary) 15%, transparent 16%);
+            background-size: 30px 30px;
+            margin: 0;
+            padding: 0;
+            color: var(--dark);
+            user-select: none;
+            padding-bottom: 80px;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background: linear-gradient(135deg, var(--primary), #2e86de);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            box-shadow: 0 8px 0 rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 { margin: 0; font-family: 'Fredoka', cursive; font-size: 2.2rem; letter-spacing: 1px; text-shadow: 2px 2px 0 rgba(0,0,0,0.1); }
+        .sub-title { font-size: 1.1rem; opacity: 0.95; font-weight: bold; margin-top: 5px; }
+
+        /* --- NAV --- */
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 0 10px;
+        }
+
+        .nav-btn {
+            background: var(--white);
+            border: none;
+            color: var(--dark);
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #b2bec3;
+            font-family: 'Fredoka', cursive;
+            transition: transform 0.1s;
+            flex: 1;
+            max-width: 200px;
+        }
+
+        .nav-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #b2bec3; }
+        .nav-btn.active { background: var(--secondary); color: white; box-shadow: 0 6px 0 #e67e22; }
+        .nav-btn.active:active { box-shadow: 0 2px 0 #e67e22; }
+
+        /* --- SECTIONS --- */
+        .section {
+            display: none;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 15px;
+            animation: slideUp 0.5s ease-out;
+        }
+        .section.active { display: block; }
+
+        /* --- NOTE CARDS --- */
+        .note-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 0 rgba(0,0,0,0.05);
+            border-left: 8px solid var(--primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .note-title {
+            font-family: 'Fredoka', cursive;
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .note-text { font-size: 1.2rem; line-height: 1.6; color: #555; }
+        .highlight { background: #ffeaa7; padding: 2px 8px; border-radius: 8px; font-weight: bold; color: #e17055; }
+        .big-emoji { font-size: 3rem; float: right; }
+
+        /* --- GAME UI --- */
+        .score-panel {
+            background: var(--dark);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+        }
+
+        .progress-container { background: #fff; height: 15px; border-radius: 10px; margin-bottom: 20px; border: 3px solid var(--dark); overflow: hidden; }
+        .progress-bar { height: 100%; width: 0%; background: repeating-linear-gradient(45deg, var(--accent), var(--accent) 10px, #16a085 10px, #16a085 20px); transition: width 0.5s; }
+
+        .question-card {
+            background: var(--white);
+            border-radius: 25px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 0 rgba(0,0,0,0.1);
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border: 5px solid var(--secondary);
+        }
+
+        .q-text { font-size: 1.6rem; color: var(--dark); margin-bottom: 20px; font-weight: bold; font-family: 'Fredoka', cursive; }
+        .q-img { font-size: 5rem; display: block; margin-bottom: 15px; animation: bounce 2s infinite; }
+
+        .options-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-top: 15px; }
+
+        .opt-btn {
+            background: #f1f2f6;
+            border: 3px solid #dfe4ea;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: transform 0.1s;
+            font-family: 'Nunito', sans-serif;
+            color: #555;
+            font-weight: bold;
+            box-shadow: 0 4px 0 #ccc;
+        }
+
+        .opt-btn:active { transform: translateY(4px); box-shadow: none; }
+        .opt-btn.correct { background: var(--accent); color: white; border-color: #10ac84; box-shadow: 0 4px 0 #10ac84; }
+        .opt-btn.wrong { background: var(--danger); color: white; border-color: #c0392b; box-shadow: 0 4px 0 #c0392b; animation: shake 0.4s; }
+
+        /* --- ANIMATIONS --- */
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        @keyframes pop { 0% { transform: scale(0); } 80% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+        /* --- MODAL --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none; justify-content: center; align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white; padding: 30px; border-radius: 25px;
+            text-align: center; width: 85%; max-width: 350px;
+            animation: pop 0.4s; border: 6px solid var(--purple);
+        }
+        .feedback-emoji { font-size: 5rem; display: block; margin-bottom: 10px; }
+        .feedback-title { font-size: 2.5rem; margin: 0; font-family: 'Fredoka', cursive; }
+        .next-btn {
+            background: var(--dark); color: white; border: none;
+            padding: 12px 35px; border-radius: 50px; font-size: 1.2rem;
+            margin-top: 20px; cursor: pointer; font-family: 'Fredoka', cursive;
+            box-shadow: 0 4px 0 black;
+        }
+        .next-btn:active { transform: translateY(4px); box-shadow: none; }
+
+        /* --- FOOTER --- */
+        footer {
+            background: var(--dark); color: white; text-align: center;
+            padding: 15px; font-size: 0.8rem; position: fixed;
+            bottom: 0; width: 100%; border-top: 4px solid var(--primary);
+            z-index: 90;
+        }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🖥️ Operating System</h1>
+    <div class="sub-title">Class 2 • Chapter 8 • The Computer Boss</div>
+</header>
+
+<div class="nav-container">
+    <button class="nav-btn active" onclick="switchTab('learn')">📘 Read Notes</button>
+    <button class="nav-btn" onclick="switchTab('play')">🎮 Play Quiz</button>
+</div>
+
+<div id="learn-section" class="section active">
+    
+    <div class="note-card" style="border-left-color: var(--primary);">
+        <div class="note-title">🤖 What is an Operating System?</div>
+        <p class="note-text">
+            The <span class="highlight">Operating System (OS)</span> is the <b>BOSS</b> of the computer!<br>
+            It helps the computer start and work.<br>
+            It tells all the parts (like mouse and keyboard) what to do.<br>
+            <i>"When Rohan presses the power button, the OS wakes up the computer!"</i> 😊
+        </p>
+        <span class="big-emoji">👮‍♂️</span>
+    </div>
+
+    <div class="note-card" style="border-left-color: var(--secondary);">
+        <div class="note-title">🪟 Examples of OS</div>
+        <p class="note-text">
+            Just like you have a name, Operating Systems have names too!<br>
+            1. <b>Windows</b> 🪟 (Seen on most computers)<br>
+            2. <b>Android</b> 🤖 (Seen on mobile phones)<br>
+            These are the most famous ones.
+        </p>
+    </div>
+
+    <div class="note-card" style="border-left-color: var(--accent);">
+        <div class="note-title">🖥️ The Desktop</div>
+        <p class="note-text">
+            When the computer starts, the first screen you see is called the <span class="highlight">Desktop</span>.<br>
+            It is like a study table where we keep our things.<br>
+            It has a pretty picture in the background!
+        </p>
+    </div>
+
+    <div class="note-card" style="border-left-color: var(--purple);">
+        <div class="note-title">🖼️ Icons</div>
+        <p class="note-text">
+            The small pictures on the Desktop are called <span class="highlight">Icons</span>.<br>
+            Each icon stands for a program or file.<br>
+            <b>Examples:</b><br>
+            🎨 Paint, 🎮 Games, ➕ Calculator.<br>
+            <i>"Click an icon to open it!"</i>
+        </p>
+    </div>
+
+    <div class="note-card" style="border-left-color: var(--danger);">
+        <div class="note-title">🔘 Start Button & Taskbar</div>
+        <p class="note-text">
+            <b>Start Button:</b> It is like a door 🚪. It helps us begin our work and open programs.<br><br>
+            <b>Taskbar:</b> It is the long bar at the bottom of the screen ➖. It shows which programs are open.
+        </p>
+    </div>
+
+    <div class="note-card" style="border-left-color: var(--primary);">
+        <div class="note-title">🖱️ Open & Close</div>
+        <p class="note-text">
+            <b>To Open:</b> Move mouse pointer to an icon and click (or double click).<br>
+            <b>To Close:</b> Click the <span style="color:red; font-weight:bold;">X</span> button at the top corner.<br>
+            <i>"Open Paint -> Draw -> Close Paint"</i>
+        </p>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 40px;">
+        <button class="nav-btn" style="background: var(--accent); color: white;" onclick="switchTab('play')">I'm Ready to Play! 🚀</button>
+    </div>
+</div>
+
+<div id="play-section" class="section">
+    <div class="score-panel">
+        <div>⭐ <span id="star-count">0</span></div>
+        <div>✅ <span id="score-count">0</span> | ❌ <span id="wrong-count">0</span></div>
+        <div id="pct-score">0%</div>
+    </div>
+    
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <div class="question-card" id="game-area">
+        </div>
+</div>
+
+<div class="modal-overlay" id="feedback-modal">
+    <div class="modal-content">
+        <span class="feedback-emoji" id="modal-emoji">🌟</span>
+        <h2 class="feedback-title" id="modal-title">Excellent!</h2>
+        <button class="next-btn" onclick="nextQuestion()">Next ➡</button>
+    </div>
+</div>
+
+<footer>
+    Designed & Created by SHRISHANT YADAV<br>
+    2026 – ShanEduHub
+</footer>
+
+<script>
+/* =========================================================
+   DATABASE: 60+ UNIQUE QUESTIONS
+   ========================================================= */
+const questions = [
+    // --- WHAT IS OS ---
+    { t: 'mcq', q: "Who is the BOSS of the computer?", a: "Operating System", o: ["Mouse", "Operating System", "Keyboard"], e: "👮‍♂️" },
+    { t: 'mcq', q: "The Operating System helps the computer to ________.", a: "Start", o: ["Sleep", "Start", "Dance"], e: "🚀" },
+    { t: 'tf', q: "A computer can work without an Operating System.", a: "False", e: "🛑" },
+    { t: 'mcq', q: "What wakes up the computer when you press power?", a: "OS", o: ["OS", "Monitor", "Printer"], e: "⏰" },
+    { t: 'mcq', q: "OS stands for ________.", a: "Operating System", o: ["Open System", "Operating System", "Over System"], e: "📖" },
+    { t: 'match', q: "Match: BOSS", a: "Operating System", o: ["Operating System", "Desktop", "Icon"], e: "👔" },
+    { t: 'tf', q: "The OS tells hardware what to do.", a: "True", e: "🗣️" },
+
+    // --- EXAMPLES OF OS ---
+    { t: 'identify', q: "Which of these is an Operating System?", a: "Windows", o: ["Paint", "Windows", "Mouse"], e: "🪟" },
+    { t: 'mcq', q: "Android is an OS used in ________.", a: "Mobiles", o: ["Cars", "Mobiles", "Ovens"], e: "📱" },
+    { t: 'tf', q: "Windows is a popular Operating System.", a: "True", e: "✅" },
+    { t: 'identify', q: "Identify the Robot OS:", a: "Android", o: ["Windows", "Android", "Word"], e: "🤖" },
+    { t: 'mcq', q: "Paint is an OS.", a: "False", o: ["True", "False"], e: "🎨" },
+
+    // --- DESKTOP ---
+    { t: 'mcq', q: "The first screen we see is called ________.", a: "Desktop", o: ["Tabletop", "Desktop", "Rooftop"], e: "🖥️" },
+    { t: 'tf', q: "The Desktop is like a study table.", a: "True", e: "🏫" },
+    { t: 'mcq', q: "We keep icons on the ________.", a: "Desktop", o: ["Keyboard", "Desktop", "Printer"], e: "📂" },
+    { t: 'identify', q: "What appears after booting?", a: "Desktop", o: ["Black screen", "Desktop", "Nothing"], e: "✨" },
+    { t: 'arrange', q: "Arrange: TOP - DESK", a: "DESKTOP", o: ["DESKTOP", "TOPDESK"], e: "🔠" },
+    
+    // --- ICONS ---
+    { t: 'mcq', q: "Small pictures on the desktop are called ________.", a: "Icons", o: ["Photos", "Icons", "Cartoons"], e: "🖼️" },
+    { t: 'tf', q: "Icons help us open programs.", a: "True", e: "🔓" },
+    { t: 'identify', q: "Which icon helps us draw?", a: "Paint", o: ["Calculator", "Paint", "Music"], e: "🎨" },
+    { t: 'identify', q: "Which icon helps us do sums?", a: "Calculator", o: ["Paint", "Calculator", "Game"], e: "➕" },
+    { t: 'mcq', q: "To open an icon, we use the ________.", a: "Mouse", o: ["Keyboard", "Mouse", "Screen"], e: "🖱️" },
+    { t: 'tf', q: "All icons look the same.", a: "False", e: "🚫" },
+    { t: 'match', q: "Match: SMALL PICTURE", a: "Icon", o: ["Desktop", "Icon", "Taskbar"], e: "🔍" },
+    { t: 'mcq', q: "The Recycle Bin is an ________.", a: "Icon", o: ["OS", "Icon", "Wire"], e: "🗑️" },
+
+    // --- START BUTTON ---
+    { t: 'mcq', q: "The Start button is like a ________.", a: "Door", o: ["Window", "Door", "Roof"], e: "🚪" },
+    { t: 'mcq', q: "Where is the Start button usually found?", a: "Bottom Corner", o: ["Top Corner", "Bottom Corner", "Middle"], e: "↙️" },
+    { t: 'tf', q: "We can shut down computer from Start button.", a: "True", e: "🛑" },
+    { t: 'mcq', q: "Clicking Start button opens a ________.", a: "Menu", o: ["Game", "Menu", "Movie"], e: "📜" },
+    { t: 'identify', q: "Identify Start Button:", a: "Start", o: ["Stop", "Start", "Pause"], e: "🔘" },
+
+    // --- TASKBAR ---
+    { t: 'mcq', q: "The long bar at the bottom is called ________.", a: "Taskbar", o: ["Chocolate Bar", "Taskbar", "Spacebar"], e: "➖" },
+    { t: 'tf', q: "Taskbar shows open programs.", a: "True", e: "📂" },
+    { t: 'mcq', q: "The Start button is on the ________.", a: "Taskbar", o: ["Monitor Top", "Taskbar", "Mouse"], e: "⬇️" },
+    { t: 'identify', q: "Which bar has the clock?", a: "Taskbar", o: ["Title Bar", "Taskbar", "Scroll Bar"], e: "🕒" },
+    { t: 'arrange', q: "Arrange: BAR - TASK", a: "TASKBAR", o: ["TASKBAR", "BARTASK"], e: "🔡" },
+
+    // --- OPEN & CLOSE ---
+    { t: 'mcq', q: "To open a program, we ________ on its icon.", a: "Click", o: ["Jump", "Click", "Blow"], e: "👆" },
+    { t: 'mcq', q: "To close a program, we click the ________ button.", a: "X", o: ["O", "X", "Y"], e: "❌" },
+    { t: 'tf', q: "Double clicking opens a program.", a: "True", e: "✌️" },
+    { t: 'mcq', q: "The Close button is usually ________ in color.", a: "Red", o: ["Green", "Red", "Blue"], e: "🟥" },
+    { t: 'mcq', q: "Where is the Close button?", a: "Top Corner", o: ["Bottom Corner", "Top Corner", "Middle"], e: "↗️" },
+    { t: 'tf', q: "We should leave programs open when done.", a: "False", e: "🚫" },
+
+    // --- MIXED / REAL LIFE ---
+    { t: 'mcq', q: "To paint a picture, I will click ________.", a: "Paint Icon", o: ["Calculator", "Paint Icon", "Start"], e: "🖌️" },
+    { t: 'mcq', q: "If I want to play, I will look for ________.", a: "Game Icon", o: ["Word Icon", "Game Icon", "Excel"], e: "🎮" },
+    { t: 'identify', q: "What controls the mouse and keyboard?", a: "OS", o: ["Wire", "OS", "Table"], e: "🕹️" },
+    { t: 'mcq', q: "Is 'Windows 10' an OS?", a: "Yes", o: ["Yes", "No"], e: "🔟" },
+    { t: 'tf', q: "We can move icons on the desktop.", a: "True", e: "🚚" },
+    { t: 'mcq', q: "The background picture is called ________.", a: "Wallpaper", o: ["Paint", "Wallpaper", "Poster"], e: "🖼️" },
+    { t: 'match', q: "Match: LONG BAR", a: "Taskbar", o: ["Icon", "Taskbar", "Desktop"], e: "📏" },
+    { t: 'mcq', q: "Can we have many icons on Desktop?", a: "Yes", o: ["Yes", "No"], e: "🔢" },
+    { t: 'identify', q: "Which symbol closes a window?", a: "X", o: ["-", "X", "+"], e: "❎" },
+    { t: 'mcq', q: "Computer needs OS to ________.", a: "Run", o: ["Eat", "Run", "Walk"], e: "🏃" },
+    { t: 'tf', q: "Taskbar is at the top of the screen.", a: "False", e: "🙃" },
+    { t: 'mcq', q: "Which one is NOT an OS?", a: "Mouse", o: ["Windows", "Android", "Mouse"], e: "🖱️" },
+    { t: 'identify', q: "Find the Calculator:", a: "➕", o: ["🎨", "➕", "📝"], e: "🧮" },
+    { t: 'mcq', q: "Start button opens the ________ menu.", a: "Start", o: ["Stop", "Start", "End"], e: "🏁" },
+    { t: 'arrange', q: "Arrange: WIN - DOWS", a: "WINDOWS", o: ["WINDOWS", "DOWSWIN"], e: "🔠" },
+    { t: 'mcq', q: "Does the OS manage memory?", a: "Yes", o: ["Yes", "No"], e: "🧠" },
+    { t: 'tf', q: "Icons are large text files.", a: "False", e: "📄" },
+    { t: 'mcq', q: "To switch programs, use ________.", a: "Taskbar", o: ["Mouse pad", "Taskbar", "Printer"], e: "🔄" }
+];
+
+/* =========================================================
+   GAME LOGIC ENGINE
+   ========================================================= */
+let currentQIndex = 0;
+let score = 0;
+let wrong = 0;
+let stars = 0;
+let shuffledQ = [];
+
+function initGame() {
+    shuffledQ = questions.sort(() => Math.random() - 0.5);
+    currentQIndex = 0;
+    score = 0;
+    wrong = 0;
+    stars = 0;
+    updateUI();
+    loadQuestion();
+}
+
+function switchTab(tab) {
+    document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+    
+    document.getElementById(tab + '-section').classList.add('active');
+    document.querySelector(`button[onclick="switchTab('${tab}')"]`).classList.add('active');
+
+    if(tab === 'play') {
+        initGame();
+    }
+}
+
+function loadQuestion() {
+    if (currentQIndex >= shuffledQ.length) {
+        showFinalScore();
+        return;
+    }
+
+    const q = shuffledQ[currentQIndex];
+    const area = document.getElementById('game-area');
+    
+    // Progress
+    const pct = ((currentQIndex) / shuffledQ.length) * 100;
+    document.getElementById('progress-bar').style.width = pct + "%";
+
+    let html = ``;
+    if(q.e) html += `<span class="q-emoji">${q.e}</span>`;
+    
+    let title = `Q${currentQIndex + 1}: `;
+    if(q.t === 'identify') title = "Identify: ";
+    if(q.t === 'arrange') title = "Unscramble: ";
+    
+    html += `<div class="q-text">${title}${q.q}</div>`;
+
+    // Render Options
+    if (q.t === 'mcq' || q.t === 'identify' || q.t === 'match' || q.t === 'arrange') {
+        html += `<div class="options-grid">`;
+        let opts = q.o ? q.o.sort(() => Math.random() - 0.5) : [];
+        if(q.t === 'arrange') opts = q.o; // Don't shuffle arrange options randomly if defined strictly
+        
+        opts.forEach(opt => {
+            html += `<button class="opt-btn" onclick="check('${opt}', '${q.a}', this)">${opt}</button>`;
+        });
+        html += `</div>`;
+    } 
+    else if (q.t === 'tf') {
+        html += `<div class="options-grid">`;
+        html += `<button class="opt-btn" onclick="check('True', '${q.a}', this)">True ✅</button>`;
+        html += `<button class="opt-btn" onclick="check('False', '${q.a}', this)">False ❌</button>`;
+        html += `</div>`;
+    }
+
+    area.innerHTML = html;
+}
+
+// --- LOGIC FUNCTIONS ---
+
+function check(selected, correct, btn) {
+    if (selected === correct) {
+        btn.classList.add('correct');
+        handleResult(true);
+    } else {
+        btn.classList.add('wrong');
+        handleResult(false);
+    }
+}
+
+// --- RESULT HANDLING ---
+
+function handleResult(isCorrect) {
+    if (isCorrect) {
+        score++;
+        stars += 5;
+        updateUI();
+        showModal(true);
+    } else {
+        wrong++;
+        updateUI();
+        showModal(false);
+    }
+}
+
+function updateUI() {
+    document.getElementById('score-count').innerText = score;
+    document.getElementById('wrong-count').innerText = wrong;
+    document.getElementById('star-count').innerText = stars;
+    
+    let total = currentQIndex + 1;
+    let attempts = score + wrong;
+    let pct = attempts === 0 ? 0 : Math.round((score / attempts) * 100);
+    document.getElementById('pct-score').innerText = pct + "%";
+}
+
+function showModal(isSuccess) {
+    const modal = document.getElementById('feedback-modal');
+    const title = document.getElementById('modal-title');
+    const emoji = document.getElementById('modal-emoji');
+
+    if (isSuccess) {
+        title.innerText = "Excellent!";
+        title.style.color = "#1dd1a1";
+        emoji.innerText = "⭐";
+    } else {
+        title.innerText = "Try Again!";
+        title.style.color = "#ff6b6b";
+        emoji.innerText = "😊";
+    }
+
+    modal.style.display = 'flex';
+}
+
+function nextQuestion() {
+    document.getElementById('feedback-modal').style.display = 'none';
+    currentQIndex++;
+    loadQuestion();
+}
+
+function showFinalScore() {
+    const area = document.getElementById('game-area');
+    area.innerHTML = `
+        <div style="font-size:5rem;">🏆</div>
+        <h2 style="font-family:'Fredoka', cursive; font-size:2.5rem;">Game Over!</h2>
+        <p style="font-size:1.5rem;">Score: <b>${score}</b></p>
+        <p style="font-size:1.5rem;">Stars: <b>${stars} ⭐</b></p>
+        <button class="nav-btn" onclick="initGame()" style="background:var(--secondary);">Play Again 🔄</button>
+    `;
+    document.getElementById('progress-bar').style.width = "100%";
+}
+</script>
+
+</body>
+</html>

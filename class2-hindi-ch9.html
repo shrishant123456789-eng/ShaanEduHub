@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>कक्षा 2 - हिंदी: कहानी संसार</title>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF9F43;   /* Story Orange */
+            --secondary: #54A0FF; /* Sky Blue */
+            --accent: #2ECC71;    /* Nature Green */
+            --pop: #FF6B6B;       /* Alert Red */
+            --bg: #FFF3E0;        /* Warm BG */
+            --card-bg: #FFFFFF;
+            --text: #2D3436;
+        }
+
+        body {
+            font-family: 'Baloo 2', cursive;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            padding-bottom: 160px; /* Space for score panel */
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary), #FF6348);
+            color: white;
+            text-align: center;
+            padding: 25px;
+            border-radius: 0 0 35px 35px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            margin-bottom: 30px;
+        }
+
+        h1 { margin: 0; font-size: 2.4rem; text-shadow: 2px 2px rgba(0,0,0,0.1); }
+        .subtitle { font-size: 1.2rem; font-weight: 600; margin-top: 5px; opacity: 0.95; }
+
+        /* Notes Section - Story Style */
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-left: 8px solid var(--accent);
+            transition: transform 0.2s;
+        }
+        
+        .card:hover { transform: translateY(-3px); }
+
+        h2 { color: #E67E22; border-bottom: 2px dashed #ddd; padding-bottom: 10px; font-size: 1.7rem; margin-top: 0; }
+        
+        .story-text { font-size: 1.15rem; color: #555; }
+        
+        .story-box {
+            background: #EAF2F8;
+            border: 2px solid var(--secondary);
+            padding: 15px;
+            border-radius: 15px;
+            margin: 15px 0;
+            font-style: italic;
+            color: #2E86DE;
+            line-height: 1.8;
+        }
+
+        .parts-grid {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .part-item {
+            flex: 1;
+            text-align: center;
+            background: #D4EDDA;
+            padding: 10px;
+            border-radius: 10px;
+            border: 2px solid #C3E6CB;
+            color: #155724;
+            font-weight: bold;
+        }
+
+        .moral-tag {
+            background: #FADBD8;
+            color: #C0392B;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        /* Quiz Section */
+        .quiz-header {
+            text-align: center;
+            background: var(--secondary);
+            color: white;
+            padding: 20px;
+            border-radius: 20px;
+            margin: 40px 0 20px 0;
+            box-shadow: 0 5px 15px rgba(84, 160, 255, 0.4);
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border-top: 6px solid var(--primary);
+            position: relative;
+        }
+
+        .q-tag {
+            background: #f1f2f6;
+            color: #747d8c;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-weight: 600;
+        }
+
+        .q-text { font-size: 1.3rem; font-weight: 700; margin-bottom: 15px; color: #2D3436; margin-right: 40px; }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background: #fff;
+            border: 2px solid #dfe4ea;
+            padding: 14px;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            font-family: 'Baloo 2', cursive;
+            transition: all 0.2s;
+            text-align: left;
+            color: #57606f;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .option-btn:hover { background: #FFF2CC; border-color: var(--primary); transform: translateY(-2px); }
+
+        .option-btn.correct {
+            background: #D4EDDA;
+            border-color: #28a745;
+            color: #155724;
+            animation: bounce 0.4s;
+        }
+
+        .option-btn.wrong {
+            background: #F8D7DA;
+            border-color: #dc3545;
+            color: #721c24;
+            opacity: 0.9;
+            animation: shake 0.4s;
+        }
+
+        .feedback {
+            margin-top: 12px;
+            font-weight: 800;
+            min-height: 25px;
+            font-size: 1.1rem;
+        }
+
+        /* Score Panel */
+        #score-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            padding: 10px 20px;
+            box-shadow: 0 -5px 25px rgba(0,0,0,0.15);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+            border-top: 6px solid var(--primary);
+        }
+
+        .score-box { text-align: center; }
+        .score-val { font-size: 1.4rem; font-weight: 800; display: block; line-height: 1; }
+        .score-lbl { font-size: 0.75rem; color: #a4b0be; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .progress-track {
+            flex-grow: 1;
+            margin: 0 20px;
+            background: #dfe6e9;
+            height: 14px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #ced6e0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--pop));
+            width: 0%;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #a4b0be;
+            font-size: 0.9rem;
+            margin-top: 50px;
+            font-weight: 600;
+        }
+
+        /* Animations */
+        @keyframes bounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } 100% { transform: translateX(0); } }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 2rem; }
+            #score-panel { padding: 10px; flex-wrap: wrap; }
+            .score-val { font-size: 1.2rem; }
+            .progress-track { order: 3; width: 100%; margin: 10px 0 0 0; }
+            .parts-grid { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>कक्षा 2 - हिंदी 📘</h1>
+        <div class="subtitle">अध्याय 9: कहानी संसार 🦁📖</div>
+    </header>
+
+    <div class="container">
+        
+        <div id="notes-section">
+            
+            <div class="card">
+                <h2>1️⃣ भूमिका (Introduction) 👋</h2>
+                <p class="story-text">प्यारे बच्चों! क्या आपको नानी-दादी से कहानियाँ सुनना अच्छा लगता है? 👵✨</p>
+                <p class="story-text">कहानियाँ हमें जादुई दुनिया में ले जाती हैं। कभी जंगल, कभी परियों का देश, तो कभी हमारे अपने घर की बातें। कहानी सुनने से हम नए शब्द सीखते हैं और अच्छे बच्चे बनते हैं!</p>
+            </div>
+
+            <div class="card">
+                <h2>2️⃣ नैतिक कहानियाँ (Moral Stories) 🌟</h2>
+                <p class="story-text">ये वो कहानियाँ हैं जो हमें कुछ <strong>सिखाती</strong> हैं।</p>
+                <div class="story-box">
+                    <strong>उदाहरण: लालची कुत्ता 🐕</strong><br>
+                    एक कुत्ते को रोटी मिली। उसने नदी के पानी में अपनी परछाई देखी। उसे लगा दूसरा कुत्ता है। उसने उसकी रोटी भी छीननी चाही और 'भौंक' दिया। उसकी रोटी पानी में गिर गई!
+                </div>
+                <div class="moral-tag">सीख: लालच करना बुरी बला है।</div>
+            </div>
+
+            <div class="card">
+                <h2>3️⃣ पशु कथाएँ (Animal Stories) 🦁🐭</h2>
+                <p class="story-text">इन कहानियों में जानवर बोलते हैं और इंसानों जैसे काम करते हैं!</p>
+                <div class="story-box">
+                    <strong>शेर और चूहा</strong><br>
+                    एक बार शेर जाल में फँस गया। नन्हे चूहे ने अपने तेज़ दाँतों से जाल काट दिया। शेर आज़ाद हो गया।
+                </div>
+                <div class="moral-tag">सीख: छोटा भी बड़े काम कर सकता है।</div>
+            </div>
+
+            <div class="card">
+                <h2>4️⃣ पारिवारिक कहानियाँ (Family Stories) 🏠</h2>
+                <p class="story-text">ये हमारे घर, माता-पिता और भाई-बहन की प्यारी बातें होती हैं।</p>
+                <p class="story-text">जैसे: दादी का चश्मा ढूँढना, माँ की मदद करना, या पिकनिक पर जाना। इनसे हम <strong>प्यार और मदद</strong> करना सीखते हैं।</p>
+            </div>
+
+            <div class="card">
+                <h2>5️⃣ कहानी के भाग (Parts of a Story) 🧩</h2>
+                <p class="story-text">हर कहानी के तीन हिस्से होते हैं:</p>
+                <div class="parts-grid">
+                    <div class="part-item">1. शुरुआत<br>(Start) 🎬<br>कौन है? कहाँ है?</div>
+                    <div class="part-item">2. मध्य<br>(Middle) 🛤️<br>क्या हुआ? क्या मुसीबत आई?</div>
+                    <div class="part-item">3. अंत<br>(End) 🏁<br>सब ठीक कैसे हुआ?</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>6️⃣ पात्र पहचान (Characters) 🎭</h2>
+                <p class="story-text">कहानी में जो लोग या जानवर होते हैं, उन्हें <strong>पात्र (Characters)</strong> कहते हैं।</p>
+                <ul>
+                    <li>🦸‍♂️ <strong>हीरो (नायक):</strong> जो अच्छा काम करता है।</li>
+                    <li>😈 <strong>विलेन (खलनायक):</strong> जो गड़बड़ करता है।</li>
+                </ul>
+                <p class="story-text">हमेशा सोचो: "इस कहानी से मैंने क्या सीखा?" 🤔</p>
+            </div>
+
+        </div>
+
+        <div id="quiz-section">
+            <div class="quiz-header">
+                <h2 style="color:white; border:none; margin:0; font-size:2rem;">कहानी प्रश्नोत्तरी 🎯</h2>
+                <p style="margin:5px 0 0 0; opacity:0.9;">नीचे दिए गए 70 प्रश्नों के सही उत्तर चुनें!</p>
+            </div>
+            
+            <div id="questions-container">
+                </div>
+        </div>
+
+        <footer>
+            Designed & Created by SHRISHANT YADAV<br>
+            2026 – ShanEduHub
+        </footer>
+
+    </div>
+
+    <div id="score-panel">
+        <div class="score-box">
+            <span class="score-val" id="correct-count" style="color:var(--accent)">0</span>
+            <span class="score-lbl">सही ✅</span>
+        </div>
+        <div class="score-box">
+            <span class="score-val" id="wrong-count" style="color:var(--pop)">0</span>
+            <span class="score-lbl">गलत ❌</span>
+        </div>
+        <div class="progress-track">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        <div class="score-box">
+            <span class="score-val" id="star-rating">⭐ 0</span>
+            <span class="score-lbl">स्टार</span>
+        </div>
+        <div class="score-box" style="margin-left: 10px;">
+            <span class="score-val" id="percentage">0%</span>
+        </div>
+    </div>
+
+    <script>
+        // 70 UNIQUE QUESTIONS DATABASE
+        const questionBank = [
+            // --- THIRSTY CROW (PYASA KAUWA) ---
+            { id: 1, q: "कौवे को क्या लगी थी?", options: ["भूख", "प्यास", "चोट", "नींद"], ans: 1 },
+            { id: 2, q: "घड़े में पानी कैसा था?", options: ["बहुत ज्यादा", "बिल्कुल नहीं", "बहुत कम (नीचे)", "गर्म"], ans: 2 },
+            { id: 3, q: "कौवे ने घड़े में क्या डाला?", options: ["रोटी", "कंकड़", "पत्ते", "लकड़ी"], ans: 1 },
+            { id: 4, q: "कंकड़ डालने से क्या हुआ?", options: ["घड़ा टूट गया", "पानी ऊपर आ गया", "पानी सूख गया", "कौवा गिर गया"], ans: 1 },
+            { id: 5, q: "इस कहानी से क्या सीख मिलती है?", options: ["मेहनत का फल मीठा होता है", "लालच बुरी बला है", "झूठ बोलना पाप है", "सोना जरूरी है"], ans: 0 },
+
+            // --- LION AND MOUSE (SHER AUR CHUHA) ---
+            { id: 6, q: "शेर कहाँ सो रहा था?", options: ["गुफा में", "पेड़ पर", "घर में", "पानी में"], ans: 0 },
+            { id: 7, q: "शेर के ऊपर कौन कूदने लगा?", options: ["बिल्ली", "चूहा", "खरगोश", "बंदर"], ans: 1 },
+            { id: 8, q: "शेर किस चीज़ में फँस गया?", options: ["कीचड़ में", "गुफा में", "शिकारी के जाल में", "पानी में"], ans: 2 },
+            { id: 9, q: "जाल को किसने काटा?", options: ["हाथी ने", "लोमड़ी ने", "चूहे ने", "शेर ने"], ans: 2 },
+            { id: 10, q: "क्या छोटा जानवर भी मदद कर सकता है?", options: ["हाँ", "नहीं", "कभी नहीं", "शायद"], ans: 0 },
+
+            // --- HARE AND TORTOISE (KHARGOSH AUR KACHUA) ---
+            { id: 11, q: "दौड़ किस-किस के बीच हुई?", options: ["शेर और हाथी", "कुत्ता और बिल्ली", "खरगोश और कछुआ", "चूहा और बिल्ली"], ans: 2 },
+            { id: 12, q: "कौन बहुत तेज दौड़ता था?", options: ["कछुआ", "खरगोश", "घोंघा", "चींटी"], ans: 1 },
+            { id: 13, q: "रास्ते में खरगोश ने क्या किया?", options: ["खाना खाया", "सो गया", "पानी पिया", "दौड़ता रहा"], ans: 1 },
+            { id: 14, q: "दौड़ कौन जीता?", options: ["खरगोश", "कछुआ", "दोनों", "कोई नहीं"], ans: 1 },
+            { id: 15, q: "कछुआ कैसे जीता?", options: ["धीरे-धीरे और लगातार चलकर", "भागकर", "धोखा देकर", "सोकर"], ans: 0 },
+
+            // --- GREEDY DOG (LALCHI KUTTA) ---
+            { id: 16, q: "कुत्ते के मुँह में क्या था?", options: ["हड्डी/रोटी", "गेंद", "खिलौना", "लकड़ी"], ans: 0 },
+            { id: 17, q: "कुत्ते ने पानी में क्या देखा?", options: ["मछली", "अपनी परछाई", "मगरमच्छ", "पत्थर"], ans: 1 },
+            { id: 18, q: "कुत्ते ने परछाई को क्या समझा?", options: ["दूसरा कुत्ता", "दोस्त", "राक्षस", "शेर"], ans: 0 },
+            { id: 19, q: "भौंकने पर क्या हुआ?", options: ["रोटी गिर गई", "रोटी मिल गई", "पानी सूख गया", "कुछ नहीं हुआ"], ans: 0 },
+            { id: 20, q: "कुत्ता कैसा था?", options: ["समझदार", "लालची", "दयालु", "ईमानदार"], ans: 1 },
+
+            // --- FOX AND GRAPES (LOMDI AUR ANGOOR) ---
+            { id: 21, q: "लोमड़ी ने पेड़ पर क्या देखा?", options: ["आम", "सेब", "अंगूर", "केले"], ans: 2 },
+            { id: 22, q: "अंगूर कहाँ लटक रहे थे?", options: ["बहुत नीचे", "जमीन पर", "बहुत ऊँचाई पर", "पानी में"], ans: 2 },
+            { id: 23, q: "लोमड़ी ने अंगूर पाने के लिए क्या किया?", options: ["पेड़ काटा", "छलाँग लगाई", "पत्थर फेंका", "सो गई"], ans: 1 },
+            { id: 24, q: "क्या लोमड़ी को अंगूर मिले?", options: ["हाँ", "नहीं", "थोड़े से", "बहुत सारे"], ans: 1 },
+            { id: 25, q: "जाते समय लोमड़ी ने क्या कहा?", options: ["अंगूर मीठे हैं", "अंगूर खट्टे हैं", "अंगूर खराब हैं", "अंगूर लाल हैं"], ans: 1 },
+
+            // --- HONEST WOODCUTTER (IMANDAR LAKADHARA) ---
+            { id: 26, q: "लकड़हारा क्या काट रहा था?", options: ["सब्जी", "लकड़ी", "कपड़ा", "कागज"], ans: 1 },
+            { id: 27, q: "उसकी कुल्हाड़ी कहाँ गिर गई?", options: ["जमीन पर", "आग में", "नदी में", "घर में"], ans: 2 },
+            { id: 28, q: "नदी से कौन निकला?", options: ["जलपरी/देवता", "मछली", "मगरमच्छ", "मेढक"], ans: 0 },
+            { id: 29, q: "देवता ने पहले कौन सी कुल्हाड़ी दिखाई?", options: ["लोहे की", "सोने की", "चाँदी की", "लकड़ी की"], ans: 1 },
+            { id: 30, q: "लकड़हारे ने कौन सी कुल्हाड़ी ली?", options: ["सोने की", "चाँदी की", "अपनी लोहे की", "तीनों"], ans: 2 },
+
+            // --- STORY PARTS & CONCEPTS (31-45) ---
+            { id: 31, q: "कहानी के सबसे पहले हिस्से को क्या कहते हैं?", options: ["अंत", "शुरुआत", "मध्य", "सीख"], ans: 1 },
+            { id: 32, q: "जहाँ कहानी खत्म होती है, उसे क्या कहते हैं?", options: ["शुरुआत", "अंत", "बीच", "नाम"], ans: 1 },
+            { id: 33, q: "कहानी के 'हीरो' को हिंदी में क्या कहते हैं?", options: ["नायक", "खलनायक", "दुश्मन", "चोर"], ans: 0 },
+            { id: 34, q: "जो कहानी में बुरा काम करता है, वह कौन है?", options: ["हीरो", "खलनायक (Villain)", "राजा", "सिपाही"], ans: 1 },
+            { id: 35, q: "कहानी से हमें क्या मिलती है?", options: ["मिठाई", "पैसे", "सीख (Moral)", "खिलौने"], ans: 2 },
+            { id: 36, q: "क्या हमें कहानियों से अच्छी बातें सीखनी चाहिए?", options: ["हाँ", "नहीं", "कभी नहीं", "शायद"], ans: 0 },
+            { id: 37, q: "कहानी सुनाने वाले को क्या कहते हैं?", options: ["कहानीकार", "चित्रकार", "गायक", "डॉक्टर"], ans: 0 },
+            { id: 38, q: "परियों की कहानी में क्या होता है?", options: ["जादू", "कार", "मोबाइल", "कंप्यूटर"], ans: 0 },
+            { id: 39, q: "जंगल की कहानी में मुख्य पात्र कौन होते हैं?", options: ["मशीनें", "जानवर", "एलियन", "रोबोट"], ans: 1 },
+            { id: 40, q: "नैतिक कहानियाँ हमें क्या सिखाती हैं?", options: ["लड़ना", "अच्छाई", "चोरी करना", "सोना"], ans: 1 },
+            { id: 41, q: "कहानी में समस्या (Problem) कहाँ आती है?", options: ["शुरुआत में", "अंत में", "मध्य (बीच) में", "कहीं नहीं"], ans: 2 },
+            { id: 42, q: "कहानी में समस्या का हल (Solution) कब मिलता है?", options: ["अंत में", "शुरुआत में", "कभी नहीं", "पहले"], ans: 0 },
+            { id: 43, q: "अगर कहानी में शेर है, तो वह कहाँ रहेगा?", options: ["शहर में", "जंगल में", "पानी में", "आसमान में"], ans: 1 },
+            { id: 44, q: "मछली की कहानी कहाँ होगी?", options: ["पेड़ पर", "रेगिस्तान में", "पानी में", "पहाड़ पर"], ans: 2 },
+            { id: 45, q: "दादी माँ की कहानियाँ कैसी होती हैं?", options: ["डरावनी", "मजेदार और ज्ञानवर्धक", "बोरिंग", "बुरी"], ans: 1 },
+
+            // --- CHARACTER & SITUATION LOGIC (46-60) ---
+            { id: 46, q: "अगर तुम कौवे की जगह होते, तो क्या करते?", options: ["रोते रहते", "कोशिश करते", "सो जाते", "घर चले जाते"], ans: 1 },
+            { id: 47, q: "ईमानदार लकड़हारे को ईनाम क्यों मिला?", options: ["सच बोलने के लिए", "झूठ बोलने के लिए", "लड़ने के लिए", "रोने के लिए"], ans: 0 },
+            { id: 48, q: "कछुआ क्यों जीता?", options: ["वह रुका नहीं", "वह तेज था", "उसने चीटिंग की", "उसे जादू आता था"], ans: 0 },
+            { id: 49, q: "लोमड़ी ने अंगूर को खट्टा क्यों कहा?", options: ["वे सच में खट्टे थे", "क्योंकि वह उन्हें पा नहीं सकी", "उसे पसंद नहीं थे", "वह बीमार थी"], ans: 1 },
+            { id: 50, q: "शेर ने चूहे को क्यों छोड़ दिया?", options: ["शेर डर गया", "चूहा बहुत बड़ा था", "दया करके", "शेर को भूख नहीं थी"], ans: 2 },
+            { id: 51, q: "परिवार की कहानी में सबसे बड़ा कौन होता है?", options: ["बच्चा", "दादा-दादी / माता-पिता", "दोस्त", "पड़ोसी"], ans: 1 },
+            { id: 52, q: "अगर दोस्त गिर जाए, तो कहानी का अच्छा बच्चा क्या करेगा?", options: ["हँसेगा", "मदद करेगा", "भाग जाएगा", "धक्का देगा"], ans: 1 },
+            { id: 53, q: "जन्मदिन की कहानी में क्या जरूरी है?", options: ["केक", "लड़ाई", "रोना", "पढ़ाई"], ans: 0 },
+            { id: 54, q: "चतुर (Clever) जानवर कौन माना जाता है?", options: ["गधा", "लोमड़ी", "हाथी", "गाय"], ans: 1 },
+            { id: 55, q: "वफादार (Loyal) जानवर कौन है?", options: ["बिल्ली", "कुत्ता", "साँप", "शेर"], ans: 1 },
+            { id: 56, q: "कहानी में 'एक बार की बात है' कब आता है?", options: ["अंत में", "शुरुआत में", "बीच में", "कभी नहीं"], ans: 1 },
+            { id: 57, q: "राजा की कहानी में रानी कहाँ रहती है?", options: ["झोपड़ी में", "महल में", "गुफा में", "पेड़ पर"], ans: 1 },
+            { id: 58, q: "बुरा काम करने वाले के साथ अंत में क्या होता है?", options: ["बुरा होता है", "अच्छा होता है", "ईनाम मिलता है", "तारीफ होती है"], ans: 0 },
+            { id: 59, q: "अच्छा काम करने वाले के साथ अंत में क्या होता है?", options: ["सजा मिलती है", "बुरा होता है", "अच्छा होता है", "डाँट पड़ती है"], ans: 2 },
+            { id: 60, q: "हमें बड़ों की बात क्यों माननी चाहिए?", options: ["डर से", "क्योंकि वे सही सलाह देते हैं", "पैसे के लिए", "चुप रहने के लिए"], ans: 1 },
+
+            // --- MIXED BAG (61-70) ---
+            { id: 61, q: "सही मिलान: शेर -> ____", options: ["मिमियाना", "दहाड़ना", "रंभाना", "चीं-चीं"], ans: 1 },
+            { id: 62, q: "सही मिलान: कोयल -> ____", options: ["कड़वा", "मीठा", "नमकीन", "खट्टा"], ans: 1 },
+            { id: 63, q: "बेमेल (Odd one out) चुनें:", options: ["राजा", "रानी", "राजकुमार", "मोबाइल"], ans: 3 },
+            { id: 64, q: "बेमेल चुनें:", options: ["शेर", "बाघ", "चीता", "गाय"], ans: 3 }, // गाय पालतू है
+            { id: 65, q: "चित्र (सोचो): एक लड़की रो रही है। कहानी कैसी होगी?", options: ["खुशी वाली", "दुख वाली", "मजेदार", "जादुई"], ans: 1 },
+            { id: 66, q: "चित्र (सोचो): सब हँस रहे हैं। कहानी कैसी है?", options: ["डरावनी", "मजेदार (Comedy)", "उदास", "बुरी"], ans: 1 },
+            { id: 67, q: "सही शब्द: 'जैसे को ____ '", options: ["तैसा", "वैसा", "कैसा", "पैसा"], ans: 0 },
+            { id: 68, q: "सही शब्द: 'अंत भला तो ____ भला'", options: ["सब", "कुछ", "कब", "कल"], ans: 0 },
+            { id: 69, q: "क्या हमें जानवरों को तंग करना चाहिए?", options: ["हाँ", "मजा आता है", "नहीं, यह बुरी बात है", "कभी-कभी"], ans: 2 },
+            { id: 70, q: "कहानी खत्म होने पर हम क्या कहते हैं?", options: ["शुरू", "खत्म / समाप्त", "भागो", "रुको"], ans: 1 }
+        ];
+
+        // GAME LOGIC
+        let correctCount = 0;
+        let wrongCount = 0;
+        const totalQs = questionBank.length;
+
+        const quizContainer = document.getElementById('questions-container');
+
+        // Init Quiz
+        function initQuiz() {
+            questionBank.forEach((q, index) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.innerHTML = `
+                    <div class="q-tag">प्रश्न ${index + 1}</div>
+                    <div class="q-text">${q.q}</div>
+                    <div class="options-grid" id="opt-container-${q.id}"></div>
+                    <div class="feedback" id="feed-${q.id}"></div>
+                `;
+
+                const optContainer = card.querySelector(`#opt-container-${q.id}`);
+                
+                q.options.forEach((opt, optIndex) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerText = opt;
+                    btn.onclick = () => handleAnswer(q.id, optIndex, q.ans, btn);
+                    optContainer.appendChild(btn);
+                });
+
+                quizContainer.appendChild(card);
+            });
+        }
+
+        function handleAnswer(qId, selectedIndex, correctIndex, btnElement) {
+            const feedbackBox = document.getElementById(`feed-${qId}`);
+            const parentGrid = btnElement.parentElement;
+            const allBtns = parentGrid.querySelectorAll('.option-btn');
+
+            // Disable buttons
+            allBtns.forEach(b => {
+                b.disabled = true;
+                b.style.cursor = 'default';
+            });
+
+            if (selectedIndex === correctIndex) {
+                // Correct
+                btnElement.classList.add('correct');
+                feedbackBox.innerHTML = "<span style='color:var(--accent)'>अद्भुत! सही उत्तर! 🌟</span>";
+                correctCount++;
+            } else {
+                // Wrong
+                btnElement.classList.add('wrong');
+                // Highlight correct
+                allBtns[correctIndex].classList.add('correct');
+                feedbackBox.innerHTML = "<span style='color:var(--pop)'>ओह! सही उत्तर हरे रंग में है।</span>";
+                wrongCount++;
+            }
+
+            updateScore();
+        }
+
+        function updateScore() {
+            const percentage = Math.round((correctCount / totalQs) * 100);
+            
+            document.getElementById('correct-count').innerText = correctCount;
+            document.getElementById('wrong-count').innerText = wrongCount;
+            document.getElementById('percentage').innerText = percentage + "%";
+            document.getElementById('progress-bar').style.width = percentage + "%";
+
+            // Stars
+            let stars = "0";
+            if(percentage > 10) stars = "⭐";
+            if(percentage > 30) stars = "⭐⭐";
+            if(percentage > 50) stars = "⭐⭐⭐";
+            if(percentage > 75) stars = "⭐⭐⭐⭐";
+            if(percentage === 100) stars = "⭐⭐⭐⭐⭐";
+            
+            document.getElementById('star-rating').innerText = stars;
+        }
+
+        // Start App
+        initQuiz();
+
+    </script>
+</body>
+</html>

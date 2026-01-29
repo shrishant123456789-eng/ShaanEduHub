@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 2 Computer: Mouse – Point & Click</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Poppins:wght@400;600&display=swap');
+
+        :root {
+            --primary: #4834d4;       /* Deep Blue */
+            --secondary: #686de0;     /* Soft Blue */
+            --accent: #f0932b;        /* Orange */
+            --green: #badc58;         /* Green */
+            --red: #ff7979;           /* Red */
+            --bg: #dff9fb;            /* Light Cyan */
+            --white: #ffffff;
+            --dark: #2c3e50;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg);
+            background-image: radial-gradient(#c7ecee 20%, transparent 20%);
+            background-size: 30px 30px;
+            margin: 0;
+            padding: 0;
+            color: var(--dark);
+            user-select: none;
+            padding-bottom: 80px;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 { margin: 0; font-family: 'Comic Neue', cursive; font-size: 2.5rem; letter-spacing: 1px; }
+        .sub-title { font-size: 1.1rem; opacity: 0.9; font-weight: bold; margin-top: 5px; }
+
+        /* --- NAVIGATION --- */
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 25px 0;
+            padding: 0 10px;
+        }
+
+        .nav-btn {
+            background: var(--white);
+            border: none;
+            color: var(--dark);
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #95a5a6;
+            font-family: 'Comic Neue', cursive;
+            transition: all 0.2s;
+            flex: 1;
+            max-width: 200px;
+        }
+
+        .nav-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #95a5a6; }
+        .nav-btn.active { background: var(--accent); color: white; box-shadow: 0 6px 0 #e67e22; }
+        .nav-btn.active:active { box-shadow: 0 2px 0 #e67e22; }
+
+        /* --- SECTIONS --- */
+        .section {
+            display: none;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 15px;
+            animation: slideUp 0.5s ease-out;
+        }
+        .section.active { display: block; }
+
+        /* --- NOTE CARDS --- */
+        .note-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.05);
+            border-top: 6px solid var(--secondary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .note-title {
+            font-family: 'Comic Neue', cursive;
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .note-text { font-size: 1.2rem; line-height: 1.6; color: #555; }
+        .highlight { background: #ffeaa7; padding: 2px 8px; border-radius: 8px; font-weight: bold; color: #d35400; }
+        
+        /* Visual Mouse Representation for Notes */
+        .mouse-diagram {
+            width: 150px;
+            height: 220px;
+            background: #f1f2f6;
+            border: 4px solid #2f3542;
+            border-radius: 70px 70px 40px 40px;
+            margin: 20px auto;
+            position: relative;
+            box-shadow: 0 10px 0 #ced6e0;
+        }
+        .mouse-btn-left {
+            position: absolute; top: 0; left: 0; width: 48%; height: 80px;
+            border-right: 2px solid #2f3542; border-bottom: 2px solid #2f3542;
+            border-radius: 65px 0 20px 0; background: #ff7979;
+            display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;
+        }
+        .mouse-btn-right {
+            position: absolute; top: 0; right: 0; width: 48%; height: 80px;
+            border-left: 2px solid #2f3542; border-bottom: 2px solid #2f3542;
+            border-radius: 0 65px 0 20px; background: #badc58;
+            display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;
+        }
+        .mouse-scroll {
+            position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+            width: 20px; height: 40px; background: #333; border-radius: 10px;
+        }
+        .mouse-wire {
+            position: absolute; top: -50px; left: 50%; width: 4px; height: 50px; background: #333;
+        }
+
+        /* --- GAME UI --- */
+        .score-panel {
+            background: var(--dark);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+        }
+
+        .progress-track { background: #dfe6e9; height: 12px; border-radius: 10px; margin-bottom: 25px; overflow: hidden; border: 2px solid white; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--green), var(--primary)); transition: width 0.4s; }
+
+        .question-card {
+            background: white;
+            border-radius: 25px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 0 rgba(0,0,0,0.05);
+            border: 4px solid var(--secondary);
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .q-text { font-size: 1.6rem; color: var(--dark); margin-bottom: 20px; font-weight: bold; font-family: 'Comic Neue', cursive; }
+        .q-emoji { font-size: 4rem; display: block; margin-bottom: 15px; animation: bounce 2s infinite; }
+
+        .options-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-top: 15px; }
+
+        .opt-btn {
+            background: #f7f1e3;
+            border: 2px solid #d1ccc0;
+            border-bottom: 5px solid #b2bec3;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: transform 0.1s;
+            font-family: 'Poppins', sans-serif;
+            color: #555;
+            font-weight: bold;
+        }
+
+        .opt-btn:active { transform: translateY(3px); border-bottom-width: 2px; }
+        .opt-btn.correct { background: var(--green); color: white; border-color: #6ab04c; }
+        .opt-btn.wrong { background: var(--red); color: white; border-color: #eb4d4b; animation: shake 0.4s; }
+
+        /* Interactive Elements */
+        .drag-zone {
+            border: 3px dashed #aaa; padding: 20px; margin: 10px; border-radius: 10px;
+            background: #f9f9f9; min-height: 60px; display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; color: #777;
+        }
+        .drag-item {
+            display: inline-block; padding: 10px 20px; background: var(--accent); color: white;
+            border-radius: 50px; cursor: pointer; font-weight: bold; margin: 5px;
+            box-shadow: 0 4px 0 #d35400;
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        @keyframes pop { 0% { transform: scale(0); } 80% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+        /* --- MODAL --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none; justify-content: center; align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white; padding: 30px; border-radius: 25px;
+            text-align: center; width: 85%; max-width: 350px;
+            animation: pop 0.4s; border: 6px solid var(--accent);
+        }
+        .feedback-emoji { font-size: 5rem; display: block; margin-bottom: 10px; }
+        .feedback-title { font-size: 2.5rem; margin: 0; font-family: 'Comic Neue', cursive; }
+        .next-btn {
+            background: var(--dark); color: white; border: none;
+            padding: 12px 35px; border-radius: 50px; font-size: 1.2rem;
+            margin-top: 20px; cursor: pointer; font-family: 'Comic Neue', cursive;
+            box-shadow: 0 4px 0 black;
+        }
+        .next-btn:active { transform: translateY(4px); box-shadow: none; }
+
+        /* --- FOOTER --- */
+        footer {
+            background: var(--dark); color: white; text-align: center;
+            padding: 15px; font-size: 0.8rem; position: fixed;
+            bottom: 0; width: 100%; border-top: 4px solid var(--accent);
+            z-index: 90;
+        }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🖱️ Mouse Master</h1>
+    <div class="sub-title">Class 2 • Chapter 6 • Point & Click</div>
+</header>
+
+<div class="nav-container">
+    <button class="nav-btn active" onclick="switchTab('learn')">📘 Read Notes</button>
+    <button class="nav-btn" onclick="switchTab('play')">🎮 Play Quiz</button>
+</div>
+
+<div id="learn-section" class="section active">
+    
+    <div class="note-card" style="border-color: var(--primary);">
+        <div class="note-title">🖱️ What is a Mouse?</div>
+        <p class="note-text">
+            A computer mouse is a small <span class="highlight">Input Device</span>.<br>
+            It looks like a real mouse with a long tail (wire).<br>
+            We use it to <b>point</b> at things and <b>click</b> on the screen.<br>
+            <i>"Aman moves the mouse to open his favorite game."</i> 🎮
+        </p>
+    </div>
+
+    <div class="note-card" style="border-color: var(--secondary);">
+        <div class="note-title">⚙️ Parts of a Mouse</div>
+        <p class="note-text" style="text-align:center;">
+            A mouse has 3 main parts:
+        </p>
+        <div class="mouse-diagram">
+            <div class="mouse-wire"></div>
+            <div class="mouse-btn-left">Left</div>
+            <div class="mouse-btn-right">Right</div>
+            <div class="mouse-scroll"></div>
+        </div>
+        <p class="note-text">
+            1. <b>Left Button:</b> Used for clicking.<br>
+            2. <b>Right Button:</b> Used for options.<br>
+            3. <b>Scroll Wheel:</b> Used to go Up and Down.
+        </p>
+    </div>
+
+    <div class="note-card" style="border-color: var(--green);">
+        <div class="note-title">👆 Click (Single Click)</div>
+        <p class="note-text">
+            Pressing the <b>Left Button</b> once is called a Click.<br>
+            It makes a "Click" sound.<br>
+            We use it to <span class="highlight">Select</span> an item on the screen.
+        </p>
+    </div>
+
+    <div class="note-card" style="border-color: var(--accent);">
+        <div class="note-title">✌️ Double Click</div>
+        <p class="note-text">
+            Pressing the <b>Left Button</b> two times quickly is called Double Click.<br>
+            <i>Click-Click!</i><br>
+            We use it to <span class="highlight">Open</span> a file or a game.
+        </p>
+    </div>
+
+    <div class="note-card" style="border-color: var(--red);">
+        <div class="note-title">👉 Right Click</div>
+        <p class="note-text">
+            Pressing the <b>Right Button</b> once is called Right Click.<br>
+            It opens a list of choices (Menu) on the screen.<br>
+            It helps us see what we can do with an item.
+        </p>
+    </div>
+
+    <div class="note-card" style="border-color: var(--primary);">
+        <div class="note-title">🚚 Drag and Drop</div>
+        <p class="note-text">
+            1. <b>Click</b> and <b>Hold</b> the left button.<br>
+            2. <b>Move</b> the mouse.<br>
+            3. <b>Release</b> the button.<br>
+            This is used to <span class="highlight">Move</span> objects from one place to another. 🖼️
+        </p>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 40px;">
+        <button class="nav-btn" style="background: var(--accent); color: white;" onclick="switchTab('play')">I'm Ready to Click! 🚀</button>
+    </div>
+</div>
+
+<div id="play-section" class="section">
+    <div class="score-panel">
+        <div>⭐ <span id="star-count">0</span></div>
+        <div>✅ <span id="score-count">0</span> | ❌ <span id="wrong-count">0</span></div>
+        <div id="pct-score">0%</div>
+    </div>
+    
+    <div class="progress-track">
+        <div class="progress-fill" id="progress-bar"></div>
+    </div>
+
+    <div class="question-card" id="game-area">
+        </div>
+</div>
+
+<div class="modal-overlay" id="feedback-modal">
+    <div class="modal-content">
+        <span class="feedback-emoji" id="modal-emoji">🌟</span>
+        <h2 class="feedback-title" id="modal-title">Excellent!</h2>
+        <button class="next-btn" onclick="nextQuestion()">Next ➡</button>
+    </div>
+</div>
+
+<footer>
+    Designed & Created by SHRISHANT YADAV<br>
+    2026 – ShanEduHub
+</footer>
+
+<script>
+/* =========================================================
+   DATABASE: 60+ UNIQUE QUESTIONS
+   ========================================================= */
+const questions = [
+    // --- BASIC CONCEPTS ---
+    { t: 'mcq', q: "A mouse is an ________ device.", a: "Input", o: ["Input", "Output", "Storage"], e: "🖱️" },
+    { t: 'mcq', q: "A mouse helps us to ________ on the screen.", a: "Point", o: ["Type", "Point", "Speak"], e: "👉" },
+    { t: 'tf', q: "A computer mouse looks like a real mouse.", a: "True", e: "🐁" },
+    { t: 'mcq', q: "The wire of the mouse is like its ________.", a: "Tail", o: ["Leg", "Tail", "Ear"], e: "🔌" },
+    { t: 'mcq', q: "We keep the mouse on a ________.", a: "Mouse Pad", o: ["Book", "Mouse Pad", "Floor"], e: "⬛" },
+    
+    // --- PARTS OF MOUSE ---
+    { t: 'mcq', q: "How many buttons does a mouse usually have?", a: "2 or 3", o: ["1", "2 or 3", "10"], e: "🔢" },
+    { t: 'identify', q: "Which button is on the Left side?", a: "Left Button", o: ["Right Button", "Left Button", "Scroll"], e: "👈" },
+    { t: 'identify', q: "Which button is on the Right side?", a: "Right Button", o: ["Left Button", "Scroll", "Right Button"], e: "👉" },
+    { t: 'mcq', q: "The wheel in the center is called ________.", a: "Scroll Wheel", o: ["Ball", "Scroll Wheel", "Button"], e: "⚙️" },
+    { t: 'tf', q: "The scroll wheel is used to type.", a: "False", e: "🚫" },
+
+    // --- ACTIONS: CLICK ---
+    { t: 'mcq', q: "Pressing the mouse button once is called ________.", a: "Clicking", o: ["Hitting", "Clicking", "Moving"], e: "👆" },
+    { t: 'mcq', q: "We use Single Click to ________ an item.", a: "Select", o: ["Open", "Select", "Delete"], e: "✅" },
+    { t: 'tf', q: "Clicking makes a 'Click' sound.", a: "True", e: "🔊" },
+    { t: 'identify', q: "Which finger is used for Left Click?", a: "Index Finger", o: ["Thumb", "Index Finger", "Pinky"], e: "☝️" },
+    { t: 'arrange', q: "Arrange: BUTTON - PRESS - LEFT", a: "PRESS LEFT BUTTON", parts: ["LEFT", "PRESS", "BUTTON"], e: "🖱️" },
+
+    // --- ACTIONS: DOUBLE CLICK ---
+    { t: 'mcq', q: "Pressing the left button twice quickly is ________.", a: "Double Click", o: ["Right Click", "Double Click", "Scroll"], e: "✌️" },
+    { t: 'mcq', q: "Double click is used to ________ a file.", a: "Open", o: ["Select", "Open", "Close"], e: "📂" },
+    { t: 'tf', q: "We should double click very slowly.", a: "False", e: "🐢" },
+    { t: 'match', q: "Match: DOUBLE CLICK", a: "Open Item", o: ["Select Item", "Open Item", "Show Menu"], e: "🔓" },
+    { t: 'mcq', q: "To play a game, we usually ________ on its icon.", a: "Double Click", o: ["Right Click", "Double Click", "Scroll"], e: "🎮" },
+
+    // --- ACTIONS: RIGHT CLICK ---
+    { t: 'mcq', q: "Pressing the right button once is ________.", a: "Right Click", o: ["Left Click", "Right Click", "Double Click"], e: "👉" },
+    { t: 'mcq', q: "Right click shows a list of ________.", a: "Options", o: ["Pictures", "Options", "Games"], e: "📋" },
+    { t: 'tf', q: "Right click is used to select an item.", a: "False", e: "❌" },
+    { t: 'match', q: "Match: RIGHT CLICK", a: "Show Menu", o: ["Show Menu", "Open File", "Move Page"], e: "📑" },
+    { t: 'identify', q: "Which finger is used for Right Click?", a: "Middle Finger", o: ["Thumb", "Middle Finger", "Index Finger"], e: "🖕" },
+
+    // --- ACTIONS: SCROLL ---
+    { t: 'mcq', q: "We use the Scroll Wheel to move page ________.", a: "Up and Down", o: ["Left and Right", "Up and Down", "Round"], e: "↕️" },
+    { t: 'mcq', q: "Moving the wheel is called ________.", a: "Scrolling", o: ["Rolling", "Scrolling", "Clicking"], e: "📜" },
+    { t: 'tf', q: "A mouse has 2 scroll wheels.", a: "False", e: "🔢" },
+    { t: 'identify', q: "Find the Scroll Wheel:", a: "Middle", o: ["Left", "Middle", "Right"], e: "📍" },
+    { t: 'arrange', q: "Arrange: PAGE - MOVE - THE", a: "MOVE THE PAGE", parts: ["THE", "PAGE", "MOVE"], e: "📄" },
+
+    // --- ACTIONS: DRAG & DROP ---
+    { t: 'mcq', q: "Moving an object while holding the button is ________.", a: "Dragging", o: ["Clicking", "Dragging", "Scrolling"], e: "🚚" },
+    { t: 'mcq', q: "Releasing the button after moving is ________.", a: "Dropping", o: ["Stopping", "Dropping", "Falling"], e: "⬇️" },
+    { t: 'tf', q: "Drag and Drop moves items on screen.", a: "True", e: "🖼️" },
+    { t: 'arrange', q: "Arrange: HOLD - MOVE - DROP", a: "HOLD MOVE DROP", parts: ["DROP", "HOLD", "MOVE"], e: "📦" },
+    { t: 'match', q: "Match: DRAG", a: "Move Item", o: ["Move Item", "Open Item", "Select Item"], e: "✋" },
+
+    // --- CURSOR / POINTER ---
+    { t: 'mcq', q: "The arrow on the screen is called ________.", a: "Mouse Pointer", o: ["Stick", "Mouse Pointer", "Line"], e: "↗️" },
+    { t: 'mcq', q: "When you move the mouse, the ________ moves.", a: "Pointer", o: ["Screen", "Pointer", "Keyboard"], e: "🏃" },
+    { t: 'tf', q: "The pointer always looks like an arrow.", a: "False", e: "⏳" },
+    { t: 'mcq', q: "Can the pointer change shape?", a: "Yes", o: ["Yes", "No"], e: "🔄" },
+    { t: 'identify', q: "Identify the Pointer:", a: "↗️", o: ["|", "↗️", "⭕"], e: "👀" },
+
+    // --- USAGE & CARE ---
+    { t: 'mcq', q: "We should keep the mouse on a ________ pad.", a: "Soft", o: ["Rough", "Soft", "Wet"], e: "☁️" },
+    { t: 'tf', q: "We should pull the mouse by its wire.", a: "False", e: "🚫" },
+    { t: 'mcq', q: "Holding the mouse correctly helps our ________.", a: "Hand", o: ["Leg", "Hand", "Ear"], e: "✋" },
+    { t: 'mcq', q: "Wireless mouse has no ________.", a: "Wire", o: ["Buttons", "Wire", "Wheel"], e: "📡" },
+    { t: 'arrange', q: "Arrange: MOUSE - USE - PAD", a: "USE MOUSE PAD", parts: ["PAD", "MOUSE", "USE"], e: "⬜" },
+
+    // --- MIXED BAG ---
+    { t: 'match', q: "Match: INPUT DEVICE", a: "Mouse", o: ["Mouse", "Monitor", "Printer"], e: "🖱️" },
+    { t: 'mcq', q: "To draw pictures, we use the ________.", a: "Mouse", o: ["Keyboard", "Mouse", "Speaker"], e: "🎨" },
+    { t: 'tf', q: "We can type using a mouse.", a: "False", e: "⌨️" },
+    { t: 'mcq', q: "The mouse is usually kept on the ________ side.", a: "Right", o: ["Left", "Right", "Back"], e: "👉" },
+    { t: 'identify', q: "Which action opens a folder?", a: "Double Click", o: ["Click", "Double Click", "Scroll"], e: "📂" },
+    { t: 'mcq', q: "Is mouse an Output device?", a: "No", o: ["Yes", "No"], e: "❌" },
+    { t: 'arrange', q: "Arrange: POINT - AND - CLICK", a: "POINT AND CLICK", parts: ["CLICK", "POINT", "AND"], e: "🎯" },
+    { t: 'match', q: "Match: SELECT", a: "Single Click", o: ["Single Click", "Double Click", "Scroll"], e: "✅" },
+    { t: 'mcq', q: "A laptop has a ________ instead of a mouse.", a: "Touchpad", o: ["Screen", "Touchpad", "Key"], e: "💻" },
+    { t: 'tf', q: "Optical mouse uses light to work.", a: "True", e: "💡" },
+    { t: 'mcq', q: "Can we use a mouse without a pad?", a: "Yes", o: ["Yes", "No"], e: "🤷" },
+    { t: 'identify', q: "Which part helps to read long stories?", a: "Scroll Wheel", o: ["Left Button", "Scroll Wheel", "Wire"], e: "📖" },
+    { t: 'mcq', q: "A mouse pointer is also called ________.", a: "Cursor", o: ["Line", "Cursor", "Dot"], e: "📍" },
+    { t: 'arrange', q: "Arrange: INPUT - IS - MOUSE", a: "MOUSE IS INPUT", parts: ["INPUT", "MOUSE", "IS"], e: "🔌" },
+    { t: 'mcq', q: "Click means pressing and ________.", a: "Releasing", o: ["Holding", "Releasing", "Pushing"], e: "🆙" }
+];
+
+/* =========================================================
+   GAME LOGIC ENGINE
+   ========================================================= */
+let currentQIndex = 0;
+let score = 0;
+let wrong = 0;
+let stars = 0;
+let shuffledQ = [];
+let userArrange = []; // For arrange questions
+
+function initGame() {
+    shuffledQ = questions.sort(() => Math.random() - 0.5);
+    currentQIndex = 0;
+    score = 0;
+    wrong = 0;
+    stars = 0;
+    updateUI();
+    loadQuestion();
+}
+
+function switchTab(tab) {
+    document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+    
+    document.getElementById(tab + '-section').classList.add('active');
+    document.querySelector(`button[onclick="switchTab('${tab}')"]`).classList.add('active');
+
+    if(tab === 'play') {
+        initGame();
+    }
+}
+
+function loadQuestion() {
+    if (currentQIndex >= shuffledQ.length) {
+        showFinalScore();
+        return;
+    }
+
+    const q = shuffledQ[currentQIndex];
+    const area = document.getElementById('game-area');
+    
+    // Progress
+    const pct = ((currentQIndex) / shuffledQ.length) * 100;
+    document.getElementById('progress-bar').style.width = pct + "%";
+
+    let html = ``;
+    if(q.e) html += `<span class="q-emoji">${q.e}</span>`;
+    
+    // Title
+    let title = `Q${currentQIndex + 1}: `;
+    if(q.t === 'arrange') title = "Arrange Words: ";
+    if(q.t === 'identify') title = "Identify: ";
+    
+    html += `<div class="q-text">${title}${q.q}</div>`;
+
+    // Render Options
+    if (q.t === 'mcq' || q.t === 'identify' || q.t === 'match') {
+        html += `<div class="options-grid">`;
+        let opts = q.o.sort(() => Math.random() - 0.5);
+        opts.forEach(opt => {
+            html += `<button class="opt-btn" onclick="check('${opt}', '${q.a}', this)">${opt}</button>`;
+        });
+        html += `</div>`;
+    } 
+    else if (q.t === 'tf') {
+        html += `<div class="options-grid">`;
+        html += `<button class="opt-btn" onclick="check('True', '${q.a}', this)">True ✅</button>`;
+        html += `<button class="opt-btn" onclick="check('False', '${q.a}', this)">False ❌</button>`;
+        html += `</div>`;
+    }
+    else if (q.t === 'arrange') {
+        userArrange = [];
+        html += `<div class="drag-zone" id="dropZone">Tap words below 👇</div>`;
+        html += `<div style="text-align:center;">`;
+        let parts = q.parts.sort(() => Math.random() - 0.5);
+        parts.forEach(w => {
+            html += `<div class="drag-item" onclick="moveWord(this, '${w}')">${w}</div>`;
+        });
+        html += `</div>`;
+        html += `<button class="next-btn" onclick="checkArrange('${q.a}')">Check ✅</button>`;
+        html += `<button class="next-btn" style="background:#bdc3c7; margin-left:10px;" onclick="resetArrange()">Reset 🔄</button>`;
+    }
+
+    area.innerHTML = html;
+}
+
+// --- LOGIC FUNCTIONS ---
+
+function check(selected, correct, btn) {
+    if (selected === correct) {
+        btn.classList.add('correct');
+        handleResult(true);
+    } else {
+        btn.classList.add('wrong');
+        handleResult(false);
+    }
+}
+
+// Arrange Logic
+function moveWord(el, word) {
+    userArrange.push(word);
+    el.style.display = 'none';
+    const zone = document.getElementById('dropZone');
+    if(userArrange.length === 1) zone.innerText = "";
+    zone.innerText += (userArrange.length > 1 ? " " : "") + word;
+}
+
+function resetArrange() {
+    userArrange = [];
+    loadQuestion();
+}
+
+function checkArrange(correct) {
+    if(userArrange.join(" ") === correct) handleResult(true);
+    else {
+        document.getElementById('dropZone').style.borderColor = 'red';
+        document.getElementById('dropZone').style.color = 'red';
+        setTimeout(() => {
+            document.getElementById('dropZone').style.borderColor = '#aaa';
+            document.getElementById('dropZone').style.color = '#777';
+        }, 500);
+        handleResult(false);
+    }
+}
+
+// --- RESULT HANDLING ---
+
+function handleResult(isCorrect) {
+    if (isCorrect) {
+        score++;
+        stars += 5;
+        updateUI();
+        showModal(true);
+    } else {
+        wrong++;
+        updateUI();
+        showModal(false);
+    }
+}
+
+function updateUI() {
+    document.getElementById('score-count').innerText = score;
+    document.getElementById('wrong-count').innerText = wrong;
+    document.getElementById('star-count').innerText = stars;
+    
+    let total = currentQIndex + 1;
+    let attempts = score + wrong;
+    let pct = attempts === 0 ? 0 : Math.round((score / attempts) * 100);
+    document.getElementById('pct-score').innerText = pct + "%";
+}
+
+function showModal(isSuccess) {
+    const modal = document.getElementById('feedback-modal');
+    const title = document.getElementById('modal-title');
+    const emoji = document.getElementById('modal-emoji');
+
+    if (isSuccess) {
+        title.innerText = "Excellent!";
+        title.style.color = "#badc58";
+        emoji.innerText = "⭐";
+    } else {
+        title.innerText = "Try Again!";
+        title.style.color = "#ff7979";
+        emoji.innerText = "😊";
+    }
+
+    modal.style.display = 'flex';
+}
+
+function nextQuestion() {
+    document.getElementById('feedback-modal').style.display = 'none';
+    currentQIndex++;
+    loadQuestion();
+}
+
+function showFinalScore() {
+    const area = document.getElementById('game-area');
+    area.innerHTML = `
+        <div style="font-size:5rem;">🏆</div>
+        <h2 style="font-family:'Comic Neue', cursive; font-size:2.5rem;">Game Over!</h2>
+        <p style="font-size:1.5rem;">Score: <b>${score}</b></p>
+        <p style="font-size:1.5rem;">Stars: <b>${stars} ⭐</b></p>
+        <button class="next-btn" onclick="initGame()" style="background:var(--secondary);">Play Again 🔄</button>
+    `;
+    document.getElementById('progress-bar').style.width = "100%";
+}
+</script>
+
+</body>
+</html>

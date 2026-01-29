@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 2 Computer: Keyboard Magic</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Nunito:wght@400;700&display=swap');
+
+        :root {
+            --primary: #FF6B6B;       /* Coral */
+            --secondary: #4ECDC4;     /* Teal */
+            --accent: #FFE66D;        /* Yellow */
+            --dark: #2D3436;
+            --light: #F7FFF7;
+            --key-bg: #f1f2f6;
+            --key-shadow: #b2bec3;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #dff9fb;
+            background-image: radial-gradient(var(--secondary) 20%, transparent 20%);
+            background-size: 30px 30px;
+            margin: 0;
+            padding: 0;
+            color: var(--dark);
+            user-select: none;
+            padding-bottom: 80px;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background: linear-gradient(135deg, var(--primary), #ee5253);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            box-shadow: 0 8px 0 rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 { margin: 0; font-family: 'Fredoka', cursive; font-size: 2.2rem; letter-spacing: 1px; text-shadow: 2px 2px 0 rgba(0,0,0,0.2); }
+        .sub-title { font-size: 1.1rem; opacity: 0.95; font-weight: bold; margin-top: 5px; }
+
+        /* --- NAV --- */
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 25px 0;
+            padding: 0 10px;
+        }
+
+        .nav-btn {
+            background: white;
+            border: none;
+            color: var(--dark);
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #bdc3c7;
+            font-family: 'Fredoka', cursive;
+            transition: transform 0.1s;
+            flex: 1;
+            max-width: 200px;
+        }
+
+        .nav-btn:active { transform: translateY(4px); box-shadow: none; }
+        .nav-btn.active { background: var(--secondary); color: white; box-shadow: 0 5px 0 #2d98da; }
+
+        /* --- SECTIONS --- */
+        .section {
+            display: none;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 15px;
+            animation: slideUp 0.5s ease-out;
+        }
+        .section.active { display: block; }
+
+        /* --- NOTES STYLING --- */
+        .note-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            border-left: 8px solid var(--primary);
+            position: relative;
+        }
+
+        .note-title {
+            font-family: 'Fredoka', cursive;
+            font-size: 1.8rem;
+            color: var(--dark);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .note-text { font-size: 1.2rem; line-height: 1.6; color: #555; }
+        
+        .key-visual {
+            display: inline-block;
+            background: var(--key-bg);
+            border: 2px solid #dfe6e9;
+            border-bottom: 4px solid var(--key-shadow);
+            border-radius: 8px;
+            padding: 5px 12px;
+            font-family: monospace;
+            font-weight: bold;
+            color: #333;
+            margin: 0 5px;
+        }
+
+        /* --- GAME UI --- */
+        .score-panel {
+            background: var(--dark);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+        }
+
+        .progress-track { background: #dfe6e9; height: 12px; border-radius: 10px; margin-bottom: 25px; overflow: hidden; border: 2px solid white; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--primary)); transition: width 0.4s; }
+
+        .question-card {
+            background: white;
+            border-radius: 25px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 0 rgba(0,0,0,0.05);
+            border: 4px solid var(--secondary);
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .q-text { font-size: 1.6rem; color: var(--dark); margin-bottom: 20px; font-weight: bold; }
+        .q-emoji { font-size: 4rem; display: block; margin-bottom: 15px; animation: bounce 2s infinite; }
+
+        .options-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-top: 15px; }
+
+        .opt-btn {
+            background: #f7f1e3;
+            border: 2px solid #d1ccc0;
+            border-bottom: 5px solid #b2bec3;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: transform 0.1s;
+            font-family: 'Nunito', sans-serif;
+            color: #555;
+            font-weight: bold;
+        }
+
+        .opt-btn:active { transform: translateY(3px); border-bottom-width: 2px; }
+        .opt-btn.correct { background: var(--secondary); color: white; border-color: #22a6b3; }
+        .opt-btn.wrong { background: var(--primary); color: white; border-color: #c0392b; animation: shake 0.4s; }
+
+        /* Typing Game Specifics */
+        .typing-area { background: #333; padding: 20px; border-radius: 10px; color: #0f0; font-family: monospace; font-size: 1.5rem; margin-bottom: 15px; min-height: 40px; }
+        .keyboard-mock { display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; margin-top: 10px; }
+        .mock-key { width: 30px; height: 30px; background: #eee; border: 1px solid #ccc; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; cursor: pointer; }
+        .mock-key:active { background: #ccc; }
+
+        /* --- ANIMATIONS --- */
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        @keyframes pop { 0% { transform: scale(0); } 80% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+        /* --- MODAL --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none; justify-content: center; align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white; padding: 30px; border-radius: 25px;
+            text-align: center; width: 85%; max-width: 350px;
+            animation: pop 0.4s; border: 6px solid var(--accent);
+        }
+        .feedback-emoji { font-size: 5rem; display: block; margin-bottom: 10px; }
+        .feedback-title { font-size: 2.5rem; margin: 0; font-family: 'Fredoka', cursive; }
+        .next-btn {
+            background: var(--dark); color: white; border: none;
+            padding: 12px 35px; border-radius: 50px; font-size: 1.2rem;
+            margin-top: 20px; cursor: pointer; font-family: 'Fredoka', cursive;
+            box-shadow: 0 4px 0 black;
+        }
+        .next-btn:active { transform: translateY(4px); box-shadow: none; }
+
+        /* --- FOOTER --- */
+        footer {
+            background: var(--dark); color: white; text-align: center;
+            padding: 15px; font-size: 0.8rem; position: fixed;
+            bottom: 0; width: 100%; border-top: 4px solid var(--secondary);
+            z-index: 90;
+        }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>⌨️ Keyboard Magic</h1>
+    <div class="sub-title">Class 2 • Chapter 5 • Typing Skills</div>
+</header>
+
+<div class="nav-container">
+    <button class="nav-btn active" onclick="switchTab('learn')">📘 Read Notes</button>
+    <button class="nav-btn" onclick="switchTab('play')">🎮 Play Quiz</button>
+</div>
+
+<div id="learn-section" class="section active">
+    
+    <div class="note-card" style="border-color: var(--primary);">
+        <div class="note-title">⌨️ What is a Keyboard?</div>
+        <p class="note-text">
+            A keyboard is like a magic slate! It is an <b>Input Device</b>.<br>
+            It has many small buttons called <span class="key-visual">Keys</span>.<br>
+            We use it to write letters, numbers, and words on the computer.<br>
+            <i>Example: "Riya types her name using the keyboard."</i> 😊
+        </p>
+    </div>
+
+    <div class="note-card" style="border-color: var(--secondary);">
+        <div class="note-title">🔤 Alphabet Keys</div>
+        <p class="note-text">
+            These keys have letters from <span class="key-visual">A</span> to <span class="key-visual">Z</span>.<br>
+            We use them to type words and sentences.<br>
+            <i>"Cat", "Dog", "My Name" - all are typed using Alphabet keys!</i>
+        </p>
+    </div>
+
+    <div class="note-card" style="border-color: var(--accent);">
+        <div class="note-title">🔢 Number Keys</div>
+        <p class="note-text">
+            These keys show numbers from <span class="key-visual">0</span> to <span class="key-visual">9</span>.<br>
+            We use them to type our age, phone number, or do math sums.<br>
+            <i>Can you find the number 7 on your keyboard?</i>
+        </p>
+    </div>
+
+    <div class="note-card" style="border-color: #a55eea;">
+        <div class="note-title">✨ Special Keys</div>
+        <p class="note-text">
+            <b>Spacebar:</b> The longest key! It gives a space between words.<br>
+            <i>(Hello[space]World)</i><br><br>
+            <b>Enter Key:</b> <span class="key-visual">↵</span> Moves the cursor to the next line. Like pressing "Go"!<br><br>
+            <b>Backspace:</b> <span class="key-visual">←</span> Erases mistakes from the left side. It works like an eraser.<br><br>
+            <b>Caps Lock:</b> Helps us type BIG (Capital) letters like <span class="key-visual">ABC</span>.
+        </p>
+    </div>
+
+    <div class="note-card" style="border-color: #2bcbba;">
+        <div class="note-title">⬆️⬇️ Arrow Keys</div>
+        <p class="note-text">
+            There are 4 arrow keys.<br>
+            ⬆️ <b>Up Arrow:</b> Moves cursor up.<br>
+            ⬇️ <b>Down Arrow:</b> Moves cursor down.<br>
+            ⬅️ <b>Left Arrow:</b> Moves cursor left.<br>
+            ➡️ <b>Right Arrow:</b> Moves cursor right.
+        </p>
+    </div>
+
+    <div class="note-card" style="border-color: var(--primary);">
+        <div class="note-title">🧘 Correct Posture</div>
+        <p class="note-text">
+            • Sit straight on your chair.<br>
+            • Keep your feet flat on the floor.<br>
+            • Keep your hands soft on the keyboard.<br>
+            • Don't hit the keys hard! Be gentle. 🌸
+        </p>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 40px;">
+        <button class="nav-btn" style="background: var(--primary); color: white;" onclick="switchTab('play')">I'm Ready to Type! 🚀</button>
+    </div>
+</div>
+
+<div id="play-section" class="section">
+    <div class="score-panel">
+        <div>⭐ <span id="star-count">0</span></div>
+        <div>✅ <span id="score-count">0</span> | ❌ <span id="wrong-count">0</span></div>
+        <div id="pct-score">0%</div>
+    </div>
+    
+    <div class="progress-track">
+        <div class="progress-fill" id="progress-bar"></div>
+    </div>
+
+    <div class="question-card" id="game-area">
+        </div>
+</div>
+
+<div class="modal-overlay" id="feedback-modal">
+    <div class="modal-content">
+        <span class="feedback-emoji" id="modal-emoji">🌟</span>
+        <h2 class="feedback-title" id="modal-title">Excellent!</h2>
+        <button class="next-btn" onclick="nextQuestion()">Next ➡</button>
+    </div>
+</div>
+
+<footer>
+    Designed & Created by SHRISHANT YADAV<br>
+    2026 – ShanEduHub
+</footer>
+
+<script>
+/* =========================================================
+   DATABASE: 60+ UNIQUE QUESTIONS
+   ========================================================= */
+const questions = [
+    // --- BASIC IDENTIFICATION ---
+    { t: 'mcq', q: "A keyboard is an ________ device.", a: "Input", o: ["Input", "Output", "Storage"], e: "⌨️" },
+    { t: 'mcq', q: "The small buttons on the keyboard are called ________.", a: "Keys", o: ["Locks", "Keys", "Coins"], e: "🔲" },
+    { t: 'tf', q: "We use a keyboard to type.", a: "True", e: "✍️" },
+    { t: 'mcq', q: "Which key is the longest?", a: "Spacebar", o: ["Enter", "Spacebar", "Shift"], e: "📏" },
+    { t: 'mcq', q: "Which key moves to the next line?", a: "Enter", o: ["Spacebar", "Enter", "Shift"], e: "↵" },
+    
+    // --- ALPHABET KEYS ---
+    { t: 'mcq', q: "How many Alphabet keys are there?", a: "26", o: ["10", "26", "50"], e: "🔤" },
+    { t: 'mcq', q: "Alphabet keys have letters from ________.", a: "A to Z", o: ["0 to 9", "A to Z", "1 to 100"], e: "AZ" },
+    { t: 'identify', q: "Find the Alphabet Key:", a: "K", o: ["K", "5", "Enter", "Shift"], e: "🔤" },
+    { t: 'mcq', q: "To type 'CAT', we use ________ keys.", a: "Alphabet", o: ["Number", "Alphabet", "Arrow"], e: "🐱" },
+    { t: 'arrange', q: "Arrange to make a word: T - A - C", a: "CAT", parts: ["A", "T", "C"], e: "🐈" },
+
+    // --- NUMBER KEYS ---
+    { t: 'mcq', q: "Number keys show numbers from ________.", a: "0 to 9", o: ["A to Z", "0 to 9", "1 to 100"], e: "🔢" },
+    { t: 'mcq', q: "To type your age, you use ________ keys.", a: "Number", o: ["Alphabet", "Number", "Spacebar"], e: "🎂" },
+    { t: 'identify', q: "Find the Number Key:", a: "7", o: ["A", "7", "Space", "Ctrl"], e: "7️⃣" },
+    { t: 'tf', q: "There are two sets of number keys on some keyboards.", a: "True", e: "⌨️" },
+    { t: 'type', q: "Type the number: 10", a: "10", e: "🔟" },
+
+    // --- SPECIAL KEYS ---
+    { t: 'mcq', q: "Which key gives space between words?", a: "Spacebar", o: ["Enter", "Spacebar", "Alt"], e: "🚀" },
+    { t: 'mcq', q: "Which key works like an eraser?", a: "Backspace", o: ["Enter", "Backspace", "Spacebar"], e: "🧼" },
+    { t: 'mcq', q: "Caps Lock is used to type ________ letters.", a: "Capital", o: ["Small", "Capital", "Numbers"], e: "🔠" },
+    { t: 'identify', q: "Identify the Enter Key symbol:", a: "↵", o: ["←", "↵", "⬆️", "Esc"], e: "🛑" },
+    { t: 'tf', q: "We press Enter to go down to a new line.", a: "True", e: "⬇️" },
+    { t: 'match', q: "Match: BACKSPACE", a: "Erases Left", o: ["Erases Left", "Adds Space", "New Line"], e: "🔙" },
+
+    // --- ARROW KEYS ---
+    { t: 'mcq', q: "How many arrow keys are there?", a: "4", o: ["2", "4", "6"], e: "↔️" },
+    { t: 'identify', q: "Which key moves cursor UP?", a: "⬆️", o: ["⬇️", "⬅️", "⬆️", "➡️"], e: "👆" },
+    { t: 'identify', q: "Which key moves cursor RIGHT?", a: "➡️", o: ["⬆️", "⬅️", "➡️", "⬇️"], e: "👉" },
+    { t: 'mcq', q: "Arrow keys are used to ________ the cursor.", a: "Move", o: ["Delete", "Move", "Color"], e: "🏃" },
+    { t: 'tf', q: "Arrow keys have letters on them.", a: "False", e: "🚫" },
+
+    // --- POSTURE & CARE ---
+    { t: 'mcq', q: "We should sit ________ while typing.", a: "Straight", o: ["Curved", "Straight", "Sleeping"], e: "🪑" },
+    { t: 'tf', q: "We should hit the keys very hard.", a: "False", e: "🔨" },
+    { t: 'mcq', q: "Keep your ________ on the floor.", a: "Feet", o: ["Hands", "Feet", "Head"], e: "🦶" },
+    { t: 'mcq', q: "We should press keys ________.", a: "Softly", o: ["Hardly", "Softly", "Angrily"], e: "🌸" },
+    { t: 'match', q: "Match: DIRTY HANDS", a: "Don't Type", o: ["Type Fast", "Don't Type", "Clean Key"], e: "👐" },
+
+    // --- MIXED & TYPING PRACTICE ---
+    { t: 'arrange', q: "Spell the word: K - E - Y", a: "KEY", parts: ["E", "Y", "K"], e: "🗝️" },
+    { t: 'type', q: "Type the word: DOG", a: "DOG", e: "🐶" },
+    { t: 'identify', q: "Which key has no name written on it?", a: "Spacebar", o: ["Enter", "Shift", "Spacebar"], e: "😶" },
+    { t: 'mcq', q: "The blinking line on screen is called ________.", a: "Cursor", o: ["Mouse", "Cursor", "Stick"], e: "|" },
+    { t: 'tf', q: "A keyboard is an Output device.", a: "False", e: "🔌" },
+    { t: 'mcq', q: "Shift key helps to type ________ symbols.", a: "Special", o: ["Number", "Special", "Wrong"], e: "@" },
+    { t: 'type', q: "Type: HELLO", a: "HELLO", e: "👋" },
+    { t: 'arrange', q: "Arrange: B - O - A - R - D", a: "BOARD", parts: ["A", "R", "D", "B", "O"], e: "📋" },
+    { t: 'mcq', q: "Delete key erases from the ________ side.", a: "Right", o: ["Left", "Right", "Top"], e: "❌" },
+    { t: 'match', q: "Match: DELETE", a: "Erases Right", o: ["Erases Left", "Erases Right", "Types"], e: "🗑️" },
+    { t: 'mcq', q: "What do we use to type a phone number?", a: "Number Keys", o: ["Arrow Keys", "Number Keys", "Spacebar"], e: "📱" },
+    { t: 'tf', q: "We should eat food while typing.", a: "False", e: "🍔" },
+    { t: 'type', q: "Type: APPLE", a: "APPLE", e: "🍎" },
+    { t: 'identify', q: "Which is a Special Key?", a: "Enter", o: ["K", "9", "Enter"], e: "✨" },
+    { t: 'mcq', q: "To type capital 'A', we can use ________.", a: "Caps Lock", o: ["Enter", "Caps Lock", "Alt"], e: "🅰️" },
+    { t: 'arrange', q: "Arrange: T - Y - P - E", a: "TYPE", parts: ["P", "E", "T", "Y"], e: "⌨️" },
+    { t: 'mcq', q: "Cursor looks like a small ________ line.", a: "Blinking", o: ["Sleeping", "Blinking", "Running"], e: "|" },
+    { t: 'type', q: "Type: 123", a: "123", e: "🔢" },
+    { t: 'mcq', q: "Which key is at the top left corner?", a: "Esc", o: ["Enter", "Esc", "Space"], e: "🔚" },
+    { t: 'tf', q: "We use both hands for typing.", a: "True", e: "👐" },
+    { t: 'mcq', q: "A keyboard looks like a ________.", a: "Typewriter", o: ["TV", "Typewriter", "Phone"], e: "📠" },
+    { t: 'identify', q: "Find the Spacebar:", a: "Space", o: ["Enter", "Space", "Shift"], e: "🚀" },
+    { t: 'match', q: "Match: CAPS LOCK", a: "Big Letters", o: ["Small Letters", "Big Letters", "Numbers"], e: "🔠" },
+    { t: 'type', q: "Type: SUN", a: "SUN", e: "☀️" },
+    { t: 'mcq', q: "To move cursor down, press ________ arrow.", a: "Down", o: ["Up", "Down", "Left"], e: "⬇️" }
+];
+
+/* =========================================================
+   GAME LOGIC ENGINE
+   ========================================================= */
+let currentQIndex = 0;
+let score = 0;
+let wrong = 0;
+let stars = 0;
+let shuffledQ = [];
+let userArrange = []; // For arrange questions
+let typedText = ""; // For typing questions
+
+function initGame() {
+    shuffledQ = questions.sort(() => Math.random() - 0.5);
+    currentQIndex = 0;
+    score = 0;
+    wrong = 0;
+    stars = 0;
+    updateUI();
+    loadQuestion();
+}
+
+function switchTab(tab) {
+    document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+    
+    document.getElementById(tab + '-section').classList.add('active');
+    document.querySelector(`button[onclick="switchTab('${tab}')"]`).classList.add('active');
+
+    if(tab === 'play') {
+        initGame();
+    }
+}
+
+function loadQuestion() {
+    if (currentQIndex >= shuffledQ.length) {
+        showFinalScore();
+        return;
+    }
+
+    const q = shuffledQ[currentQIndex];
+    const area = document.getElementById('game-area');
+    
+    // Progress
+    const pct = ((currentQIndex) / shuffledQ.length) * 100;
+    document.getElementById('progress-bar').style.width = pct + "%";
+
+    let html = ``;
+    if(q.e) html += `<span class="q-emoji">${q.e}</span>`;
+    html += `<div class="q-text">Q${currentQIndex + 1}: ${q.q}</div>`;
+
+    // Render Options based on Type
+    if (q.t === 'mcq' || q.t === 'identify' || q.t === 'match') {
+        html += `<div class="options-grid">`;
+        let opts = q.o.sort(() => Math.random() - 0.5);
+        opts.forEach(opt => {
+            html += `<button class="opt-btn" onclick="check('${opt}', '${q.a}', this)">${opt}</button>`;
+        });
+        html += `</div>`;
+    } 
+    else if (q.t === 'tf') {
+        html += `<div class="options-grid">`;
+        html += `<button class="opt-btn" onclick="check('True', '${q.a}', this)">True ✅</button>`;
+        html += `<button class="opt-btn" onclick="check('False', '${q.a}', this)">False ❌</button>`;
+        html += `</div>`;
+    }
+    else if (q.t === 'arrange') {
+        userArrange = [];
+        html += `<div style="background:#fff; border:2px dashed #333; padding:10px; margin-bottom:10px; font-size:1.5rem; min-height:40px;" id="dropZone"></div>`;
+        html += `<div style="display:flex; gap:10px; justify-content:center;">`;
+        let parts = q.parts.sort(() => Math.random() - 0.5);
+        parts.forEach(w => {
+            html += `<button class="opt-btn" style="padding:10px 20px;" onclick="moveWord(this, '${w}')">${w}</button>`;
+        });
+        html += `</div>`;
+        html += `<button class="next-btn" onclick="checkArrange('${q.a}')">Check ✅</button>`;
+        html += `<button class="next-btn" style="background:#95a5a6; margin-left:10px;" onclick="resetArrange()">Reset 🔄</button>`;
+    }
+    else if (q.t === 'type') {
+        typedText = "";
+        html += `<div class="typing-area" id="typeScreen">_</div>`;
+        html += `<p style="color:#777; font-size:0.9rem;">Type exactly: <b>${q.a}</b></p>`;
+        html += `<div class="keyboard-mock">`;
+        // Create a simple mock keyboard
+        const keys = "1234567890QWERTYUIOPASDFGHJKLZXCVBNM".split('');
+        keys.forEach(k => {
+            html += `<div class="mock-key" onclick="typeKey('${k}')">${k}</div>`;
+        });
+        html += `<div class="mock-key" style="width:60px;" onclick="typeKey('BACK')">⬅</div>`;
+        html += `</div>`;
+        html += `<button class="next-btn" onclick="checkType('${q.a}')">Check Answer ✅</button>`;
+    }
+
+    area.innerHTML = html;
+}
+
+// --- LOGIC FUNCTIONS ---
+
+function check(selected, correct, btn) {
+    if (selected === correct) {
+        btn.classList.add('correct');
+        handleResult(true);
+    } else {
+        btn.classList.add('wrong');
+        handleResult(false);
+    }
+}
+
+// Arrange Logic
+function moveWord(el, word) {
+    userArrange.push(word);
+    el.style.display = 'none';
+    const zone = document.getElementById('dropZone');
+    zone.innerText = userArrange.join("");
+}
+
+function resetArrange() {
+    userArrange = [];
+    loadQuestion();
+}
+
+function checkArrange(correct) {
+    if(userArrange.join("") === correct) handleResult(true);
+    else {
+        document.getElementById('dropZone').style.borderColor = 'red';
+        setTimeout(() => document.getElementById('dropZone').style.borderColor = '#333', 500);
+        handleResult(false);
+    }
+}
+
+// Typing Logic
+function typeKey(key) {
+    if(key === 'BACK') {
+        typedText = typedText.slice(0, -1);
+    } else {
+        if(typedText.length < 10) typedText += key;
+    }
+    document.getElementById('typeScreen').innerText = typedText + (typedText.length < 10 ? "_" : "");
+}
+
+function checkType(correct) {
+    if(typedText === correct) handleResult(true);
+    else {
+        document.getElementById('typeScreen').style.color = 'red';
+        setTimeout(() => document.getElementById('typeScreen').style.color = '#0f0', 500);
+        handleResult(false);
+    }
+}
+
+// --- RESULT HANDLING ---
+
+function handleResult(isCorrect) {
+    if (isCorrect) {
+        score++;
+        stars += 5;
+        updateUI();
+        showModal(true);
+    } else {
+        wrong++;
+        updateUI();
+        showModal(false);
+    }
+}
+
+function updateUI() {
+    document.getElementById('score-count').innerText = score;
+    document.getElementById('wrong-count').innerText = wrong;
+    document.getElementById('star-count').innerText = stars;
+    
+    let total = currentQIndex + 1;
+    let attempts = score + wrong;
+    let pct = attempts === 0 ? 0 : Math.round((score / attempts) * 100);
+    document.getElementById('pct-score').innerText = pct + "%";
+}
+
+function showModal(isSuccess) {
+    const modal = document.getElementById('feedback-modal');
+    const title = document.getElementById('modal-title');
+    const emoji = document.getElementById('modal-emoji');
+
+    if (isSuccess) {
+        title.innerText = "Excellent!";
+        title.style.color = "#2bcbba";
+        emoji.innerText = "⭐";
+    } else {
+        title.innerText = "Try Again!";
+        title.style.color = "#fc5c65";
+        emoji.innerText = "😊";
+    }
+
+    modal.style.display = 'flex';
+}
+
+function nextQuestion() {
+    document.getElementById('feedback-modal').style.display = 'none';
+    currentQIndex++;
+    loadQuestion();
+}
+
+function showFinalScore() {
+    const area = document.getElementById('game-area');
+    area.innerHTML = `
+        <div style="font-size:5rem;">🏆</div>
+        <h2 style="font-family:'Fredoka', cursive;">Game Over!</h2>
+        <p style="font-size:1.3rem;">Score: <b>${score}</b></p>
+        <p style="font-size:1.3rem;">Stars: <b>${stars} ⭐</b></p>
+        <button class="next-btn" onclick="initGame()" style="background:var(--secondary);">Play Again 🔄</button>
+    `;
+    document.getElementById('progress-bar').style.width = "100%";
+}
+</script>
+
+</body>
+</html>

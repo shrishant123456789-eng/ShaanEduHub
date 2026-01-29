@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 2 Computer: Paint – Drawing & Coloring</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Chewy&family=Nunito:wght@400;700&display=swap');
+
+        :root {
+            --primary: #FF6B81;       /* Pink */
+            --secondary: #70a1ff;     /* Blue */
+            --accent: #ffa502;        /* Orange */
+            --green: #2ed573;         /* Green */
+            --purple: #a55eea;        /* Purple */
+            --bg: #f7f1e3;            /* Canvas color */
+            --dark: #2f3542;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg);
+            background-image: radial-gradient(#dfe4ea 15%, transparent 16%);
+            background-size: 30px 30px;
+            margin: 0;
+            padding: 0;
+            color: var(--dark);
+            user-select: none;
+            padding-bottom: 80px;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            padding: 15px;
+            text-align: center;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+            box-shadow: 0 10px 0 rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 { margin: 0; font-family: 'Chewy', cursive; font-size: 2.5rem; letter-spacing: 2px; text-shadow: 3px 3px 0 rgba(0,0,0,0.1); }
+        .sub-title { font-size: 1.2rem; opacity: 0.95; font-weight: bold; margin-top: 5px; }
+
+        /* --- NAV --- */
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 25px 0;
+            padding: 0 10px;
+        }
+
+        .nav-btn {
+            background: var(--white);
+            border: none;
+            color: var(--dark);
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #b2bec3;
+            font-family: 'Chewy', cursive;
+            transition: transform 0.1s;
+            flex: 1;
+            max-width: 200px;
+        }
+
+        .nav-btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #b2bec3; }
+        .nav-btn.active { background: var(--secondary); color: white; box-shadow: 0 6px 0 #1e90ff; }
+        .nav-btn.active:active { box-shadow: 0 2px 0 #1e90ff; }
+
+        /* --- SECTIONS --- */
+        .section {
+            display: none;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 15px;
+            animation: slideUp 0.5s ease-out;
+        }
+        .section.active { display: block; }
+
+        /* --- NOTE CARDS --- */
+        .note-card {
+            background: var(--white);
+            border-radius: 25px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 0 rgba(0,0,0,0.05);
+            border: 4px solid var(--primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .note-title {
+            font-family: 'Chewy', cursive;
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .note-text { font-size: 1.3rem; line-height: 1.6; color: #555; }
+        .highlight { background: #fff2cc; padding: 2px 8px; border-radius: 8px; font-weight: bold; color: #e58e26; }
+        
+        .tool-grid {
+            display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px;
+        }
+        .tool-item {
+            background: #f1f2f6; padding: 10px 15px; border-radius: 15px;
+            font-weight: bold; display: flex; align-items: center; gap: 5px;
+            border: 2px solid #ccc; font-size: 1.1rem;
+        }
+
+        /* --- GAME UI --- */
+        .score-panel {
+            background: var(--dark);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+        }
+
+        .progress-container { background: #fff; height: 15px; border-radius: 10px; margin-bottom: 20px; border: 3px solid var(--dark); overflow: hidden; }
+        .progress-bar { height: 100%; width: 0%; background: repeating-linear-gradient(45deg, var(--green), var(--green) 10px, #26de81 10px, #26de81 20px); transition: width 0.5s; }
+
+        .question-card {
+            background: var(--white);
+            border-radius: 25px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 0 rgba(0,0,0,0.1);
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border: 5px solid var(--purple);
+        }
+
+        .q-text { font-size: 1.6rem; color: var(--dark); margin-bottom: 20px; font-weight: bold; font-family: 'Nunito', sans-serif; }
+        .q-emoji { font-size: 5rem; display: block; margin-bottom: 20px; animation: bounce 2s infinite; }
+
+        .options-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-top: 15px; }
+
+        .opt-btn {
+            background: #f1f2f6;
+            border: 3px solid #dfe4ea;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: transform 0.1s;
+            font-family: 'Nunito', sans-serif;
+            color: #555;
+            font-weight: bold;
+            box-shadow: 0 4px 0 #ccc;
+        }
+
+        .opt-btn:active { transform: translateY(4px); box-shadow: none; }
+        .opt-btn.correct { background: var(--green); color: white; border-color: #26de81; box-shadow: 0 4px 0 #26de81; }
+        .opt-btn.wrong { background: var(--primary); color: white; border-color: #eb3b5a; box-shadow: 0 4px 0 #eb3b5a; animation: shake 0.4s; }
+
+        /* Arrange / Drag Simulation */
+        .step-container { display: flex; flex-direction: column; gap: 10px; }
+        .step-box { background: #ffeaa7; padding: 10px; border: 2px dashed #fdcb6e; border-radius: 10px; font-weight: bold; cursor: pointer; }
+
+        /* --- ANIMATIONS --- */
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        @keyframes pop { 0% { transform: scale(0); } 80% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+        /* --- MODAL --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none; justify-content: center; align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white; padding: 30px; border-radius: 25px;
+            text-align: center; width: 85%; max-width: 350px;
+            animation: pop 0.4s; border: 6px solid var(--accent);
+        }
+        .feedback-emoji { font-size: 5rem; display: block; margin-bottom: 10px; }
+        .feedback-title { font-size: 2.5rem; margin: 0; font-family: 'Chewy', cursive; }
+        .next-btn {
+            background: var(--dark); color: white; border: none;
+            padding: 12px 35px; border-radius: 50px; font-size: 1.2rem;
+            margin-top: 20px; cursor: pointer; font-family: 'Chewy', cursive;
+            box-shadow: 0 4px 0 black;
+        }
+        .next-btn:active { transform: translateY(4px); box-shadow: none; }
+
+        /* --- FOOTER --- */
+        footer {
+            background: var(--dark); color: white; text-align: center;
+            padding: 15px; font-size: 0.8rem; position: fixed;
+            bottom: 0; width: 100%; border-top: 4px solid var(--primary);
+            z-index: 90;
+        }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🎨 Paint & Fun</h1>
+    <div class="sub-title">Class 2 • Chapter 9 • Drawing & Coloring</div>
+</header>
+
+<div class="nav-container">
+    <button class="nav-btn active" onclick="switchTab('learn')">📘 Learn</button>
+    <button class="nav-btn" onclick="switchTab('play')">🎮 Play Quiz</button>
+</div>
+
+<div id="learn-section" class="section active">
+    
+    <div class="note-card" style="border-color: var(--primary);">
+        <div class="note-title">🎨 What is Paint?</div>
+        <p class="note-text">
+            Paint is a special drawing program on the computer.<br>
+            It is like a <span class="highlight">Magic Drawing Book</span>!<br>
+            We can draw pictures, color them, and make fun shapes.<br>
+            <i>"Let's make a beautiful scenery today!"</i> ✨
+        </p>
+    </div>
+
+    <div class="note-card" style="border-color: var(--secondary);">
+        <div class="note-title">🚪 How to Open Paint?</div>
+        <p class="note-text">
+            Follow these easy steps:<br>
+            1. Click the <b>Start Button</b>.<br>
+            2. Type "Paint" or find the <b>Paint Icon</b> 🎨.<br>
+            3. Click it, and the white canvas opens!
+        </p>
+    </div>
+
+    <div class="note-card" style="border-color: var(--accent);">
+        <div class="note-title">✏️ Drawing Tools</div>
+        <p class="note-text">
+            Paint has a tool box with many friends inside:
+        </p>
+        <div class="tool-grid">
+            <div class="tool-item">✏️ Pencil</div>
+            <div class="tool-item">🖌️ Brush</div>
+            <div class="tool-item">🧼 Eraser</div>
+            <div class="tool-item">🪣 Fill Color</div>
+            <div class="tool-item">⬜ Shapes</div>
+        </div>
+    </div>
+
+    <div class="note-card" style="border-color: var(--green);">
+        <div class="note-title">🛠️ Tool Magic</div>
+        <p class="note-text">
+            <b>✏️ Pencil:</b> Used for free drawing, just like a real pencil.<br>
+            <b>🖌️ Brush:</b> Used to paint with thick and colorful lines.<br>
+            <b>⬜ Shapes:</b> Draw circles, squares, and triangles easily.<br>
+            <b>🪣 Fill with Color:</b> Fills a closed shape with color instantly!<br>
+            <b>🧼 Eraser:</b> Made a mistake? Use this to clean it up!
+        </p>
+    </div>
+
+    <div class="note-card" style="border-color: var(--purple);">
+        <div class="note-title">💾 Saving Your Work</div>
+        <p class="note-text">
+            Don't lose your drawing! Save it.<br>
+            1. Click <b>File</b>.<br>
+            2. Click <b>Save</b>.<br>
+            3. Give it a name (like "My House").<br>
+            4. Click Save button. Done! ✅
+        </p>
+    </div>
+
+    <div class="note-card" style="border-color: var(--primary);">
+        <div class="note-title">🌈 Be Creative!</div>
+        <p class="note-text">
+            Paint helps your imagination grow.<br>
+            You can draw a blue sun ☀️ or a pink tree 🌳!<br>
+            There are no mistakes in art, only happy accidents.<br>
+            <i>"Drawing makes learning fun!"</i>
+        </p>
+    </div>
+
+    <div style="text-align: center; margin-bottom: 40px;">
+        <button class="nav-btn" style="background: var(--accent); color: white;" onclick="switchTab('play')">I'm Ready to Draw! 🚀</button>
+    </div>
+</div>
+
+<div id="play-section" class="section">
+    <div class="score-panel">
+        <div>⭐ <span id="star-count">0</span></div>
+        <div>✅ <span id="score-count">0</span> | ❌ <span id="wrong-count">0</span></div>
+        <div id="pct-score">0%</div>
+    </div>
+    
+    <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <div class="question-card" id="game-area">
+        </div>
+</div>
+
+<div class="modal-overlay" id="feedback-modal">
+    <div class="modal-content">
+        <span class="feedback-emoji" id="modal-emoji">🌟</span>
+        <h2 class="feedback-title" id="modal-title">Excellent!</h2>
+        <button class="next-btn" onclick="nextQuestion()">Next ➡</button>
+    </div>
+</div>
+
+<footer>
+    Designed & Created by SHRISHANT YADAV<br>
+    2026 – ShanEduHub
+</footer>
+
+<script>
+/* =========================================================
+   DATABASE: 60+ UNIQUE QUESTIONS
+   ========================================================= */
+const questions = [
+    // --- WHAT IS PAINT ---
+    { t: 'mcq', q: "Paint is a ________ program.", a: "Drawing", o: ["Singing", "Drawing", "Dancing"], e: "🎨" },
+    { t: 'tf', q: "We can color pictures in Paint.", a: "True", e: "🌈" },
+    { t: 'mcq', q: "Paint is like a magic ________ book.", a: "Drawing", o: ["Math", "Drawing", "Science"], e: "📒" },
+    { t: 'mcq', q: "Can we draw shapes in Paint?", a: "Yes", o: ["Yes", "No"], e: "⬜" },
+    { t: 'tf', q: "Paint is used to type long letters.", a: "False", e: "📝" },
+
+    // --- TOOLS IDENTIFICATION ---
+    { t: 'identify', q: "Identify the Pencil tool:", a: "✏️", o: ["🖌️", "✏️", "🧼"], e: "✏️" },
+    { t: 'identify', q: "Identify the Eraser tool:", a: "🧼", o: ["🪣", "✏️", "🧼"], e: "🧼" },
+    { t: 'identify', q: "Identify the Brush tool:", a: "🖌️", o: ["✏️", "🖌️", "⬜"], e: "🖌️" },
+    { t: 'identify', q: "Identify the Fill Color tool:", a: "🪣", o: ["🧼", "🪣", "🖌️"], e: "🪣" },
+    { t: 'mcq', q: "Which tool looks like a bucket?", a: "Fill with Color", o: ["Brush", "Fill with Color", "Eraser"], e: "🪣" },
+
+    // --- TOOL USAGE ---
+    { t: 'mcq', q: "Which tool is used to draw free lines?", a: "Pencil", o: ["Shape", "Pencil", "Eraser"], e: "✏️" },
+    { t: 'mcq', q: "To remove a mistake, use ________.", a: "Eraser", o: ["Brush", "Eraser", "Pencil"], e: "🧼" },
+    { t: 'mcq', q: "To fill color in a circle, use ________.", a: "Fill with Color", o: ["Pencil", "Fill with Color", "Eraser"], e: "🔴" },
+    { t: 'mcq', q: "Which tool draws a perfect square?", a: "Shapes", o: ["Pencil", "Shapes", "Brush"], e: "🟥" },
+    { t: 'mcq', q: "Brush tool creates ________ lines.", a: "Thick", o: ["Invisible", "Thick", "Broken"], e: "🖌️" },
+
+    // --- SHAPES ---
+    { t: 'identify', q: "Which shape is a Circle?", a: "⭕", o: ["🟥", "⭕", "🔺"], e: "⚪" },
+    { t: 'identify', q: "Which shape is a Triangle?", a: "🔺", o: ["⭕", "⬜", "🔺"], e: "📐" },
+    { t: 'mcq', q: "Can we draw a house using Shapes?", a: "Yes", o: ["Yes", "No"], e: "🏠" },
+    { t: 'match', q: "Match: SUN", a: "Circle", o: ["Square", "Circle", "Triangle"], e: "☀️" },
+    { t: 'match', q: "Match: DOOR", a: "Rectangle", o: ["Circle", "Rectangle", "Star"], e: "🚪" },
+
+    // --- COLORS ---
+    { t: 'mcq', q: "We choose colors from the ________.", a: "Color Palette", o: ["Tool box", "Color Palette", "File Menu"], e: "🎨" },
+    { t: 'tf', q: "We can only use black color in Paint.", a: "False", e: "🖤" },
+    { t: 'mcq', q: "To make grass, we use ________ color.", a: "Green", o: ["Red", "Green", "Blue"], e: "🌿" },
+    { t: 'mcq', q: "To make the sky, we use ________ color.", a: "Blue", o: ["Yellow", "Blue", "Pink"], e: "☁️" },
+    { t: 'tf', q: "Drawing becomes beautiful with colors.", a: "True", e: "✨" },
+
+    // --- SAVING & OPENING ---
+    { t: 'arrange', q: "Steps to Save: 1.File 2.Save", a: "File > Save", o: ["Save > File", "File > Save"], e: "💾" },
+    { t: 'mcq', q: "We save a drawing to ________.", a: "Keep it safe", o: ["Delete it", "Keep it safe", "Hide it"], e: "🔐" },
+    { t: 'mcq', q: "To start Paint, click ________ button.", a: "Start", o: ["Stop", "Start", "End"], e: "🏁" },
+    { t: 'tf', q: "We must give a name to save a file.", a: "True", e: "🏷️" },
+    { t: 'mcq', q: "The white area to draw is called ________.", a: "Canvas", o: ["Paper", "Canvas", "Wall"], e: "⬜" },
+
+    // --- REAL LIFE SCENARIOS ---
+    { t: 'mcq', q: "I drew a wrong line. I need ________.", a: "Eraser", o: ["Pencil", "Eraser", "Brush"], e: "😫" },
+    { t: 'mcq', q: "I want to draw a ball. I will use ________ shape.", a: "Circle", o: ["Square", "Circle", "Line"], e: "⚽" },
+    { t: 'mcq', q: "I want to color the whole sky blue quickly.", a: "Fill with Color", o: ["Pencil", "Fill with Color", "Eraser"], e: "🟦" },
+    { t: 'mcq', q: "I want to write my name. I can use ________.", a: "Text Tool", o: ["Eraser", "Text Tool", "Bucket"], e: "🔤" },
+    { t: 'tf', q: "We can draw a happy face in Paint.", a: "True", e: "🙂" },
+
+    // --- MIXED BAG ---
+    { t: 'match', q: "Match: PENCIL", a: "Draw lines", o: ["Fill color", "Draw lines", "Erase"], e: "✏️" },
+    { t: 'match', q: "Match: BUCKET", a: "Fill color", o: ["Fill color", "Cut", "Type"], e: "🪣" },
+    { t: 'identify', q: "Which tool sprays color?", a: "Airbrush", o: ["Pencil", "Airbrush", "Line"], e: "💨" },
+    { t: 'mcq', q: "Can we draw stars in Paint?", a: "Yes", o: ["Yes", "No"], e: "⭐" },
+    { t: 'tf', q: "Paint is difficult to use.", a: "False", e: "🙅" },
+    { t: 'arrange', q: "To Open: 1.Start 2.Paint", a: "Start > Paint", o: ["Paint > Start", "Start > Paint"], e: "🖱️" },
+    { t: 'mcq', q: "Which bar shows the tools?", a: "Ribbon", o: ["Taskbar", "Ribbon", "Title Bar"], e: "🎀" },
+    { t: 'identify', q: "Identify the Square shape:", a: "🟥", o: ["🟥", "🔴", "⭐"], e: "🔲" },
+    { t: 'mcq', q: "The eraser tool is usually ________ in color.", a: "White/Pink", o: ["Black", "White/Pink", "Green"], e: "🧼" },
+    { t: 'tf', q: "We can print our drawing on paper.", a: "True", e: "🖨️" },
+    { t: 'mcq', q: "If we don't save, drawing is ________.", a: "Lost", o: ["Saved", "Lost", "Copied"], e: "🗑️" },
+    { t: 'match', q: "Match: HOUSE ROOF", a: "Triangle", o: ["Circle", "Triangle", "Square"], e: "🏠" },
+    { t: 'mcq', q: "To draw a thick line, change ________ size.", a: "Brush", o: ["Eraser", "Brush", "Bucket"], e: "🖌️" },
+    { t: 'identify', q: "Which tool types A, B, C?", a: "Text", o: ["Pencil", "Text", "Brush"], e: "🔤" },
+    { t: 'tf', q: "Drawing in Paint is fun!", a: "True", e: "🥳" }
+];
+
+/* =========================================================
+   GAME LOGIC ENGINE
+   ========================================================= */
+let currentQIndex = 0;
+let score = 0;
+let wrong = 0;
+let stars = 0;
+let shuffledQ = [];
+
+function initGame() {
+    shuffledQ = questions.sort(() => Math.random() - 0.5);
+    currentQIndex = 0;
+    score = 0;
+    wrong = 0;
+    stars = 0;
+    updateUI();
+    loadQuestion();
+}
+
+function switchTab(tab) {
+    document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+    
+    document.getElementById(tab + '-section').classList.add('active');
+    document.querySelector(`button[onclick="switchTab('${tab}')"]`).classList.add('active');
+
+    if(tab === 'play') {
+        initGame();
+    }
+}
+
+function loadQuestion() {
+    if (currentQIndex >= shuffledQ.length) {
+        showFinalScore();
+        return;
+    }
+
+    const q = shuffledQ[currentQIndex];
+    const area = document.getElementById('game-area');
+    
+    // Progress
+    const pct = ((currentQIndex) / shuffledQ.length) * 100;
+    document.getElementById('progress-bar').style.width = pct + "%";
+
+    let html = ``;
+    if(q.e) html += `<span class="q-emoji">${q.e}</span>`;
+    
+    let title = `Q${currentQIndex + 1}: `;
+    if(q.t === 'identify') title = "Identify: ";
+    if(q.t === 'arrange') title = "Arrange Steps: ";
+    
+    html += `<div class="q-text">${title}${q.q}</div>`;
+
+    // Render Options
+    if (q.t === 'mcq' || q.t === 'identify' || q.t === 'match' || q.t === 'arrange') {
+        html += `<div class="options-grid">`;
+        let opts = q.o.sort(() => Math.random() - 0.5);
+        opts.forEach(opt => {
+            html += `<button class="opt-btn" onclick="check('${opt}', '${q.a}', this)">${opt}</button>`;
+        });
+        html += `</div>`;
+    } 
+    else if (q.t === 'tf') {
+        html += `<div class="options-grid">`;
+        html += `<button class="opt-btn" onclick="check('True', '${q.a}', this)">True ✅</button>`;
+        html += `<button class="opt-btn" onclick="check('False', '${q.a}', this)">False ❌</button>`;
+        html += `</div>`;
+    }
+
+    area.innerHTML = html;
+}
+
+// --- LOGIC FUNCTIONS ---
+
+function check(selected, correct, btn) {
+    if (selected === correct) {
+        btn.classList.add('correct');
+        handleResult(true);
+    } else {
+        btn.classList.add('wrong');
+        handleResult(false);
+    }
+}
+
+// --- RESULT HANDLING ---
+
+function handleResult(isCorrect) {
+    if (isCorrect) {
+        score++;
+        stars += 5;
+        updateUI();
+        showModal(true);
+    } else {
+        wrong++;
+        updateUI();
+        showModal(false);
+    }
+}
+
+function updateUI() {
+    document.getElementById('score-count').innerText = score;
+    document.getElementById('wrong-count').innerText = wrong;
+    document.getElementById('star-count').innerText = stars;
+    
+    let total = currentQIndex + 1;
+    let attempts = score + wrong;
+    let pct = attempts === 0 ? 0 : Math.round((score / attempts) * 100);
+    document.getElementById('pct-score').innerText = pct + "%";
+}
+
+function showModal(isSuccess) {
+    const modal = document.getElementById('feedback-modal');
+    const title = document.getElementById('modal-title');
+    const emoji = document.getElementById('modal-emoji');
+
+    if (isSuccess) {
+        title.innerText = "Excellent!";
+        title.style.color = "#2ed573";
+        emoji.innerText = "⭐";
+    } else {
+        title.innerText = "Try Again 🎨";
+        title.style.color = "#FF6B81";
+        emoji.innerText = "😊";
+    }
+
+    modal.style.display = 'flex';
+}
+
+function nextQuestion() {
+    document.getElementById('feedback-modal').style.display = 'none';
+    currentQIndex++;
+    loadQuestion();
+}
+
+function showFinalScore() {
+    const area = document.getElementById('game-area');
+    area.innerHTML = `
+        <div style="font-size:5rem;">🏆</div>
+        <h2 style="font-family:'Chewy', cursive; font-size:2.5rem;">Game Over!</h2>
+        <p style="font-size:1.5rem;">Score: <b>${score}</b></p>
+        <p style="font-size:1.5rem;">Stars: <b>${stars} ⭐</b></p>
+        <button class="nav-btn" onclick="initGame()" style="background:var(--secondary);">Play Again 🔄</button>
+    `;
+    document.getElementById('progress-bar').style.width = "100%";
+}
+</script>
+
+</body>
+</html>

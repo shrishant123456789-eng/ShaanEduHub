@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>कक्षा 2 - हिंदी: सर्वनाम व वचन</title>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #54a0ff;   /* Soft Blue */
+            --secondary: #1dd1a1; /* Soft Green */
+            --accent: #ff9f43;    /* Orange */
+            --pop: #ff6b6b;       /* Pink/Red */
+            --text: #222f3e;
+            --bg: #f7f1e3;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Baloo 2', cursive;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            padding-bottom: 150px; /* Space for fixed score panel */
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--pop), var(--accent));
+            color: white;
+            text-align: center;
+            padding: 25px;
+            border-radius: 0 0 35px 35px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            margin-bottom: 30px;
+        }
+
+        h1 { margin: 0; font-size: 2.2rem; text-shadow: 2px 2px rgba(0,0,0,0.1); }
+        .subtitle { font-size: 1.2rem; font-weight: 600; margin-top: 5px; opacity: 0.95; }
+
+        /* Notes Section */
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 20px 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-left: 8px solid var(--secondary);
+            transition: transform 0.2s;
+        }
+        
+        .card:hover { transform: translateY(-3px); }
+
+        h2 { color: var(--primary); border-bottom: 2px dashed #eee; padding-bottom: 10px; font-size: 1.6rem; margin-top: 0; }
+
+        .story-text { font-size: 1.1rem; color: #555; }
+
+        .example-box {
+            background: #eef9f5;
+            border: 2px solid var(--secondary);
+            padding: 15px;
+            border-radius: 12px;
+            margin: 15px 0;
+            font-weight: 600;
+            color: #218c74;
+            text-align: center;
+        }
+
+        .concept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .concept-item {
+            background: #fff2cc;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            color: #e58e26;
+        }
+
+        /* Quiz Section */
+        .quiz-header {
+            text-align: center;
+            background: var(--primary);
+            color: white;
+            padding: 20px;
+            border-radius: 20px;
+            margin: 40px 0 20px 0;
+            box-shadow: 0 5px 15px rgba(84, 160, 255, 0.4);
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 18px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border-top: 5px solid var(--pop);
+            position: relative;
+        }
+
+        .q-tag {
+            background: #eee;
+            color: #777;
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+
+        .q-text { font-size: 1.25rem; font-weight: 700; margin-bottom: 15px; color: #2d3436; margin-right: 40px; }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .option-btn {
+            background: #f1f2f6;
+            border: 2px solid #dfe4ea;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            cursor: pointer;
+            font-family: 'Baloo 2', cursive;
+            transition: all 0.2s;
+            text-align: left;
+            color: #57606f;
+        }
+
+        .option-btn:hover { background: #ffeaa7; border-color: var(--accent); }
+
+        .option-btn.correct {
+            background: var(--secondary);
+            border-color: #10ac84;
+            color: white;
+            animation: pulse 0.4s;
+        }
+
+        .option-btn.wrong {
+            background: var(--pop);
+            border-color: #ee5253;
+            color: white;
+            opacity: 0.8;
+            animation: shake 0.4s;
+        }
+
+        .feedback {
+            margin-top: 10px;
+            font-weight: 700;
+            min-height: 25px;
+        }
+
+        /* Score Panel */
+        #score-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            padding: 10px 15px;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-sizing: border-box;
+            border-top: 6px solid var(--accent);
+        }
+
+        .score-box { text-align: center; flex: 0 0 auto; }
+        .score-val { font-size: 1.4rem; font-weight: 800; display: block; line-height: 1; }
+        .score-lbl { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .progress-track {
+            flex-grow: 1;
+            margin: 0 15px;
+            background: #dfe6e9;
+            height: 12px;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            width: 0%;
+            transition: width 0.5s ease-out;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #b2bec3;
+            font-size: 0.9rem;
+            margin-top: 40px;
+            font-weight: 600;
+        }
+
+        /* Animations */
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } 100% { transform: translateX(0); } }
+
+        @media (max-width: 600px) {
+            .options-grid { grid-template-columns: 1fr; }
+            h1 { font-size: 1.8rem; }
+            #score-panel { padding: 8px; flex-wrap: wrap; }
+            .score-val { font-size: 1.2rem; }
+            .progress-track { order: 3; width: 100%; margin: 8px 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>कक्षा 2 - हिंदी 📘</h1>
+        <div class="subtitle">अध्याय 5: सर्वनाम व वचन 🧩</div>
+    </header>
+
+    <div class="container">
+        
+        <div id="notes-section">
+            
+            <div class="card">
+                <h2>1️⃣ भूमिका (Introduction) 👋</h2>
+                <p class="story-text">नमस्ते बच्चों! 🌟 हमने पिछले पाठ में सीखा था कि हर चीज़ का एक 'नाम' (संज्ञा) होता है।</p>
+                <p class="story-text">लेकिन सोचो, अगर हम बार-बार एक ही नाम बोलें तो कैसा लगेगा?</p>
+                <div class="example-box" style="background: #ffeaa7; color: #d35400; border-color:#d35400;">
+                    <em>"राम अच्छा लड़का है। राम स्कूल जाता है। राम खाना खाता है।"</em> 🙄
+                </div>
+                <p class="story-text">अजीब लगा न? बार-बार "राम" बोलना अच्छा नहीं लगता। इसलिए हमारे पास कुछ जादुई शब्द हैं! ✨</p>
+            </div>
+
+            <div class="card">
+                <h2>2️⃣ सर्वनाम (Pronoun) क्या है?</h2>
+                <p class="story-text">जो शब्द <strong>नाम की जगह</strong> आते हैं, उन्हें <strong>सर्वनाम</strong> कहते हैं।</p>
+                <div class="example-box">
+                    "राम अच्छा लड़का है। <strong>वह</strong> स्कूल जाता है।" ✅
+                </div>
+                <p class="story-text">यहाँ हमने राम की जगह <strong>'वह'</strong> लगाया। बस यही सर्वनाम है!</p>
+            </div>
+
+            <div class="card">
+                <h2>3️⃣ मुख्य सर्वनाम (Main Pronouns) 🔑</h2>
+                <div class="concept-grid">
+                    <div class="concept-item">🙋 मैं (Main)<br><span style="font-size:0.9rem; font-weight:400;">अपने लिए</span></div>
+                    <div class="concept-item">👨‍👩‍👧 हम (Hum)<br><span style="font-size:0.9rem; font-weight:400;">एक से ज्यादा के लिए</span></div>
+                    <div class="concept-item">👉 तुम (Tum)<br><span style="font-size:0.9rem; font-weight:400;">दोस्त के लिए</span></div>
+                    <div class="concept-item">👆 वह (Vah)<br><span style="font-size:0.9rem; font-weight:400;">दूर वाले के लिए</span></div>
+                    <div class="concept-item">👇 यह (Yeh)<br><span style="font-size:0.9rem; font-weight:400;">पास वाले के लिए</span></div>
+                </div>
+                <p class="story-text" style="margin-top:15px;">
+                    • <strong>मैं</strong> खेल रहा हूँ।<br>
+                    • <strong>तुम</strong> कहाँ जा रहे हो?<br>
+                    • <strong>यह</strong> मेरी किताब है।
+                </p>
+            </div>
+
+            <div class="card">
+                <h2>4️⃣ वचन (Vachan) - एक या अनेक? 🔢</h2>
+                <p class="story-text">अब हम गिनना सीखेंगे! क्या कोई चीज़ <strong>एक (One)</strong> है या <strong>अनेक (Many)</strong>?</p>
+                <p class="story-text">हिंदी में इसे <strong>'वचन'</strong> कहते हैं। ये दो तरह के होते हैं:</p>
+            </div>
+
+            <div class="card">
+                <h2>5️⃣ एकवचन (Singular) ☝️</h2>
+                <p class="story-text">जब कोई चीज़ गिनती में सिर्फ <strong>एक</strong> हो।</p>
+                <div class="example-box">
+                    लड़का 👦, केला 🍌, ताला 🔒, घोड़ा 🐎
+                </div>
+                <p class="story-text">वाक्य: "लड़का खेल रहा है।"</p>
+            </div>
+
+            <div class="card">
+                <h2>6️⃣ बहुवचन (Plural) 👨‍👩‍👦‍👦</h2>
+                <p class="story-text">जब चीज़ें गिनती में <strong>एक से ज्यादा</strong> हों।</p>
+                <div class="example-box">
+                    लड़के 👬, केले 🍌🍌, ताले 🔒🔒, घोड़े 🐎🐎
+                </div>
+                <p class="story-text">वाक्य: "लड़के खेल रहे हैं।"</p>
+            </div>
+
+            <div class="card">
+                <h2>7️⃣ वचन बदलो (Magic Change) 🎩</h2>
+                <p class="story-text">आओ शब्दों को एक से अनेक बनाएँ:</p>
+                <ul class="story-text">
+                    <li>बेटा ➡ बेटे</li>
+                    <li>पंखा ➡ पंखे</li>
+                    <li>चूहा ➡ चूहे</li>
+                    <li>लड़की ➡ लड़कियाँ (मात्रा बदली!)</li>
+                    <li>रोटी ➡ रोटियाँ</li>
+                    <li>किताब ➡ किताबें</li>
+                </ul>
+            </div>
+
+        </div>
+
+        <div id="quiz-section">
+            <div class="quiz-header">
+                <h2 style="color:white; border:none; margin:0; font-size:2rem;">अभ्यास (Practice) 🎯</h2>
+                <p style="margin:5px 0 0 0; opacity:0.9;">नीचे दिए गए 70 प्रश्नों के सही उत्तर चुनें!</p>
+            </div>
+            
+            <div id="questions-container">
+                </div>
+        </div>
+
+        <footer>
+            Designed & Created by SHRISHANT YADAV<br>
+            2026 – ShanEduHub
+        </footer>
+
+    </div>
+
+    <div id="score-panel">
+        <div class="score-box">
+            <span class="score-val" id="correct-count" style="color:var(--secondary)">0</span>
+            <span class="score-lbl">सही ✅</span>
+        </div>
+        <div class="score-box">
+            <span class="score-val" id="wrong-count" style="color:var(--pop)">0</span>
+            <span class="score-lbl">गलत ❌</span>
+        </div>
+        <div class="progress-track">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        <div class="score-box">
+            <span class="score-val" id="star-rating">⭐ 0</span>
+            <span class="score-lbl">स्टार</span>
+        </div>
+        <div class="score-box" style="margin-left: 10px;">
+            <span class="score-val" id="percentage">0%</span>
+        </div>
+    </div>
+
+    <script>
+        // 70 UNIQUE QUESTIONS DATABASE
+        const questionBank = [
+            // --- SERVANAAM (Pronouns) IDENTIFICATION (1-15) ---
+            { id: 1, q: "राम मेरा दोस्त है। ____ बहुत अच्छा है।", options: ["वह", "मैं", "तुम", "हम"], ans: 0 },
+            { id: 2, q: "____ स्कूल जा रहा हूँ।", options: ["तुम", "मैं", "वह", "वे"], ans: 1 },
+            { id: 3, q: "पिताजी ने कहा, '____ कहाँ जा रहे हो?'", options: ["मैं", "तुम", "हम", "मेरा"], ans: 1 },
+            { id: 4, q: "इनमें से सर्वनाम शब्द पहचानें:", options: ["सेब", "लाल", "वह", "दौड़ना"], ans: 2 },
+            { id: 5, q: "संज्ञा के स्थान पर आने वाले शब्द को क्या कहते हैं?", options: ["संज्ञा", "सर्वनाम", "वचन", "क्रिया"], ans: 1 },
+            { id: 6, q: "____ सब मिलकर खेलेंगे।", options: ["मैं", "हम", "तू", "मेरा"], ans: 1 },
+            { id: 7, q: "यह ____ किताब है। (My)", options: ["मेरा", "मेरी", "मेरे", "मुझे"], ans: 1 },
+            { id: 8, q: "इनमें से कौन सा शब्द सर्वनाम नहीं है?", options: ["तुम", "हम", "कलम", "आप"], ans: 2 },
+            { id: 9, q: "____ नाम क्या है?", options: ["तुम्हारा", "तुम", "मैं", "हम"], ans: 0 },
+            { id: 10, q: "देखो, ____ नाच रहा है।", options: ["वह", "मैं", "हम", "तुम"], ans: 0 },
+            { id: 11, q: "____ कल दिल्ली जाएँगे। (Plural)", options: ["मैं", "हम", "वह", "तू"], ans: 1 },
+            { id: 12, q: "क्या ____ खाना खा लिया?", options: ["तुमने", "मैं", "वह", "हम"], ans: 0 },
+            { id: 13, q: "'मैं' का प्रयोग किसके लिए होता है?", options: ["दूसरे के लिए", "अपने लिए", "सबके लिए", "किसी के लिए नहीं"], ans: 1 },
+            { id: 14, q: "'यह' मेरी गुड़िया है। इसमें सर्वनाम क्या है?", options: ["गुड़िया", "मेरी", "है", "यह"], ans: 3 },
+            { id: 15, q: "सही सर्वनाम चुनें: ____ क्या कर रही हो?", options: ["तुम", "मैं", "हम", "वे"], ans: 0 },
+
+            // --- VACHAN (Numbers) IDENTIFICATION (16-30) ---
+            { id: 16, q: "'लड़का' का बहुवचन क्या होगा?", options: ["लड़की", "लड़के", "लड़कों", "लड़काएँ"], ans: 1 },
+            { id: 17, q: "'केला' शब्द कौन सा वचन है?", options: ["एकवचन", "बहुवचन", "दोनों", "कोई नहीं"], ans: 0 },
+            { id: 18, q: "इनमें से बहुवचन शब्द चुनें:", options: ["किताब", "बच्चा", "पंखे", "घड़ी"], ans: 2 },
+            { id: 19, q: "'घोड़े' दौड़ रहे हैं। यह कौन सा वचन है?", options: ["एकवचन", "बहुवचन", "संज्ञा", "सर्वनाम"], ans: 1 },
+            { id: 20, q: "'चूहा' का बहुवचन क्या है?", options: ["चूहिया", "चूहे", "चूहों", "चूहाएँ"], ans: 1 },
+            { id: 21, q: "इनमें से एकवचन शब्द चुनें:", options: ["बेटे", "तारे", "कमरा", "आंखें"], ans: 2 },
+            { id: 22, q: "'आँख' का बहुवचन क्या होगा?", options: ["आँखें", "आखो", "आँखिया", "आँख"], ans: 0 },
+            { id: 23, q: "'नदी' का बहुवचन क्या है?", options: ["नदियाँ", "नदीये", "नदियों", "नादी"], ans: 0 },
+            { id: 24, q: "'रोटी' का सही बहुवचन चुनें:", options: ["रोटीयाँ", "रोटियाँ", "रोटे", "रोटियों"], ans: 1 },
+            { id: 25, q: "'माला' का बहुवचन क्या है?", options: ["मालाएँ", "माले", "मालियाँ", "मालों"], ans: 0 },
+            { id: 26, q: "मेरे पास एक ____ है।", options: ["पेंसिलें", "पेंसिल", "पेंसिलों", "पेंसिले"], ans: 1 },
+            { id: 27, q: "आसमान में बहुत सारे ____ हैं।", options: ["तारा", "तारे", "तारों", "तारी"], ans: 1 },
+            { id: 28, q: "'पत्ता' गिर गया। वचन बताओ।", options: ["एकवचन", "बहुवचन", "दोनों", "पता नहीं"], ans: 0 },
+            { id: 29, q: "पेड़ पर कई ____ बैठे हैं।", options: ["तोता", "तोते", "तोतों", "तूतू"], ans: 1 },
+            { id: 30, q: "'कहानी' का बहुवचन क्या है?", options: ["कहानियाँ", "कहानीयाँ", "कहानीये", "कहानो"], ans: 0 },
+
+            // --- SERVANAAM & SENTENCE CORRECTION (31-45) ---
+            { id: 31, q: "गलत वाक्य पहचानो:", options: ["मैं खेलता हूँ।", "हम खेलते हैं।", "तुम खेलता हो।", "वह खेलता है।"], ans: 2 },
+            { id: 32, q: "सही वाक्य चुनें:", options: ["मेरे को जाना है।", "मुझे जाना है।", "मैं को जाना है।", "हम जाना है।"], ans: 1 },
+            { id: 33, q: "____ (He) बहुत तेज दौड़ता है।", options: ["वह", "वे", "तुम", "मैं"], ans: 0 },
+            { id: 34, q: "अध्यापक ने ____ (Us) बुलाया।", options: ["हमें", "हम", "मैं", "तुम"], ans: 0 },
+            { id: 35, q: "यह ____ (Your) पेन है।", options: ["तुम", "तुम्हारा", "तुम्हें", "तुमने"], ans: 1 },
+            { id: 36, q: "सही मिलान: मैं -> ____", options: ["हूँ", "है", "हो", "हैं"], ans: 0 },
+            { id: 37, q: "सही मिलान: तुम -> ____", options: ["हो", "हूँ", "है", "हैं"], ans: 0 },
+            { id: 38, q: "सही मिलान: वे -> ____", options: ["हैं", "है", "हूँ", "हो"], ans: 0 },
+            { id: 39, q: "'कोई' दरवाजे पर खड़ा है। सर्वनाम क्या है?", options: ["दरवाजे", "खड़ा", "है", "कोई"], ans: 3 },
+            { id: 40, q: "प्रश्न पूछने के लिए कौन सा सर्वनाम लगेगा? ____ आया है?", options: ["कौन", "मैं", "हम", "तू"], ans: 0 },
+            { id: 41, q: "दूध में ____ गिर गया है।", options: ["कौन", "कुछ", "मैं", "तुम"], ans: 1 },
+            { id: 42, q: "वाक्य पूरा करो: हम कल बाजार ____ ।", options: ["जाऊँगा", "जाएँगे", "जाओगे", "जाता"], ans: 1 },
+            { id: 43, q: "वाक्य पूरा करो: मैं खाना खा ____ ।", options: ["रहा हूँ", "रहे हैं", "रहा है", "रही हैं"], ans: 0 },
+            { id: 44, q: "उसने ____ (Me) एक उपहार दिया।", options: ["मैं", "मुझे", "मेरा", "हम"], ans: 1 },
+            { id: 45, q: "सही शब्द: ____ (Our) देश भारत है।", options: ["हमारा", "हम", "हमें", "मैं"], ans: 0 },
+
+            // --- VACHAN CONVERSION & LOGIC (46-60) ---
+            { id: 46, q: "'बच्चा' रो रहा है। बहुवचन में बदलो:", options: ["बच्चे रो रहे हैं।", "बच्चा रो रहे हैं।", "बच्चे रो रहा है।", "बच्चाओं रो रहे हैं।"], ans: 0 },
+            { id: 47, q: "'लड़कियाँ' पढ़ रही हैं। एकवचन क्या होगा?", options: ["लड़की पढ़ रही है।", "लड़का पढ़ रहा है।", "लड़कियाँ पढ़ रहा है।", "लड़के पढ़ रहे हैं।"], ans: 0 },
+            { id: 48, q: "'गमला' का बहुवचन क्या है?", options: ["गमले", "गमलों", "गमेले", "गामला"], ans: 0 },
+            { id: 49, q: "'मिठाई' का बहुवचन क्या है?", options: ["मिठाइयाँ", "मिठाईयाँ", "मिठाये", "मीठाई"], ans: 0 },
+            { id: 50, q: "बेमेल (Odd one out) चुनें:", options: ["कुत्ता", "बिल्ली", "घोड़े", "चूहा"], ans: 2 }, // घोड़े is plural
+            { id: 51, q: "बेमेल चुनें:", options: ["किताबें", "पेंसिलें", "रबड़", "कॉपियाँ"], ans: 2 }, // रबड़ is singular
+            { id: 52, q: "'चिड़िया' का बहुवचन क्या है?", options: ["चिड़ियाँ", "चिड़िए", "चिड़ियों", "चिड़ी"], ans: 0 },
+            { id: 53, q: "'वस्तु' का बहुवचन क्या है?", options: ["वस्तुएँ", "वस्तुआ", "वस्तुओं", "वस्त"], ans: 0 },
+            { id: 54, q: "'सखी' (सहेली) का बहुवचन क्या होगा?", options: ["सखियाँ", "सखीयाँ", "सखे", "सखि"], ans: 0 },
+            { id: 55, q: "'बकरा' घास खा रहा है। वचन बदलो:", options: ["बकरे घास खा रहे हैं।", "बकरी घास खा रही है।", "बकरों घास खा रहे।", "बकरा घास खा रहे।"], ans: 0 },
+            { id: 56, q: "'गाड़ी' चल रही है। बहुवचन क्या होगा?", options: ["गाड़ियाँ चल रही हैं।", "गाड़ीयाँ चल रहे हैं।", "गाड़े चल रहे हैं।", "गाड़ी चल रहे हैं।"], ans: 0 },
+            { id: 57, q: "एक ____ , अनेक ____ । सही जोड़ा चुनें:", options: ["तारा - तारे", "तारे - तारा", "तारा - तारों", "तारी - तारे"], ans: 0 },
+            { id: 58, q: "मेज पर तीन ____ रखी हैं।", options: ["पुस्तक", "पुस्तकें", "पुस्तका", "पुस्तकों"], ans: 1 },
+            { id: 59, q: "मेरे दोनों ____ में दर्द है।", options: ["पैर", "पैरों", "पैरे", "पैरें"], ans: 1 },
+            { id: 60, q: "'अध्यापिका' का बहुवचन क्या है?", options: ["अध्यापिकाएँ", "अध्यापिकों", "अध्यापक", "अध्यापिक"], ans: 0 },
+
+            // --- MIXED CHALLENGE (61-70) ---
+            { id: 61, q: "सही या गलत: 'आप' अपने से बड़ों के लिए बोला जाता है।", options: ["सही", "गलत", "पता नहीं", "शायद"], ans: 0 },
+            { id: 62, q: "सही या गलत: 'मैं' का बहुवचन 'हम' होता है।", options: ["सही", "गलत", "नहीं", "शायद"], ans: 0 },
+            { id: 63, q: "सही या गलत: 'वह' पास की चीज़ के लिए होता है।", options: ["गलत", "सही", "दोनों", "कोई नहीं"], ans: 0 },
+            { id: 64, q: "चित्र (विवरण): बहुत सारे गुब्बारे। यह क्या है?", options: ["एकवचन", "बहुवचन", "सर्वनाम", "संज्ञा"], ans: 1 },
+            { id: 65, q: "चित्र (विवरण): एक अकेली बत्तख। यह क्या है?", options: ["एकवचन", "बहुवचन", "क्रिया", "विशेषण"], ans: 0 },
+            { id: 66, q: "वाक्य शुद्ध करें: 'मेरे को भूख लगी है।'", options: ["मुझे भूख लगी है।", "मैं को भूख लगी है।", "हमको भूख लगी है।", "मेरा भूख लगी है।"], ans: 0 },
+            { id: 67, q: "अगर 'लड़का' खेलता है, तो 'लड़के' ____ हैं।", options: ["खेलते", "खेलता", "खेलती", "खेलो"], ans: 0 },
+            { id: 68, q: "अगर 'मैं' लिखता हूँ, तो 'हम' ____ हैं।", options: ["लिखते", "लिखता", "लिखती", "लिखो"], ans: 0 },
+            { id: 69, q: "इनमें से कौन सा शब्द हमेशा बहुवचन में प्रयोग होता है?", options: ["आँसू", "लड़का", "किताब", "कुर्सी"], ans: 0 }, // Slightly advanced but good logic
+            { id: 70, q: "इनमें से कौन सा जोड़ा सही है?", options: ["मैं-मेरा", "तुम-हम", "वह-मैं", "हम-तू"], ans: 0 }
+        ];
+
+        // GAME ENGINE
+        let correctCount = 0;
+        let wrongCount = 0;
+        const totalQs = questionBank.length;
+
+        const quizContainer = document.getElementById('questions-container');
+
+        // Initialize Quiz
+        function initQuiz() {
+            questionBank.forEach((q, index) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.innerHTML = `
+                    <div class="q-tag">प्रश्न ${index + 1}</div>
+                    <div class="q-text">${q.q}</div>
+                    <div class="options-grid" id="opt-container-${q.id}"></div>
+                    <div class="feedback" id="feed-${q.id}"></div>
+                `;
+
+                const optContainer = card.querySelector(`#opt-container-${q.id}`);
+                
+                q.options.forEach((opt, optIndex) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerText = opt;
+                    btn.onclick = () => handleAnswer(q.id, optIndex, q.ans, btn);
+                    optContainer.appendChild(btn);
+                });
+
+                quizContainer.appendChild(card);
+            });
+        }
+
+        function handleAnswer(qId, selectedIndex, correctIndex, btnElement) {
+            const feedbackBox = document.getElementById(`feed-${qId}`);
+            const parentGrid = btnElement.parentElement;
+            const allBtns = parentGrid.querySelectorAll('.option-btn');
+
+            // Disable all buttons
+            allBtns.forEach(b => {
+                b.disabled = true;
+                b.style.cursor = 'default';
+            });
+
+            if (selectedIndex === correctIndex) {
+                // Correct
+                btnElement.classList.add('correct');
+                feedbackBox.innerHTML = "<span style='color:var(--secondary)'>शाबाश! बिल्कुल सही! 🌟</span>";
+                correctCount++;
+            } else {
+                // Wrong
+                btnElement.classList.add('wrong');
+                // Highlight correct one
+                allBtns[correctIndex].classList.add('correct');
+                feedbackBox.innerHTML = "<span style='color:var(--pop)'>ओह! सही उत्तर हरे रंग में है।</span>";
+                wrongCount++;
+            }
+
+            updateScore();
+        }
+
+        function updateScore() {
+            const percentage = Math.round((correctCount / totalQs) * 100);
+            
+            document.getElementById('correct-count').innerText = correctCount;
+            document.getElementById('wrong-count').innerText = wrongCount;
+            document.getElementById('percentage').innerText = percentage + "%";
+            document.getElementById('progress-bar').style.width = percentage + "%";
+
+            // Stars
+            let stars = "0";
+            if(percentage > 10) stars = "⭐";
+            if(percentage > 30) stars = "⭐⭐";
+            if(percentage > 50) stars = "⭐⭐⭐";
+            if(percentage > 75) stars = "⭐⭐⭐⭐";
+            if(percentage === 100) stars = "⭐⭐⭐⭐⭐";
+            
+            document.getElementById('star-rating').innerText = stars;
+        }
+
+        // Run
+        initQuiz();
+
+    </script>
+</body>
+</html>

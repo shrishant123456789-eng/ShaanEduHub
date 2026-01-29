@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Class 2 Computer Mega Practice</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Nunito:wght@400;700&display=swap');
+
+        :root {
+            --bg-color: #E0F7FA;
+            --primary: #FF6B6B;
+            --secondary: #4ECDC4;
+            --accent: #FFE66D;
+            --dark: #2D3436;
+            --white: #FFFFFF;
+            --success: #6BCB77;
+            --error: #FF6B6B;
+            --card-shadow: 0 8px 0 rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(var(--secondary) 15%, transparent 16%);
+            background-size: 30px 30px;
+            margin: 0;
+            padding: 0;
+            color: var(--dark);
+            user-select: none;
+            padding-bottom: 70px;
+        }
+
+        /* HEADER */
+        header {
+            background: linear-gradient(135deg, #FF9F43, #FF6B6B);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        h1 { margin: 0; font-family: 'Fredoka', cursive; font-size: 1.8rem; letter-spacing: 1px; text-shadow: 2px 2px 0 rgba(0,0,0,0.1); }
+        .subtitle { font-size: 0.9rem; opacity: 0.9; margin-top: 5px; }
+
+        /* DASHBOARD (SETS) */
+        #dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .set-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: transform 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .set-card:active { transform: translateY(5px); box-shadow: none; }
+        .set-card:hover { border-color: var(--secondary); }
+        .set-icon { font-size: 3rem; margin-bottom: 10px; display: block; }
+        .set-title { font-weight: bold; font-family: 'Fredoka', cursive; color: var(--dark); font-size: 1.1rem; }
+        .set-desc { font-size: 0.8rem; color: #777; margin-top: 5px; }
+
+        /* GAME AREA */
+        #game-area {
+            display: none;
+            max-width: 600px;
+            margin: 20px auto;
+            background: var(--white);
+            border-radius: 25px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+            min-height: 400px;
+        }
+
+        /* HUD */
+        .hud {
+            display: flex;
+            justify-content: space-between;
+            background: #f1f2f6;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            border: 2px solid #ddd;
+        }
+        .hud-item { display: flex; align-items: center; gap: 5px; }
+        .progress-bar-container { height: 10px; background: #eee; border-radius: 5px; margin-bottom: 20px; overflow: hidden; }
+        .progress-bar { height: 100%; width: 0%; background: var(--secondary); transition: width 0.3s; }
+
+        /* QUESTIONS */
+        .q-container { text-align: center; animation: slideIn 0.4s ease-out; }
+        .q-emoji { font-size: 5rem; display: block; margin-bottom: 10px; animation: bounce 2s infinite; }
+        .q-text { font-size: 1.6rem; color: var(--dark); margin-bottom: 20px; font-weight: bold; font-family: 'Fredoka', cursive; line-height: 1.4; }
+
+        /* OPTIONS */
+        .options-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 15px; margin-top: 15px; }
+        
+        .opt-btn {
+            background: #fff;
+            border: 2px solid #eee;
+            border-bottom: 5px solid #ddd;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+            transition: all 0.1s;
+            color: #555;
+            font-weight: bold;
+        }
+        
+        .opt-btn:active { transform: translateY(4px); border-bottom-width: 2px; }
+        .opt-btn.correct { background: var(--success); color: white; border-color: #2e7d32; }
+        .opt-btn.wrong { background: var(--error); color: white; border-color: #c0392b; animation: shake 0.4s; }
+
+        /* DRAG & SORT STYLES */
+        .drag-area { border: 3px dashed #ccc; padding: 15px; border-radius: 10px; background: #fafafa; min-height: 50px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 15px; }
+        .word-bank { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+        .word-chip { background: var(--secondary); color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 0 #2980b9; }
+        .word-chip:active { transform: translateY(4px); box-shadow: none; }
+
+        /* CONTROLS */
+        .controls { display: flex; justify-content: center; gap: 15px; margin-top: 25px; border-top: 2px solid #f1f2f6; padding-top: 15px; }
+        .action-btn { padding: 10px 25px; border: none; border-radius: 50px; font-weight: bold; color: white; cursor: pointer; display: flex; align-items: center; gap: 5px; box-shadow: 0 4px 0 rgba(0,0,0,0.2); }
+        .btn-home { background: #636e72; }
+        .btn-speak { background: #0984e3; }
+        .btn-next { background: var(--primary); display: none; }
+
+        /* MODAL */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+        .modal-content { background: white; padding: 30px; border-radius: 25px; text-align: center; width: 85%; max-width: 350px; animation: pop 0.4s; border: 5px solid var(--accent); }
+        .modal-emoji { font-size: 5rem; display: block; margin-bottom: 10px; }
+        .modal-title { font-size: 2rem; font-family: 'Fredoka'; margin: 0 0 10px 0; }
+
+        /* FOOTER */
+        footer {
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            font-size: 0.8rem;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            z-index: 90;
+            border-top: 4px solid var(--primary);
+        }
+
+        /* ANIMATIONS */
+        @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        @keyframes pop { 0% { transform: scale(0); } 80% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>💻 Computer Mega Practice</h1>
+    <div class="subtitle">Class 2 • 10 Sets • 500+ Tasks</div>
+</header>
+
+<div id="dashboard">
+    </div>
+
+<div id="game-area">
+    <div class="hud">
+        <div class="hud-item">⭐ <span id="score-val">0</span></div>
+        <div class="hud-item">📊 <span id="progress-val">1/50</span></div>
+        <div class="hud-item">📈 <span id="percent-val">0%</span></div>
+    </div>
+    <div class="progress-bar-container"><div class="progress-bar" id="progress-fill"></div></div>
+
+    <div id="question-container" class="q-container">
+        </div>
+
+    <div class="controls">
+        <button class="action-btn btn-home" onclick="goHome()">🏠 Home</button>
+        <button class="action-btn btn-speak" onclick="speakQuestion()">🔊 Read</button>
+        <button class="action-btn btn-next" id="next-btn" onclick="nextQuestion()">Next ➡</button>
+    </div>
+</div>
+
+<div id="feedback-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-emoji" id="modal-emoji">🌟</div>
+        <h2 class="modal-title" id="modal-title">Excellent!</h2>
+        <button class="action-btn btn-next" style="display:inline-flex; margin-top:15px;" onclick="closeModal()">Continue ▶</button>
+    </div>
+</div>
+
+<footer>
+    Designed & Created by SHRISHANT YADAV<br>
+    2026 – ShanEduHub
+</footer>
+
+<script>
+/* ==========================================================================
+   DATA BANK - The core knowledge base for generating 500+ questions
+   ========================================================================== */
+const KB = {
+    parts: [
+        { name: "Monitor", icon: "🖥️", desc: "Looks like a TV", type: "Output" },
+        { name: "CPU", icon: "🧠", desc: "Brain of computer", type: "Processing" },
+        { name: "Keyboard", icon: "⌨️", desc: "Used to type", type: "Input" },
+        { name: "Mouse", icon: "🖱️", desc: "Used to point & click", type: "Input" },
+        { name: "Printer", icon: "🖨️", desc: "Prints on paper", type: "Output" },
+        { name: "Speakers", icon: "🔊", desc: "Plays sound", type: "Output" },
+        { name: "Headphones", icon: "🎧", desc: "Listen privately", type: "Output" },
+        { name: "Scanner", icon: "📠", desc: "Copies paper to computer", type: "Input" }
+    ],
+    types: [
+        { name: "Desktop", icon: "🖥️", fact: "Kept on a table, big size" },
+        { name: "Laptop", icon: "💻", fact: "Can be kept on lap, portable" },
+        { name: "Tablet", icon: "📱", fact: "Touch screen, bigger than phone" },
+        { name: "Smartphone", icon: "🤳", fact: "Fits in pocket, makes calls" }
+    ],
+    keys: [
+        { name: "Enter", icon: "↵", use: "Go to next line" },
+        { name: "Spacebar", icon: "📏", use: "Give space" },
+        { name: "Backspace", icon: "⬅️", use: "Erase to left" },
+        { name: "Delete", icon: "❌", use: "Erase to right" },
+        { name: "Caps Lock", icon: "🔠", use: "Type capital letters" },
+        { name: "Arrow Keys", icon: "↔️", use: "Move cursor up/down/left/right" },
+        { name: "Shift", icon: "⬆️", use: "Type symbols or one capital letter" }
+    ],
+    mouseActions: [
+        { name: "Click", desc: "Press left button once" },
+        { name: "Double Click", desc: "Press left button twice quickly" },
+        { name: "Right Click", desc: "Press right button once" },
+        { name: "Drag and Drop", desc: "Move items on screen" },
+        { name: "Scroll", desc: "Move page up and down" }
+    ],
+    paintTools: [
+        { name: "Pencil", icon: "✏️", use: "Free hand drawing" },
+        { name: "Eraser", icon: "🧼", use: "Remove mistakes" },
+        { name: "Fill Color", icon: "🪣", use: "Fill color in shape" },
+        { name: "Brush", icon: "🖌️", use: "Paint thick lines" },
+        { name: "Text", icon: "🔤", use: "Type name" },
+        { name: "Shapes", icon: "⬜", use: "Draw circle, square" }
+    ],
+    hw_sw: [
+        { name: "Hardware", items: ["Monitor", "Mouse", "Keyboard", "Printer", "Wire"] },
+        { name: "Software", items: ["Paint", "Windows", "Games", "Calculator", "Notepad"] }
+    ],
+    safety: [
+        { rule: "Sit Straight", type: "Good", icon: "🪑" },
+        { rule: "Eat near computer", type: "Bad", icon: "🍔" },
+        { rule: "Clean hands", type: "Good", icon: "🧼" },
+        { rule: "Pull wires", type: "Bad", icon: "⚡" },
+        { rule: "Touch with wet hands", type: "Bad", icon: "💦" },
+        { rule: "Ask parents", type: "Good", icon: "👪" },
+        { rule: "Talk to strangers", type: "Bad", icon: "👤" }
+    ]
+};
+
+const SET_CONFIG = [
+    { id: 1, title: "Intro & Parts", topics: ["parts"], color: "#FF6B6B", icon: "🖥️" },
+    { id: 2, title: "Types of PC", topics: ["types"], color: "#4ECDC4", icon: "💻" },
+    { id: 3, title: "Uses & Places", topics: ["parts", "types"], color: "#FFE66D", icon: "🏥" },
+    { id: 4, title: "Keyboard Skills", topics: ["keys"], color: "#FF9F43", icon: "⌨️" },
+    { id: 5, title: "Mouse Actions", topics: ["mouseActions"], color: "#54A0FF", icon: "🖱️" },
+    { id: 6, title: "HW vs Software", topics: ["hw_sw"], color: "#A29BFE", icon: "💿" },
+    { id: 7, title: "Operating Sys", topics: ["hw_sw"], color: "#6C5CE7", icon: "🤖" },
+    { id: 8, title: "Paint Fun", topics: ["paintTools"], color: "#FD79A8", icon: "🎨" },
+    { id: 9, title: "Safety & Net", topics: ["safety"], color: "#00B894", icon: "🛡️" },
+    { id: 10, title: "Mega Revision", topics: "ALL", color: "#2D3436", icon: "🏆" }
+];
+
+/* ==========================================================================
+   STATE & LOGIC
+   ========================================================================== */
+let state = {
+    setId: 0,
+    qIndex: 0,
+    score: 0,
+    questions: [],
+    userDrag: []
+};
+
+// Initialize Dashboard
+window.onload = function() {
+    const dash = document.getElementById('dashboard');
+    SET_CONFIG.forEach(set => {
+        const div = document.createElement('div');
+        div.className = 'set-card';
+        div.style.borderBottomColor = set.color;
+        div.innerHTML = `<span class="set-icon">${set.icon}</span><div class="set-title">${set.title}</div><div class="set-desc">50 Questions</div>`;
+        div.onclick = () => startSet(set);
+        dash.appendChild(div);
+    });
+};
+
+function goHome() {
+    document.getElementById('dashboard').style.display = 'grid';
+    document.getElementById('game-area').style.display = 'none';
+    document.querySelector('header').style.display = 'block';
+}
+
+function startSet(config) {
+    state.setId = config.id;
+    state.qIndex = 0;
+    state.score = 0;
+    state.questions = generateQuestions(config.topics); // THE GENERATOR
+    
+    document.getElementById('dashboard').style.display = 'none';
+    document.getElementById('game-area').style.display = 'block';
+    
+    updateHUD();
+    loadQuestion();
+}
+
+/* ==========================================================================
+   THE GENERATOR ENGINE (Crucial for 500+ Unique Tasks)
+   ========================================================================== */
+function generateQuestions(topics) {
+    let qList = [];
+    const totalNeeded = 50;
+    
+    // Helper to get random item
+    const rnd = (arr) => arr[Math.floor(Math.random() * arr.length)];
+    const rndExcl = (arr, excl) => {
+        let item;
+        do { item = rnd(arr); } while(item === excl);
+        return item;
+    };
+
+    for(let i=0; i<totalNeeded; i++) {
+        let type = i % 5; // Rotate question types
+        let q = {};
+        
+        // --- TOPIC ROUTING ---
+        // If "ALL", pick random topic source each time
+        let sourceKey = topics === "ALL" ? rnd(Object.keys(KB)) : rnd(topics);
+        
+        // --- LOGIC BASED ON SOURCE ---
+        
+        if (sourceKey === 'parts' || sourceKey === 'types' || sourceKey === 'keys' || sourceKey === 'paintTools') {
+            const item = rnd(KB[sourceKey]);
+            
+            if(type === 0) { // MCQ: Identify Icon
+                q = {
+                    type: 'mcq',
+                    text: `Which one is the <b>${item.name}</b>?`,
+                    emoji: "❓",
+                    correct: item.icon,
+                    options: shuffle([item.icon, rndExcl(KB[sourceKey], item).icon, rndExcl(KB[sourceKey], item).icon, "❌"])
+                };
+            } else if (type === 1) { // MCQ: Identify Name from Icon
+                q = {
+                    type: 'mcq',
+                    text: `What is this?`,
+                    emoji: item.icon,
+                    correct: item.name,
+                    options: shuffle([item.name, rndExcl(KB[sourceKey], item).name, rndExcl(KB[sourceKey], item).name, "None"])
+                };
+            } else if (type === 2) { // True/False Description
+                let isTrue = Math.random() > 0.5;
+                let desc = isTrue ? item.desc || item.fact || item.use : rndExcl(KB[sourceKey], item).desc || rndExcl(KB[sourceKey], item).fact;
+                q = {
+                    type: 'tf',
+                    text: `${item.name}: ${desc}. Is this correct?`,
+                    emoji: item.icon,
+                    correct: isTrue ? "True" : "False"
+                };
+            } else if (type === 3) { // Unscramble
+                q = {
+                    type: 'arrange',
+                    text: `Spell the word correctly:`,
+                    emoji: item.icon,
+                    correct: item.name.toUpperCase(),
+                    parts: shuffle(item.name.toUpperCase().split(''))
+                };
+            } else { // Fill blank
+                let words = (item.desc || item.use).split(' ');
+                let blankWord = words[words.length-1];
+                let text = (item.desc || item.use).replace(blankWord, "_______");
+                q = {
+                    type: 'mcq',
+                    text: `${item.name}: ${text}`,
+                    emoji: item.icon,
+                    correct: blankWord,
+                    options: shuffle([blankWord, "Water", "Food", "Air"]) 
+                };
+            }
+        } 
+        
+        else if (sourceKey === 'hw_sw') {
+            const cat = rnd(KB.hw_sw);
+            const item = rnd(cat.items);
+            const otherCat = cat.name === "Hardware" ? "Software" : "Hardware";
+            
+            q = {
+                type: 'mcq',
+                text: `Is <b>${item}</b> Hardware or Software?`,
+                emoji: "💻",
+                correct: cat.name,
+                options: ["Hardware", "Software"]
+            };
+        }
+        
+        else if (sourceKey === 'safety') {
+            const rule = rnd(KB.safety);
+            q = {
+                type: 'mcq',
+                text: `Is "${rule.rule}" a Good or Bad habit?`,
+                emoji: rule.icon,
+                correct: rule.type,
+                options: ["Good", "Bad"]
+            };
+        }
+        
+        else if (sourceKey === 'mouseActions') {
+            const act = rnd(KB.mouseActions);
+            q = {
+                type: 'mcq',
+                text: act.desc,
+                emoji: "🖱️",
+                correct: act.name,
+                options: shuffle(KB.mouseActions.map(x=>x.name).slice(0,4))
+            };
+        }
+
+        qList.push(q);
+    }
+    return qList;
+}
+
+function shuffle(array) {
+    return array.sort(() => Math.random() - 0.5);
+}
+
+/* ==========================================================================
+   RENDER & INTERACTION
+   ========================================================================== */
+function loadQuestion() {
+    if(state.qIndex >= state.questions.length) {
+        showFinalResult();
+        return;
+    }
+
+    const q = state.questions[state.qIndex];
+    const container = document.getElementById('question-container');
+    document.getElementById('next-btn').style.display = 'none';
+    state.userDrag = [];
+
+    let html = `<div class="q-emoji">${q.emoji}</div>`;
+    html += `<div class="q-text">${q.text}</div>`;
+
+    if (q.type === 'mcq' || q.type === 'tf') {
+        let opts = q.type === 'tf' ? ["True", "False"] : q.options;
+        html += `<div class="options-grid">`;
+        opts.forEach(opt => {
+            html += `<button class="opt-btn" onclick="checkAnswer(this, '${opt}')">${opt}</button>`;
+        });
+        html += `</div>`;
+    } 
+    else if (q.type === 'arrange') {
+        html += `<div id="drop-zone" class="drag-area">Tap letters below 👇</div>`;
+        html += `<div class="word-bank">`;
+        q.parts.forEach(char => {
+            html += `<div class="word-chip" onclick="moveChar(this, '${char}')">${char}</div>`;
+        });
+        html += `</div>`;
+        html += `<div style="margin-top:15px">
+            <button class="action-btn" style="background:var(--secondary); display:inline-flex" onclick="checkArrange()">Check ✅</button>
+            <button class="action-btn" style="background:#999; display:inline-flex" onclick="resetArrange()">Reset 🔄</button>
+        </div>`;
+    }
+
+    container.innerHTML = html;
+    speakQuestion();
+}
+
+// Logic for MCQs
+function checkAnswer(btn, val) {
+    const q = state.questions[state.qIndex];
+    if (val === q.correct) {
+        btn.classList.add('correct');
+        handleSuccess();
+    } else {
+        btn.classList.add('wrong');
+        speak("Try again!");
+    }
+}
+
+// Logic for Arrange/Spelling
+function moveChar(btn, char) {
+    state.userDrag.push(char);
+    btn.style.display = 'none';
+    document.getElementById('drop-zone').innerText = state.userDrag.join('');
+}
+
+function resetArrange() {
+    state.userDrag = [];
+    loadQuestion();
+}
+
+function checkArrange() {
+    const q = state.questions[state.qIndex];
+    if (state.userDrag.join('') === q.correct) {
+        handleSuccess();
+    } else {
+        speak("Not quite right");
+        document.getElementById('drop-zone').style.borderColor = 'red';
+        setTimeout(()=> document.getElementById('drop-zone').style.borderColor = '#ccc', 500);
+    }
+}
+
+function handleSuccess() {
+    state.score++;
+    updateHUD();
+    playSound(true);
+    
+    // Show Modal
+    const titles = ["Excellent!", "Great Job!", "Superb!", "Correct!"];
+    const emojis = ["⭐", "🌟", "🏆", "🎉"];
+    document.getElementById('modal-title').innerText = titles[Math.floor(Math.random()*titles.length)];
+    document.getElementById('modal-emoji').innerText = emojis[Math.floor(Math.random()*emojis.length)];
+    document.getElementById('feedback-modal').style.display = 'flex';
+}
+
+function nextQuestion() {
+    document.getElementById('feedback-modal').style.display = 'none';
+    state.qIndex++;
+    loadQuestion();
+}
+
+function closeModal() {
+    nextQuestion();
+}
+
+function updateHUD() {
+    document.getElementById('score-val').innerText = state.score;
+    document.getElementById('progress-val').innerText = `${state.qIndex + 1}/50`;
+    let pct = Math.round((state.score / 50) * 100);
+    document.getElementById('percent-val').innerText = pct + "%";
+    document.getElementById('progress-fill').style.width = ((state.qIndex) / 50 * 100) + "%";
+}
+
+function showFinalResult() {
+    const container = document.getElementById('game-area');
+    container.innerHTML = `
+        <div style="text-align:center; padding:40px;">
+            <div style="font-size:6rem;">🏆</div>
+            <h2 style="font-family:'Fredoka'">Set Completed!</h2>
+            <p style="font-size:1.5rem; margin:20px 0;">You scored ${state.score} out of 50</p>
+            <p style="color:var(--secondary); font-weight:bold;">${state.score > 40 ? "Computer Master!" : "Keep Practicing!"}</p>
+            <button class="action-btn btn-home" style="margin:20px auto;" onclick="goHome()">Back to Menu</button>
+        </div>
+    `;
+}
+
+/* ==========================================================================
+   AUDIO & UTILS
+   ========================================================================== */
+function speakQuestion() {
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const q = state.questions[state.qIndex];
+        const text = q.text.replace(/<[^>]*>/g, ''); // strip html
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.rate = 0.9;
+        msg.pitch = 1.1;
+        window.speechSynthesis.speak(msg);
+    }
+}
+
+function speak(text) {
+    if ('speechSynthesis' in window) {
+        const msg = new SpeechSynthesisUtterance(text);
+        window.speechSynthesis.speak(msg);
+    }
+}
+
+function playSound(correct) {
+    // Simple beep simulation if needed, mostly handled by visual + TTS
+}
+
+</script>
+</body>
+</html>
