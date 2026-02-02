@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Class 3 Computer - Chapter 10</title>
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+:root {
+--primary: #4a148c;
+--secondary: #ff6f00;
+--bg: #fdf6e3;
+--card-bg: #ffffff;
+--correct: #2e7d32;
+--wrong: #c62828;
+}
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'Patrick Hand', cursive;
+        font-weight: bold !important;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+        background-color: var(--bg);
+        color: #333;
+        line-height: 1.4;
+        overflow-x: hidden;
+        width: 100%;
+    }
+
+    /* --- Header --- */
+    .hero {
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        color: white;
+        text-align: center;
+        padding: 30px 15px;
+        border-bottom-left-radius: 30px;
+        border-bottom-right-radius: 30px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    /* --- Live Score --- */
+    .score-panel {
+        position: sticky;
+        top: 10px;
+        z-index: 100;
+        background: var(--secondary);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 50px;
+        margin: 10px auto;
+        width: fit-content;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        font-size: 1.2rem;
+        display: flex;
+        gap: 15px;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 15px;
+    }
+
+    /* --- Common Styles --- */
+    section {
+        margin-bottom: 40px;
+        background: var(--card-bg);
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        border: 3px solid #eee;
+    }
+
+    h2 {
+        color: var(--primary);
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 1.8rem;
+        text-decoration: underline;
+    }
+
+    .note-card {
+        border-left: 8px solid var(--primary);
+        margin-bottom: 25px;
+        padding: 15px;
+        background: #f9f0ff;
+        border-radius: 0 15px 15px 0;
+    }
+
+    .note-card h3 {
+        color: #7b1fa2;
+        margin-bottom: 10px;
+        font-size: 1.4rem;
+    }
+
+    .img-placeholder {
+        width: 100%;
+        margin: 15px 0;
+        border-radius: 10px;
+    }
+
+    .check-btn {
+        background: #e1bee7;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 10px;
+        cursor: pointer;
+        margin-top: 10px;
+        font-size: 1rem;
+    }
+
+    /* --- Important Questions --- */
+    .imp-q {
+        background: #fff3e0;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 15px;
+        border: 2px dashed var(--secondary);
+    }
+
+    /* --- Practice Quiz --- */
+    #quiz-container {
+        min-height: 300px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .option-btn {
+        display: block;
+        width: 100%;
+        padding: 15px;
+        margin: 10px 0;
+        border: 3px solid #ddd;
+        border-radius: 15px;
+        background: white;
+        cursor: pointer;
+        text-align: left;
+        font-size: 1.1rem;
+        transition: 0.2s;
+    }
+
+    .option-btn:active { transform: scale(0.98); }
+
+    .feedback {
+        margin-top: 15px;
+        padding: 15px;
+        border-radius: 10px;
+        display: none;
+        text-align: center;
+        font-size: 1.2rem;
+    }
+
+    .correct-anim { background: var(--correct); color: white; }
+    .wrong-anim { background: var(--wrong); color: white; }
+
+    /* --- Revision --- */
+    .revision-list {
+        list-style: none;
+    }
+
+    .revision-list li {
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        align-items: center;
+    }
+
+    .revision-list li::before {
+        content: "⭐";
+        margin-right: 10px;
+    }
+
+    /* --- Footer --- */
+    footer {
+        background: #222;
+        color: white;
+        text-align: center;
+        padding: 25px 15px;
+        margin-top: 50px;
+        font-size: 1rem;
+    }
+
+    /* --- Utilities --- */
+    .hidden { display: none; }
+    .center { text-align: center; }
+</style>
+
+</head>
+<body>
+<div class="hero">
+    <h1>ShanEduHub</h1>
+    <p>Class 3 | Computer | Chapter 10</p>
+    <h2>Formatting in Word</h2>
+</div>
+
+<div class="score-panel">
+    <span>Score: <span id="current-score">0</span></span>
+    <span>Quest: <span id="q-count">1</span>/70</span>
+</div>
+
+<div class="container">
+
+    <section id="notes">
+        <h2>📘 Smart Notes</h2>
+
+        <div class="note-card">
+            <h3>TOPIC 1: Selecting Text</h3>
+            <p><strong>Definition:</strong> Selecting text means choosing a word or sentence to change it.</p>
+            <p><strong>Explanation:</strong> Before formatting, we must select the text. Selected text becomes highlighted.</p>
+            <p><strong>Example:</strong> Selecting a word to make it bold.</p>
+            <p><strong>Memory Tip:</strong> Select First, Change Later</p>
+            <div class="img-placeholder"></div>
+            <button class="check-btn" data-ans="To change its format or look.">Quick Check: Why do we select text?</button>
+        </div>
+
+        <div class="note-card">
+            <h3>TOPIC 2: Font Size</h3>
+            <p><strong>Definition:</strong> Font size means how big or small the text is.</p>
+            <p><strong>Explanation:</strong> We can increase or decrease text size to make it clear.</p>
+            <p><strong>Example:</strong> Making heading text bigger.</p>
+            <p><strong>Memory Tip:</strong> Big Size = Big Text</p>
+            <div class="img-placeholder"></div>
+            <button class="check-btn" data-ans="It changes how big or small the text appears.">Quick Check: What does font size change?</button>
+        </div>
+
+        <div class="note-card">
+            <h3>TOPIC 3: Font Style</h3>
+            <p><strong>Definition:</strong> Font style means the design of letters.</p>
+            <p><strong>Explanation:</strong> Different font styles make text look different.</p>
+            <p><strong>Example:</strong> Changing text style for title.</p>
+            <p><strong>Memory Tip:</strong> Style = Look</p>
+            <div class="img-placeholder"></div>
+            <button class="check-btn" data-ans="Yes, it changes the design of the letters.">Quick Check: Does font style change text design?</button>
+        </div>
+
+        <div class="note-card">
+            <h3>TOPIC 4: Bold Text</h3>
+            <p><strong>Definition:</strong> Bold makes text darker and thicker.</p>
+            <p><strong>Explanation:</strong> It is used to highlight important words.</p>
+            <p><strong>Example:</strong> Bold heading text.</p>
+            <p><strong>Memory Tip:</strong> Bold = Dark Text</p>
+            <div class="img-placeholder"></div>
+            <button class="check-btn" data-ans="The Bold option (B icon).">Quick Check: Which option makes text thick?</button>
+        </div>
+
+        <div class="note-card">
+            <h3>TOPIC 5: Italic Text</h3>
+            <p><strong>Definition:</strong> Italic makes text slanted.</p>
+            <p><strong>Explanation:</strong> It is used for special words.</p>
+            <p><strong>Example:</strong> Italic name of book.</p>
+            <p><strong>Memory Tip:</strong> Italic = Slant</p>
+            <div class="img-placeholder"></div>
+            <button class="check-btn" data-ans="The Italic style.">Quick Check: Which text style is slanted?</button>
+        </div>
+
+        <div class="note-card">
+            <h3>TOPIC 6: Underline Text</h3>
+            <p><strong>Definition:</strong> Underline puts a line under text.</p>
+            <p><strong>Explanation:</strong> It highlights important text.</p>
+            <p><strong>Example:</strong> Underline heading.</p>
+            <p><strong>Memory Tip:</strong> Underline = Line Below</p>
+            <div class="img-placeholder"></div>
+            <button class="check-btn" data-ans="The Underline option (U icon).">Quick Check: Which option draws a line under text?</button>
+        </div>
+
+        <div class="note-card">
+            <h3>TOPIC 7: Font Color</h3>
+            <p><strong>Definition:</strong> Font color changes the color of text.</p>
+            <p><strong>Explanation:</strong> Colored text looks attractive.</p>
+            <p><strong>Example:</strong> Red color for heading.</p>
+            <p><strong>Memory Tip:</strong> Font Color = Text Color</p>
+            <div class="img-placeholder"></div>
+            <button class="check-btn" data-ans="It changes the color of the text.">Quick Check: What does font color change?</button>
+        </div>
+
+        <div class="note-card">
+            <h3>TOPIC 8: Text Alignment</h3>
+            <p><strong>Definition:</strong> Text alignment means placing text properly.</p>
+            <p><strong>Explanation:</strong> Text can be left, center, or right aligned.</p>
+            <p><strong>Example:</strong> Center aligned heading.</p>
+            <p><strong>Memory Tip:</strong> Alignment = Text Position</p>
+            <div class="img-placeholder"></div>
+            <button class="check-btn" data-ans="Center Alignment.">Quick Check: Which alignment puts text in center?</button>
+        </div>
+
+        <div class="note-card">
+            <h3>TOPIC 9: Bullets and Numbering</h3>
+            <p><strong>Definition:</strong> Bullets and numbering organize text in list form.</p>
+            <p><strong>Explanation:</strong> They make points easy to read.</p>
+            <p><strong>Example:</strong> List of fruits using bullets.</p>
+            <p><strong>Memory Tip:</strong> Bullets = Points</p>
+            <div class="img-placeholder"></div>
+            <button class="check-btn" data-ans="To make points easy to read and organized.">Quick Check: Why do we use bullets?</button>
+        </div>
+
+        <div class="note-card">
+            <h3>TOPIC 10: Inserting Pictures</h3>
+            <p><strong>Definition:</strong> Inserting pictures means adding images to document.</p>
+            <p><strong>Explanation:</strong> Pictures make documents attractive.</p>
+            <p><strong>Example:</strong> Adding school image.</p>
+            <p><strong>Memory Tip:</strong> Picture = Image Add</p>
+            <div class="img-placeholder"></div>
+            <button class="check-btn" data-ans="To make the document more attractive and clear.">Quick Check: Why do we insert pictures?</button>
+        </div>
+
+        <div class="note-card">
+            <h3>TOPIC 11: Inserting Shapes</h3>
+            <p><strong>Definition:</strong> Inserting shapes means adding shapes like circle or rectangle.</p>
+            <p><strong>Explanation:</strong> Shapes are used for design.</p>
+            <p><strong>Example:</strong> Adding rectangle for heading.</p>
+            <p><strong>Memory Tip:</strong> Shapes = Designs</p>
+            <div class="img-placeholder"></div>
+            <button class="check-btn" data-ans="Circle (or Rectangle/Square/Triangle).">Quick Check: Name one shape used in Word.</button>
+        </div>
+    </section>
+
+    <section id="important-questions">
+        <h2>🏆 Important Questions</h2>
+        <div id="imp-questions-list">
+            </div>
+    </section>
+
+    <section id="practice">
+        <h2>🎯 Practice Zone</h2>
+        <div id="quiz-container">
+            <div id="question-text" style="font-size: 1.3rem; margin-bottom: 20px;"></div>
+            <div id="options-container"></div>
+            <div id="quiz-feedback" class="feedback"></div>
+        </div>
+    </section>
+
+    <section id="revision">
+        <h2>📝 Quick Revision</h2>
+        <ul class="revision-list">
+            <li>Formatting changes text look</li>
+            <li>Text must be selected first</li>
+            <li>Bold makes text thick</li>
+            <li>Italic makes text slanted</li>
+            <li>Underline draws line</li>
+            <li>Font color adds color</li>
+            <li>Alignment sets position</li>
+            <li>Bullets organize text</li>
+            <li>Pictures and shapes decorate document</li>
+        </ul>
+    </section>
+
+</div>
+
+<footer>
+    <p>Designed & Created by SHRISHANT YADAV</p>
+    <p>2026 – ShanEduHub</p>
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        // --- DATA: IMPORTANT QUESTIONS (30) ---
+        const impQuestions = [
+            {q: "What is formatting in Word?", a: "Formatting changes the look of text.", e: "It makes document attractive."},
+            {q: "Why do we select text?", a: "To change its format.", e: "Formatting works on selected text."},
+            {q: "What does bold do?", a: "Makes text thick.", e: "It highlights text."},
+            {q: "What is font size?", a: "It is the size of text.", e: "Can be big or small."},
+            {q: "What is font style?", a: "The design of letters.", e: "Changes how letters look."},
+            {q: "How does Italic text look?", a: "It looks slanted.", e: "Used for special words."},
+            {q: "Where is the Underline drawn?", a: "Under the text.", e: "Used for headings."},
+            {q: "What does font color do?", a: "Changes text color.", e: "Makes text attractive."},
+            {q: "What is text alignment?", a: "Position of text.", e: "Left, Right, or Center."},
+            {q: "What are bullets used for?", a: "To make lists.", e: "Organizes points."},
+            {q: "Why insert pictures?", a: "To make document attractive.", e: "Visuals help understanding."},
+            {q: "Name two shapes in Word.", a: "Circle and Rectangle.", e: "Used for designs."},
+            {q: "What color is selected text usually?", a: "Highlighted (Blue/Grey).", e: "Shows it is chosen."},
+            {q: "Can we have red text?", a: "Yes, using Font Color.", e: "Choose from palette."},
+            {q: "Which alignment is best for titles?", a: "Center alignment.", e: "Looks neat in middle."},
+            {q: "Does Bold make text light?", a: "No, it makes it darker.", e: "Bold = Thick/Dark."},
+            {q: "What happens if we increase font size?", a: "Text gets bigger.", e: "Easier to read headings."},
+            {q: "Is 'Times New Roman' a font style?", a: "Yes, it is a famous style.", e: "Commonly used in books."},
+            {q: "What does 'Underline' put below text?", a: "A straight line.", e: "Shortcut is Ctrl+U."},
+            {q: "Can we number a list?", a: "Yes, using Numbering tool.", e: "1, 2, 3... format."},
+            {q: "Are shapes found in 'Insert' tab?", a: "Yes, usually in Insert menu.", e: "Select shape and draw."},
+            {q: "Why use different colors?", a: "To highlight different topics.", e: "Helps in memory."},
+            {q: "What is the shortcut for Bold?", a: "Ctrl + B.", e: "Fast way to format."},
+            {q: "What is the shortcut for Italic?", a: "Ctrl + I.", e: "Fast way to slant text."},
+            {q: "What is the shortcut for Underline?", a: "Ctrl + U.", e: "Fast way to add line."},
+            {q: "Can we insert a photo from a phone?", a: "Yes, if connected to computer.", e: "Use 'Insert Picture'."},
+            {q: "What does 'Left Alignment' do?", a: "Moves text to the left margin.", e: "Standard for typing."},
+            {q: "What does 'Right Alignment' do?", a: "Moves text to the right margin.", e: "Used for dates/addresses."},
+            {q: "Can we use bullets and colors together?", a: "Yes, we can format lists.", e: "Makes lists look great."},
+            {q: "Does formatting change the meaning?", a: "No, only the look.", e: "Words stay the same."}
+        ];
+
+        // --- DATA: PRACTICE QUESTIONS (70 UNIQUE) ---
+        const practiceQs = [
+            {q: "To change text, we must first _____ it.", o: ["Select", "Delete", "Print", "Save"], a: 0, r: "Selection is the first step in formatting."},
+            {q: "Which option makes text slanted?", o: ["Bold", "Underline", "Italic", "Font Size"], a: 2, r: "Italic style slants the text."},
+            {q: "Font Color tool is used to change _____ color.", o: ["Paper", "Background", "Text", "Icon"], a: 2, r: "Font color affects the letters only."},
+            {q: "Which tool draws a line under the words?", o: ["Underline", "Line Tool", "Border", "Strikethrough"], a: 0, r: "Underline adds a horizontal line below text."},
+            {q: "Which one is a shape?", o: ["Pencil", "Circle", "Eraser", "Brush"], a: 1, r: "Circle is a geometric shape in Word."},
+            {q: "To make a title look big, we increase its _____.", o: ["Color", "Font Style", "Font Size", "Length"], a: 2, r: "Font size controls text dimensions."},
+            {q: "Bullets are used to make a _____.", o: ["Drawing", "Picture", "List", "Table"], a: 2, r: "Bullets help create organized lists."},
+            {q: "Center alignment puts text in the _____.", o: ["Top", "Bottom", "Middle", "Left"], a: 2, r: "Center means middle of the page width."},
+            {q: "Selected text looks _____.", o: ["Hidden", "Highlighted", "Invisible", "Red"], a: 1, r: "A colored box appears over selected text."},
+            {q: "Which tool makes text look very dark?", o: ["Light", "Italic", "Bold", "Shadow"], a: 2, r: "Bold adds thickness and darkness."},
+            {q: "True or False: We can insert pictures in MS Word.", o: ["True", "False"], a: 0, r: "Word allows images to be added."},
+            {q: "True or False: Underline puts a line above text.", o: ["True", "False"], a: 1, r: "Underline puts a line below text."},
+            {q: "True or False: Font style changes the shape of letters.", o: ["True", "False"], a: 0, r: "Style is the design of characters."},
+            {q: "Which key is used to select all text?", o: ["Ctrl+A", "Ctrl+B", "Ctrl+S", "Ctrl+P"], a: 0, r: "A stands for All."},
+            {q: "A small dot used in lists is called a _____.", o: ["Point", "Bullet", "Spot", "Mark"], a: 1, r: "Bullets are small symbols for list items."},
+            {q: "Which alignment moves text to the left?", o: ["Left", "Right", "Center", "Justify"], a: 0, r: "Left alignment is default."},
+            {q: "If you want 1, 2, 3 in a list, use _____.", o: ["Bullets", "Numbering", "Shapes", "Pictures"], a: 1, r: "Numbering provides sequential order."},
+            {q: "Inserting a rectangle is done through _____ menu.", o: ["Shapes", "Colors", "Fonts", "Sizes"], a: 0, r: "Rectangles are shapes."},
+            {q: "What happens when you click 'B' icon?", o: ["Text slants", "Text gets thick", "Text gets red", "Text disappears"], a: 1, r: "B stands for Bold."},
+            {q: "Font style 'Arial' is a _____.", o: ["Color", "Size", "Design", "Shape"], a: 2, r: "Arial is a design/style of font."},
+            {q: "Can we use 'Font Color' for a single letter?", o: ["Yes", "No"], a: 0, r: "Formatting works on any selected amount."},
+            {q: "Which icon shows a 'U' with a line?", o: ["Italic", "Bold", "Underline", "Save"], a: 2, r: "U is for Underline."},
+            {q: "To add a star, use _____.", o: ["Bullets", "Shapes", "Font Size", "Italic"], a: 1, r: "Stars are available in the Shapes menu."},
+            {q: "Which button has a slanted 'I'?", o: ["Bold", "Italic", "Insert", "Increase"], a: 1, r: "I is for Italic."},
+            {q: "Selecting text makes it look like it's in a blue box.", o: ["True", "False"], a: 0, r: "Highlighting shows selection."},
+            {q: "Alignment means text _____.", o: ["Color", "Position", "Design", "Spelling"], a: 1, r: "Position on the page."},
+            {q: "Can we insert a triangle in Word?", o: ["Yes", "No"], a: 0, r: "Triangle is a standard shape."},
+            {q: "Which size is bigger: 10 or 20?", o: ["10", "20"], a: 1, r: "Higher number means larger size."},
+            {q: "Where do we find the 'Shapes' option?", o: ["Insert Tab", "Home Tab", "File Tab", "Design Tab"], a: 0, r: "Shapes are 'inserted' into the page."},
+            {q: "One word for choosing text: _____.", o: ["Selection", "Deletion", "Typing", "Moving"], a: 0, r: "Selecting = Choosing."},
+            {q: "Formatting makes text _____.", o: ["Boring", "Attractive", "Longer", "Smaller"], a: 1, r: "Main goal is a better look."},
+            {q: "The 'A' with a red line below it changes _____.", o: ["Font", "Font Size", "Font Color", "Alignment"], a: 2, r: "This is the Font Color icon."},
+            {q: "Which alignment is used for regular paragraphs?", o: ["Left", "Right", "Center", "Top"], a: 0, r: "Left is standard for English text."},
+            {q: "Is 'Square' a shape in Word?", o: ["Yes", "No"], a: 0, r: "Yes, squares can be drawn."},
+            {q: "Can we make text Italic and Bold together?", o: ["Yes", "No"], a: 0, r: "Multiple formats can be applied at once."},
+            {q: "Numbering tool is found in _____ group.", o: ["Font", "Paragraph", "Styles", "Editing"], a: 1, r: "Alignment and bullets are Paragraph settings."},
+            {q: "Short answer: What is thick text called?", o: ["Underline", "Bold", "Italic", "Size"], a: 1, r: "Bold text is thick."},
+            {q: "Which tool adds a picture of a cat?", o: ["Insert Picture", "Insert Shape", "Bold", "Bullets"], a: 0, r: "Photos are pictures."},
+            {q: "Short answer: What is slanted text called?", o: ["Slant", "Cursive", "Italic", "Bold"], a: 2, r: "Technical term is Italic."},
+            {q: "Which alignment is used for a date on the right?", o: ["Right", "Left", "Center", "Bottom"], a: 0, r: "Right alignment moves text to right margin."},
+            {q: "Can you change font size to 72?", o: ["Yes", "No"], a: 0, r: "Sizes can go very high."},
+            {q: "To remove Underline, select text and click _____ again.", o: ["U icon", "B icon", "I icon", "X icon"], a: 0, r: "Clicking again toggles it off."},
+            {q: "Which key deselects text?", o: ["Enter", "Shift", "Clicking outside", "Backspace"], a: 2, r: "Clicking elsewhere removes the highlight."},
+            {q: "Bold, Italic, and Underline are in the _____ group.", o: ["Insert", "Font", "View", "Layout"], a: 1, r: "They belong to Font formatting."},
+            {q: "Which one is NOT a font style?", o: ["Arial", "Calibri", "Square", "Verdana"], a: 2, r: "Square is a shape, not a font."},
+            {q: "True or False: Pictures cannot be resized.", o: ["True", "False"], a: 1, r: "You can make pictures bigger or smaller."},
+            {q: "Why use numbering for steps?", o: ["To look colorful", "To show order", "To make big", "To slant"], a: 1, r: "Numbers show the sequence of steps."},
+            {q: "The default font color is _____.", o: ["Blue", "Red", "Black", "White"], a: 2, r: "Black is the standard typing color."},
+            {q: "Does Italic change the color?", o: ["Yes", "No"], a: 1, r: "It only changes the slant."},
+            {q: "Bullets are usually _____ in shape.", o: ["Round", "Long", "Square", "Invisible"], a: 0, r: "Standard bullets are small circles."},
+            {q: "Which button makes text look like this: <u>Hello</u>?", o: ["B", "I", "U", "S"], a: 2, r: "U stands for Underline."},
+            {q: "Which button makes text look like this: <b>Hello</b>?", o: ["B", "I", "U", "C"], a: 0, r: "B stands for Bold."},
+            {q: "Which button makes text look like this: <i>Hello</i>?", o: ["B", "I", "U", "K"], a: 1, r: "I stands for Italic."},
+            {q: "Formatting means changing _____.", o: ["Meaning", "Look", "Language", "File Name"], a: 1, r: "Only the appearance changes."},
+            {q: "Can you insert a 'Heart' shape?", o: ["Yes", "No"], a: 0, r: "Heart is an available shape."},
+            {q: "Which is a font size?", o: ["Red", "Bold", "12", "Center"], a: 2, r: "Numbers represent font size."},
+            {q: "How many alignments are there primarily?", o: ["1", "2", "3", "4"], a: 2, r: "Left, Center, Right (and Justify)."},
+            {q: "To highlight a heading, we use _____.", o: ["Backspace", "Bold", "Delete", "Close"], a: 1, r: "Bold is great for headings."},
+            {q: "Bullets make points _____ to read.", o: ["Harder", "Easier", "Longer", "Smaller"], a: 1, r: "They organize data visually."},
+            {q: "Which key is used to select one word?", o: ["Single Click", "Double Click", "Triple Click", "Right Click"], a: 1, r: "Double clicking selects the whole word."},
+            {q: "Which key selects a whole paragraph?", o: ["Single Click", "Double Click", "Triple Click", "Right Click"], a: 2, r: "Triple click for a paragraph."},
+            {q: "True or False: Shapes can have colors inside.", o: ["True", "False"], a: 0, r: "You can fill shapes with color."},
+            {q: "Which menu has 'Font Color'?", o: ["Home", "Insert", "Page Layout", "Review"], a: 0, r: "Basic formatting is in the Home tab."},
+            {q: "Can we use more than one shape?", o: ["Yes", "No"], a: 0, r: "You can add as many as you want."},
+            {q: "The space between text and page edge is _____.", o: ["Gap", "Margin", "Border", "Frame"], a: 1, r: "Alignment works within margins."},
+            {q: "Changing 'Hello' to 'HELLO' is part of formatting.", o: ["True", "False"], a: 0, r: "Changing case is formatting."},
+            {q: "Can we use numbers for a grocery list?", o: ["Yes", "No"], a: 0, r: "Numbering helps list items."},
+            {q: "Selecting is like _____ a target.", o: ["Aiming", "Missing", "Hitting", "Deleting"], a: 0, r: "You pick what to change."},
+            {q: "Does 'Underline' affect the color?", o: ["Yes", "No"], a: 1, r: "Only adds a line."},
+            {q: "Final Question: Is MS Word a word processor?", o: ["Yes", "No"], a: 0, r: "Yes, it is used for typing and formatting."}
+        ];
+
+        let currentScore = 0;
+        let currentQIndex = 0;
+
+        // --- FUNCTIONS ---
+
+        function initImpQuestions() {
+            const container = document.getElementById('imp-questions-list');
+            impQuestions.forEach((q, index) => {
+                const div = document.createElement('div');
+                div.className = 'imp-q';
+                div.innerHTML = `
+                    <p><strong>Q${index+1}: ${q.q}</strong></p>
+                    <p style="color:var(--correct)">Ans: ${q.a}</p>
+                    <p style="font-size:0.9rem; color:#666">Note: ${q.e}</p>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function renderPracticeQuestion() {
+            const q = practiceQs[currentQIndex];
+            const qText = document.getElementById('question-text');
+            const optContainer = document.getElementById('options-container');
+            const feedback = document.getElementById('quiz-feedback');
+
+            qText.innerText = `Q${currentQIndex + 1}: ${q.q}`;
+            optContainer.innerHTML = '';
+            feedback.style.display = 'none';
+            feedback.className = 'feedback';
+
+            q.o.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.addEventListener('click', () => handleAnswer(idx, btn));
+                optContainer.appendChild(btn);
+            });
+
+            document.getElementById('q-count').innerText = currentQIndex + 1;
+        }
+
+        function handleAnswer(choice, btn) {
+            const q = practiceQs[currentQIndex];
+            const feedback = document.getElementById('quiz-feedback');
+            const allBtns = document.querySelectorAll('.option-btn');
+            
+            allBtns.forEach(b => b.disabled = true);
+
+            if (choice === q.a) {
+                currentScore += 1;
+                document.getElementById('current-score').innerText = currentScore;
+                feedback.innerText = "Excellent ⭐";
+                feedback.classList.add('correct-anim');
+                btn.style.borderColor = "var(--correct)";
+                btn.style.background = "#e8f5e9";
+            } else {
+                feedback.innerText = `Try Again! Correct: ${q.o[q.a]}. ${q.r}`;
+                feedback.classList.add('wrong-anim');
+                btn.style.borderColor = "var(--wrong)";
+                btn.style.background = "#ffebee";
+            }
+
+            feedback.style.display = 'block';
+
+            setTimeout(() => {
+                currentQIndex++;
+                if (currentQIndex < practiceQs.length) {
+                    renderPracticeQuestion();
+                } else {
+                    finishQuiz();
+                }
+            }, 3000);
+        }
+
+        function finishQuiz() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = `
+                <div class="center">
+                    <h2>Amazing! 🎉</h2>
+                    <p style="font-size:1.5rem">You finished all questions!</p>
+                    <p style="font-size:2rem; color:var(--secondary)">Final Score: ${currentScore}/70</p>
+                    <button class="check-btn" onclick="location.reload()" style="padding:15px 30px; font-size:1.2rem">Restart Quiz</button>
+                </div>
+            `;
+        }
+
+        // --- EVENT LISTENERS ---
+
+        // Quick Check Buttons
+        document.querySelectorAll('.check-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const ans = btn.getAttribute('data-ans');
+                alert("Answer: " + ans);
+            });
+        });
+
+        // Start everything
+        initImpQuestions();
+        renderPracticeQuestion();
+
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 3 EVS - Chapter 10: Transport and Communication</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pastel-yellow: #FFF9C4;
+            --pastel-green: #DCEDC8;
+            --pastel-blue: #B3E5FC;
+            --pastel-orange: #FFE0B2;
+            --white: #FFFFFF;
+            --text-color: #37474F;
+            --border-green: #66BB6A;
+            --border-blue: #42A5F5;
+            --btn-shadow: 0 4px 0 rgba(0,0,0,0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Comic Neue', cursive;
+            background-color: var(--white);
+            color: var(--text-color);
+            line-height: 1.6;
+            font-weight: 700; /* STRICT: All text bold */
+            padding-bottom: 50px;
+        }
+
+        /* HEADER */
+        header {
+            background: linear-gradient(180deg, var(--pastel-blue) 0%, var(--white) 100%);
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 4px dashed var(--pastel-orange);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            color: #E65100;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 0px var(--pastel-yellow);
+        }
+
+        .sub-header {
+            font-size: 1.2rem;
+            color: #006064;
+            margin-bottom: 15px;
+        }
+
+        .quote {
+            font-size: 1.4rem;
+            color: #2E7D32;
+            margin: 20px 0;
+            font-style: italic;
+            background: var(--pastel-yellow);
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: 2px solid var(--pastel-orange);
+        }
+
+        .brand {
+            font-size: 1rem;
+            color: #546E7A;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .hero-emoji {
+            font-size: 4rem;
+            display: block;
+            margin: 10px auto;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-20px);}
+            60% {transform: translateY(-10px);}
+        }
+
+        .start-btn {
+            background-color: var(--border-green);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: var(--btn-shadow);
+            font-family: 'Comic Neue', cursive;
+            font-weight: 700;
+            transition: transform 0.2s;
+        }
+
+        .start-btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        /* STICKY SCORE PANEL */
+        #score-panel {
+            position: sticky;
+            top: 0;
+            background-color: #FAFAFA; /* Very light tint */
+            border-top: 3px solid var(--border-green);
+            border-bottom: 3px solid var(--border-blue);
+            padding: 10px;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            font-size: 0.9rem;
+        }
+
+        .score-item {
+            text-align: center;
+            margin: 2px 5px;
+        }
+
+        .score-val {
+            font-size: 1.2rem;
+            color: #D84315;
+        }
+
+        /* GENERAL SECTIONS */
+        section {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 1.8rem;
+            margin: 40px 0 20px;
+            color: #1565C0;
+            text-decoration: underline;
+            text-decoration-color: var(--pastel-orange);
+            text-decoration-style: wavy;
+        }
+
+        /* NOTES CARDS */
+        .topic-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: 2px solid transparent;
+            transition: transform 0.2s;
+        }
+
+        .topic-card:nth-child(even) { background: var(--pastel-blue); border-color: #81D4FA; }
+        .topic-card:nth-child(odd) { background: var(--pastel-green); border-color: #A5D6A7; }
+        .topic-card:nth-child(3n) { background: var(--pastel-yellow); border-color: #FFF59D; }
+        .topic-card:nth-child(4n) { background: var(--pastel-orange); border-color: #FFCC80; }
+
+        .topic-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .topic-title {
+            font-size: 1.4rem;
+            color: #263238;
+            margin-bottom: 10px;
+            border-bottom: 2px dashed #90A4AE;
+            padding-bottom: 5px;
+        }
+
+        .explanation {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .example-box {
+            background: rgba(255,255,255,0.6);
+            padding: 10px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border-left: 5px solid #FF9800;
+        }
+
+        .memory-tip {
+            background: #FFFDE7;
+            border: 2px dotted #FDD835;
+            padding: 8px;
+            border-radius: 10px;
+            margin: 10px 0;
+            color: #F57F17;
+        }
+
+        .quick-check {
+            background: #E0F7FA;
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 10px;
+            color: #006064;
+            font-style: italic;
+        }
+
+        .img-placeholder {
+            width: 100%;
+            height: 150px;
+            background: #EEEEEE;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #BDBDBD;
+            margin: 10px 0;
+            border: 2px dashed #BDBDBD;
+        }
+
+        /* IMPORTANT QUESTIONS */
+        .imp-q-card {
+            background: var(--white);
+            border: 2px solid var(--pastel-blue);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 15px;
+        }
+
+        .imp-q-q { color: #D84315; margin-bottom: 5px; }
+        .imp-q-a { color: #2E7D32; }
+
+        /* PRACTICE QUIZ */
+        .quiz-container {
+            background: var(--white);
+            border: 3px solid var(--pastel-orange);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            min-height: 300px;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: #37474F;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .option-btn {
+            background: var(--pastel-blue);
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-family: 'Comic Neue', cursive;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 3px 0 #81D4FA;
+        }
+
+        .option-btn:active { transform: translateY(3px); box-shadow: none; }
+        .option-btn.correct { background: #C8E6C9; color: #1B5E20; box-shadow: 0 3px 0 #A5D6A7; }
+        .option-btn.wrong { background: #FFCDD2; color: #B71C1C; box-shadow: 0 3px 0 #EF9A9A; }
+
+        .feedback-msg {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            min-height: 30px;
+        }
+
+        /* LONG ANSWER */
+        .long-card {
+            background: var(--pastel-yellow);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 2px solid #FDD835;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            border-radius: 10px;
+            border: 2px solid #B0BEC5;
+            padding: 10px;
+            font-family: 'Comic Neue', cursive;
+            font-size: 1rem;
+            font-weight: 700;
+            margin: 10px 0;
+            resize: none;
+        }
+
+        .check-btn {
+            background: #29B6F6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-family: 'Comic Neue';
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .feedback-long {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        /* REVISION */
+        .revision-list {
+            list-style: none;
+        }
+
+        .revision-list li {
+            background: white;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            border-left: 5px solid;
+            display: flex;
+            align-items: center;
+        }
+        
+        .revision-list li::before {
+            content: '●';
+            margin-right: 10px;
+            font-size: 1.5rem;
+        }
+
+        .rev-1 { border-color: #EF5350; color: #EF5350; }
+        .rev-2 { border-color: #42A5F5; color: #42A5F5; }
+        .rev-3 { border-color: #66BB6A; color: #66BB6A; }
+        .rev-4 { border-color: #FFA726; color: #FFA726; }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 30px;
+            background: #ECEFF1;
+            color: #546E7A;
+            margin-top: 50px;
+            border-top: 4px dotted #B0BEC5;
+        }
+
+        @media (max-width: 600px) {
+            .options-grid { grid-template-columns: 1fr; }
+            h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. HEADER / HERO SECTION -->
+    <header>
+        <span class="brand">ShanEduHub</span>
+        <h1>Transport and Communication</h1>
+        <div class="sub-header">Class 3 - EVS - Chapter 10</div>
+        <div class="hero-emoji">🚂</div>
+        <div class="quote">"Travel opens the world, Talking connects the heart!"</div>
+        <button class="start-btn" onclick="document.getElementById('notes-section').scrollIntoView({behavior: 'smooth'})">Start Learning</button>
+    </header>
+
+    <!-- 2. LIVE SCORE PANEL -->
+    <div id="score-panel">
+        <div class="score-item">Correct: <span id="s-correct" class="score-val">0</span></div>
+        <div class="score-item">Wrong: <span id="s-wrong" class="score-val">0</span></div>
+        <div class="score-item">Long Ans: <span id="s-long" class="score-val">0</span>/50</div>
+        <div class="score-item">Total %: <span id="s-percent" class="score-val">0%</span></div>
+    </div>
+
+    <!-- 3. SECTION 1: NOTES -->
+    <section id="notes-section">
+        <h2 class="section-title">Chapter Notes</h2>
+
+        <!-- Topic 1 -->
+        <div class="topic-card">
+            <div class="topic-title">1. Means of Transport</div>
+            <div class="explanation">Transport means moving people or goods from one place to another. We cannot walk everywhere because it takes too much time.</div>
+            <div class="img-placeholder">Image: Bus, Ship, Plane collage</div>
+            <div class="explanation">
+                <br><b>Land Transport:</b> Vehicles that move on land (roads or rails). Examples: Car, Bus, Train, Bicycle.
+                <br><b>Water Transport:</b> Vehicles that move on water. Examples: Boat, Ship, Steamer.
+                <br><b>Air Transport:</b> Vehicles that fly in the sky. Examples: Aeroplane, Helicopter.
+            </div>
+            <div class="example-box">Example: We use a school bus (Land) to go to school. We use a Ship (Water) to cross the sea.</div>
+            <div class="memory-tip">Tip: Land has wheels, Water floats, Air has wings!</div>
+            <div class="quick-check">Check: Can a boat run on the road? (No)</div>
+        </div>
+
+        <!-- Topic 2 -->
+        <div class="topic-card">
+            <div class="topic-title">2. Uses of Transport</div>
+            <div class="explanation">We use different vehicles for different needs.</div>
+            <div class="explanation">
+                1. To travel to school or office.<br>
+                2. To visit relatives in other cities (Train/Flight).<br>
+                3. To carry fruits, vegetables, and heavy loads (Trucks).
+            </div>
+            <div class="example-box">Example: A truck carries milk packets from the village to the city market.</div>
+            <div class="memory-tip">Tip: Trucks carry things, Buses carry people.</div>
+            <div class="quick-check">Check: What do we use to go to Nani's house far away?</div>
+        </div>
+
+        <!-- Topic 3 -->
+        <div class="topic-card">
+            <div class="topic-title">3. Slow and Fast Transport</div>
+            <div class="explanation">Some vehicles move slowly, while some move very fast.</div>
+            <div class="img-placeholder">Image: Bullock Cart vs Aeroplane</div>
+            <div class="explanation">
+                <b>Slow Moving:</b> Bullock cart, Rickshaw, Bicycle. Used for short distances.
+                <br><b>Fast Moving:</b> Metro train, Aeroplane, Speed boat. Used for long distances to save time.
+            </div>
+            <div class="example-box">Example: In villages, farmers use bullock carts. In cities, people use Metro trains.</div>
+            <div class="memory-tip">Tip: Animals move slow, Engines move fast.</div>
+            <div class="quick-check">Check: Which is faster, a cycle or a car?</div>
+        </div>
+
+        <!-- Topic 4 -->
+        <div class="topic-card">
+            <div class="topic-title">4. Public and Private Transport</div>
+            <div class="explanation">
+                <b>Public Transport:</b> Used by many people together. We buy a ticket. Examples: Bus, Train, Metro.
+                <br><b>Private Transport:</b> Owned by one person or family. Example: Your father's car or scooter.
+            </div>
+            <div class="example-box">Example: You share a seat in a Bus (Public), but you sit alone in your Car (Private).</div>
+            <div class="memory-tip">Tip: Public = For Everyone. Private = Just for Me.</div>
+            <div class="quick-check">Check: Is a school bus public or private for students? (Public/Shared)</div>
+        </div>
+
+        <!-- Topic 5 -->
+        <div class="topic-card">
+            <div class="topic-title">5. Traffic Rules</div>
+            <div class="explanation">To stay safe on the road, we follow rules.</div>
+            <div class="img-placeholder">Image: Traffic Light (Red, Yellow, Green)</div>
+            <div class="explanation">
+                <span style="color:red">RED Light:</span> STOP.<br>
+                <span style="color:#FBC02D">YELLOW Light:</span> WAIT / Get Ready.<br>
+                <span style="color:green">GREEN Light:</span> GO.<br>
+                Always walk on the footpath and cross at the Zebra Crossing.
+            </div>
+            <div class="example-box">Example: Always hold an elder's hand while crossing the road.</div>
+            <div class="memory-tip">Tip: Red means Danger/Stop. Green means Safe/Go.</div>
+            <div class="quick-check">Check: What should you do when the light is Red?</div>
+        </div>
+
+        <!-- Topic 6 -->
+        <div class="topic-card">
+            <div class="topic-title">6. Communication Methods</div>
+            <div class="explanation">Communication means sending and receiving messages or ideas.</div>
+            <div class="explanation">
+                <b>Letters:</b> We write on paper and drop it in a Letter Box. The Postman brings it.
+                <br><b>Telephone:</b> Used to talk to people who are far away. (Landline).
+                <br><b>Mobile Phone:</b> A small phone we can carry in our pocket.
+                <br><b>Internet:</b> Sending emails or video calling using computers.
+            </div>
+            <div class="img-placeholder">Image: Postcard, Mobile, Computer</div>
+            <div class="example-box">Example: Writing a letter to a friend or calling Nani on a mobile.</div>
+            <div class="memory-tip">Tip: Letter takes days, Phone takes seconds.</div>
+            <div class="quick-check">Check: Who delivers our letters?</div>
+        </div>
+
+        <!-- Topic 7 -->
+        <div class="topic-card">
+            <div class="topic-title">7. Importance of Communication</div>
+            <div class="explanation">Why do we need to talk?</div>
+            <div class="explanation">
+                1. To share news (Good or Bad).<br>
+                2. To ask for help in an emergency (Police, Fire, Ambulance).<br>
+                3. To stay connected with family who live far away.
+            </div>
+            <div class="example-box">Example: If there is a fire, we call the Fire Station immediately.</div>
+            <div class="memory-tip">Tip: Communication connects the world.</div>
+            <div class="quick-check">Check: What happens if we cannot talk to anyone?</div>
+        </div>
+
+        <!-- Topic 8 -->
+        <div class="topic-card">
+            <div class="topic-title">8. Modern Means of Communication</div>
+            <div class="explanation">Today, communication is very fast.</div>
+            <div class="explanation">
+                <b>Smartphones:</b> We can see the person while talking (Video Call).
+                <br><b>Email:</b> Electronic mail sent via computer.
+                <br><b>Satellites:</b> Help us watch TV and use GPS on phones.
+            </div>
+            <div class="img-placeholder">Image: Satellite in space</div>
+            <div class="example-box">Example: Watching a cricket match live on TV is possible because of satellites.</div>
+            <div class="memory-tip">Tip: Modern means Fast and Wireless.</div>
+            <div class="quick-check">Check: Can you see a friend on a Video Call?</div>
+        </div>
+
+        <!-- Topic 9 -->
+        <div class="topic-card">
+            <div class="topic-title">9. Transport Safety</div>
+            <div class="explanation">Safety comes first!</div>
+            <div class="explanation">
+                1. Always wear a seatbelt in a car.<br>
+                2. Always wear a helmet on a bike.<br>
+                3. Do not put your hand out of a moving bus window.<br>
+                4. Stand in a queue at the bus stop.
+            </div>
+            <div class="example-box">Example: Waiting for the bus to stop completely before getting down.</div>
+            <div class="memory-tip">Tip: Better late than never (Be safe).</div>
+            <div class="quick-check">Check: Is it safe to play on the road?</div>
+        </div>
+
+        <!-- Topic 10 -->
+        <div class="topic-card">
+            <div class="topic-title">10. Development through Transport</div>
+            <div class="explanation">Good transport helps a country grow.</div>
+            <div class="explanation">
+                Roads connect villages to cities. Farmers can sell crops in the city. Doctors can reach villages. Factories can send goods to shops.
+            </div>
+            <div class="example-box">Example: Fresh apples from Kashmir reach your city because of trucks and trains.</div>
+            <div class="memory-tip">Tip: Good Roads = Good Business.</div>
+            <div class="quick-check">Check: How do apples reach us?</div>
+        </div>
+    </section>
+
+    <!-- 4. SECTION 2: IMPORTANT QUESTIONS -->
+    <section>
+        <h2 class="section-title">Important Questions</h2>
+        <div id="imp-questions-container">
+            <!-- Populated by JS -->
+        </div>
+    </section>
+
+    <!-- 5. SECTION 3: PRACTICE QUESTIONS -->
+    <section>
+        <h2 class="section-title">Practice Quiz (70 Qs)</h2>
+        <div class="quiz-container">
+            <div id="q-counter" style="color:#90A4AE; margin-bottom:10px;">Question 1 / 70</div>
+            <div id="q-text" class="question-text">Loading...</div>
+            <div id="q-img" class="img-placeholder" style="display:none; height:100px;"></div>
+            <div id="q-options" class="options-grid"></div>
+            <div id="q-feedback" class="feedback-msg"></div>
+            <button id="next-btn" class="start-btn" style="margin-top:20px; font-size:1rem; display:none;" onclick="nextQuestion()">Next Question</button>
+        </div>
+    </section>
+
+    <!-- 6. SECTION 4: LONG ANSWER -->
+    <section>
+        <h2 class="section-title">Advanced Long Answers</h2>
+        <div style="text-align:center; margin-bottom:20px; color:#546E7A;">Attempt carefully. Each carries 5 marks.</div>
+        <div id="long-answer-container">
+            <!-- Populated by JS -->
+        </div>
+    </section>
+
+    <!-- 7. REVISION SECTION -->
+    <section>
+        <h2 class="section-title">Quick Revision</h2>
+        <button class="start-btn" style="font-size:1rem; padding:10px 20px; background:#AB47BC; margin-bottom:20px;" onclick="toggleRevision()">Show/Hide Summary</button>
+        <div id="revision-box" style="display:none;">
+            <ul class="revision-list">
+                <li class="rev-1">Transport means carrying people and goods.</li>
+                <li class="rev-2">Three modes: Land (Bus), Water (Ship), Air (Plane).</li>
+                <li class="rev-3">Air transport is the fastest; Water transport carries heavy loads.</li>
+                <li class="rev-4">Traffic Lights: Red (Stop), Yellow (Wait), Green (Go).</li>
+                <li class="rev-1">Communication means sending messages (Letter, Mobile).</li>
+                <li class="rev-2">Internet and Satellites are modern means.</li>
+                <li class="rev-3">Always follow safety rules on the road.</li>
+                <li class="rev-4">Transport helps in the development of the country.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- 8. FOOTER -->
+    <footer>
+        <p>Designed & Created by SHRISHANT YADAV</p>
+        <p>2026 – ShanEduHub</p>
+    </footer>
+
+    <script>
+        // -------------------------
+        // DATA: IMPORTANT QUESTIONS (30)
+        // -------------------------
+        const impQuestions = [
+            { q: "What is transport?", a: "Movement of people and goods from one place to another." },
+            { q: "Name three modes of transport.", a: "Land, Water, and Air transport." },
+            { q: "Which is the fastest mode of transport?", a: "Air transport (Aeroplanes)." },
+            { q: "Name a vehicle with two wheels.", a: "Bicycle or Scooter." },
+            { q: "Name a vehicle with four wheels.", a: "Car or Jeep." },
+            { q: "What does the red traffic light mean?", a: "It means STOP." },
+            { q: "What is a Zebra crossing used for?", a: "For people to cross the road safely." },
+            { q: "Who delivers letters?", a: "The Postman." },
+            { q: "What is a PIN code?", a: "Postal Index Number used to find the correct area for letters." },
+            { q: "Which animal pulls a cart?", a: "Bullock or Horse." },
+            { q: "Name a means of water transport.", a: "Ship or Boat." },
+            { q: "What fuel do cars use?", a: "Petrol, Diesel, or CNG." },
+            { q: "What is public transport?", a: "Vehicles shared by many people, like buses and trains." },
+            { q: "Name a vehicle that runs on tracks.", a: "Train or Metro." },
+            { q: "Why do we use the internet?", a: "To send emails, learn, and video call." },
+            { q: "What is an ambulance used for?", a: "To take sick people to the hospital." },
+            { q: "What is a fire engine?", a: "A vehicle used to put out fires." },
+            { q: "Where do aeroplanes land?", a: "At the Airport." },
+            { q: "Where do ships dock?", a: "At the Port or Harbor." },
+            { q: "Where do trains stop?", a: "At the Railway Station." },
+            { q: "What is the full form of E-mail?", a: "Electronic Mail." },
+            { q: "Which vehicle is used by farmers?", a: "Tractor." },
+            { q: "What is a submarine?", a: "A water transport that travels underwater." },
+            { q: "What is a helicopter useful for?", a: "Reaching places where planes cannot land, and rescue operations." },
+            { q: "Why should we wear a helmet?", a: "To protect our head while riding a bike." },
+            { q: "What is a life jacket?", a: "A safety jacket used in water transport." },
+            { q: "What is a footpath?", a: "A path on the side of the road for walking." },
+            { q: "Which transport is eco-friendly?", a: "Bicycle (No pollution)." },
+            { q: "What is mass communication?", a: "Talking to many people at once (TV, Radio)." },
+            { q: "How did people travel long ago?", a: "On foot or using animals." }
+        ];
+
+        // -------------------------
+        // DATA: PRACTICE QUIZ (70)
+        // -------------------------
+        const practiceQuestions = [
+            // Means of Transport (1-10)
+            { t: 'mcq', q: "Which travels on water?", o: ["Bus", "Ship", "Car", "Train"], a: 1 },
+            { t: 'mcq', q: "Which travels in air?", o: ["Boat", "Rickshaw", "Aeroplane", "Cycle"], a: 2 },
+            { t: 'mcq', q: "A train moves on?", o: ["Road", "Water", "Tracks", "Air"], a: 2 },
+            { t: 'tf', q: "A car has 4 wheels.", a: true },
+            { t: 'tf', q: "Boats fly in the sky.", a: false },
+            { t: 'fill', q: "A _____ carries sick people.", a: "ambulance" },
+            { t: 'mcq', q: "Fastest transport?", o: ["Bullock cart", "Cycle", "Aeroplane", "Bus"], a: 2 },
+            { t: 'one', q: "Name a 3-wheeled vehicle.", a: "auto" },
+            { t: 'mcq', q: "Where does a bus stop?", o: ["Airport", "Bus Stop", "Port", "Station"], a: 1 },
+            { t: 'tf', q: "We can walk from India to America.", a: false },
+
+            // Uses (11-20)
+            { t: 'mcq', q: "To carry heavy logs we use?", o: ["Cycle", "Truck", "Scooter", "Car"], a: 1 },
+            { t: 'mcq', q: "To go to school we use?", o: ["Rocket", "School Bus", "Ship", "Helicopter"], a: 1 },
+            { t: 'tf', q: "Fire engines carry water.", a: true },
+            { t: 'fill', q: "A postal van carries _____.", a: "letters" },
+            { t: 'mcq', q: "Which is used in villages?", o: ["Metro", "Bullock Cart", "Jet", "Submarine"], a: 1 },
+            { t: 'one', q: "Who drives a plane?", a: "pilot" },
+            { t: 'mcq', q: "A tractor is used by?", o: ["Doctor", "Teacher", "Farmer", "Police"], a: 2 },
+            { t: 'tf', q: "We use a boat to cross a desert.", a: false },
+            { t: 'mcq', q: "Police use?", o: ["Police Jeep", "Fire Engine", "Ambulance", "Tractor"], a: 0 },
+            { t: 'fill', q: "Trains carry passengers and _____.", a: "goods" },
+
+            // Slow/Fast & Public/Private (21-30)
+            { t: 'mcq', q: "Which is slowest?", o: ["Car", "Cycle", "Aeroplane", "Train"], a: 1 },
+            { t: 'mcq', q: "Which is public transport?", o: ["My Cycle", "Metro Train", "My Toy Car", "My Shoes"], a: 1 },
+            { t: 'tf', q: "A bullock cart is faster than a car.", a: false },
+            { t: 'one', q: "Is a Taxi public or private?", a: "public" },
+            { t: 'mcq', q: "Metro trains are found in?", o: ["Villages", "Cities", "Forests", "Rivers"], a: 1 },
+            { t: 'tf', q: "Private transport belongs to one person.", a: true },
+            { t: 'fill', q: "A bicycle needs _____ fuel.", a: "no" },
+            { t: 'mcq', q: "Which runs on electricity?", o: ["Bullock Cart", "Metro", "Cycle", "Rickshaw"], a: 1 },
+            { t: 'mcq', q: "Rickshaws are common in?", o: ["Sky", "India", "Space", "Ocean"], a: 1 },
+            { t: 'tf', q: "Walking is the slowest way to travel.", a: true },
+
+            // Traffic Rules (31-40)
+            { t: 'mcq', q: "Red light says?", o: ["Go", "Fly", "Stop", "Run"], a: 2 },
+            { t: 'mcq', q: "Green light says?", o: ["Stop", "Wait", "Go", "Sleep"], a: 2 },
+            { t: 'fill', q: "Cross road at _____ crossing.", a: "zebra" },
+            { t: 'tf', q: "We should play football on the road.", a: false },
+            { t: 'mcq', q: "Yellow light means?", o: ["Go fast", "Wait/Ready", "Stop", "Turn back"], a: 1 },
+            { t: 'one', q: "Where do we walk on road?", a: "footpath" },
+            { t: 'img', q: "Identify this light color for STOP.", src: "🔴", o: ["Red", "Blue", "Green", "Pink"], a: 0 },
+            { t: 'tf', q: "Always look left and right before crossing.", a: true },
+            { t: 'mcq', q: "Seat belts are used in?", o: ["Bike", "Car", "Cycle", "Boat"], a: 1 },
+            { t: 'fill', q: "Wear a _____ on a bike.", a: "helmet" },
+
+            // Communication (41-50)
+            { t: 'mcq', q: "Oldest way to send message?", o: ["Email", "Letter", "Mobile", "TV"], a: 1 },
+            { t: 'mcq', q: "We put letters in?", o: ["Dustbin", "Fridge", "Letter Box", "Bag"], a: 2 },
+            { t: 'tf', q: "We can talk on a mobile while walking.", a: true },
+            { t: 'fill', q: "PIN means Postal _____ Number.", a: "index" },
+            { t: 'mcq', q: "Which is a mass media?", o: ["Postcard", "Television", "Whisper", "Note"], a: 1 },
+            { t: 'one', q: "Do we need internet for Email?", a: "yes" },
+            { t: 'mcq', q: "Urgent written message sent by telegraph was?", o: ["Telegram", "Instagram", "Kilogram", "Program"], a: 0 },
+            { t: 'tf', q: "Newspapers tell us daily news.", a: true },
+            { t: 'mcq', q: "We listen to news on?", o: ["Radio", "Oven", "Iron", "Fan"], a: 0 },
+            { t: 'fill', q: "We use a _____ to talk to distant friends.", a: "telephone" },
+
+            // Modern & Importance (51-60)
+            { t: 'mcq', q: "Video calling needs?", o: ["Postcard", "Smartphone", "Radio", "Typewriter"], a: 1 },
+            { t: 'mcq', q: "Which helps in GPS?", o: ["Moon", "Satellite", "Sun", "Stars"], a: 1 },
+            { t: 'tf', q: "Email is slower than a letter.", a: false },
+            { t: 'mcq', q: "Computer network is called?", o: ["Internet", "Fishnet", "Hairnet", "Cabinet"], a: 0 },
+            { t: 'one', q: "Is TV audio or visual?", a: "visual" },
+            { t: 'mcq', q: "To call police dial?", o: ["100", "101", "102", "1000"], a: 0 },
+            { t: 'fill', q: "Computers use the _____.", a: "internet" },
+            { t: 'mcq', q: "Fax machines send?", o: ["Food", "Documents", "Clothes", "Water"], a: 1 },
+            { t: 'tf', q: "We can buy things online.", a: true },
+            { t: 'mcq', q: "Social media is on?", o: ["Paper", "Internet", "Wall", "Tree"], a: 1 },
+
+            // Mixed / Thinking (61-70)
+            { t: 'mcq', q: "Which has no engine?", o: ["Car", "Bus", "Tonga", "Ship"], a: 2 },
+            { t: 'thinking', q: "If there is no petrol, which will stop?", o: ["Cycle", "Car", "Bullock Cart", "Walking"], a: 1 },
+            { t: 'thinking', q: "To reach America from India fast, use?", o: ["Ship", "Train", "Aeroplane", "Bus"], a: 2 },
+            { t: 'mcq', q: "Camel cart is used in?", o: ["Snow", "Desert", "Water", "Forest"], a: 1 },
+            { t: 'fill', q: "A train runs on _____ tracks.", a: "railway" },
+            { t: 'tf', q: "Astronauts use rockets.", a: true },
+            { t: 'one', q: "Does a cycle cause pollution?", a: "no" },
+            { t: 'mcq', q: "Submarines travel?", o: ["On road", "Under water", "In air", "On track"], a: 1 },
+            { t: 'mcq', q: "A hot air balloon uses?", o: ["Water", "Air/Gas", "Petrol", "Diesel"], a: 1 },
+            { t: 'thinking', q: "Which is best for environment?", o: ["Car", "Bus", "Walking", "Bike"], a: 2 }
+        ];
+
+        // -------------------------
+        // DATA: LONG ANSWER (10)
+        // -------------------------
+        const longQuestions = [
+            { id: 1, q: "Explain Land Transport with two examples.", marks: 5, keywords: ["road", "rail", "track", "bus", "car", "train", "truck", "ground"] },
+            { id: 2, q: "What is the difference between slow and fast transport?", marks: 5, keywords: ["speed", "time", "engine", "bullock", "aeroplane", "cycle", "fast", "slow"] },
+            { id: 3, q: "Why do we need traffic rules?", marks: 5, keywords: ["safety", "accident", "safe", "life", "protect", "crash", "hurt"] },
+            { id: 4, q: "How is a letter delivered to your house?", marks: 5, keywords: ["postman", "box", "stamp", "address", "post", "office", "van"] },
+            { id: 5, q: "Write three uses of a mobile phone.", marks: 5, keywords: ["talk", "call", "message", "game", "photo", "internet", "video"] },
+            { id: 6, q: "Why is air transport important?", marks: 5, keywords: ["fast", "time", "quick", "far", "country", "foreign", "sky"] },
+            { id: 7, q: "What is the difference between Personal and Public transport?", marks: 5, keywords: ["own", "share", "ticket", "everyone", "private", "family", "bus"] },
+            { id: 8, q: "How does transport help in development?", marks: 5, keywords: ["goods", "business", "connect", "city", "village", "trade", "grow"] },
+            { id: 9, q: "What are modern means of communication?", marks: 5, keywords: ["internet", "email", "satellite", "computer", "smartphone", "fast"] },
+            { id: 10, q: "List three safety rules while travelling in a bus.", marks: 5, keywords: ["queue", "line", "hand", "window", "seat", "running", "wait"] }
+        ];
+
+        // -------------------------
+        // LOGIC: INITIALIZATION
+        // -------------------------
+        let currentQIndex = 0;
+        let score = 0;
+        let wrong = 0;
+        let longScore = 0;
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            renderImpQuestions();
+            loadPracticeQuestion();
+            renderLongQuestions();
+        });
+
+        // -------------------------
+        // LOGIC: IMP QUESTIONS
+        // -------------------------
+        function renderImpQuestions() {
+            const container = document.getElementById('imp-questions-container');
+            let html = '';
+            impQuestions.forEach((item, index) => {
+                html += `
+                <div class="imp-q-card">
+                    <div class="imp-q-q">Q${index+1}: ${item.q}</div>
+                    <div class="imp-q-a">Ans: ${item.a}</div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        // -------------------------
+        // LOGIC: PRACTICE QUIZ
+        // -------------------------
+        function loadPracticeQuestion() {
+            const q = practiceQuestions[currentQIndex];
+            const container = document.querySelector('.quiz-container');
+            const qCounter = document.getElementById('q-counter');
+            const qText = document.getElementById('q-text');
+            const qImg = document.getElementById('q-img');
+            const qOptions = document.getElementById('q-options');
+            const qFeedback = document.getElementById('q-feedback');
+            const nextBtn = document.getElementById('next-btn');
+
+            // Reset UI
+            container.style.borderColor = "#FFE0B2"; // Reset border
+            qFeedback.innerHTML = "";
+            qFeedback.className = "feedback-msg";
+            nextBtn.style.display = "none";
+            qOptions.innerHTML = "";
+            qImg.style.display = 'none';
+
+            qCounter.innerText = `Question ${currentQIndex + 1} / 70`;
+            
+            // Handle Image Questions
+            if (q.t === 'img') {
+                qText.innerHTML = q.q + " <br><span style='font-size:3rem;'>" + q.src + "</span>";
+            } else {
+                qText.innerText = q.q;
+            }
+
+            // Generate Input UI based on type
+            if (q.t === 'mcq' || q.t === 'thinking' || q.t === 'img') {
+                q.o.forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerText = opt;
+                    btn.onclick = () => checkPracticeAnswer(idx, q.a, btn);
+                    qOptions.appendChild(btn);
+                });
+            } 
+            else if (q.t === 'tf') {
+                ['True', 'False'].forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerText = opt;
+                    // True is index 0 (true), False is index 1 (false) logic
+                    // But data uses boolean. True is correct if q.a is true.
+                    const isCorrect = (idx === 0 && q.a === true) || (idx === 1 && q.a === false);
+                    btn.onclick = () => checkPracticeAnswer(isCorrect ? 1 : 0, 1, btn);
+                    qOptions.appendChild(btn);
+                });
+            }
+            else if (q.t === 'fill' || q.t === 'one') {
+                qOptions.style.display = 'block';
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.placeholder = 'Type answer here...';
+                input.style.padding = '10px';
+                input.style.fontSize = '1.2rem';
+                input.style.border = '2px solid #90A4AE';
+                input.style.borderRadius = '10px';
+                input.style.width = '80%';
+                input.style.marginBottom = '10px';
+                input.style.fontFamily = 'Comic Neue';
+                input.style.fontWeight = '700';
+                
+                const btn = document.createElement('button');
+                btn.className = 'start-btn';
+                btn.style.fontSize = '1rem';
+                btn.style.padding = '10px 20px';
+                btn.innerText = 'Check';
+                btn.onclick = () => checkTextAnswer(input.value, q.a);
+                
+                qOptions.appendChild(input);
+                qOptions.appendChild(document.createElement('br'));
+                qOptions.appendChild(btn);
+            }
+        }
+
+        function checkPracticeAnswer(selected, correct, btnElement) {
+            // Disable all buttons
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(b => b.disabled = true);
+
+            const feedback = document.getElementById('q-feedback');
+            const container = document.querySelector('.quiz-container');
+
+            if (selected === correct) {
+                score++;
+                btnElement.classList.add('correct');
+                feedback.innerHTML = "Excellent ⭐ Correct!";
+                feedback.style.color = "green";
+                container.style.borderColor = "#66BB6A";
+            } else {
+                wrong++;
+                btnElement.classList.add('wrong');
+                // Highlight correct one if MCQ
+                if (practiceQuestions[currentQIndex].o) {
+                    buttons[correct].classList.add('correct');
+                }
+                feedback.innerHTML = "Try Again! The correct answer is shown in green.";
+                feedback.style.color = "red";
+                container.style.borderColor = "#EF5350";
+            }
+
+            updateScorePanel();
+            document.getElementById('next-btn').style.display = 'inline-block';
+        }
+
+        function checkTextAnswer(userText, correctText) {
+            const feedback = document.getElementById('q-feedback');
+            const container = document.querySelector('.quiz-container');
+            
+            if (userText.toLowerCase().trim() === correctText.toLowerCase()) {
+                score++;
+                feedback.innerHTML = "Excellent ⭐ Correct!";
+                feedback.style.color = "green";
+                container.style.borderColor = "#66BB6A";
+            } else {
+                wrong++;
+                feedback.innerHTML = `Wrong. Correct answer: ${correctText}`;
+                feedback.style.color = "red";
+                container.style.borderColor = "#EF5350";
+            }
+            updateScorePanel();
+            document.getElementById('next-btn').style.display = 'inline-block';
+            // Disable input
+            const input = document.querySelector('.quiz-container input');
+            if(input) input.disabled = true;
+            const btn = document.querySelector('.quiz-container .start-btn');
+            if(btn) btn.disabled = true;
+        }
+
+        function nextQuestion() {
+            if (currentQIndex < practiceQuestions.length - 1) {
+                currentQIndex++;
+                // Reset Grid display for MCQs
+                document.getElementById('q-options').style.display = 'grid';
+                loadPracticeQuestion();
+            } else {
+                document.querySelector('.quiz-container').innerHTML = `
+                    <h2 style="color:#2E7D32">Chapter Completed!</h2>
+                    <p style="font-size:1.5rem">Final Score: ${score} / 70</p>
+                    <p>Great job! Now try the long answers.</p>
+                `;
+            }
+        }
+
+        // -------------------------
+        // LOGIC: LONG ANSWERS
+        // -------------------------
+        function renderLongQuestions() {
+            const container = document.getElementById('long-answer-container');
+            let html = '';
+            longQuestions.forEach((q, index) => {
+                html += `
+                <div class="long-card" id="long-card-${index}">
+                    <div style="font-size:1.2rem; margin-bottom:10px;">Q${index+1}: ${q.q} (${q.marks} Marks)</div>
+                    <textarea id="long-input-${index}" placeholder="Write your answer here..."></textarea>
+                    <br>
+                    <button class="check-btn" onclick="checkLongAns(${index})">Check Answer</button>
+                    <div id="long-feed-${index}" class="feedback-long"></div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function checkLongAns(index) {
+            const q = longQuestions[index];
+            const input = document.getElementById(`long-input-${index}`);
+            const feed = document.getElementById(`long-feed-${index}`);
+            const card = document.getElementById(`long-card-${index}`);
+            const val = input.value.toLowerCase();
+            
+            if (val.length < 5) {
+                alert("Please write a longer answer.");
+                return;
+            }
+
+            // Keyword Matching
+            let found = 0;
+            q.keywords.forEach(k => {
+                if (val.includes(k)) found++;
+            });
+
+            // Logic: Need 30% of keywords for full marks logic (simplified for Class 3)
+            // If they used at least 2 relevant words, we give points.
+            let marksObtained = 0;
+            if (found >= 2) marksObtained = 5;
+            else if (found === 1) marksObtained = 2;
+            else marksObtained = 0;
+
+            longScore += marksObtained;
+            
+            // UI Update
+            feed.style.display = 'block';
+            if (marksObtained > 0) {
+                feed.style.background = '#C8E6C9';
+                feed.style.color = '#1B5E20';
+                feed.innerHTML = `✅ <b>Good Attempt!</b> You got ${marksObtained}/5 marks.<br>Keywords found: ${found}.<br>Model Points: ${q.keywords.slice(0,4).join(", ")}...`;
+                card.style.background = '#F1F8E9';
+            } else {
+                feed.style.background = '#FFCDD2';
+                feed.style.color = '#B71C1C';
+                feed.innerHTML = `❌ <b>Needs Improvement.</b> Try to use words like: ${q.keywords.join(", ")}`;
+            }
+
+            // Disable
+            input.disabled = true;
+            card.querySelector('button').disabled = true;
+            
+            updateScorePanel();
+        }
+
+        // -------------------------
+        // LOGIC: GLOBAL SCORE
+        // -------------------------
+        function updateScorePanel() {
+            const totalAttempts = score + wrong;
+            const percent = totalAttempts === 0 ? 0 : Math.round((score / totalAttempts) * 100);
+            
+            document.getElementById('s-correct').innerText = score;
+            document.getElementById('s-wrong').innerText = wrong;
+            document.getElementById('s-long').innerText = longScore;
+            document.getElementById('s-percent').innerText = percent + "%";
+        }
+
+        function toggleRevision() {
+            const box = document.getElementById('revision-box');
+            if (box.style.display === 'none') {
+                box.style.display = 'block';
+                box.scrollIntoView({behavior:'smooth'});
+            } else {
+                box.style.display = 'none';
+            }
+        }
+
+    </script>
+</body>
+</html>

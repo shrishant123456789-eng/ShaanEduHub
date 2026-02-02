@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>class3-english-ch6.html</title>
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            --pastel-yellow: #FFF9C4;
+            --pastel-green: #C8E6C9;
+            --pastel-blue: #BBDEFB;
+            --pastel-orange: #FFE0B2;
+            --pastel-pink: #F8BBD0;
+            --white: #FFFFFF;
+            --text-dark: #37474F;
+            --accent-green: #2E7D32;
+            --accent-red: #C62828;
+            --accent-blue: #1565C0;
+            --border-radius: 20px;
+            --shadow: 0 4px 8px rgba(0,0,0,0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* --- GLOBAL TYPOGRAPHY (STRICT RULE: SINGLE CURSIVE FONT, BOLD) --- */
+        body {
+            font-family: 'Comic Sans MS', 'Comic Sans', 'Chalkboard SE', 'Marker Felt', cursive;
+            font-weight: bold;
+            color: var(--text-dark);
+            background: linear-gradient(180deg, var(--pastel-yellow) 0%, #FFFFFF 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+            padding-bottom: 50px;
+        }
+
+        /* --- UTILITIES --- */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+            transition: transform 0.1s;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 0 rgba(0,0,0,0.1);
+        }
+
+        .btn-start {
+            background: linear-gradient(90deg, var(--pastel-green), var(--pastel-blue));
+            color: var(--text-dark);
+            width: 80%;
+            max-width: 300px;
+            margin-top: 15px;
+        }
+
+        .btn-revise {
+            background-color: var(--pastel-orange);
+            color: var(--text-dark);
+            width: 100%;
+        }
+
+        /* --- HEADER / HERO --- */
+        .hero {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.5);
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 {
+            font-size: 2rem;
+            color: var(--accent-blue);
+            margin-bottom: 5px;
+        }
+
+        .hero h2 {
+            font-size: 1.2rem;
+            color: #546E7A;
+            margin-bottom: 15px;
+        }
+
+        .quote {
+            font-size: 1.4rem;
+            color: var(--accent-green);
+            margin: 15px 0;
+            padding: 10px;
+        }
+
+        .branding {
+            font-size: 0.9rem;
+            color: #90A4AE;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* --- LIVE SCORE PANEL --- */
+        .score-panel {
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+            background: #FFFBEE;
+            margin: 0 15px 25px 15px;
+            padding: 10px;
+            border-radius: 15px;
+            border: 3px solid;
+            border-image: linear-gradient(to right, var(--pastel-green), var(--pastel-blue)) 1;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-around;
+            max-width: 770px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .score-item span:first-child {
+            display: block;
+            font-size: 0.8rem;
+            color: #78909C;
+            text-transform: uppercase;
+        }
+
+        .score-item span:last-child {
+            font-size: 1.3rem;
+        }
+
+        /* --- CARDS GENERAL --- */
+        .card {
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s;
+            border: 2px solid rgba(0,0,0,0.05);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+            color: var(--accent-blue);
+            text-decoration: underline;
+            text-decoration-color: var(--pastel-orange);
+            text-decoration-thickness: 4px;
+        }
+
+        /* --- NOTES SECTION --- */
+        .note-card {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .note-card:nth-child(odd) { background-color: var(--pastel-blue); }
+        .note-card:nth-child(even) { background-color: var(--pastel-green); }
+        .note-card:nth-child(3n) { background-color: var(--pastel-yellow); }
+        .note-card:nth-child(4n) { background-color: var(--pastel-orange); }
+
+        .note-title {
+            font-size: 1.2rem;
+            color: #000;
+            margin-bottom: 8px;
+            text-decoration: underline;
+        }
+
+        .example-box {
+            background: rgba(255,255,255,0.7);
+            padding: 8px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 5px solid var(--accent-blue);
+        }
+
+        .tip-box {
+            font-size: 0.9rem;
+            background: #FFFDE7;
+            padding: 8px;
+            border-radius: 8px;
+            border: 2px dashed #FBC02D;
+            margin-top: 10px;
+        }
+
+        .img-placeholder {
+            width: 100%;
+            height: 100px;
+            background: rgba(255,255,255,0.5);
+            border: 2px dashed #999;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        /* --- IMPORTANT QUESTIONS --- */
+        .imp-q-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 8px solid;
+            border-image: linear-gradient(to bottom, var(--pastel-pink), var(--pastel-blue)) 1;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .imp-ans {
+            color: var(--accent-green);
+            margin-top: 5px;
+        }
+
+        .imp-exp {
+            font-size: 0.9rem;
+            color: #78909C;
+            margin-top: 2px;
+        }
+
+        /* --- QUIZ SECTION --- */
+        #quiz-card {
+            background-color: var(--white);
+            border: 4px solid var(--pastel-blue);
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .options-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background-color: #E3F2FD;
+            border: 2px solid #BBDEFB;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            text-align: left;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-family: inherit;
+            font-weight: bold;
+        }
+
+        .option-btn:hover {
+            background-color: #C8E6C9;
+            border-color: #81C784;
+        }
+
+        .option-btn.correct {
+            background-color: #A5D6A7;
+            border-color: #2E7D32;
+            color: #1B5E20;
+        }
+
+        .option-btn.wrong {
+            background-color: #EF9A9A;
+            border-color: #C62828;
+            color: #B71C1C;
+        }
+
+        .feedback-text {
+            text-align: center;
+            margin: 15px 0;
+            min-height: 24px;
+            font-size: 1.2rem;
+        }
+
+        /* --- REVISION --- */
+        .revision-section {
+            background-color: #E8F5E9;
+        }
+
+        .revision-list {
+            list-style: none;
+        }
+
+        .revision-list li {
+            padding: 10px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .revision-list li::before {
+            content: "•";
+            color: var(--accent-blue);
+            font-size: 1.5rem;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            padding: 30px 10px;
+            color: #90A4AE;
+            font-size: 0.9rem;
+            background: #FAFAFA;
+            margin-top: 40px;
+            border-top: 2px solid #EEE;
+        }
+
+        @media (max-width: 400px) {
+            .hero h1 { font-size: 1.8rem; }
+            .score-panel { font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="hero">
+        <span class="branding">ShanEduHub</span>
+        <h1>Sentence Structure & Punctuation</h1>
+        <h2>Class 3 – English</h2>
+        <div class="quote">"A sentence is a train of words!"</div>
+        <div style="font-size: 3.5rem; margin: 10px 0;">🚂</div>
+        <button class="btn btn-start" onclick="document.getElementById('notes-section').scrollIntoView({behavior: 'smooth'})">Start Learning</button>
+    </header>
+
+    <div class="score-panel">
+        <div class="score-item">
+            <span>Correct</span>
+            <span id="score-correct" style="color: var(--accent-green);">0</span>
+        </div>
+        <div class="score-item">
+            <span>Wrong</span>
+            <span id="score-wrong" style="color: var(--accent-red);">0</span>
+        </div>
+        <div class="score-item">
+            <span>Total</span>
+            <span id="score-total" style="color: var(--accent-blue);">0</span>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <section id="notes-section" class="card" style="background: #FFF;">
+            <h2 class="section-title">Chapter Notes</h2>
+
+            <div class="note-card">
+                <div class="note-title">1. What is a Sentence?</div>
+                <p>A sentence is a group of words that makes complete sense.</p>
+                <div class="example-box">
+                    Example: "The sun rises in the east." (Correct)<br>
+                    "Rises sun east." (Incorrect)
+                </div>
+                <div class="tip-box">💡 Rule: A sentence always starts with a Capital Letter.</div>
+                <div class="img-placeholder">[Image: Train engine starting with Capital Letter]</div>
+            </div>
+
+            <div class="note-card">
+                <div class="note-title">2. Types of Sentences</div>
+                <p>There are different types of sentences:</p>
+                <ul>
+                    <li><strong>Statement:</strong> Tells us something. (I like apples.)</li>
+                    <li><strong>Question:</strong> Asks something. (Do you like apples?)</li>
+                    <li><strong>Command:</strong> Tells someone to do something. (Eat your apple.)</li>
+                    <li><strong>Exclamation:</strong> Shows strong feeling. (What a tasty apple!)</li>
+                </ul>
+                <div class="img-placeholder">[Image: Four icons representing types]</div>
+            </div>
+
+            <div class="note-card">
+                <div class="note-title">3. Punctuation Marks</div>
+                <p>We use special marks at the end of a sentence.</p>
+                <div class="example-box">
+                    <strong>. (Full Stop):</strong> For Statements and Commands.<br>
+                    <strong>? (Question Mark):</strong> For Questions.<br>
+                    <strong>! (Exclamation Mark):</strong> For Strong feelings.
+                </div>
+                <div class="tip-box">💡 Tip: Look at the first word. Is it 'What', 'Where', 'Why'? It's a question!</div>
+            </div>
+
+            <div class="note-card">
+                <div class="note-title">4. Capital Letters</div>
+                <p>We use Capital Letters for:</p>
+                <ul>
+                    <li>The first word of a sentence.</li>
+                    <li>The word 'I'.</li>
+                    <li>Names of people (Rahul), places (Delhi), days (Monday), and months (June).</li>
+                </ul>
+                <div class="example-box">
+                    Example: <strong>R</strong>ahul and <strong>I</strong> went to <strong>D</strong>elhi on <strong>M</strong>onday.
+                </div>
+            </div>
+
+            <div class="note-card">
+                <div class="note-title">5. Jumbled Sentences</div>
+                <p>To make a correct sentence, words must be in the right order.</p>
+                <div class="example-box">
+                    Jumbled: "milk likes cat The."<br>
+                    Correct: "The cat likes milk."
+                </div>
+                <div class="tip-box">💡 Tip: Find the Action word (Verb) and the Doer (Subject) first.</div>
+            </div>
+
+        </section>
+
+        <section class="card" style="background: #FAFAFA;">
+            <h2 class="section-title">Important Questions</h2>
+            <div id="imp-questions-container">
+                </div>
+        </section>
+
+        <section id="quiz-card" class="card">
+            <h2 class="section-title">Practice Quiz</h2>
+            
+            <div id="quiz-area">
+                <div class="img-placeholder" id="quiz-img" style="display:none; height:120px; margin-bottom:15px;"></div>
+                <div class="question-text" id="question-text">Loading Question...</div>
+                
+                <div class="options-grid" id="options-container">
+                    </div>
+
+                <div class="feedback-text" id="feedback"></div>
+                
+                <button id="next-btn" class="btn btn-revise hidden" onclick="nextQuestion()">Next Question ➡</button>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px; color: #BBB;">
+                Question <span id="q-current">0</span> / <span id="q-total">0</span>
+            </div>
+        </section>
+
+        <section class="card revision-section">
+            <h2 class="section-title">Quick Revision</h2>
+            <button class="btn btn-revise" onclick="toggleRevision()">Show/Hide Summary</button>
+            <div id="revision-content" class="hidden" style="margin-top: 15px;">
+                <ul class="revision-list">
+                    <li>Start every sentence with a Capital Letter.</li>
+                    <li>End Statements with a Full Stop (.).</li>
+                    <li>End Questions with a Question Mark (?).</li>
+                    <li>End Exclamations with an Exclamation Mark (!).</li>
+                    <li>Use Capital Letters for Names and 'I'.</li>
+                    <li>Words must be in correct order to make sense.</li>
+                </ul>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        Designed & Created by SHRISHANT YADAV<br>
+        2026 – ShanEduHub
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            /* --- DATA: Important Questions (30) --- */
+            const impQuestions = [
+                { q: "What does every sentence start with?", a: "A Capital Letter.", exp: "First letter is always big." },
+                { q: "What mark comes at the end of a simple statement?", a: "Full Stop (.)", exp: "It stops the sentence." },
+                { q: "What mark comes after a question?", a: "Question Mark (?)", exp: "Used for asking." },
+                { q: "What mark shows strong feeling?", a: "Exclamation Mark (!)", exp: "Like 'Wow!' or 'Ouch!'" },
+                { q: "Which word is always capital?", a: "'I'", exp: "When talking about yourself." },
+                { q: "Correct the sentence: 'i am hungry.'", a: "I am hungry.", exp: "Capital 'I' start." },
+                { q: "Is 'Cat the sat mat on' a sentence?", a: "No.", exp: "It has no meaning." },
+                { q: "What type of sentence is 'Sit down.'?", a: "Command.", exp: "It tells you to do something." },
+                { q: "What type of sentence is 'Where are you?'?", a: "Question.", exp: "It asks something." },
+                { q: "What type of sentence is 'The sky is blue.'?", a: "Statement.", exp: "It tells a fact." },
+                { q: "Should names start with capital letters?", a: "Yes.", exp: "Proper nouns are capital." },
+                { q: "Correct: 'delhi is big.'", a: "Delhi is big.", exp: "Delhi is a place name." },
+                { q: "Correct: 'monday is fun.'", a: "Monday is fun.", exp: "Days of week get capitals." },
+                { q: "Which mark for 'Happy Birthday'?", a: "Exclamation Mark (!)", exp: "It shows excitement." },
+                { q: "Which mark for 'What is your name'?", a: "Question Mark (?)", exp: "It is a question." },
+                { q: "Arrange: 'is / he / boy / a'", a: "He is a boy.", exp: "Subject + Verb order." },
+                { q: "Arrange: 'run / dogs / fast'", a: "Dogs run fast.", exp: "Subject + Verb order." },
+                { q: "Is 'Wow' an exclamation?", a: "Yes.", exp: "Shows surprise." },
+                { q: "Do we use full stop for questions?", a: "No.", exp: "Only for statements/commands." },
+                { q: "Correct: 'she likes tea'", a: "She likes tea.", exp: "Capital S, Full stop at end." },
+                { q: "Find the error: 'He go to school.'", a: "go -> goes", exp: "Grammar check." },
+                { q: "Find the error: 'where is my bag.'", a: ". -> ?", exp: "It is a question." },
+                { q: "Find the error: 'i love india.'", a: "i -> I, india -> India", exp: "Capital letters needed." },
+                { q: "Type of sentence: 'Please help me.'", a: "Command/Request.", exp: "Asking for action." },
+                { q: "Type of sentence: 'It is hot.'", a: "Statement.", exp: "Just a fact." },
+                { q: "Symbol for full stop?", a: ".", exp: "A dot." },
+                { q: "Symbol for question mark?", a: "?", exp: "Curved shape." },
+                { q: "Symbol for exclamation mark?", a: "!", exp: "Line with a dot." },
+                { q: "Arrange: 'blue / is / sky / the'", a: "The sky is blue.", exp: "Makes sense." },
+                { q: "Is a sentence a group of words?", a: "Yes.", exp: "But must make sense." }
+            ];
+
+            /* --- DATA: Practice Quiz (60) --- */
+            const quizQuestions = [
+                // Set 1: Identify Punctuation Mark (Basic)
+                { q: "Choose the end mark: 'My name is Ram'", opts: [".", "?", "!"], a: 0 },
+                { q: "Choose the end mark: 'How are you'", opts: [".", "?", "!"], a: 1 },
+                { q: "Choose the end mark: 'Wow, look at that'", opts: [".", "?", "!"], a: 2 },
+                { q: "Choose the end mark: 'I like ice cream'", opts: [".", "?", "!"], a: 0 },
+                { q: "Choose the end mark: 'Where do you live'", opts: [".", "?", "!"], a: 1 },
+                { q: "Choose the end mark: 'Stop the car'", opts: [".", "?", "!"], a: 0 },
+                { q: "Choose the end mark: 'Ouch, it hurts'", opts: [".", "?", "!"], a: 2 },
+                { q: "Choose the end mark: 'Is it raining'", opts: [".", "?", "!"], a: 1 },
+                { q: "Choose the end mark: 'The bird is flying'", opts: [".", "?", "!"], a: 0 },
+                { q: "Choose the end mark: 'Can you swim'", opts: [".", "?", "!"], a: 1 },
+
+                // Set 2: Capital Letters
+                { q: "Which word needs a capital letter? 'my cat is black.'", opts: ["my", "cat", "black"], a: 0 },
+                { q: "Which word needs a capital letter? 'he lives in india.'", opts: ["lives", "in", "india"], a: 2 },
+                { q: "Which word needs a capital letter? 'rahul is my friend.'", opts: ["rahul", "is", "friend"], a: 0 },
+                { q: "Which word needs a capital letter? 'i am happy.'", opts: ["i", "am", "happy"], a: 0 },
+                { q: "Which word needs a capital letter? 'We go on sunday.'", opts: ["go", "on", "sunday"], a: 2 },
+                { q: "Is this correct? 'the Dog is barking.'", opts: ["Yes", "No (the should be The)"], a: 1 },
+                { q: "Is this correct? 'I live in delhi.'", opts: ["Yes", "No (delhi should be Delhi)"], a: 1 },
+                { q: "Identify the name: 'He likes tom.'", opts: ["He", "likes", "tom (Tom)"], a: 2 },
+                { q: "Identify the proper noun: 'city', 'pune', 'town'", opts: ["city", "pune", "town"], a: 1 },
+                { q: "Always capitalize the word ____.", opts: ["The", "I", "Is"], a: 1 },
+
+                // Set 3: Type of Sentence
+                { q: "'What is your age?' This is a...", opts: ["Statement", "Question", "Command"], a: 1 },
+                { q: "'The grass is green.' This is a...", opts: ["Statement", "Question", "Command"], a: 0 },
+                { q: "'Close the door.' This is a...", opts: ["Statement", "Question", "Command"], a: 2 },
+                { q: "'Hurrah! We won.' This is a...", opts: ["Statement", "Question", "Exclamation"], a: 2 },
+                { q: "'Do you have a pen?' This is a...", opts: ["Statement", "Question", "Command"], a: 1 },
+                { q: "'Please give me water.' This is a...", opts: ["Statement", "Question", "Command/Request"], a: 2 },
+                { q: "'I go to school.' This is a...", opts: ["Statement", "Question", "Command"], a: 0 },
+                { q: "'Are you sad?' This is a...", opts: ["Statement", "Question", "Command"], a: 1 },
+                { q: "'What a beautiful flower!' This is a...", opts: ["Statement", "Exclamation", "Command"], a: 1 },
+                { q: "'Stand up.' This is a...", opts: ["Statement", "Question", "Command"], a: 2 },
+
+                // Set 4: Jumbled Sentences (Logic check)
+                { q: "Correct order: 'is / hot / tea / The'", opts: ["Tea the hot is.", "The tea is hot.", "Hot is tea The."], a: 1 },
+                { q: "Correct order: 'fly / Birds / sky / in'", opts: ["Birds fly in sky.", "Sky in fly Birds.", "Fly Birds in sky."], a: 0 },
+                { q: "Correct order: 'name / is / What / your'", opts: ["Name your is What?", "What is your name?", "Your name What is?"], a: 1 },
+                { q: "Correct order: 'love / I / mom / my'", opts: ["I love my mom.", "Mom love my I.", "My I love mom."], a: 0 },
+                { q: "Correct order: 'big / a / is / It / house'", opts: ["It is a big house.", "House a big is It.", "Is It a house big."], a: 0 },
+                { q: "Correct order: 'milk / drink / I'", opts: ["I drink milk.", "Drink milk I.", "Milk I drink."], a: 0 },
+                { q: "Correct order: 'blue / is / Pen / My'", opts: ["My Pen is blue.", "Blue is Pen My.", "Pen My blue is."], a: 0 },
+                { q: "Correct order: 'fast / Run / .' ", opts: ["Run fast.", "Fast run.", "Run. fast"], a: 0 },
+                { q: "Correct order: 'old / are / How / you'", opts: ["How old are you?", "You are how old?", "Old are you How?"], a: 0 },
+                { q: "Correct order: 'apple / An / red / is'", opts: ["An apple is red.", "Red is an apple.", "Is red an apple."], a: 0 },
+
+                // Set 5: Missing Punctuation (Visual)
+                { q: "What is missing? 'Who are you'", opts: [".", "?", "!"], a: 1 },
+                { q: "What is missing? 'I am six years old'", opts: [".", "?", "!"], a: 0 },
+                { q: "What is missing? 'Help'", opts: [".", "?", "!"], a: 2 },
+                { q: "What is missing? 'Where is the dog'", opts: [".", "?", "!"], a: 1 },
+                { q: "What is missing? 'It is raining'", opts: [".", "?", "!"], a: 0 },
+                { q: "What is missing? 'Happy Diwali'", opts: [".", "?", "!"], a: 2 },
+                { q: "What is missing? 'May I come in'", opts: [".", "?", "!"], a: 1 },
+                { q: "What is missing? 'The box is heavy'", opts: [".", "?", "!"], a: 0 },
+                { q: "What is missing? 'Don't run'", opts: [".", "?", "!"], a: 0 },
+                { q: "What is missing? 'Are you hungry'", opts: [".", "?", "!"], a: 1 },
+
+                // Set 6: Mixed / Thinking
+                { q: "True or False: A sentence can start with a small letter.", opts: ["True", "False"], a: 1 },
+                { q: "True or False: We use '?' for asking questions.", opts: ["True", "False"], a: 0 },
+                { q: "True or False: 'delhi' should be 'Delhi'.", opts: ["True", "False"], a: 0 },
+                { q: "[Image: 🛑] This sign means 'Stop'. It is a...", opts: ["Command", "Question", "Statement"], a: 0, img: "Stop Sign" },
+                { q: "[Image: ❓] This symbol is a...", opts: ["Full Stop", "Question Mark", "Comma"], a: 1, img: "Question Mark" },
+                { q: "[Image: 🌞] Sentence: 'The sun shines.' End with...", opts: ["?", ".", "!"], a: 1, img: "Sun" },
+                { q: "Find the odd one out.", opts: [".", "?", "A"], a: 2 },
+                { q: "Which is a correct sentence?", opts: ["Cat meow.", "The cat meows.", "Meows cat the."], a: 1 },
+                { q: "Which is a correct sentence?", opts: ["i like toys.", "I like toys.", "like toys I."], a: 1 },
+                { q: "Last Question: Do sentences make sense?", opts: ["Yes, always.", "No, never."], a: 0 }
+            ];
+
+            /* --- APP LOGIC --- */
+            let currentQIndex = 0;
+            let score = { correct: 0, wrong: 0, total: 0 };
+            let isAnswered = false;
+
+            // DOM Elements
+            const scoreCorrectEl = document.getElementById('score-correct');
+            const scoreWrongEl = document.getElementById('score-wrong');
+            const scoreTotalEl = document.getElementById('score-total');
+            const quizArea = document.getElementById('quiz-area');
+            const questionTextEl = document.getElementById('question-text');
+            const optionsContainer = document.getElementById('options-container');
+            const feedbackEl = document.getElementById('feedback');
+            const nextBtn = document.getElementById('next-btn');
+            const qCurrentEl = document.getElementById('q-current');
+            const qTotalEl = document.getElementById('q-total');
+            const impContainer = document.getElementById('imp-questions-container');
+            const quizImg = document.getElementById('quiz-img');
+
+            // Init
+            function init() {
+                renderImpQuestions();
+                qTotalEl.textContent = quizQuestions.length;
+                loadQuestion();
+            }
+
+            // Render Important Questions
+            function renderImpQuestions() {
+                let html = '';
+                impQuestions.forEach((item, index) => {
+                    html += `
+                        <div class="imp-q-card">
+                            <div style="font-size:1.1rem;">Q${index + 1}: ${item.q}</div>
+                            <div class="imp-ans">Ans: ${item.a}</div>
+                            <div class="imp-exp">(${item.exp})</div>
+                        </div>
+                    `;
+                });
+                impContainer.innerHTML = html;
+            }
+
+            // Load Quiz Question
+            window.loadQuestion = function() {
+                if (currentQIndex >= quizQuestions.length) {
+                    quizArea.innerHTML = `
+                        <div style="text-align:center; padding:20px;">
+                            <h2 style="color:var(--accent-green); margin-bottom:15px;">🎉 Quiz Complete! 🎉</h2>
+                            <p style="font-size:1.2rem;">You got <strong>${score.correct}</strong> correct out of <strong>${score.total}</strong>.</p>
+                            <button class="btn btn-start" onclick="location.reload()" style="margin-top:20px;">Play Again 🔄</button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const data = quizQuestions[currentQIndex];
+                isAnswered = false;
+                feedbackEl.textContent = '';
+                nextBtn.classList.add('hidden');
+                qCurrentEl.textContent = currentQIndex + 1;
+
+                // Set Question & Image
+                if (data.img) {
+                    quizImg.style.display = 'flex';
+                    quizImg.textContent = "🖼️ " + data.img;
+                    questionTextEl.textContent = `Q${currentQIndex + 1}: ` + data.q.replace(/\[Image:.*?\]/, "").trim();
+                } else {
+                    quizImg.style.display = 'none';
+                    questionTextEl.textContent = `Q${currentQIndex + 1}: ${data.q}`;
+                }
+
+                // Set Options
+                optionsContainer.innerHTML = '';
+                // Cycle card colors based on index
+                const cardColors = ['#FFF9C4', '#BBDEFB', '#C8E6C9']; // Yellow, Blue, Green
+                document.getElementById('quiz-card').style.backgroundColor = cardColors[currentQIndex % 3];
+
+                data.opts.forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.textContent = opt;
+                    btn.onclick = () => checkAnswer(idx, btn);
+                    optionsContainer.appendChild(btn);
+                });
+            };
+
+            // Check Answer
+            window.checkAnswer = function(selectedIdx, btn) {
+                if (isAnswered) return;
+                isAnswered = true;
+
+                const data = quizQuestions[currentQIndex];
+                const correctIdx = data.a;
+
+                if (selectedIdx === correctIdx) {
+                    btn.classList.add('correct');
+                    feedbackEl.textContent = "Excellent ⭐";
+                    feedbackEl.style.color = "var(--accent-green)";
+                    score.correct++;
+                } else {
+                    btn.classList.add('wrong');
+                    feedbackEl.textContent = "Try Again ❌";
+                    feedbackEl.style.color = "var(--accent-red)";
+                    // Highlight correct
+                    optionsContainer.children[correctIdx].classList.add('correct');
+                    score.wrong++;
+                }
+
+                score.total++;
+                updateScoreBoard();
+                nextBtn.classList.remove('hidden');
+            };
+
+            // Update Score
+            function updateScoreBoard() {
+                scoreCorrectEl.textContent = score.correct;
+                scoreWrongEl.textContent = score.wrong;
+                scoreTotalEl.textContent = score.total;
+            }
+
+            // Next Question
+            window.nextQuestion = function() {
+                currentQIndex++;
+                loadQuestion();
+            };
+
+            // Toggle Revision
+            window.toggleRevision = function() {
+                const el = document.getElementById('revision-content');
+                el.classList.toggle('hidden');
+            };
+
+            // Run Init
+            init();
+        });
+    </script>
+</body>
+</html>

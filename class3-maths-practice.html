@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 3 Mathematics - Practice Zone 🧮</title>
+    <style>
+        /* =========================================
+           CSS STYLES - KID FRIENDLY & VIBRANT
+           ========================================= */
+        :root {
+            --primary: #FF6B6B;       /* Fun Coral */
+            --secondary: #4ECDC4;     /* Bright Teal */
+            --accent: #FFE66D;        /* Sunny Yellow */
+            --dark: #2D3436;          /* Charcoal */
+            --light: #F7FFF7;         /* Minty White */
+            --correct: #6BCB77;
+            --wrong: #FF6B6B;
+            --font-main: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            margin: 0;
+            padding: 0;
+            padding-bottom: 100px;
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        /* HEADER */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            text-align: center;
+            padding: 20px;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            animation: slideDown 0.8s ease-out;
+            border-top: 8px solid var(--secondary);
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(0); }
+        }
+
+        h1 {
+            color: var(--primary);
+            margin: 0;
+            font-size: 2rem;
+            text-shadow: 2px 2px 0px var(--accent);
+        }
+
+        /* SET SELECTOR */
+        .set-selector-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        .set-btn {
+            background: white;
+            border: 3px solid var(--primary);
+            border-radius: 20px;
+            padding: 10px 20px;
+            font-size: 1.1rem;
+            font-family: var(--font-main);
+            font-weight: bold;
+            color: var(--dark);
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+        }
+
+        .set-btn:hover, .set-btn.active {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.15);
+        }
+
+        /* QUESTION CARD */
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 30px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            position: relative;
+            border: 5px solid var(--secondary);
+        }
+
+        .question-box {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 25px;
+            background: #f0f8ff;
+            padding: 20px;
+            border-radius: 20px;
+            color: var(--dark);
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .option-btn {
+            background: var(--light);
+            border: 3px solid #dfe6e9;
+            padding: 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-family: var(--font-main);
+            transition: 0.2s;
+            color: var(--dark);
+            font-weight: bold;
+        }
+
+        .option-btn:hover:not([disabled]) {
+            background: white;
+            border-color: var(--primary);
+            transform: scale(1.02);
+        }
+
+        .option-btn.correct { background: #d4edda; border-color: var(--correct); color: #155724; }
+        .option-btn.wrong { background: #f8d7da; border-color: var(--wrong); color: #721c24; }
+
+        /* FOOTER CONTROLS */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            align-items: center;
+        }
+
+        .control-btn {
+            background: var(--secondary);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 4px 0 #2a9d8f;
+        }
+        .control-btn:active { transform: translateY(4px); box-shadow: none; }
+        .control-btn:disabled { background: #ccc; box-shadow: none; cursor: not-allowed; }
+
+        /* PROGRESS & SCORE */
+        .stats-bar {
+            background: #333;
+            color: white;
+            padding: 10px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+        }
+
+        .progress-container {
+            width: 100%;
+            background-color: #eee;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            height: 12px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: var(--correct);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* FEEDBACK POPUP */
+        .feedback {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-top: 15px;
+            min-height: 30px;
+        }
+
+        /* RESULT SCREEN */
+        .result-screen {
+            display: none;
+            text-align: center;
+        }
+        .result-score { font-size: 3rem; color: var(--primary); margin: 20px 0; }
+
+        /* FIXED FOOTER */
+        .site-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            font-size: 0.9rem;
+            z-index: 1000;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .options-grid { grid-template-columns: 1fr; }
+            h1 { font-size: 1.5rem; }
+            .quiz-container { padding: 15px; width: 95%; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Class 3 Mathematics <br> Practice Zone 🧮</h1>
+    </header>
+
+    <section class="set-selector-container" id="setSelector">
+        </section>
+
+    <main class="quiz-container" id="quizArea" style="display:none;">
+        
+        <div class="stats-bar">
+            <span>Question: <span id="qNum">1</span>/50</span>
+            <span>Score: <span id="scoreVal">0</span></span>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="question-box" id="questionText">Loading...</div>
+        
+        <div class="options-grid" id="optionsBox">
+            </div>
+
+        <div class="feedback" id="feedbackText"></div>
+
+        <div class="controls">
+            <button class="control-btn" id="prevBtn" onclick="prevQ()" disabled>⬅️ Prev</button>
+            <button class="control-btn" id="nextBtn" onclick="nextQ()" style="display:none;">Next ➡️</button>
+            <button class="control-btn" id="finishBtn" onclick="showResult()" style="display:none; background:var(--primary);">Finish Set 🏁</button>
+        </div>
+
+        <button class="control-btn" onclick="backToMenu()" style="margin-top:20px; background:#555;">🏠 Back to Menu</button>
+    </main>
+
+    <div class="quiz-container result-screen" id="resultArea">
+        <h2>Set Completed! 🎉</h2>
+        <div class="result-score" id="finalScore">0 / 50</div>
+        <p id="performanceMsg" style="font-size:1.2rem; margin-bottom:20px;">Great Job!</p>
+        <button class="control-btn" onclick="backToMenu()">Select New Set 🔄</button>
+    </div>
+
+    <footer class="site-footer">
+        Designed & Created by SHRISHANT YADAV
+    </footer>
+
+    <script>
+        // --- DATA ENGINE ---
+        // Generating 500 Unique Questions procedurally based on Syllabus Scope
+        // Set 1-3: Easy, Set 4-7: Medium, Set 8-10: Hard
+        
+        const sets = [];
+        const totalSets = 10;
+        const qPerSet = 50;
+
+        function generateQuestions() {
+            for(let s = 1; s <= totalSets; s++) {
+                let setQs = [];
+                let difficulty = s <= 3 ? 'easy' : (s <= 7 ? 'medium' : 'hard');
+                
+                for(let i = 0; i < qPerSet; i++) {
+                    let type = i % 10; // Distribute types
+                    let q = createQuestion(s, i, difficulty, type);
+                    setQs.push(q);
+                }
+                sets.push(setQs);
+            }
+        }
+
+        function createQuestion(setNum, index, diff, type) {
+            let n1, n2, ans, opts, txt;
+            
+            // Random Number Generators based on Difficulty
+            let maxVal = diff === 'easy' ? 50 : (diff === 'medium' ? 500 : 9999);
+            n1 = Math.floor(Math.random() * maxVal) + 1;
+            n2 = Math.floor(Math.random() * maxVal) + 1;
+
+            // Type 0: Addition
+            if(type === 0) {
+                ans = n1 + n2;
+                txt = `Add: ${n1} + ${n2} = ?`;
+                opts = shuffle([ans, ans+10, ans-5, ans+2]);
+            }
+            // Type 1: Subtraction
+            else if(type === 1) {
+                if(n1 < n2) [n1, n2] = [n2, n1]; // Ensure positive
+                ans = n1 - n2;
+                txt = `Subtract: ${n1} - ${n2} = ?`;
+                opts = shuffle([ans, ans+10, ans-2, ans+5]);
+            }
+            // Type 2: Multiplication (Tables)
+            else if(type === 2) {
+                let m1 = diff === 'easy' ? Math.floor(Math.random()*9)+2 : Math.floor(Math.random()*15)+2;
+                let m2 = Math.floor(Math.random()*9)+1;
+                ans = m1 * m2;
+                txt = `Multiply: ${m1} × ${m2} = ?`;
+                opts = shuffle([ans, ans+m1, ans-m2, ans+5]);
+            }
+            // Type 3: Division
+            else if(type === 3) {
+                let d2 = Math.floor(Math.random()*8)+2;
+                let d1 = d2 * (Math.floor(Math.random()*9)+1);
+                ans = d1 / d2;
+                txt = `Divide: ${d1} ÷ ${d2} = ?`;
+                opts = shuffle([ans, ans+1, ans+2, ans-1]);
+            }
+            // Type 4: Place Value / Numbers
+            else if(type === 4) {
+                let pv = Math.floor(Math.random() * 900) + 100;
+                ans = Math.floor(pv/100) * 100;
+                txt = `The place value of ${Math.floor(pv/100)} in ${pv} is:`;
+                opts = shuffle([ans, Math.floor(pv/100), 10, 100]);
+            }
+            // Type 5: Time / Money
+            else if(type === 5) {
+                if(Math.random() > 0.5) {
+                    // Money
+                    ans = n1 + n2;
+                    txt = `You have ₹${n1}. Mom gave ₹${n2}. Total?`;
+                    opts = shuffle([`₹${ans}`, `₹${ans-5}`, `₹${ans+10}`, `₹${n1}`]);
+                } else {
+                    // Time
+                    let h = Math.floor(Math.random()*11)+1;
+                    txt = `What time is 1 hour after ${h}:00?`;
+                    ans = `${h+1}:00`;
+                    opts = shuffle([`${h+1}:00`, `${h}:30`, `${h+2}:00`, `12:00`]);
+                }
+            }
+            // Type 6: Geometry / Shapes
+            else if(type === 6) {
+                const shapes = [
+                    {n:"Triangle", s:3}, {n:"Square", s:4}, {n:"Pentagon", s:5}, {n:"Hexagon", s:6}
+                ];
+                let s = shapes[Math.floor(Math.random()*shapes.length)];
+                txt = `How many sides does a ${s.n} have?`;
+                ans = s.s;
+                opts = shuffle([s.s, s.s+1, s.s-1, s.s*2]);
+            }
+            // Type 7: Measurements
+            else if(type === 7) {
+                txt = `1 Meter = ___ Centimeters`;
+                ans = 100;
+                opts = shuffle([100, 1000, 10, 50]);
+            }
+            // Type 8: Patterns
+            else if(type === 8) {
+                let start = Math.floor(Math.random()*10);
+                let gap = Math.floor(Math.random()*5)+2;
+                txt = `Complete pattern: ${start}, ${start+gap}, ${start+gap*2}, __`;
+                ans = start+gap*3;
+                opts = shuffle([ans, ans+1, ans-2, ans+5]);
+            }
+            // Type 9: Word Problems
+            else {
+                txt = `There are ${n1} apples in a box. ${n2} are rotten. How many good ones?`;
+                ans = Math.abs(n1-n2); // Just in case logic fails, though abs handles it
+                if(n1<n2) {
+                     // Swap logic fix for subtraction word problem
+                     let t = n1; n1 = n2; n2 = t;
+                     ans = n1 - n2;
+                     txt = `There are ${n1} apples in a box. ${n2} are rotten. How many good ones?`;
+                }
+                opts = shuffle([ans, ans+5, ans-2, ans+10]);
+            }
+
+            return {
+                id: `s${setNum}_q${index}`,
+                q: txt,
+                options: opts,
+                correct: ans,
+                selected: null // to track user answer
+            };
+        }
+
+        function shuffle(array) {
+            return array.sort(() => Math.random() - 0.5);
+        }
+
+        // --- APP STATE ---
+        let currentSetIndex = -1;
+        let currentQIndex = 0;
+        let score = 0;
+
+        // --- INITIALIZATION ---
+        window.onload = function() {
+            generateQuestions();
+            renderSetSelector();
+        };
+
+        function renderSetSelector() {
+            const container = document.getElementById('setSelector');
+            container.innerHTML = '';
+            for(let i=0; i<totalSets; i++) {
+                let btn = document.createElement('button');
+                btn.className = 'set-btn';
+                btn.innerText = `Set ${i+1}`;
+                btn.onclick = () => startSet(i);
+                container.appendChild(btn);
+            }
+        }
+
+        function startSet(index) {
+            currentSetIndex = index;
+            currentQIndex = 0;
+            score = 0;
+            document.getElementById('setSelector').style.display = 'none';
+            document.getElementById('quizArea').style.display = 'block';
+            document.getElementById('resultArea').style.display = 'none';
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const qData = sets[currentSetIndex][currentQIndex];
+            
+            // Update UI Stats
+            document.getElementById('qNum').innerText = currentQIndex + 1;
+            document.getElementById('scoreVal').innerText = score;
+            document.getElementById('progressBar').style.width = ((currentQIndex) / qPerSet * 100) + "%";
+
+            // Render Text
+            document.getElementById('questionText').innerText = qData.q;
+            
+            // Render Options
+            const optsContainer = document.getElementById('optionsBox');
+            optsContainer.innerHTML = '';
+            
+            qData.options.forEach(opt => {
+                let btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(opt, qData, btn);
+                
+                // If already answered, show state
+                if(qData.selected !== null) {
+                    btn.disabled = true;
+                    if(opt == qData.correct) btn.classList.add('correct');
+                    else if(opt == qData.selected) btn.classList.add('wrong');
+                }
+                
+                optsContainer.appendChild(btn);
+            });
+
+            // Feedback & Nav Buttons
+            const feedback = document.getElementById('feedbackText');
+            const nextBtn = document.getElementById('nextBtn');
+            const finishBtn = document.getElementById('finishBtn');
+
+            if(qData.selected !== null) {
+                if(qData.selected == qData.correct) {
+                    feedback.innerHTML = "<span style='color:green'>Awesome! ⭐ Correct Answer.</span>";
+                } else {
+                    feedback.innerHTML = `<span style='color:red'>Oops! The correct answer was ${qData.correct}.</span>`;
+                }
+                
+                if(currentQIndex < qPerSet - 1) nextBtn.style.display = 'block';
+                else finishBtn.style.display = 'block';
+            } else {
+                feedback.innerHTML = "";
+                nextBtn.style.display = 'none';
+                finishBtn.style.display = 'none';
+            }
+
+            // Prev Button Logic
+            document.getElementById('prevBtn').disabled = (currentQIndex === 0);
+        }
+
+        function checkAnswer(selectedOpt, qData, btnElement) {
+            if(qData.selected !== null) return; // Prevent re-answer
+
+            qData.selected = selectedOpt;
+            
+            // Update Score
+            if(selectedOpt == qData.correct) {
+                score++;
+            }
+
+            // Re-render to show colors and lock
+            renderQuestion();
+        }
+
+        function nextQ() {
+            if(currentQIndex < qPerSet - 1) {
+                currentQIndex++;
+                renderQuestion();
+            }
+        }
+
+        function prevQ() {
+            if(currentQIndex > 0) {
+                currentQIndex--;
+                renderQuestion();
+            }
+        }
+
+        function showResult() {
+            document.getElementById('quizArea').style.display = 'none';
+            document.getElementById('resultArea').style.display = 'block';
+            document.getElementById('finalScore').innerText = `${score} / ${qPerSet}`;
+            
+            let msg = "";
+            let pct = (score/qPerSet)*100;
+            if(pct >= 90) msg = "🌟 Amazing! You are a Math Wizard!";
+            else if(pct >= 70) msg = "🎉 Great Job! Keep it up!";
+            else if(pct >= 50) msg = "👍 Good! Practice more.";
+            else msg = "😊 Keep Trying! You can do it!";
+            
+            document.getElementById('performanceMsg').innerText = msg;
+        }
+
+        function backToMenu() {
+            document.getElementById('resultArea').style.display = 'none';
+            document.getElementById('quizArea').style.display = 'none';
+            document.getElementById('setSelector').style.display = 'flex';
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 9: Transport & Communication</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pastel-yellow: #fff9c4;
+            --pastel-green: #c8e6c9;
+            --pastel-blue: #bbdefb;
+            --pastel-orange: #ffe0b2;
+            --white: #ffffff;
+            --text-color: #333;
+            --border-green: #4caf50;
+            --border-blue: #2196f3;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Neue', cursive;
+            font-weight: 900;
+            color: var/(--text-color);
+            background-color: #fdfdfd;
+            line-height: 1.4;
+            overflow-x: hidden;
+        }
+
+        b, strong, h1, h2, h3, p, span, button, li {
+            font-weight: 900 !important;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--pastel-yellow), var(--pastel-green), var(--pastel-blue), var(--pastel-orange));
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin: 5px 0;
+        }
+
+        .brand {
+            color: #d35400;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .quote {
+            font-style: italic;
+            max-width: 300px;
+            margin: 20px auto;
+            font-size: 1.3rem;
+            color: #555;
+        }
+
+        .btn-start {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            background-color: #ff7043;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .btn-start:active {
+            transform: scale(0.95);
+        }
+
+        /* Sticky Score Panel */
+        .score-panel {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background-color: var(--white);
+            border-bottom: 4px solid var(--border-blue);
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            background-color: #fffde7;
+        }
+
+        .score-item {
+            text-align: center;
+        }
+
+        .score-val {
+            display: block;
+            font-size: 1.1rem;
+            color: #2980b9;
+        }
+
+        /* Content Sections */
+        .section-container {
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+        }
+
+        h2.section-title {
+            text-align: center;
+            font-size: 1.8rem;
+            margin: 40px 0 20px;
+            text-decoration: underline;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card.blue { background-color: var(--pastel-blue); }
+        .card.green { background-color: var(--pastel-green); }
+        .card.yellow { background-color: var(--pastel-yellow); }
+        .card.orange { background-color: var(--pastel-orange); }
+
+        .img-placeholder {
+            width: 100%;
+            height: 150px;
+            background-color: #eee;
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
+            font-size: 0.8rem;
+            color: #999;
+        }
+
+        .memory-tip {
+            background: #fff;
+            border-left: 5px solid #f1c40f;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.9rem;
+        }
+
+        .quick-check {
+            background: #e8f5e9;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            border: 1px solid #c8e6c9;
+        }
+
+        /* Questions Section */
+        .q-card {
+            border-left: 8px solid;
+            padding: 15px;
+            background: white;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* Practice Area */
+        #practice-area {
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .practice-card {
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .options-grid {
+            display: grid;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .opt-btn {
+            background: #fff;
+            border: 2px solid var(--border-blue);
+            padding: 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .opt-btn:hover { background: #e3f2fd; }
+        .opt-btn.correct { background: #a5d6a7 !important; border-color: #2e7d32; }
+        .opt-btn.wrong { background: #ef9a9a !important; border-color: #c62828; }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .input-box {
+            width: 100%;
+            padding: 10px;
+            font-family: inherit;
+            font-size: 1.1rem;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        .btn-check {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        /* Revision */
+        #revision-content {
+            display: none;
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            border: 3px solid var(--border-green);
+        }
+
+        .revision-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .dot {
+            height: 12px;
+            width: 12px;
+            border-radius: 50%;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            background: #f1f1f1;
+            font-size: 0.9rem;
+            margin-top: 50px;
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <!-- HERO SECTION -->
+    <section class="hero" id="hero">
+        <div class="brand">ShanEduHub</div>
+        <h1>🚂 Chapter 9: Transport & Communication</h1>
+        <p>Class 3 | General Knowledge</p>
+        <div class="quote">"Connecting people and places makes the world a big happy family!"</div>
+        <button class="btn-start" id="start-btn">Start Learning</button>
+    </section>
+
+    <!-- SCORE PANEL -->
+    <div class="score-panel">
+        <div class="score-item">✅ <span class="score-val" id="score-correct">0</span></div>
+        <div class="score-item">❌ <span class="score-val" id="score-wrong">0</span></div>
+        <div class="score-item">📝 <span class="score-val" id="score-total">0</span></div>
+        <div class="score-item">📊 <span class="score-val" id="score-pct">0%</span></div>
+    </div>
+
+    <div class="section-container">
+        
+        <!-- NOTES SECTION -->
+        <h2 class="section-title" id="notes-anchor">Handwritten Notes</h2>
+        
+        <div class="card blue">
+            <h3>1. Modes of Transport</h3>
+            <p>Transport means moving people or goods from one place to another. We use different vehicles based on where we travel!</p>
+            <ul>
+                <li><b>Land Transport:</b> Roads and Tracks (Car, Cycle, Train).</li>
+                <li><b>Water Transport:</b> Rivers and Oceans (Boat, Ship).</li>
+                <li><b>Air Transport:</b> The fastest way! (Aeroplane, Helicopter).</li>
+            </ul>
+            <div class="img-placeholder">[Image: A collage of Car, Boat, and Plane]</div>
+            <div class="memory-tip">💡 Tip: L.A.W. stands for Land, Air, and Water!</div>
+            <div class="quick-check">❓ Q: Which is the fastest mode? (Ans: Air)</div>
+        </div>
+
+        <div class="card green">
+            <h3>2. Special Vehicles</h3>
+            <p>Some vehicles have special jobs. They help us in emergencies or take us to unique places.</p>
+            <ul>
+                <li><b>Ambulance:</b> Carries sick people to the hospital.</li>
+                <li><b>Fire Engine:</b> Red truck that puts out fires.</li>
+                <li><b>Submarine:</b> Travels underwater!</li>
+                <li><b>Hot Air Balloon:</b> Used for fun and sight-seeing in the air.</li>
+            </ul>
+            <div class="img-placeholder">[Image: Red Fire Engine with Ladder]</div>
+            <div class="memory-tip">💡 Tip: Red means help! Look for red on fire engines and ambulance lights.</div>
+            <div class="quick-check">❓ Q: Which vehicle goes under the sea? (Ans: Submarine)</div>
+        </div>
+
+        <div class="card yellow">
+            <h3>3. Communication</h3>
+            <p>Communication is sharing information, ideas, or feelings with others.</p>
+            <ul>
+                <li><b>Letters:</b> The old way of sending messages through the post office.</li>
+                <li><b>Mobile Phones:</b> Instant talking and texting anywhere.</li>
+                <li><b>Email:</b> Letters sent through the internet.</li>
+                <li><b>Satellite:</b> Helps in TV signals and long-distance calls.</li>
+            </ul>
+            <div class="img-placeholder">[Image: A Smartphone and an Envelope]</div>
+            <div class="memory-tip">💡 Tip: "Communicate" means to "connect"!</div>
+            <div class="quick-check">❓ Q: How do we send a digital letter? (Ans: Email)</div>
+        </div>
+
+        <div class="card orange">
+            <h3>4. Road Safety</h3>
+            <p>Safety is important so we don't get hurt. Always follow the rules on the road!</p>
+            <ul>
+                <li><b>Traffic Lights:</b> Red (Stop), Yellow (Wait), Green (Go).</li>
+                <li><b>Zebra Crossing:</b> White stripes on road for walking across.</li>
+                <li><b>Footpath:</b> Always walk here, not in the middle of the road.</li>
+            </ul>
+            <div class="img-placeholder">[Image: Traffic Light with 3 colors]</div>
+            <div class="memory-tip">💡 Tip: Walk like a Zebra only on the stripes!</div>
+            <div class="quick-check">❓ Q: What does yellow light mean? (Ans: Wait/Get Ready)</div>
+        </div>
+
+        <!-- IMPORTANT QUESTIONS -->
+        <h2 class="section-title">Important Questions</h2>
+        <div id="imp-questions-list">
+            <!-- JS will populate 30 questions here -->
+        </div>
+
+        <!-- PRACTICE SECTION -->
+        <h2 class="section-title">Practice Zone</h2>
+        <div id="practice-area">
+            <!-- One question at a time -->
+        </div>
+
+        <!-- REVISION SECTION -->
+        <h2 class="section-title">Quick Revision</h2>
+        <button class="btn-start" id="btn-revise" style="width:100%; margin-bottom:10px;">Open Revision Card</button>
+        <div id="revision-content">
+            <div class="revision-item"><div class="dot" style="background:red"></div> Transport: Land, Water, Air.</div>
+            <div class="revision-item"><div class="dot" style="background:blue"></div> Fastest: Aeroplane.</div>
+            <div class="revision-item"><div class="dot" style="background:green"></div> Emergency: Ambulance & Fire Engine.</div>
+            <div class="revision-item"><div class="dot" style="background:orange"></div> Communication: Sharing info via Mobile, Email, Mail.</div>
+            <div class="revision-item"><div class="dot" style="background:purple"></div> Safety: Follow traffic lights and use Zebra crossing.</div>
+            <div class="revision-item"><div class="dot" style="background:teal"></div> Fuel: Most vehicles need petrol, diesel or CNG.</div>
+        </div>
+
+    </div>
+
+    <footer>
+        Designed & Created by SHRISHANT YADAV<br>
+        2026 – ShanEduHub
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const startBtn = document.getElementById('start-btn');
+            const notesAnchor = document.getElementById('notes-anchor');
+            const impList = document.getElementById('imp-questions-list');
+            const practiceArea = document.getElementById('practice-area');
+            const btnRevise = document.getElementById('btn-revise');
+            const revContent = document.getElementById('revision-content');
+
+            // Stats
+            let correct = 0;
+            let wrong = 0;
+            let total = 0;
+
+            function updateScore() {
+                document.getElementById('score-correct').innerText = correct;
+                document.getElementById('score-wrong').innerText = wrong;
+                document.getElementById('score-total').innerText = total;
+                const pct = total === 0 ? 0 : Math.round((correct / total) * 100);
+                document.getElementById('score-pct').innerText = pct + '%';
+            }
+
+            // Scroll Logic
+            startBtn.addEventListener('click', () => {
+                notesAnchor.scrollIntoView({ behavior: 'smooth' });
+            });
+
+            // Revision Toggle
+            btnRevise.addEventListener('click', () => {
+                if (revContent.style.display === 'block') {
+                    revContent.style.display = 'none';
+                    btnRevise.innerText = "Open Revision Card";
+                } else {
+                    revContent.style.display = 'block';
+                    btnRevise.innerText = "Close Revision Card";
+                }
+            });
+
+            // 30 Important Questions (English Only)
+            const importantQuestions = [
+                {q: "What is the fastest mode of land transport?", a: "Train (Bullet Train)", e: "Trains on tracks move faster than cars on busy roads."},
+                {q: "Name a vehicle that moves in water but has no engine.", a: "Rowboat / Sailboat", e: "They use oars or wind power."},
+                {q: "Who delivers our letters from the post office?", a: "Postman", e: "The postman carries letters to our doorsteps."},
+                {q: "What color is a Fire Engine?", a: "Red", e: "Red is used so people can see it from far away in emergencies."},
+                {q: "Which vehicle is used to travel into space?", a: "Rocket / Spacecraft", e: "Only rockets can leave the Earth's atmosphere."},
+                {q: "What do we call the place where planes land?", a: "Airport", e: "Airports have long runways for planes to take off."},
+                {q: "What is a Zebra Crossing used for?", a: "Pedestrians to cross the road", e: "It keeps people safe from moving cars."},
+                {q: "Which mode of transport is the most expensive?", a: "Air Transport", e: "Aeroplanes use special fuel and are very fast."},
+                {q: "Name an ancient mode of transport.", a: "Bullock Cart / Chariot", e: "People used animals to pull carts long ago."},
+                {q: "What does the green light mean?", a: "Go", e: "It signals that it is safe to move."},
+                {q: "What is an Email?", a: "Electronic Mail", e: "A letter sent through the computer or mobile."},
+                {q: "Which animal is called the 'Ship of the Desert'?", a: "Camel", e: "Camels are used for transport in sandy deserts."},
+                {q: "Where do we go to catch a train?", a: "Railway Station", e: "Trains stop at platforms on stations."},
+                {q: "What is a Submarine?", a: "An underwater boat", e: "It is used mainly by the Navy."},
+                {q: "How many wheels does a tricycle have?", a: "Three", e: "'Tri' means three."},
+                {q: "What is the full form of SMS?", a: "Short Message Service", e: "A quick way to text someone."},
+                {q: "Which vehicle carries many people together in a city?", a: "Bus", e: "Public transport like buses reduces traffic."},
+                {q: "What should we wear while riding a bicycle or bike?", a: "Helmet", e: "A helmet protects our head from injury."},
+                {q: "Which is the slowest mode of transport?", a: "Walking / Animal Carts", e: "These take the most time to cover distance."},
+                {q: "What is a 'Tonga'?", a: "A horse-drawn carriage", e: "Commonly seen in Indian villages."},
+                {q: "What does the yellow light tell us?", a: "Wait or Get Ready", e: "It comes before green or red."},
+                {q: "Which vehicle has a siren and carries doctors?", a: "Ambulance", e: "The siren tells other cars to give way."},
+                {q: "Name a means of Mass Communication.", a: "Newspaper / Television", e: "It sends info to many people at once."},
+                {q: "What is a harbor or port?", a: "A place where ships park", e: "Ships load and unload goods here."},
+                {q: "Why do we use satellites?", a: "For TV, Radio, and Phones", e: "They float in space and send signals."},
+                {q: "Which vehicle is used by farmers in fields?", a: "Tractor", e: "Tractors help in pulling heavy farm tools."},
+                {q: "Is a bicycle an eco-friendly transport?", a: "Yes", e: "It does not produce smoke or pollution."},
+                {q: "Where do we buy stamps from?", a: "Post Office", e: "Stamps are needed to send letters."},
+                {q: "What is a 'Runway'?", a: "A road for planes to take off", e: "Found at every airport."},
+                {q: "What is the number for Fire Brigade in India?", a: "101", e: "A quick emergency dial number."}
+            ];
+
+            const colors = ['#e3f2fd', '#e8f5e9', '#fffde7', '#fff3e0'];
+            importantQuestions.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'q-card';
+                div.style.borderColor = ['#2196f3','#4caf50','#ffeb3b','#ff9800'][index % 4];
+                div.innerHTML = `<strong>Q${index+1}: ${item.q}</strong><br><small>Ans: ${item.a}</small><br><i style="font-size:0.8rem">${item.e}</i>`;
+                impList.appendChild(div);
+            });
+
+            // 70 Practice Questions
+            const practiceData = [
+                // MCQs
+                {type:"mcq", q:"Which of these is a water transport?", o:["Car", "Bus", "Ship", "Plane"], a:"Ship"},
+                {type:"mcq", q:"What helps us to talk to someone far away?", o:["Book", "Phone", "Mirror", "Pencil"], a:"Phone"},
+                {type:"mcq", q:"A person who flies a plane is called a...", o:["Driver", "Pilot", "Captain", "Sailor"], a:"Pilot"},
+                {type:"mcq", q:"Which light says STOP?", o:["Green", "Yellow", "Red", "Blue"], a:"Red"},
+                {type:"mcq", q:"How many wheels does a car have?", o:["2", "3", "4", "6"], a:"4"},
+                {type:"mcq", q:"Which vehicle is used for a patient?", o:["Police car", "Ambulance", "Taxi", "Truck"], a:"Ambulance"},
+                {type:"mcq", q:"Where do we find a Zebra Crossing?", o:["On a tree", "On the road", "In a park", "In the sky"], a:"On the road"},
+                {type:"mcq", q:"Which is a fast communication tool?", o:["Letter", "Postcard", "Mobile Phone", "Messenger Bird"], a:"Mobile Phone"},
+                {type:"mcq", q:"A train moves on...", o:["Water", "Road", "Tracks", "Air"], a:"Tracks"},
+                {type:"mcq", q:"What is used to carry heavy goods across oceans?", o:["Canoe", "Cargo Ship", "Bicycle", "Helicopter"], a:"Cargo Ship"},
+                {type:"mcq", q:"Which is a fuel for vehicles?", o:["Milk", "Petrol", "Water", "Juice"], a:"Petrol"},
+                {type:"mcq", q:"What do we use to cross a river?", o:["Bridge", "Ladder", "Slide", "Swing"], a:"Bridge"},
+                {type:"mcq", q:"Which transport needs wind?", o:["Rocket", "Sailboat", "Motorcycle", "Truck"], a:"Sailboat"},
+                {type:"mcq", q:"Where is the steering wheel of a car?", o:["Outside", "Inside", "On the roof", "Behind"], a:"Inside"},
+                {type:"mcq", q:"Which vehicle has only 2 wheels?", o:["Auto", "Bicycle", "Bus", "Rickshaw"], a:"Bicycle"},
+
+                // Fill Blanks
+                {type:"fill", q:"A _____ carries letters and parcels.", a:"postman"},
+                {type:"fill", q:"We must walk on the _____.", a:"footpath"},
+                {type:"fill", q:"Aeroplanes fly in the _____.", a:"air"},
+                {type:"fill", q:"A _____ puts out fire.", a:"fire engine"},
+                {type:"fill", q:"A _____ travels underwater.", a:"submarine"},
+                {type:"fill", q:"We catch a bus at the bus _____.", a:"stop"},
+                {type:"fill", q:"_____ is used to send digital letters.", a:"email"},
+                {type:"fill", q:"A car runs on _____ wheels.", a:"four"},
+                {type:"fill", q:"Always wear a _____ while riding a bike.", a:"helmet"},
+                {type:"fill", q:"The fastest way to travel is by _____.", a:"air"},
+
+                // True False
+                {type:"tf", q:"A boat moves on tracks.", a:"False"},
+                {type:"tf", q:"Mobile phones can send photos.", a:"True"},
+                {type:"tf", q:"We should run on the road.", a:"False"},
+                {type:"tf", q:"A pilot drives a train.", a:"False"},
+                {type:"tf", q:"A hot air balloon is a land transport.", a:"False"},
+                {type:"tf", q:"Red light means wait.", a:"False"},
+                {type:"tf", q:"Communication means sharing ideas.", a:"True"},
+                {type:"tf", q:"A tractor is used in a city mall.", a:"False"},
+                {type:"tf", q:"The Internet helps in communication.", a:"True"},
+                {type:"tf", q:"A bicycle causes pollution.", a:"False"},
+
+                // One Word
+                {type:"one", q:"Who drives a car?", a:"driver"},
+                {type:"one", q:"Fastest land transport in India?", a:"train"},
+                {type:"one", q:"Vehicle with 3 wheels?", a:"auto rickshaw"},
+                {type:"one", q:"What color is the 'Go' light?", a:"green"},
+                {type:"one", q:"Smallest water transport?", a:"boat"},
+                {type:"one", q:"Means of mass communication?", a:"newspaper"},
+                {type:"one", q:"Where do ships park?", a:"port"},
+                {type:"one", q:"Old way of sending letters?", a:"post"},
+                {type:"one", q:"Vehicle used to travel to moon?", a:"rocket"},
+                {type:"one", q:"Who repairs vehicles?", a:"mechanic"},
+
+                // Short Ans (Auto-check logic: looking for keywords)
+                {type:"short", q:"Why do we use an ambulance?", a:"hospital", k:"hospital"},
+                {type:"short", q:"What is land transport?", a:"road", k:"road"},
+                {type:"short", q:"Define communication.", a:"sharing info", k:"sharing"},
+                {type:"short", q:"What is a zebra crossing?", a:"safety", k:"safety"},
+                {type:"short", q:"Name one air transport.", a:"plane", k:"plane"},
+
+                // MCQ Mix (Continued to reach 70)
+                {type:"mcq", q:"Which animal is used in deserts?", o:["Elephant", "Camel", "Dog", "Cat"], a:"Camel"},
+                {type:"mcq", q:"What is a helicopter?", o:["Land", "Water", "Air", "None"], a:"Air"},
+                {type:"mcq", q:"Modern way to send a letter?", o:["Pigeon", "Email", "Horse", "Bottle"], a:"Email"},
+                {type:"mcq", q:"Which vehicle uses a track?", o:["Jeep", "Metro", "Scooter", "Cycle"], a:"Metro"},
+                {type:"mcq", q:"Is a boat a slow transport?", o:["Yes", "No", "Very Fast", "Instant"], a:"Yes"},
+                {type:"mcq", q:"What is a 'Tiranga'?", o:["Car", "Flag", "Ship", "Plane"], a:"Flag"},
+                {type:"mcq", q:"Where do we keep a car?", o:["Kitchen", "Garage", "Garden", "Pool"], a:"Garage"},
+                {type:"mcq", q:"What is the color of an ambulance?", o:["Black", "White", "Green", "Pink"], a:"White"},
+                {type:"mcq", q:"Which is a group transport?", o:["Cycle", "Bus", "Bike", "Skates"], a:"Bus"},
+                {type:"mcq", q:"How do we feel when we travel fast?", o:["Excited", "Sad", "Angry", "Hungry"], a:"Excited"},
+                {type:"mcq", q:"Is a scooter a land transport?", o:["Yes", "No", "Maybe", "Water"], a:"Yes"},
+                {type:"mcq", q:"What do you call a big boat?", o:["Toy", "Ship", "Paper", "Fish"], a:"Ship"},
+                {type:"mcq", q:"Who flies a rocket?", o:["Doctor", "Astronaut", "Teacher", "Chef"], a:"Astronaut"},
+                {type:"mcq", q:"Does a plane have wings?", o:["No", "Yes", "Sometimes", "Never"], a:"Yes"},
+                {type:"mcq", q:"Is radio a communication tool?", o:["Yes", "No", "Food", "Toy"], a:"Yes"},
+                {type:"mcq", q:"Which of these is used in hills?", o:["Cable Car", "Submarine", "Tank", "Bus"], a:"Cable Car"},
+                {type:"mcq", q:"What helps you find the way?", o:["Map", "Plate", "Bed", "Pen"], a:"Map"},
+                {type:"mcq", q:"Can we travel to the Sun?", o:["Yes", "No", "Soon", "Always"], a:"No"},
+                {type:"mcq", q:"What do we use to call someone?", o:["Hammer", "Phone", "Key", "Cup"], a:"Phone"},
+                {type:"mcq", q:"Safety first means...", o:["Be careful", "Be silly", "Run fast", "Close eyes"], a:"Be careful"}
+            ];
+
+            let currentQIndex = 0;
+
+            function loadQuestion() {
+                const item = practiceData[currentQIndex];
+                practiceArea.innerHTML = '';
+                
+                const card = document.createElement('div');
+                card.className = 'practice-card';
+                card.style.backgroundColor = colors[currentQIndex % colors.length];
+
+                const qNum = document.createElement('div');
+                qNum.innerText = `Question ${currentQIndex + 1} of ${practiceData.length}`;
+                qNum.style.fontSize = '0.8rem';
+                qNum.style.marginBottom = '10px';
+                card.appendChild(qNum);
+
+                const qText = document.createElement('h3');
+                qText.innerText = item.q;
+                card.appendChild(qText);
+
+                const feedbackDiv = document.createElement('div');
+                feedbackDiv.className = 'feedback';
+                feedbackDiv.id = 'feedback-box';
+
+                if(item.type === "mcq") {
+                    const grid = document.createElement('div');
+                    grid.className = 'options-grid';
+                    item.o.forEach(opt => {
+                        const btn = document.createElement('button');
+                        btn.className = 'opt-btn';
+                        btn.innerText = opt;
+                        btn.addEventListener('click', () => checkAnswer(opt, item.a, btn, feedbackDiv));
+                        grid.appendChild(btn);
+                    });
+                    card.appendChild(grid);
+                } else if(item.type === "tf") {
+                    const grid = document.createElement('div');
+                    grid.className = 'options-grid';
+                    ["True", "False"].forEach(opt => {
+                        const btn = document.createElement('button');
+                        btn.className = 'opt-btn';
+                        btn.innerText = opt;
+                        btn.addEventListener('click', () => checkAnswer(opt, item.a, btn, feedbackDiv));
+                        grid.appendChild(btn);
+                    });
+                    card.appendChild(grid);
+                } else {
+                    const input = document.createElement('input');
+                    input.type = "text";
+                    input.className = 'input-box';
+                    input.placeholder = "Type your answer here...";
+                    card.appendChild(input);
+
+                    const checkBtn = document.createElement('button');
+                    checkBtn.className = 'btn-check';
+                    checkBtn.innerText = "Submit Answer";
+                    checkBtn.addEventListener('click', () => {
+                        const val = input.value.trim().toLowerCase();
+                        let isCorrect = false;
+                        if(item.type === "short") {
+                            isCorrect = val.includes(item.k);
+                        } else {
+                            isCorrect = val === item.a.toLowerCase();
+                        }
+                        checkAnswer(isCorrect ? item.a : val, item.a, checkBtn, feedbackDiv, isCorrect);
+                    });
+                    card.appendChild(checkBtn);
+                }
+
+                card.appendChild(feedbackDiv);
+                practiceArea.appendChild(card);
+            }
+
+            function checkAnswer(selected, correctAns, element, fb, forceCorrect = false) {
+                total++;
+                const isCorrect = forceCorrect || (selected.toString().toLowerCase() === correctAns.toString().toLowerCase());
+                
+                fb.style.display = 'block';
+                if(isCorrect) {
+                    correct++;
+                    fb.innerText = "Excellent ⭐";
+                    fb.style.backgroundColor = "#c8e6c9";
+                    fb.style.color = "#2e7d32";
+                    if(element.classList.contains('opt-btn')) element.classList.add('correct');
+                } else {
+                    wrong++;
+                    fb.innerHTML = `Try Again! <br> <small>Correct: ${correctAns}</small>`;
+                    fb.style.backgroundColor = "#ffcdd2";
+                    fb.style.color = "#c62828";
+                    if(element.classList.contains('opt-btn')) element.classList.add('wrong');
+                }
+                
+                updateScore();
+
+                setTimeout(() => {
+                    currentQIndex++;
+                    if(currentQIndex < practiceData.length) {
+                        loadQuestion();
+                    } else {
+                        practiceArea.innerHTML = `<div class='practice-card green'><h2>🎉 All Done!</h2><p>You attempted all 70 questions!</p><button class='btn-start' onclick='location.reload()'>Restart Journey</button></div>`;
+                    }
+                }, 1500);
+            }
+
+            loadQuestion();
+            updateScore();
+        });
+    </script>
+</body>
+</html>

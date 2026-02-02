@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>class3-english-ch5.html</title>
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            --pastel-yellow: #FFF9C4;
+            --pastel-green: #C8E6C9;
+            --pastel-blue: #BBDEFB;
+            --pastel-orange: #FFE0B2;
+            --pastel-pink: #F8BBD0;
+            --white: #FFFFFF;
+            --text-dark: #37474F;
+            --accent-green: #2E7D32;
+            --accent-red: #C62828;
+            --accent-blue: #1565C0;
+            --border-radius: 20px;
+            --shadow: 0 4px 8px rgba(0,0,0,0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* --- GLOBAL TYPOGRAPHY (STRICT RULE) --- */
+        body {
+            font-family: 'Comic Sans MS', 'Comic Sans', 'Chalkboard SE', 'Marker Felt', cursive;
+            font-weight: bold;
+            color: var(--text-dark);
+            background: linear-gradient(180deg, var(--pastel-yellow) 0%, #FFFFFF 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+            padding-bottom: 50px;
+        }
+
+        /* --- UTILITIES --- */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+            transition: transform 0.1s;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 0 rgba(0,0,0,0.1);
+        }
+
+        .btn-start {
+            background: linear-gradient(90deg, var(--pastel-green), var(--pastel-blue));
+            color: var(--text-dark);
+            width: 80%;
+            max-width: 300px;
+            margin-top: 15px;
+        }
+
+        .btn-revise {
+            background-color: var(--pastel-orange);
+            color: var(--text-dark);
+            width: 100%;
+        }
+
+        /* --- HEADER / HERO --- */
+        .hero {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.5);
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 {
+            font-size: 2rem;
+            color: var(--accent-blue);
+            margin-bottom: 5px;
+        }
+
+        .hero h2 {
+            font-size: 1.2rem;
+            color: #546E7A;
+            margin-bottom: 15px;
+        }
+
+        .quote {
+            font-size: 1.4rem;
+            color: var(--accent-green);
+            margin: 15px 0;
+            padding: 10px;
+        }
+
+        .branding {
+            font-size: 0.9rem;
+            color: #90A4AE;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* --- LIVE SCORE PANEL --- */
+        .score-panel {
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+            background: #FFFBEE; /* Very light yellow tint */
+            margin: 0 15px 25px 15px;
+            padding: 10px;
+            border-radius: 15px;
+            border: 3px solid;
+            border-image: linear-gradient(to right, var(--pastel-green), var(--pastel-blue)) 1;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-around;
+            max-width: 770px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .score-item span:first-child {
+            display: block;
+            font-size: 0.8rem;
+            color: #78909C;
+            text-transform: uppercase;
+        }
+
+        .score-item span:last-child {
+            font-size: 1.3rem;
+        }
+
+        /* --- CARDS GENERAL --- */
+        .card {
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s;
+            border: 2px solid rgba(0,0,0,0.05);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+            color: var(--accent-blue);
+            text-decoration: underline;
+            text-decoration-color: var(--pastel-orange);
+            text-decoration-thickness: 4px;
+        }
+
+        /* --- NOTES SECTION --- */
+        .note-card {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .note-card:nth-child(odd) { background-color: var(--pastel-blue); }
+        .note-card:nth-child(even) { background-color: var(--pastel-green); }
+        .note-card:nth-child(3n) { background-color: var(--pastel-yellow); }
+
+        .note-title {
+            font-size: 1.2rem;
+            color: #000;
+            margin-bottom: 8px;
+            text-decoration: underline;
+        }
+
+        .example-box {
+            background: rgba(255,255,255,0.7);
+            padding: 8px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 5px solid var(--accent-blue);
+        }
+
+        .tip-box {
+            font-size: 0.9rem;
+            background: #FFFDE7;
+            padding: 8px;
+            border-radius: 8px;
+            border: 2px dashed #FBC02D;
+            margin-top: 10px;
+        }
+
+        .img-placeholder {
+            width: 100%;
+            height: 100px;
+            background: rgba(255,255,255,0.5);
+            border: 2px dashed #999;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        /* --- IMPORTANT QUESTIONS --- */
+        .imp-q-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 8px solid;
+            border-image: linear-gradient(to bottom, var(--pastel-pink), var(--pastel-blue)) 1;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .imp-ans {
+            color: var(--accent-green);
+            margin-top: 5px;
+        }
+
+        .imp-exp {
+            font-size: 0.9rem;
+            color: #78909C;
+            margin-top: 2px;
+        }
+
+        /* --- QUIZ SECTION --- */
+        #quiz-card {
+            background-color: var(--white);
+            border: 4px solid var(--pastel-blue);
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .options-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background-color: #E3F2FD;
+            border: 2px solid #BBDEFB;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            text-align: left;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-family: inherit;
+            font-weight: bold;
+        }
+
+        .option-btn:hover {
+            background-color: #C8E6C9;
+            border-color: #81C784;
+        }
+
+        .option-btn.correct {
+            background-color: #A5D6A7;
+            border-color: #2E7D32;
+            color: #1B5E20;
+        }
+
+        .option-btn.wrong {
+            background-color: #EF9A9A;
+            border-color: #C62828;
+            color: #B71C1C;
+        }
+
+        .feedback-text {
+            text-align: center;
+            margin: 15px 0;
+            min-height: 24px;
+            font-size: 1.2rem;
+        }
+
+        /* --- REVISION --- */
+        .revision-section {
+            background-color: #E8F5E9;
+        }
+
+        .revision-list {
+            list-style: none;
+        }
+
+        .revision-list li {
+            padding: 10px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .revision-list li::before {
+            content: "•";
+            color: var(--accent-blue);
+            font-size: 1.5rem;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            padding: 30px 10px;
+            color: #90A4AE;
+            font-size: 0.9rem;
+            background: #FAFAFA;
+            margin-top: 40px;
+            border-top: 2px solid #EEE;
+        }
+
+        @media (max-width: 400px) {
+            .hero h1 { font-size: 1.8rem; }
+            .score-panel { font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="hero">
+        <span class="branding">ShanEduHub</span>
+        <h1>Adjectives & Describing Words</h1>
+        <h2>Class 3 – English</h2>
+        <div class="quote">"Words paint pictures in our minds!"</div>
+        <div style="font-size: 3.5rem; margin: 10px 0;">🌈</div>
+        <button class="btn btn-start" onclick="document.getElementById('notes-section').scrollIntoView({behavior: 'smooth'})">Start Learning</button>
+    </header>
+
+    <div class="score-panel">
+        <div class="score-item">
+            <span>Correct</span>
+            <span id="score-correct" style="color: var(--accent-green);">0</span>
+        </div>
+        <div class="score-item">
+            <span>Wrong</span>
+            <span id="score-wrong" style="color: var(--accent-red);">0</span>
+        </div>
+        <div class="score-item">
+            <span>Total</span>
+            <span id="score-total" style="color: var(--accent-blue);">0</span>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <section id="notes-section" class="card" style="background: #FFF;">
+            <h2 class="section-title">Chapter Notes</h2>
+
+            <div class="note-card">
+                <div class="note-title">1. What is an Adjective?</div>
+                <p>Adjectives are <strong>Describing Words</strong>. They tell us more about a Noun (Person, Place, Animal, or Thing).</p>
+                <div class="example-box">
+                    Example: A <strong>red</strong> apple. (Red describes the apple)
+                </div>
+                <div class="tip-box">💡 Tip: Ask "How is it?" to find the adjective.</div>
+                <div class="img-placeholder">[attachment_0](attachment)</div>
+            </div>
+
+            <div class="note-card">
+                <div class="note-title">2. Describing People</div>
+                <p>We can use words to describe how people look or feel.</p>
+                <div class="example-box">
+                    Example: A <strong>tall</strong> man. A <strong>happy</strong> girl.
+                </div>
+                <div class="img-placeholder"></div>
+            </div>
+
+            <div class="note-card">
+                <div class="note-title">3. Describing Animals</div>
+                <p>We use words to tell about an animal's size, color, or nature.</p>
+                <div class="example-box">
+                    Example: A <strong>wild</strong> lion. A <strong>cute</strong> rabbit.
+                </div>
+            </div>
+
+            <div class="note-card">
+                <div class="note-title">4. Colors & Shapes</div>
+                <p>Colors (Red, Blue) and Shapes (Round, Square) are also adjectives!</p>
+                <div class="example-box">
+                    Example: The sky is <strong>blue</strong>. The ball is <strong>round</strong>.
+                </div>
+                <div class="tip-box">💡 Tip: Numbers (One, Two) are describing words too!</div>
+            </div>
+
+            <div class="note-card">
+                <div class="note-title">5. Quality Words</div>
+                <p>These words tell us about the quality (Good or Bad) of something.</p>
+                <div class="example-box">
+                    Example: A <strong>brave</strong> soldier. A <strong>sweet</strong> mango.
+                </div>
+            </div>
+
+            <div class="note-card">
+                <div class="note-title">6. Comparison (Introduction)</div>
+                <p>When we compare two things, we change the adjective slightly.</p>
+                <div class="example-box">
+                    Big ➜ <strong>Bigger</strong><br>
+                    Small ➜ <strong>Smaller</strong>
+                </div>
+                <div class="img-placeholder">[Image showing Big ball vs Bigger ball]</div>
+            </div>
+        </section>
+
+        <section class="card" style="background: #FAFAFA;">
+            <h2 class="section-title">Important Questions</h2>
+            <div id="imp-questions-container">
+                </div>
+        </section>
+
+        <section id="quiz-card" class="card">
+            <h2 class="section-title">Practice Quiz</h2>
+            
+            <div id="quiz-area">
+                <div class="img-placeholder" id="quiz-img" style="display:none; height:120px; margin-bottom:15px;"></div>
+                <div class="question-text" id="question-text">Loading Question...</div>
+                
+                <div class="options-grid" id="options-container">
+                    </div>
+
+                <div class="feedback-text" id="feedback"></div>
+                
+                <button id="next-btn" class="btn btn-revise hidden" onclick="nextQuestion()">Next Question ➡</button>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px; color: #BBB;">
+                Question <span id="q-current">0</span> / <span id="q-total">0</span>
+            </div>
+        </section>
+
+        <section class="card revision-section">
+            <h2 class="section-title">Quick Revision</h2>
+            <button class="btn btn-revise" onclick="toggleRevision()">Show/Hide Summary</button>
+            <div id="revision-content" class="hidden" style="margin-top: 15px;">
+                <ul class="revision-list">
+                    <li>Adjectives describe Nouns.</li>
+                    <li>They tell us about Size (Big, Small).</li>
+                    <li>They tell us about Color (Red, Green).</li>
+                    <li>They tell us about Number (One, Many).</li>
+                    <li>They tell us about Quality (Good, Bad).</li>
+                    <li>They usually come BEFORE the noun (A <strong>red</strong> car).</li>
+                </ul>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        Designed & Created by SHRISHANT YADAV<br>
+        2026 – ShanEduHub
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            /* --- DATA: Important Questions (30) --- */
+            const impQuestions = [
+                { q: "What is an adjective?", a: "A word that describes a noun.", exp: "It tells more about a person, place, or thing." },
+                { q: "Find the adjective: 'A red rose'.", a: "Red", exp: "Red tells the color of the rose." },
+                { q: "Find the adjective: 'A big elephant'.", a: "Big", exp: "Big tells the size of the elephant." },
+                { q: "Find the adjective: 'Five ducks'.", a: "Five", exp: "Numbers are also adjectives." },
+                { q: "Find the adjective: 'Hot tea'.", a: "Hot", exp: "Hot describes the tea." },
+                { q: "Opposite of 'Happy'?", a: "Sad", exp: "Sad describes a feeling." },
+                { q: "Opposite of 'Big'?", a: "Small", exp: "Small describes size." },
+                { q: "Opposite of 'Tall'?", a: "Short", exp: "Short describes height." },
+                { q: "Find the adjective: 'Round ball'.", a: "Round", exp: "Round describes the shape." },
+                { q: "Find the adjective: 'Sweet cake'.", a: "Sweet", exp: "Sweet describes the taste." },
+                { q: "Is 'Run' an adjective?", a: "No", exp: "Run is an action word (Verb)." },
+                { q: "Is 'Boy' an adjective?", a: "No", exp: "Boy is a naming word (Noun)." },
+                { q: "Find the adjective: 'Clean room'.", a: "Clean", exp: "Clean describes the condition." },
+                { q: "Find the adjective: 'Dirty shoes'.", a: "Dirty", exp: "Dirty describes the shoes." },
+                { q: "Find the adjective: 'Fast car'.", a: "Fast", exp: "Fast describes the speed." },
+                { q: "Find the adjective: 'Slow tortoise'.", a: "Slow", exp: "Slow describes the speed." },
+                { q: "Comparison: Tall -> ____", a: "Taller", exp: "We add 'er' to compare two things." },
+                { q: "Comparison: Old -> ____", a: "Older", exp: "We add 'er' to compare." },
+                { q: "Find the adjective: 'Angry lion'.", a: "Angry", exp: "Angry describes the mood." },
+                { q: "Find the adjective: 'Cold ice'.", a: "Cold", exp: "Cold describes the temperature." },
+                { q: "Find the adjective: 'Heavy bag'.", a: "Heavy", exp: "Heavy describes the weight." },
+                { q: "Find the adjective: 'Light feather'.", a: "Light", exp: "Light describes the weight." },
+                { q: "Find the adjective: 'Pink dress'.", a: "Pink", exp: "Colors are adjectives." },
+                { q: "Find the adjective: 'Long hair'.", a: "Long", exp: "Long describes the length." },
+                { q: "Find the adjective: 'Short pencil'.", a: "Short", exp: "Short describes the length." },
+                { q: "Is 'Beautiful' an adjective?", a: "Yes", exp: "It describes looks." },
+                { q: "Is 'They' an adjective?", a: "No", exp: "They is a pronoun." },
+                { q: "Find the adjective: 'Smart boy'.", a: "Smart", exp: "Smart describes the boy." },
+                { q: "Find the adjective: 'Brave girl'.", a: "Brave", exp: "Brave describes the girl." },
+                { q: "Find the adjective: 'Sour lemon'.", a: "Sour", exp: "Sour describes the taste." }
+            ];
+
+            /* --- DATA: Practice Quiz (60) --- */
+            const quizQuestions = [
+                // Set 1: Identify Adjective (Basic)
+                { q: "Identify the adjective: 'Blue sky'", opts: ["Blue", "Sky", "Is"], a: 0 },
+                { q: "Identify the adjective: 'Happy baby'", opts: ["Baby", "Happy", "A"], a: 1 },
+                { q: "Identify the adjective: 'Two cats'", opts: ["Cats", "Two", "Are"], a: 1 },
+                { q: "Identify the adjective: 'Hot sun'", opts: ["Sun", "Hot", "The"], a: 1 },
+                { q: "Identify the adjective: 'Green grass'", opts: ["Grass", "Green", "Grow"], a: 1 },
+                { q: "Identify the adjective: 'Old man'", opts: ["Man", "Old", "Is"], a: 1 },
+                { q: "Identify the adjective: 'New toy'", opts: ["Toy", "New", "Play"], a: 1 },
+                { q: "Identify the adjective: 'Sharp knife'", opts: ["Knife", "Sharp", "Cut"], a: 1 },
+                { q: "Identify the adjective: 'Soft pillow'", opts: ["Soft", "Pillow", "Sleep"], a: 0 },
+                { q: "Identify the adjective: 'Hard rock'", opts: ["Rock", "Hard", "Stone"], a: 1 },
+
+                // Set 2: Fill in the blanks
+                { q: "The lemon is ____.", opts: ["Sour", "Blue", "Tall"], a: 0 },
+                { q: "The elephant is ____.", opts: ["Small", "Big", "Red"], a: 1 },
+                { q: "Ice cream is ____.", opts: ["Hot", "Cold", "Sad"], a: 1 },
+                { q: "The giraffe is ____.", opts: ["Short", "Tall", "Round"], a: 1 },
+                { q: "Fire is ____.", opts: ["Cold", "Hot", "Soft"], a: 1 },
+                { q: "Candy is ____.", opts: ["Spicy", "Sweet", "Bitter"], a: 1 },
+                { q: "The night is ____.", opts: ["Bright", "Dark", "Yellow"], a: 1 },
+                { q: "The rabbit is ____.", opts: ["Fast", "Slow", "Heavy"], a: 0 },
+                { q: "The tortoise is ____.", opts: ["Fast", "Slow", "Purple"], a: 1 },
+                { q: "A feather is ____.", opts: ["Heavy", "Light", "Hard"], a: 1 },
+
+                // Set 3: True/False
+                { q: "True or False: 'Red' is an adjective.", opts: ["True", "False"], a: 0 },
+                { q: "True or False: 'Jump' is an adjective.", opts: ["True", "False"], a: 1 },
+                { q: "True or False: 'Beautiful' describes a noun.", opts: ["True", "False"], a: 0 },
+                { q: "True or False: Adjectives tell us about color.", opts: ["True", "False"], a: 0 },
+                { q: "True or False: 'Boy' is an adjective.", opts: ["True", "False"], a: 1 },
+                { q: "True or False: Numbers can be adjectives.", opts: ["True", "False"], a: 0 },
+                { q: "True or False: 'Round' describes shape.", opts: ["True", "False"], a: 0 },
+                { q: "True or False: We use 'He' as an adjective.", opts: ["True", "False"], a: 1 },
+                { q: "True or False: 'Angry' describes a feeling.", opts: ["True", "False"], a: 0 },
+                { q: "True or False: Adjectives tell us comparisons.", opts: ["True", "False"], a: 0 },
+
+                // Set 4: Picture/Thinking (Text based)
+                { q: "[Image: 🦁] The lion is ____.", opts: ["Wild", "Tame", "Blue"], a: 0, img: "Image of a Lion" },
+                { q: "[Image: 🐜] The ant is ____.", opts: ["Big", "Tiny", "Heavy"], a: 1, img: "Image of an Ant" },
+                { q: "[Image: 🌞] The sun is ____.", opts: ["Cold", "Bright", "Green"], a: 1, img: "Image of Sun" },
+                { q: "[Image: 🎈] The balloon is ____.", opts: ["Heavy", "Light", "Sharp"], a: 1, img: "Image of Balloon" },
+                { q: "Which word describes a good student?", opts: ["Lazy", "Hardworking", "Bad"], a: 1 },
+                { q: "Which word describes a rainy day?", opts: ["Wet", "Dry", "Sunny"], a: 0 },
+                { q: "Select the color word.", opts: ["Car", "Red", "Drive"], a: 1 },
+                { q: "Select the shape word.", opts: ["Round", "Ball", "Play"], a: 0 },
+                { q: "Select the number word.", opts: ["Three", "Tree", "Tea"], a: 0 },
+                { q: "Select the size word.", opts: ["Tiny", "Cat", "Run"], a: 0 },
+
+                // Set 5: Comparisons & Mixed
+                { q: "Comparative of 'Big' is ____.", opts: ["Bigs", "Bigger", "Biggest"], a: 1 },
+                { q: "Comparative of 'Small' is ____.", opts: ["Smaller", "Smalls", "Smallest"], a: 0 },
+                { q: "Comparative of 'Fast' is ____.", opts: ["Faster", "Fasts", "Fastest"], a: 0 },
+                { q: "Comparative of 'Slow' is ____.", opts: ["Slower", "Slows", "Slowed"], a: 0 },
+                { q: "Comparative of 'Tall' is ____.", opts: ["Taller", "Tallest", "Talls"], a: 0 },
+                { q: "Opposite of 'Rich'?", opts: ["Poor", "Money", "Gold"], a: 0 },
+                { q: "Opposite of 'Full'?", opts: ["Empty", "Half", "Many"], a: 0 },
+                { q: "Opposite of 'Wet'?", opts: ["Dry", "Water", "Rain"], a: 0 },
+                { q: "Opposite of 'Young'?", opts: ["Old", "Boy", "Child"], a: 0 },
+                { q: "Odd one out: Red, Blue, Car, Green.", opts: ["Car", "Red", "Blue"], a: 0 },
+
+                // Set 6: Advanced/Sentences
+                { q: "The ____ dog barked.", opts: ["Loud", "Table", "Run"], a: 0 },
+                { q: "She wore a ____ dress.", opts: ["Pretty", "Sing", "Jump"], a: 0 },
+                { q: "He is a ____ boy.", opts: ["Smart", "Chair", "Eat"], a: 0 },
+                { q: "The water is very ____.", opts: ["Deep", "Walk", "Sky"], a: 0 },
+                { q: "It is a ____ day.", opts: ["Sunny", "Sun", "Shine"], a: 0 },
+                { q: "My bag is ____.", opts: ["Heavy", "Run", "Eat"], a: 0 },
+                { q: "The mango is ____.", opts: ["Yellow", "Jump", "Boy"], a: 0 },
+                { q: "I have a ____ ball.", opts: ["Round", "Play", "Go"], a: 0 },
+                { q: "The grass is ____.", opts: ["Green", "Cow", "Eat"], a: 0 },
+                { q: "We are ____ friends.", opts: ["Good", "Run", "House"], a: 0 }
+            ];
+
+            /* --- APP LOGIC --- */
+            let currentQIndex = 0;
+            let score = { correct: 0, wrong: 0, total: 0 };
+            let isAnswered = false;
+
+            // DOM Elements
+            const scoreCorrectEl = document.getElementById('score-correct');
+            const scoreWrongEl = document.getElementById('score-wrong');
+            const scoreTotalEl = document.getElementById('score-total');
+            const quizArea = document.getElementById('quiz-area');
+            const questionTextEl = document.getElementById('question-text');
+            const optionsContainer = document.getElementById('options-container');
+            const feedbackEl = document.getElementById('feedback');
+            const nextBtn = document.getElementById('next-btn');
+            const qCurrentEl = document.getElementById('q-current');
+            const qTotalEl = document.getElementById('q-total');
+            const impContainer = document.getElementById('imp-questions-container');
+            const quizImg = document.getElementById('quiz-img');
+
+            // Init
+            function init() {
+                renderImpQuestions();
+                qTotalEl.textContent = quizQuestions.length;
+                loadQuestion();
+            }
+
+            // Render Important Questions
+            function renderImpQuestions() {
+                let html = '';
+                impQuestions.forEach((item, index) => {
+                    html += `
+                        <div class="imp-q-card">
+                            <div style="font-size:1.1rem;">Q${index + 1}: ${item.q}</div>
+                            <div class="imp-ans">Ans: ${item.a}</div>
+                            <div class="imp-exp">(${item.exp})</div>
+                        </div>
+                    `;
+                });
+                impContainer.innerHTML = html;
+            }
+
+            // Load Quiz Question
+            window.loadQuestion = function() {
+                if (currentQIndex >= quizQuestions.length) {
+                    quizArea.innerHTML = `
+                        <div style="text-align:center; padding:20px;">
+                            <h2 style="color:var(--accent-green); margin-bottom:15px;">🎉 Quiz Complete! 🎉</h2>
+                            <p style="font-size:1.2rem;">You got <strong>${score.correct}</strong> correct out of <strong>${score.total}</strong>.</p>
+                            <button class="btn btn-start" onclick="location.reload()" style="margin-top:20px;">Play Again 🔄</button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const data = quizQuestions[currentQIndex];
+                isAnswered = false;
+                feedbackEl.textContent = '';
+                nextBtn.classList.add('hidden');
+                qCurrentEl.textContent = currentQIndex + 1;
+
+                // Set Question & Image
+                if (data.img) {
+                    quizImg.style.display = 'flex';
+                    quizImg.textContent = "🖼️ " + data.img;
+                    questionTextEl.textContent = `Q${currentQIndex + 1}: ` + data.q.replace(/\[Image:.*?\]/, "").trim();
+                } else {
+                    quizImg.style.display = 'none';
+                    questionTextEl.textContent = `Q${currentQIndex + 1}: ${data.q}`;
+                }
+
+                // Set Options
+                optionsContainer.innerHTML = '';
+                // Cycle card colors based on index
+                const cardColors = ['#FFF9C4', '#BBDEFB', '#C8E6C9']; // Yellow, Blue, Green
+                document.getElementById('quiz-card').style.backgroundColor = cardColors[currentQIndex % 3];
+
+                data.opts.forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.textContent = opt;
+                    btn.onclick = () => checkAnswer(idx, btn);
+                    optionsContainer.appendChild(btn);
+                });
+            };
+
+            // Check Answer
+            window.checkAnswer = function(selectedIdx, btn) {
+                if (isAnswered) return;
+                isAnswered = true;
+
+                const data = quizQuestions[currentQIndex];
+                const correctIdx = data.a;
+
+                if (selectedIdx === correctIdx) {
+                    btn.classList.add('correct');
+                    feedbackEl.textContent = "Excellent ⭐";
+                    feedbackEl.style.color = "var(--accent-green)";
+                    score.correct++;
+                } else {
+                    btn.classList.add('wrong');
+                    feedbackEl.textContent = "Try Again ❌";
+                    feedbackEl.style.color = "var(--accent-red)";
+                    // Highlight correct
+                    optionsContainer.children[correctIdx].classList.add('correct');
+                    score.wrong++;
+                }
+
+                score.total++;
+                updateScoreBoard();
+                nextBtn.classList.remove('hidden');
+            };
+
+            // Update Score
+            function updateScoreBoard() {
+                scoreCorrectEl.textContent = score.correct;
+                scoreWrongEl.textContent = score.wrong;
+                scoreTotalEl.textContent = score.total;
+            }
+
+            // Next Question
+            window.nextQuestion = function() {
+                currentQIndex++;
+                loadQuestion();
+            };
+
+            // Toggle Revision
+            window.toggleRevision = function() {
+                const el = document.getElementById('revision-content');
+                el.classList.toggle('hidden');
+            };
+
+            // Run Init
+            init();
+        });
+    </script>
+</body>
+</html>

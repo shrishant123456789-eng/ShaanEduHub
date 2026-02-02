@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>class3-english-ch7.html</title>
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            --pastel-yellow: #FFF9C4;
+            --pastel-green: #C8E6C9;
+            --pastel-blue: #BBDEFB;
+            --pastel-orange: #FFE0B2;
+            --pastel-pink: #F8BBD0;
+            --white: #FFFFFF;
+            --text-dark: #37474F;
+            --accent-green: #2E7D32;
+            --accent-red: #C62828;
+            --accent-blue: #1565C0;
+            --border-radius: 20px;
+            --shadow: 0 4px 8px rgba(0,0,0,0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* --- GLOBAL TYPOGRAPHY (STRICT RULE) --- */
+        body {
+            font-family: 'Comic Sans MS', 'Comic Sans', 'Chalkboard SE', 'Marker Felt', cursive;
+            font-weight: bold;
+            color: var(--text-dark);
+            background: linear-gradient(180deg, var(--pastel-yellow) 0%, #FFFFFF 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+            padding-bottom: 50px;
+        }
+
+        /* --- UTILITIES --- */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+            transition: transform 0.1s;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 0 rgba(0,0,0,0.1);
+        }
+
+        .btn-start {
+            background: linear-gradient(90deg, var(--pastel-green), var(--pastel-blue));
+            color: var(--text-dark);
+            width: 80%;
+            max-width: 300px;
+            margin-top: 15px;
+        }
+
+        .btn-revise {
+            background-color: var(--pastel-orange);
+            color: var(--text-dark);
+            width: 100%;
+        }
+
+        /* --- HEADER / HERO --- */
+        .hero {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.5);
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 {
+            font-size: 2rem;
+            color: var(--accent-blue);
+            margin-bottom: 5px;
+        }
+
+        .hero h2 {
+            font-size: 1.2rem;
+            color: #546E7A;
+            margin-bottom: 15px;
+        }
+
+        .quote {
+            font-size: 1.4rem;
+            color: var(--accent-green);
+            margin: 15px 0;
+            padding: 10px;
+        }
+
+        .branding {
+            font-size: 0.9rem;
+            color: #90A4AE;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* --- LIVE SCORE PANEL --- */
+        .score-panel {
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+            background: #FFFBEE;
+            margin: 0 15px 25px 15px;
+            padding: 10px;
+            border-radius: 15px;
+            border: 3px solid;
+            border-image: linear-gradient(to right, var(--pastel-green), var(--pastel-blue)) 1;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-around;
+            max-width: 770px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .score-item span:first-child {
+            display: block;
+            font-size: 0.8rem;
+            color: #78909C;
+            text-transform: uppercase;
+        }
+
+        .score-item span:last-child {
+            font-size: 1.3rem;
+        }
+
+        /* --- CARDS GENERAL --- */
+        .card {
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s;
+            border: 2px solid rgba(0,0,0,0.05);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+            color: var(--accent-blue);
+            text-decoration: underline;
+            text-decoration-color: var(--pastel-orange);
+            text-decoration-thickness: 4px;
+        }
+
+        /* --- NOTES SECTION --- */
+        .note-card {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .note-card:nth-child(odd) { background-color: var(--pastel-blue); }
+        .note-card:nth-child(even) { background-color: var(--pastel-green); }
+        .note-card:nth-child(3n) { background-color: var(--pastel-yellow); }
+        .note-card:nth-child(4n) { background-color: var(--pastel-orange); }
+
+        .note-title {
+            font-size: 1.2rem;
+            color: #000;
+            margin-bottom: 8px;
+            text-decoration: underline;
+        }
+
+        .example-box {
+            background: rgba(255,255,255,0.7);
+            padding: 8px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 5px solid var(--accent-blue);
+        }
+
+        .tip-box {
+            font-size: 0.9rem;
+            background: #FFFDE7;
+            padding: 8px;
+            border-radius: 8px;
+            border: 2px dashed #FBC02D;
+            margin-top: 10px;
+        }
+
+        .img-placeholder {
+            width: 100%;
+            height: 100px;
+            background: rgba(255,255,255,0.5);
+            border: 2px dashed #999;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        /* --- IMPORTANT QUESTIONS --- */
+        .imp-q-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 8px solid;
+            border-image: linear-gradient(to bottom, var(--pastel-pink), var(--pastel-blue)) 1;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .imp-ans {
+            color: var(--accent-green);
+            margin-top: 5px;
+        }
+
+        .imp-exp {
+            font-size: 0.9rem;
+            color: #78909C;
+            margin-top: 2px;
+        }
+
+        /* --- QUIZ SECTION --- */
+        #quiz-card {
+            background-color: var(--white);
+            border: 4px solid var(--pastel-blue);
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .options-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background-color: #E3F2FD;
+            border: 2px solid #BBDEFB;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            text-align: left;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-family: inherit;
+            font-weight: bold;
+        }
+
+        .option-btn:hover {
+            background-color: #C8E6C9;
+            border-color: #81C784;
+        }
+
+        .option-btn.correct {
+            background-color: #A5D6A7;
+            border-color: #2E7D32;
+            color: #1B5E20;
+        }
+
+        .option-btn.wrong {
+            background-color: #EF9A9A;
+            border-color: #C62828;
+            color: #B71C1C;
+        }
+
+        .feedback-text {
+            text-align: center;
+            margin: 15px 0;
+            min-height: 24px;
+            font-size: 1.2rem;
+        }
+
+        /* --- REVISION --- */
+        .revision-section {
+            background-color: #E8F5E9;
+        }
+
+        .revision-list {
+            list-style: none;
+        }
+
+        .revision-list li {
+            padding: 10px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .revision-list li::before {
+            content: "•";
+            color: var(--accent-blue);
+            font-size: 1.5rem;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            padding: 30px 10px;
+            color: #90A4AE;
+            font-size: 0.9rem;
+            background: #FAFAFA;
+            margin-top: 40px;
+            border-top: 2px solid #EEE;
+        }
+
+        @media (max-width: 400px) {
+            .hero h1 { font-size: 1.8rem; }
+            .score-panel { font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="hero">
+        <span class="branding">ShanEduHub</span>
+        <h1>Tenses & Time Words</h1>
+        <h2>Class 3 – English</h2>
+        <div class="quote">"Time flies, but you are the pilot!"</div>
+        <div style="font-size: 3.5rem; margin: 10px 0;">⏰</div>
+        <button class="btn btn-start" onclick="document.getElementById('notes-section').scrollIntoView({behavior: 'smooth'})">Start Learning</button>
+    </header>
+
+    <div class="score-panel">
+        <div class="score-item">
+            <span>Correct</span>
+            <span id="score-correct" style="color: var(--accent-green);">0</span>
+        </div>
+        <div class="score-item">
+            <span>Wrong</span>
+            <span id="score-wrong" style="color: var(--accent-red);">0</span>
+        </div>
+        <div class="score-item">
+            <span>Total</span>
+            <span id="score-total" style="color: var(--accent-blue);">0</span>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <section id="notes-section" class="card" style="background: #FFF;">
+            <h2 class="section-title">Chapter Notes</h2>
+
+            <div class="note-card">
+                <div class="note-title">1. What are Tenses?</div>
+                <p>Tenses tell us <strong>WHEN</strong> something happens. It is all about time.</p>
+                <div class="example-box">
+                    <strong>Past:</strong> Before now.<br>
+                    <strong>Present:</strong> Happening now.<br>
+                    <strong>Future:</strong> Will happen later.
+                </div>
+                <div class="tip-box">💡 Remember: Time flows like a river. Past -> Present -> Future.</div>
+                <div class="img-placeholder">[Image: Timeline showing Yesterday, Today, Tomorrow]</div>
+            </div>
+
+            <div class="note-card">
+                <div class="note-title">2. Present Tense (Now)</div>
+                <p>We use this for things happening <strong>today</strong> or every day.</p>
+                <div class="example-box">
+                    I <strong>play</strong> football.<br>
+                    She <strong>eats</strong> an apple.
+                </div>
+                <div class="tip-box">💡 For He/She/It, we add 's' or 'es' to the verb (Runs, Goes).</div>
+            </div>
+
+            <div class="note-card">
+                <div class="note-title">3. Past Tense (Before)</div>
+                <p>We use this for things that <strong>already happened</strong>.</p>
+                <div class="example-box">
+                    I <strong>played</strong> football yesterday.<br>
+                    She <strong>ate</strong> an apple.
+                </div>
+                <div class="tip-box">💡 Many past words end with 'ed' (Walked, Talked).</div>
+            </div>
+
+            <div class="note-card">
+                <div class="note-title">4. Future Tense (Later)</div>
+                <p>We use this for things that <strong>will happen</strong> later.</p>
+                <div class="example-box">
+                    I <strong>will play</strong> football tomorrow.<br>
+                    She <strong>will eat</strong> an apple.
+                </div>
+                <div class="tip-box">💡 Magic Word: "Will". Just add "Will" before the verb!</div>
+            </div>
+
+            <div class="note-card">
+                <div class="note-title">5. Time Words</div>
+                <p>Special words help us guess the tense.</p>
+                <div class="example-box">
+                    <strong>Yesterday</strong> = Past (Was/Were)<br>
+                    <strong>Today / Now</strong> = Present (Is/Am/Are)<br>
+                    <strong>Tomorrow</strong> = Future (Will)
+                </div>
+                <div class="img-placeholder">[Image: Calendar icon highlighting dates]</div>
+            </div>
+        </section>
+
+        <section class="card" style="background: #FAFAFA;">
+            <h2 class="section-title">Important Questions</h2>
+            <div id="imp-questions-container">
+                </div>
+        </section>
+
+        <section id="quiz-card" class="card">
+            <h2 class="section-title">Practice Quiz</h2>
+            
+            <div id="quiz-area">
+                <div class="img-placeholder" id="quiz-img" style="display:none; height:120px; margin-bottom:15px;"></div>
+                <div class="question-text" id="question-text">Loading Question...</div>
+                
+                <div class="options-grid" id="options-container">
+                    </div>
+
+                <div class="feedback-text" id="feedback"></div>
+                
+                <button id="next-btn" class="btn btn-revise hidden" onclick="nextQuestion()">Next Question ➡</button>
+            </div>
+            
+            <div style="text-align: center; margin-top: 20px; color: #BBB;">
+                Question <span id="q-current">0</span> / <span id="q-total">0</span>
+            </div>
+        </section>
+
+        <section class="card revision-section">
+            <h2 class="section-title">Quick Revision</h2>
+            <button class="btn btn-revise" onclick="toggleRevision()">Show/Hide Summary</button>
+            <div id="revision-content" class="hidden" style="margin-top: 15px;">
+                <ul class="revision-list">
+                    <li><strong>Present:</strong> Happens now. (I walk)</li>
+                    <li><strong>Past:</strong> Already happened. (I walked)</li>
+                    <li><strong>Future:</strong> Will happen. (I will walk)</li>
+                    <li><strong>Yesterday</strong> is for Past Tense.</li>
+                    <li><strong>Tomorrow</strong> is for Future Tense.</li>
+                    <li><strong>Is/Am/Are</strong> = Present. <strong>Was/Were</strong> = Past.</li>
+                </ul>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        Designed & Created by SHRISHANT YADAV<br>
+        2026 – ShanEduHub
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            /* --- DATA: Important Questions (30) --- */
+            const impQuestions = [
+                { q: "What is the past tense of 'Play'?", a: "Played", exp: "Add 'ed' for past." },
+                { q: "What is the past tense of 'Go'?", a: "Went", exp: "Go changes to Went." },
+                { q: "What time word is for the future?", a: "Tomorrow", exp: "The day after today." },
+                { q: "What time word is for the past?", a: "Yesterday", exp: "The day before today." },
+                { q: "Complete: I ____ to school yesterday.", a: "Went", exp: "Yesterday means past tense." },
+                { q: "Complete: I ____ go tomorrow.", a: "Will", exp: "Tomorrow means future tense." },
+                { q: "Past tense of 'Is'?", a: "Was", exp: "Is -> Was." },
+                { q: "Past tense of 'Are'?", a: "Were", exp: "Are -> Were." },
+                { q: "Future tense of 'Jump'?", a: "Will Jump", exp: "Add 'Will' before the verb." },
+                { q: "Present tense for 'He' + 'Run'?", a: "Runs", exp: "Add 's' for He/She/It." },
+                { q: "Past tense of 'Eat'?", a: "Ate", exp: "Irregular verb: Eat -> Ate." },
+                { q: "Which word means 'Now'?", a: "Today", exp: "Present time." },
+                { q: "Correct: 'She will plays.'", a: "She will play.", exp: "No 's' after 'will'." },
+                { q: "Correct: 'I goed there.'", a: "I went there.", exp: "Go becomes Went." },
+                { q: "Verb form: Yesterday I ____ (watch).", a: "Watched", exp: "Add 'ed'." },
+                { q: "Verb form: Now I ____ (read).", a: "Am reading / Read", exp: "Present action." },
+                { q: "Past tense of 'See'?", a: "Saw", exp: "See -> Saw." },
+                { q: "Past tense of 'Come'?", a: "Came", exp: "Come -> Came." },
+                { q: "Identify Tense: 'I was happy.'", a: "Past", exp: "'Was' is past." },
+                { q: "Identify Tense: 'I am happy.'", a: "Present", exp: "'Am' is present." },
+                { q: "Identify Tense: 'I will be happy.'", a: "Future", exp: "'Will' is future." },
+                { q: "Past tense of 'Have'?", a: "Had", exp: "Have -> Had." },
+                { q: "Does 'Did' show past or future?", a: "Past", exp: "Did is past of Do." },
+                { q: "Complete: The sun ____ yesterday.", a: "Shone", exp: "Past of Shine." },
+                { q: "Complete: We ____ friends.", a: "Are/Were", exp: "Depends on time." },
+                { q: "Is 'Tomorrow' past?", a: "No", exp: "It is future." },
+                { q: "Is 'Yesterday' future?", a: "No", exp: "It is past." },
+                { q: "Past of 'Walk'?", a: "Walked", exp: "Regular verb." },
+                { q: "Past of 'Talk'?", a: "Talked", exp: "Regular verb." },
+                { q: "Tense of 'It rained.'", a: "Past", exp: "Ends in 'ed'." }
+            ];
+
+            /* --- DATA: Practice Quiz (60) --- */
+            const quizQuestions = [
+                // Set 1: Identify Tense
+                { q: "I walked home. (Tense?)", opts: ["Past", "Present", "Future"], a: 0 },
+                { q: "She will dance. (Tense?)", opts: ["Past", "Present", "Future"], a: 2 },
+                { q: "He plays cricket. (Tense?)", opts: ["Past", "Present", "Future"], a: 1 },
+                { q: "We were tired. (Tense?)", opts: ["Past", "Present", "Future"], a: 0 },
+                { q: "It is sunny. (Tense?)", opts: ["Past", "Present", "Future"], a: 1 },
+                { q: "They will come. (Tense?)", opts: ["Past", "Present", "Future"], a: 2 },
+                { q: "I ate pizza. (Tense?)", opts: ["Past", "Present", "Future"], a: 0 },
+                { q: "She is reading. (Tense?)", opts: ["Past", "Present", "Future"], a: 1 },
+                { q: "The dog barked. (Tense?)", opts: ["Past", "Present", "Future"], a: 0 },
+                { q: "I will sleep. (Tense?)", opts: ["Past", "Present", "Future"], a: 2 },
+
+                // Set 2: Fill in the Blanks (Verbs)
+                { q: "Yesterday I ____ to the park.", opts: ["go", "went", "will go"], a: 1 },
+                { q: "Tomorrow I ____ my grandma.", opts: ["visit", "visited", "will visit"], a: 2 },
+                { q: "Today she ____ a song.", opts: ["sings", "sang", "will sing"], a: 0 },
+                { q: "Last night we ____ TV.", opts: ["watch", "watched", "will watch"], a: 1 },
+                { q: "He ____ hungry now.", opts: ["is", "was", "were"], a: 0 },
+                { q: "They ____ here yesterday.", opts: ["are", "were", "will be"], a: 1 },
+                { q: "I ____ happy tomorrow.", opts: ["am", "was", "will be"], a: 2 },
+                { q: "The bird ____ away yesterday.", opts: ["fly", "flew", "flies"], a: 1 },
+                { q: "We ____ lunch now.", opts: ["eat", "ate", "will eat"], a: 0 },
+                { q: "She ____ her homework last week.", opts: ["do", "did", "does"], a: 1 },
+
+                // Set 3: Time Words
+                { q: "____ implies Past Tense.", opts: ["Tomorrow", "Yesterday", "Next week"], a: 1 },
+                { q: "____ implies Future Tense.", opts: ["Yesterday", "Last year", "Tomorrow"], a: 2 },
+                { q: "____ implies Present Tense.", opts: ["Today", "Yesterday", "Last month"], a: 0 },
+                { q: "'Last Sunday' is...", opts: ["Past", "Future", "Present"], a: 0 },
+                { q: "'Next Monday' is...", opts: ["Past", "Future", "Present"], a: 1 },
+                { q: "I saw him ____.", opts: ["tomorrow", "yesterday", "next week"], a: 1 },
+                { q: "I will see him ____.", opts: ["yesterday", "tomorrow", "last week"], a: 1 },
+                { q: "He is here ____.", opts: ["yesterday", "now", "tomorrow"], a: 1 },
+                { q: "'Before' relates to...", opts: ["Past", "Future", "Now"], a: 0 },
+                { q: "'Later' relates to...", opts: ["Past", "Future", "Now"], a: 1 },
+
+                // Set 4: Helper Verbs (Is/Am/Are/Was/Were)
+                { q: "I ____ happy today.", opts: ["am", "was", "were"], a: 0 },
+                { q: "I ____ sad yesterday.", opts: ["am", "was", "were"], a: 1 },
+                { q: "They ____ busy now.", opts: ["are", "were", "was"], a: 0 },
+                { q: "They ____ busy last night.", opts: ["are", "were", "was"], a: 1 },
+                { q: "She ____ my friend now.", opts: ["is", "was", "were"], a: 0 },
+                { q: "She ____ my friend before.", opts: ["is", "was", "were"], a: 1 },
+                { q: "We ____ at school today.", opts: ["are", "were", "was"], a: 0 },
+                { q: "We ____ at home yesterday.", opts: ["are", "were", "was"], a: 1 },
+                { q: "It ____ cold today.", opts: ["is", "was", "were"], a: 0 },
+                { q: "It ____ hot yesterday.", opts: ["is", "was", "were"], a: 1 },
+
+                // Set 5: Regular vs Irregular
+                { q: "Past of 'Walk'?", opts: ["Walked", "Walks", "Walking"], a: 0 },
+                { q: "Past of 'Run'?", opts: ["Runned", "Ran", "Running"], a: 1 },
+                { q: "Past of 'Jump'?", opts: ["Jumped", "Jumps", "Jumping"], a: 0 },
+                { q: "Past of 'Sleep'?", opts: ["Sleeped", "Slept", "Sleeps"], a: 1 },
+                { q: "Past of 'Cook'?", opts: ["Cooked", "Cooks", "Cooking"], a: 0 },
+                { q: "Past of 'Teach'?", opts: ["Teached", "Taught", "Teaching"], a: 1 },
+                { q: "Past of 'Open'?", opts: ["Opened", "Opens", "Opening"], a: 0 },
+                { q: "Past of 'Buy'?", opts: ["Buyed", "Bought", "Buying"], a: 1 },
+                { q: "Past of 'Look'?", opts: ["Looked", "Looks", "Looking"], a: 0 },
+                { q: "Past of 'Catch'?", opts: ["Catched", "Caught", "Catching"], a: 1 },
+
+                // Set 6: Thinking / Picture / Mixed
+                { q: "True/False: 'Will' is for Past.", opts: ["True", "False"], a: 1 },
+                { q: "True/False: 'Yesterday' is Future.", opts: ["True", "False"], a: 1 },
+                { q: "True/False: 'Ed' ending often means Past.", opts: ["True", "False"], a: 0 },
+                { q: "[Image: 🌙] I sleep at night. (Tense?)", opts: ["Present", "Past", "Future"], a: 0, img: "Moon" },
+                { q: "[Image: 🎂] I had a cake yesterday. (Tense?)", opts: ["Present", "Past", "Future"], a: 1, img: "Cake" },
+                { q: "[Image: 🚀] We will go to the moon. (Tense?)", opts: ["Present", "Past", "Future"], a: 2, img: "Rocket" },
+                { q: "Which sentence is correct?", opts: ["I will played.", "I will play."], a: 1 },
+                { q: "Which sentence is correct?", opts: ["She goed home.", "She went home."], a: 1 },
+                { q: "Which sentence is correct?", opts: ["He runs fast.", "He run fast."], a: 0 },
+                { q: "Last One: Do you know Tenses?", opts: ["Yes", "No"], a: 0 }
+            ];
+
+            /* --- APP LOGIC --- */
+            let currentQIndex = 0;
+            let score = { correct: 0, wrong: 0, total: 0 };
+            let isAnswered = false;
+
+            // DOM Elements
+            const scoreCorrectEl = document.getElementById('score-correct');
+            const scoreWrongEl = document.getElementById('score-wrong');
+            const scoreTotalEl = document.getElementById('score-total');
+            const quizArea = document.getElementById('quiz-area');
+            const questionTextEl = document.getElementById('question-text');
+            const optionsContainer = document.getElementById('options-container');
+            const feedbackEl = document.getElementById('feedback');
+            const nextBtn = document.getElementById('next-btn');
+            const qCurrentEl = document.getElementById('q-current');
+            const qTotalEl = document.getElementById('q-total');
+            const impContainer = document.getElementById('imp-questions-container');
+            const quizImg = document.getElementById('quiz-img');
+
+            // Init
+            function init() {
+                renderImpQuestions();
+                qTotalEl.textContent = quizQuestions.length;
+                loadQuestion();
+            }
+
+            // Render Important Questions
+            function renderImpQuestions() {
+                let html = '';
+                impQuestions.forEach((item, index) => {
+                    html += `
+                        <div class="imp-q-card">
+                            <div style="font-size:1.1rem;">Q${index + 1}: ${item.q}</div>
+                            <div class="imp-ans">Ans: ${item.a}</div>
+                            <div class="imp-exp">(${item.exp})</div>
+                        </div>
+                    `;
+                });
+                impContainer.innerHTML = html;
+            }
+
+            // Load Quiz Question
+            window.loadQuestion = function() {
+                if (currentQIndex >= quizQuestions.length) {
+                    quizArea.innerHTML = `
+                        <div style="text-align:center; padding:20px;">
+                            <h2 style="color:var(--accent-green); margin-bottom:15px;">🎉 Quiz Complete! 🎉</h2>
+                            <p style="font-size:1.2rem;">You got <strong>${score.correct}</strong> correct out of <strong>${score.total}</strong>.</p>
+                            <button class="btn btn-start" onclick="location.reload()" style="margin-top:20px;">Play Again 🔄</button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const data = quizQuestions[currentQIndex];
+                isAnswered = false;
+                feedbackEl.textContent = '';
+                nextBtn.classList.add('hidden');
+                qCurrentEl.textContent = currentQIndex + 1;
+
+                // Set Question & Image
+                if (data.img) {
+                    quizImg.style.display = 'flex';
+                    quizImg.textContent = "🖼️ " + data.img;
+                    questionTextEl.textContent = `Q${currentQIndex + 1}: ` + data.q.replace(/\[Image:.*?\]/, "").trim();
+                } else {
+                    quizImg.style.display = 'none';
+                    questionTextEl.textContent = `Q${currentQIndex + 1}: ${data.q}`;
+                }
+
+                // Set Options
+                optionsContainer.innerHTML = '';
+                // Cycle card colors based on index
+                const cardColors = ['#FFF9C4', '#BBDEFB', '#C8E6C9']; // Yellow, Blue, Green
+                document.getElementById('quiz-card').style.backgroundColor = cardColors[currentQIndex % 3];
+
+                data.opts.forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.textContent = opt;
+                    btn.onclick = () => checkAnswer(idx, btn);
+                    optionsContainer.appendChild(btn);
+                });
+            };
+
+            // Check Answer
+            window.checkAnswer = function(selectedIdx, btn) {
+                if (isAnswered) return;
+                isAnswered = true;
+
+                const data = quizQuestions[currentQIndex];
+                const correctIdx = data.a;
+
+                if (selectedIdx === correctIdx) {
+                    btn.classList.add('correct');
+                    feedbackEl.textContent = "Excellent ⭐";
+                    feedbackEl.style.color = "var(--accent-green)";
+                    score.correct++;
+                } else {
+                    btn.classList.add('wrong');
+                    feedbackEl.textContent = "Try Again ❌";
+                    feedbackEl.style.color = "var(--accent-red)";
+                    // Highlight correct
+                    optionsContainer.children[correctIdx].classList.add('correct');
+                    score.wrong++;
+                }
+
+                score.total++;
+                updateScoreBoard();
+                nextBtn.classList.remove('hidden');
+            };
+
+            // Update Score
+            function updateScoreBoard() {
+                scoreCorrectEl.textContent = score.correct;
+                scoreWrongEl.textContent = score.wrong;
+                scoreTotalEl.textContent = score.total;
+            }
+
+            // Next Question
+            window.nextQuestion = function() {
+                currentQIndex++;
+                loadQuestion();
+            };
+
+            // Toggle Revision
+            window.toggleRevision = function() {
+                const el = document.getElementById('revision-content');
+                el.classList.toggle('hidden');
+            };
+
+            // Run Init
+            init();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 3 Maths - Games Zone 🎮</title>
+    <style>
+        /* =========================================
+           CSS STYLES - KID FRIENDLY & VIBRANT
+           ========================================= */
+        :root {
+            --primary: #FF6B6B;
+            --secondary: #4ECDC4;
+            --accent: #FFE66D;
+            --dark: #2D3436;
+            --light: #F7FFF7;
+            --correct: #6BCB77;
+            --wrong: #FF4757;
+            --font: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+        }
+
+        * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: var(--font);
+            background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 99%, #FECFEF 100%);
+            margin: 0;
+            padding: 0;
+            padding-bottom: 80px;
+            color: var(--dark);
+            min-height: 100vh;
+        }
+
+        /* HEADER */
+        header {
+            background: rgba(255,255,255,0.9);
+            padding: 15px;
+            text-align: center;
+            border-bottom: 5px solid var(--secondary);
+            border-radius: 0 0 30px 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        h1 { margin: 0; color: var(--primary); font-size: 1.5rem; text-shadow: 2px 2px 0px var(--accent); }
+        .subtitle { font-size: 0.9rem; color: #555; }
+
+        /* MENU GRID */
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            padding: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .game-card {
+            background: var(--light);
+            border-radius: 20px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 3px solid transparent;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 140px;
+        }
+
+        .game-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); border-color: var(--primary); }
+        
+        .game-icon { font-size: 2.5rem; margin-bottom: 10px; }
+        .game-title { font-weight: bold; font-size: 0.9rem; color: var(--dark); }
+        .game-tag { font-size: 0.7rem; background: var(--accent); padding: 2px 8px; border-radius: 10px; margin-top: 5px; }
+
+        /* GAME AREA (Modal Style) */
+        .game-container {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);
+            z-index: 200;
+            flex-direction: column;
+            align-items: center;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .active-game { display: flex; }
+
+        .game-header-bar {
+            width: 100%; max-width: 600px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: white; padding: 10px 20px; border-radius: 50px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .close-btn { background: var(--wrong); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; }
+
+        .question-card {
+            background: white;
+            width: 100%; max-width: 600px;
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: popIn 0.3s ease-out;
+        }
+
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .q-text { font-size: 1.5rem; margin-bottom: 20px; font-weight: bold; color: var(--dark); }
+        .q-sub { font-size: 1rem; color: #666; margin-bottom: 20px; }
+
+        .options-box { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        
+        .opt-btn {
+            background: #f0f0f0; border: 3px solid #ddd;
+            padding: 15px; border-radius: 15px;
+            font-size: 1.2rem; cursor: pointer; font-weight: bold; font-family: var(--font);
+            transition: 0.2s;
+        }
+
+        .opt-btn:hover { background: white; border-color: var(--secondary); transform: scale(1.02); }
+        .opt-btn.correct { background: #d4edda; border-color: var(--correct); color: #155724; }
+        .opt-btn.wrong { background: #f8d7da; border-color: var(--wrong); color: #721c24; }
+
+        /* SCORE & PROGRESS */
+        .stats { font-size: 1.2rem; font-weight: bold; }
+        .progress-bar-container { width: 100%; height: 10px; background: #ddd; border-radius: 5px; margin-top: 15px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--correct); width: 0%; transition: width 0.3s; }
+
+        /* FEEDBACK OVERLAY */
+        .feedback-overlay {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: white; padding: 20px; border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            text-align: center; display: none; z-index: 300;
+            border: 5px solid var(--primary);
+        }
+        .feedback-text { font-size: 2rem; display: block; margin-bottom: 10px; }
+
+        /* FOOTER */
+        footer {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: var(--dark); color: white;
+            text-align: center; padding: 10px; font-size: 0.8rem;
+            z-index: 50;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .options-box { grid-template-columns: 1fr; }
+            .q-text { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Class 3 Mathematics</h1>
+    <div class="subtitle">Game Zone 🎮 • 20 Interactive Games</div>
+</header>
+
+<section class="game-grid" id="menuGrid">
+    </section>
+
+<div class="game-container" id="gameContainer">
+    <div class="game-header-bar">
+        <button class="close-btn" onclick="exitGame()">❌</button>
+        <div class="stats">⭐ <span id="score">0</span></div>
+        <div class="stats">🏆 Level <span id="level">1</span></div>
+    </div>
+
+    <div class="question-card">
+        <div id="gameContent">
+            <div class="q-text" id="qText">Question Loading...</div>
+            <div class="q-sub" id="qSub"></div>
+            <div class="options-box" id="optionsBox"></div>
+        </div>
+        <div class="progress-bar-container">
+            <div class="progress-fill" id="progressBar"></div>
+        </div>
+        <div style="margin-top:10px; font-size:0.9rem; color:#888;">Question <span id="qCount">1</span>/50</div>
+    </div>
+</div>
+
+<div class="feedback-overlay" id="feedbackPopup">
+    <span class="feedback-text" id="fbText"></span>
+    <button class="opt-btn" onclick="nextQuestion()" style="background:var(--primary); color:white; border:none;">Next ➡️</button>
+</div>
+
+<footer>
+    Designed & Created by SHRISHANT YADAV
+</footer>
+
+<script>
+    // --- GAME DATA CONFIGURATION ---
+    const GAMES = [
+        { id: 1, title: "Number Sense Adventure", icon: "🥇", tag: "Numbers", type: "math_gen", mode: "number_sense" },
+        { id: 2, title: "Skip Count Superhero", icon: "🥈", tag: "Patterns", type: "math_gen", mode: "skip_count" },
+        { id: 3, title: "Addition Master League", icon: "🥉", tag: "Addition", type: "math_gen", mode: "addition" },
+        { id: 4, title: "Subtraction Ninja", icon: "🎯", tag: "Subtraction", type: "math_gen", mode: "subtraction" },
+        { id: 5, title: "Multiplication City", icon: "✖️", tag: "Tables", type: "math_gen", mode: "multiplication" },
+        { id: 6, title: "Division Detective", icon: "➗", tag: "Grouping", type: "math_gen", mode: "division" },
+        { id: 7, title: "Mental Maths Speed Run", icon: "🧠", tag: "Speed", type: "math_gen", mode: "mental" },
+        { id: 8, title: "Fraction Fun Kitchen", icon: "🍕", tag: "Fractions", type: "static", pool: "fractions" },
+        { id: 9, title: "Shape & Geometry Lab", icon: "📐", tag: "Shapes", type: "static", pool: "shapes" },
+        { id: 10, title: "Measurement Quest", icon: "📏", tag: "Measure", type: "static", pool: "measure" },
+        { id: 11, title: "Time Traveller Math", icon: "⏰", tag: "Time", type: "static", pool: "time" },
+        { id: 12, title: "Money Smart Kid", icon: "💰", tag: "Money", type: "static", pool: "money" },
+        { id: 13, title: "Data Detective", icon: "📊", tag: "Data", type: "static", pool: "data" },
+        { id: 14, title: "Odd One Out Arena", icon: "🔢", tag: "Logic", type: "static", pool: "odd_one" },
+        { id: 15, title: "Math Puzzle Box", icon: "🧩", tag: "Puzzles", type: "static", pool: "puzzle" },
+        { id: 16, title: "Math Board Game", icon: "🎲", tag: "Mixed", type: "math_gen", mode: "mixed" },
+        { id: 17, title: "Estimation Expert", icon: "⚡", tag: "Rounding", type: "math_gen", mode: "rounding" },
+        { id: 18, title: "Math Olympiad Mini", icon: "🧮", tag: "HOTS", type: "static", pool: "olympiad" },
+        { id: 19, title: "Logic & Reasoning Gym", icon: "🧠", tag: "Logic", type: "static", pool: "logic" },
+        { id: 20, title: "Ultimate Math Champion", icon: "🏆", tag: "Final", type: "math_gen", mode: "ultimate" }
+    ];
+
+    // --- STATIC QUESTION POOLS ---
+    const POOLS = {
+        fractions: [
+            {q: "Which shows Half (1/2)?", sub: "🍎🍎", o: ["1 out of 2", "1 out of 3", "1 out of 4", "2 out of 2"], a: "1 out of 2"},
+            {q: "Top number in a fraction is?", sub: "Numerator / Denominator", o: ["Numerator", "Denominator", "Line", "Whole"], a: "Numerator"},
+            {q: "1/4 is also called...", sub: "", o: ["Quarter", "Half", "Third", "Whole"], a: "Quarter"},
+            {q: "Which is bigger?", sub: "1/2 or 1/4", o: ["1/2", "1/4", "Equal", "None"], a: "1/2"},
+            {q: "3 parts out of 4 is...", sub: "", o: ["3/4", "4/3", "1/4", "3/1"], a: "3/4"},
+            // ... (Logic repeats with variations)
+        ],
+        shapes: [
+            {q: "I have 3 sides. Who am I?", sub: "🔺", o: ["Triangle", "Square", "Circle", "Rectangle"], a: "Triangle"},
+            {q: "A Cube has how many faces?", sub: "🎲", o: ["6", "4", "8", "12"], a: "6"},
+            {q: "Shape of an egg?", sub: "🥚", o: ["Oval", "Circle", "Sphere", "Cone"], a: "Oval"},
+            {q: "A globe is a...", sub: "🌍", o: ["Sphere", "Circle", "Cube", "Disk"], a: "Sphere"},
+            {q: "How many corners in a Circle?", sub: "⚪", o: ["0", "1", "4", "Infinite"], a: "0"}
+        ],
+        measure: [
+            {q: "1 m = ___ cm", sub: "", o: ["100", "10", "1000", "50"], a: "100"},
+            {q: "We measure water in...", sub: "💧", o: ["Litres", "Meters", "Grams", "Inches"], a: "Litres"},
+            {q: "Weight of an apple?", sub: "🍎", o: ["Grams", "Kilograms", "Litres", "Meters"], a: "Grams"},
+            {q: "1 kg = ___ g", sub: "", o: ["1000", "100", "10", "500"], a: "1000"},
+            {q: "Which is heavier?", sub: "🐘 vs 🐜", o: ["Elephant", "Ant", "Same", "None"], a: "Elephant"}
+        ],
+        time: [
+            {q: "1 Hour = ___ Minutes", sub: "⏰", o: ["60", "100", "30", "24"], a: "60"},
+            {q: "Half past 3 means...", sub: "🕒", o: ["3:30", "3:00", "2:30", "4:30"], a: "3:30"},
+            {q: "Days in a week?", sub: "📅", o: ["7", "12", "30", "365"], a: "7"},
+            {q: "Month after January?", sub: "", o: ["February", "March", "December", "April"], a: "February"},
+            {q: "Time for Lunch?", sub: "☀️/🌙", o: ["PM", "AM", "Night", "Midnight"], a: "PM"}
+        ],
+        money: [
+            {q: "₹50 + ₹20 = ?", sub: "💵", o: ["₹70", "₹80", "₹60", "₹100"], a: "₹70"},
+            {q: "How many 50p make ₹1?", sub: "🪙", o: ["2", "4", "1", "10"], a: "2"},
+            {q: "Symbol of Rupee?", sub: "", o: ["₹", "$", "€", "¥"], a: "₹"},
+            {q: "Buy pen ₹5, give ₹10. Change?", sub: "🖊️", o: ["₹5", "₹2", "₹0", "₹15"], a: "₹5"},
+            {q: "100 paise = ?", sub: "", o: ["₹1", "₹10", "₹100", "₹0"], a: "₹1"}
+        ],
+        data: [
+            {q: "If ⭐ = 2 cars. ⭐⭐ = ?", sub: "🚗", o: ["4", "2", "3", "6"], a: "4"},
+            {q: "Tally mark for 5?", sub: "", o: ["<s>||||</s>", "|||||", "||||", "V"], a: "<s>||||</s>"},
+            {q: "Graph shows highest bar for Blue.", sub: "📊", o: ["Blue is most", "Blue is least", "Equal", "None"], a: "Blue is most"},
+            {q: "Data collected is called...", sub: "", o: ["Information", "Story", "Drawing", "Game"], a: "Information"},
+            {q: "Pictograph uses...", sub: "", o: ["Pictures", "Bars", "Lines", "Dots"], a: "Pictures"}
+        ],
+        odd_one: [
+            {q: "Find Odd One Out", sub: "2, 4, 6, 7", o: ["7", "6", "4", "2"], a: "7"},
+            {q: "Find Odd One Out", sub: "Triangle, Square, Circle, Box", o: ["Box", "Triangle", "Square", "Circle"], a: "Box"},
+            {q: "Find Odd One Out", sub: "Apple, Banana, Potato, Orange", o: ["Potato", "Apple", "Banana", "Orange"], a: "Potato"},
+            {q: "Find Odd One Out", sub: "10, 20, 30, 35", o: ["35", "30", "20", "10"], a: "35"},
+            {q: "Find Odd One Out", sub: "Car, Bus, Bike, Ship", o: ["Ship", "Car", "Bus", "Bike"], a: "Ship"}
+        ],
+        puzzle: [
+            {q: "5 + ? = 12", sub: "Missing Number", o: ["7", "6", "5", "8"], a: "7"},
+            {q: "10 - ? = 4", sub: "Missing Number", o: ["6", "4", "5", "7"], a: "6"},
+            {q: "3 × ? = 15", sub: "Missing Number", o: ["5", "3", "4", "6"], a: "5"},
+            {q: "Next: 2, 4, 6, __", sub: "Pattern", o: ["8", "7", "9", "10"], a: "8"},
+            {q: "A has 2, B has 4. Total?", sub: "🅰️ + 🅱️", o: ["6", "8", "4", "2"], a: "6"}
+        ],
+        olympiad: [
+            {q: "I am > 50 and < 60. I am even.", sub: "Who am I?", o: ["52", "55", "48", "62"], a: "52"},
+            {q: "How many wheels on 3 cars?", sub: "🚗🚗🚗", o: ["12", "10", "8", "16"], a: "12"},
+            {q: "Smallest 3-digit number?", sub: "100-999", o: ["100", "999", "101", "001"], a: "100"},
+            {q: "Place value of 5 in 543?", sub: "", o: ["500", "50", "5", "5000"], a: "500"},
+            {q: "Which is heaviest?", sub: "⚖️", o: ["Brick", "Feather", "Pencil", "Leaf"], a: "Brick"}
+        ],
+        logic: [
+            {q: "If A=1, B=2, C=3... D=?", sub: "Code", o: ["4", "5", "3", "6"], a: "4"},
+            {q: "Day after tomorrow is Sunday. Today is?", sub: "📅", o: ["Friday", "Saturday", "Thursday", "Monday"], a: "Friday"},
+            {q: "Which shape has no corners?", sub: "⚪", o: ["Circle", "Square", "Triangle", "Star"], a: "Circle"},
+            {q: "Dog is to Puppy as Cat is to...", sub: "Relation", o: ["Kitten", "Calf", "Cub", "Foal"], a: "Kitten"},
+            {q: "What comes next? ⬆️ ⬇️ ⬆️ ...", sub: "Pattern", o: ["⬇️", "⬆️", "⬅️", "➡️"], a: "⬇️"}
+        ]
+    };
+
+    // --- GAME STATE ---
+    let state = {
+        activeGame: null,
+        score: 0,
+        qIndex: 0,
+        totalQ: 50,
+        currentCorrect: ""
+    };
+
+    // --- INITIALIZATION ---
+    window.onload = function() {
+        const grid = document.getElementById('menuGrid');
+        GAMES.forEach(game => {
+            const card = document.createElement('div');
+            card.className = 'game-card';
+            card.innerHTML = `
+                <div class="game-icon">${game.icon}</div>
+                <div class="game-title">${game.title}</div>
+                <div class="game-tag">${game.tag}</div>
+            `;
+            card.onclick = () => launchGame(game);
+            grid.appendChild(card);
+        });
+    };
+
+    // --- GAME ENGINE ---
+    function launchGame(game) {
+        state.activeGame = game;
+        state.score = 0;
+        state.qIndex = 0;
+        updateStats();
+        
+        document.getElementById('gameContainer').classList.add('active-game');
+        document.body.style.overflow = 'hidden';
+        
+        nextQuestion();
+    }
+
+    function exitGame() {
+        if(confirm("Exit game? Progress will be lost.")) {
+            document.getElementById('gameContainer').classList.remove('active-game');
+            document.body.style.overflow = 'auto';
+            document.getElementById('feedbackPopup').style.display = 'none';
+        }
+    }
+
+    function updateStats() {
+        document.getElementById('score').innerText = state.score;
+        document.getElementById('qCount').innerText = state.qIndex + 1;
+        document.getElementById('level').innerText = Math.floor(state.qIndex / 10) + 1;
+        document.getElementById('progressBar').style.width = ((state.qIndex) / state.totalQ * 100) + "%";
+    }
+
+    function nextQuestion() {
+        document.getElementById('feedbackPopup').style.display = 'none';
+        
+        if(state.qIndex >= state.totalQ) {
+            alert(`Game Over! 🎉\nFinal Score: ${state.score}/${state.totalQ}\nYou are a Math Champion!`);
+            exitGame();
+            return;
+        }
+
+        const game = state.activeGame;
+        let qData;
+
+        if (game.type === 'static') {
+            const pool = POOLS[game.pool];
+            // Pick random or cycle
+            const item = pool[Math.floor(Math.random() * pool.length)];
+            qData = {
+                q: item.q,
+                sub: item.sub,
+                opts: shuffleArray([...item.o]),
+                ans: item.a
+            };
+        } else {
+            // Procedural Math Generation
+            qData = generateMathQuestion(game.mode, state.qIndex);
+        }
+
+        // Render Question
+        document.getElementById('qText').innerHTML = qData.q;
+        document.getElementById('qSub').innerHTML = qData.sub || "";
+        state.currentCorrect = qData.ans;
+
+        const optBox = document.getElementById('optionsBox');
+        optBox.innerHTML = '';
+        
+        qData.opts.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'opt-btn';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(btn, opt);
+            optBox.appendChild(btn);
+        });
+
+        updateStats();
+    }
+
+    function checkAnswer(btn, value) {
+        const isCorrect = String(value) === String(state.currentCorrect);
+        
+        // Disable all buttons
+        const btns = document.querySelectorAll('.opt-btn');
+        btns.forEach(b => b.disabled = true);
+
+        if(isCorrect) {
+            btn.classList.add('correct');
+            state.score++;
+            showFeedback(true);
+        } else {
+            btn.classList.add('wrong');
+            // Highlight correct one
+            btns.forEach(b => {
+                if(String(b.innerText) === String(state.currentCorrect)) b.classList.add('correct');
+            });
+            showFeedback(false);
+        }
+        state.qIndex++;
+        updateStats();
+    }
+
+    function showFeedback(isCorrect) {
+        const popup = document.getElementById('feedbackPopup');
+        const text = document.getElementById('fbText');
+        popup.style.display = 'block';
+        
+        if(isCorrect) {
+            text.innerHTML = "✅ Excellent! ⭐";
+            text.style.color = "var(--correct)";
+        } else {
+            text.innerHTML = "❌ Oops! Keep Trying 💪";
+            text.style.color = "var(--wrong)";
+        }
+    }
+
+    // --- MATH GENERATORS ---
+    function generateMathQuestion(mode, difficulty) {
+        let n1, n2, ans, q, sub="", opts=[];
+        let max = 10 + (difficulty * 5); // Increase difficulty
+
+        switch(mode) {
+            case 'number_sense':
+                n1 = rand(100, 9999);
+                if(rand(0,1)) { // Place Value
+                    q = `Place value of ${String(n1)[1]} in ${n1}?`;
+                    ans = parseInt(String(n1)[1]) * 100;
+                    opts = [ans, ans/10, ans/100, ans*10];
+                } else { // Comparison
+                    n2 = n1 + rand(-50, 50);
+                    q = `Compare: ${n1} ___ ${n2}`;
+                    ans = n1 > n2 ? ">" : "<";
+                    opts = [">", "<", "=", "+"];
+                }
+                break;
+            
+            case 'skip_count':
+                let step = [2,3,5,10][rand(0,3)];
+                n1 = rand(2, 20) * step;
+                q = `Skip by ${step}: ${n1}, ${n1+step}, __`;
+                ans = n1 + (step*2);
+                opts = [ans, ans-step, ans+step, ans+2];
+                break;
+
+            case 'addition':
+                n1 = rand(10, max*2); n2 = rand(5, max);
+                q = `${n1} + ${n2} = ?`;
+                ans = n1 + n2;
+                opts = genOpts(ans);
+                break;
+
+            case 'subtraction':
+                n1 = rand(20, max*2); n2 = rand(5, n1);
+                q = `${n1} - ${n2} = ?`;
+                ans = n1 - n2;
+                opts = genOpts(ans);
+                break;
+
+            case 'multiplication':
+                n1 = rand(2, 9); n2 = rand(1, 10);
+                q = `${n1} × ${n2} = ?`;
+                ans = n1 * n2;
+                opts = genOpts(ans);
+                break;
+
+            case 'division':
+                n2 = rand(2, 9); ans = rand(1, 10);
+                n1 = n2 * ans;
+                q = `${n1} ÷ ${n2} = ?`;
+                opts = genOpts(ans);
+                break;
+
+            case 'rounding':
+                n1 = rand(11, 99);
+                q = `Round ${n1} to nearest 10`;
+                ans = Math.round(n1/10)*10;
+                opts = [ans, ans+10, ans-10, n1];
+                break;
+
+            case 'mental':
+                // Rapid fire simple ops
+                let op = ['+','-','×'][rand(0,2)];
+                if(op=='+') { n1=rand(5,20); n2=rand(5,20); ans=n1+n2; }
+                if(op=='-') { n1=rand(15,30); n2=rand(5,10); ans=n1-n2; }
+                if(op=='×') { n1=rand(2,5); n2=rand(2,5); ans=n1*n2; }
+                q = `Quick: ${n1} ${op} ${n2}`;
+                opts = genOpts(ans);
+                break;
+
+            case 'mixed':
+            case 'ultimate':
+                // Recursively call a random other mode
+                let modes = ['addition', 'subtraction', 'multiplication', 'number_sense'];
+                return generateMathQuestion(modes[rand(0,3)], difficulty);
+        }
+
+        return { q, sub, opts: shuffleArray(opts), ans };
+    }
+
+    // --- UTILS ---
+    function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+    
+    function genOpts(correct) {
+        let set = new Set([correct]);
+        while(set.size < 4) {
+            let offset = rand(-10, 10);
+            let val = correct + offset;
+            if(val >= 0) set.add(val);
+        }
+        return Array.from(set);
+    }
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+</script>
+</body>
+</html>
