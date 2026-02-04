@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 4 EVS - Chapter 2: Plants</title>
+    <style>
+        :root {
+            --paper-color: #fffdf0;
+            --line-color: #a4b0be;
+            --margin-line: #ff7675;
+            --text-color: #2d3436;
+            --primary: #6c5ce7;
+            --success: #00b894;
+            --error: #d63031;
+            --card-bg: #ffffff;
+            --font-stack: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-stack);
+            background-color: #dfe6e9;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            line-height: 1.6;
+            font-weight: bold;
+        }
+
+        /* Notebook Layout */
+        .notebook-page {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--paper-color);
+            background-image: linear-gradient(var(--line-color) 1px, transparent 1px);
+            background-size: 100% 2rem;
+            min-height: 100vh;
+            padding: 2rem 1rem 4rem 1rem;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-left: 2px solid var(--margin-line);
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            background: #fff;
+            padding: 1.5rem;
+            border: 3px solid var(--text-color);
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 4px 4px 0px var(--text-color);
+        }
+
+        h1 {
+            margin: 0;
+            color: var(--primary);
+            font-size: 1.8rem;
+            text-transform: uppercase;
+        }
+
+        h2, h3 {
+            color: #2d3436;
+            margin-top: 1.5rem;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: #636e72;
+        }
+
+        /* Score Panel */
+        #score-panel {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: #fdcb6e;
+            padding: 0.8rem;
+            border-bottom: 3px solid var(--text-color);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .score-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .score-val {
+            font-size: 1.2rem;
+            color: #d63031;
+        }
+
+        /* Notes Section */
+        .note-card {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid var(--text-color);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .topic-badge {
+            background: var(--primary);
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .img-placeholder {
+            width: 100%;
+            height: 150px;
+            background: #dfe6e9;
+            border: 2px dashed var(--line-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 1rem 0;
+            color: #636e72;
+            border-radius: 8px;
+            font-style: italic;
+        }
+
+        .memory-tip {
+            background: #fab1a0;
+            padding: 0.5rem;
+            border-radius: 5px;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .example-box {
+            background: #81ecec;
+            padding: 0.5rem;
+            border-radius: 5px;
+            margin-top: 0.5rem;
+        }
+
+        /* Questions */
+        .question-container {
+            background: white;
+            border: 2px solid var(--text-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+        }
+
+        .q-text {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .options-grid {
+            display: grid;
+            gap: 0.8rem;
+        }
+
+        button.option-btn {
+            background: #fff;
+            border: 2px solid var(--text-color);
+            padding: 0.8rem;
+            text-align: left;
+            border-radius: 8px;
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button.option-btn:hover {
+            background: #dfe6e9;
+        }
+
+        button.btn-primary {
+            background: var(--primary);
+            color: white;
+            border: 2px solid var(--text-color);
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-family: inherit;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        .feedback-box {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .feedback-correct {
+            background: #55efc4;
+            border: 2px solid #00b894;
+        }
+
+        .feedback-wrong {
+            background: #ff7675;
+            border: 2px solid #d63031;
+            color: white;
+        }
+
+        /* Long Answer */
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 0.8rem;
+            border: 2px solid var(--text-color);
+            border-radius: 8px;
+            font-family: inherit;
+            margin: 1rem 0;
+            resize: vertical;
+            background: #fdfdfd;
+        }
+
+        /* Important Questions List */
+        .imp-q-card {
+            background: #ffeaa7;
+            padding: 1rem;
+            border-bottom: 2px dashed var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            background: var(--text-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            display: inline-block;
+            margin: 2rem 0 1rem 0;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 2rem;
+            background: #2d3436;
+            color: white;
+            font-size: 0.9rem;
+            border-radius: 10px 10px 0 0;
+        }
+
+        /* Nav Buttons */
+        .nav-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+
+        /* Utilities */
+        .hidden { display: none; }
+        .highlight { color: var(--primary); text-decoration: underline; }
+
+        @media (max-width: 400px) {
+            h1 { font-size: 1.5rem; }
+            .notebook-page { padding: 1rem 0.5rem; }
+            .score-val { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Score Panel -->
+    <div id="score-panel">
+        <div class="score-item">
+            <span>Correct</span>
+            <span class="score-val" id="score-correct">0</span>
+        </div>
+        <div class="score-item">
+            <span>Wrong</span>
+            <span class="score-val" id="score-wrong">0</span>
+        </div>
+        <div class="score-item">
+            <span>Total</span>
+            <span class="score-val" id="score-total">0</span>
+        </div>
+        <div class="score-item">
+            <span>%</span>
+            <span class="score-val" id="score-perc">0%</span>
+        </div>
+    </div>
+
+    <div class="notebook-page">
+        <!-- Hero -->
+        <header>
+            <div class="subtitle">Class 4 • EVS • Science</div>
+            <h1>Chapter 2: Plants</h1>
+            <div class="subtitle">Structure, Functions & Life</div>
+        </header>
+
+        <!-- Navigation -->
+        <div style="text-align: center; margin-bottom: 1rem;">
+            <button class="btn-primary" onclick="scrollToSection('notes')">📖 Read Notes</button>
+            <button class="btn-primary" onclick="scrollToSection('practice')">🎮 Start Quiz</button>
+        </div>
+
+        <!-- SECTION: NOTES -->
+        <section id="notes">
+            <h2 class="section-title">📝 Chapter Notes</h2>
+            <div id="notes-container"></div>
+        </section>
+
+        <!-- SECTION: IMPORTANT QUESTIONS -->
+        <section id="imp-questions">
+            <h2 class="section-title">⭐ Important Questions (Exam)</h2>
+            <div id="imp-q-container"></div>
+        </section>
+
+        <!-- SECTION: PRACTICE QUIZ -->
+        <section id="practice">
+            <h2 class="section-title">🎯 Practice Quiz (70 Qs)</h2>
+            <div id="quiz-area" class="question-container">
+                <div id="q-counter" style="text-align: right; font-size: 0.8rem; color: #636e72;">Question 1 / 70</div>
+                <div id="q-text" class="q-text">Loading...</div>
+                <div id="q-image" class="img-placeholder hidden">Image</div>
+                <div id="q-options" class="options-grid"></div>
+                
+                <div id="q-feedback" class="feedback-box"></div>
+                
+                <button id="next-btn" class="btn-primary hidden">Next Question ➡️</button>
+            </div>
+        </section>
+
+        <!-- SECTION: ADVANCED LONG QUESTIONS -->
+        <section id="advanced">
+            <h2 class="section-title">🧠 Advanced Long Questions</h2>
+            <div id="long-q-area"></div>
+        </section>
+
+        <!-- SECTION: REVISION -->
+        <section id="revision">
+            <h2 class="section-title">⚡ Quick Revision</h2>
+            <div class="note-card" style="background: #dfe6e9;">
+                <ul id="revision-list">
+                    <li>Plants are classified into Herbs, Shrubs, Trees, Climbers, and Creepers based on stems.</li>
+                    <li>Roots anchor the plant and absorb water. Tap roots have one main root; fibrous roots are messy.</li>
+                    <li>Stems carry water and food. They support branches and leaves.</li>
+                    <li>Leaves are the 'Kitchen of the Plant'. They make food using sunlight (Photosynthesis).</li>
+                    <li>Flowers turn into fruits. Fruits have seeds. Seeds grow into new plants.</li>
+                    <li>Seed dispersal happens via Wind, Water, Animals, and Explosion.</li>
+                    <li>Plants adapt to their surroundings: Cactus (Desert), Lotus (Water), Pine (Mountains).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            Designed & Created by SHRISHANT YADAV<br>
+            ShanEduHub
+        </footer>
+    </div>
+
+    <script>
+        // --- DATA STORE ---
+
+        // 1. NOTES DATA
+        const notesData = [
+            {
+                topic: "1. Types of Plants",
+                content: "Plants are grouped by their size and stem type.",
+                subtopics: [
+                    { name: "Herbs", text: "Small plants with soft, green stems. Life span is short (seasons).", ex: "Mint (Pudina), Coriander (Dhaniya), Tulsi.", tip: "🌿 Herb = H for Half-size (Small)." },
+                    { name: "Shrubs", text: "Medium size, woody stem but thin. Branches start near the ground.", ex: "Rose, Hibiscus, Lemon.", tip: "🌹 Shrub = S for Short Tree." },
+                    { name: "Trees", text: "Big, tall plants. Thick, hard woody stem called Trunk.", ex: "Mango, Neem, Banyan.", tip: "🌳 Tree = T for Tall." },
+                    { name: "Climbers", text: "Weak stems. Need support (stick/wall) to climb up.", ex: "Money Plant, Grapevine, Pea plant.", tip: "🧗 Climbers Climb." },
+                    { name: "Creepers", text: "Weak stems. Grow along the ground because fruit is heavy.", ex: "Watermelon, Pumpkin.", tip: "🐍 Creepers Creep on ground." }
+                ]
+            },
+            {
+                topic: "2. Parts of a Plant: Roots",
+                content: "Roots grow underground. They hold the plant firmly.",
+                subtopics: [
+                    { name: "Tap Root", text: "One main thick root with small side roots.", ex: "Carrot, Radish, Bean, Mustard.", tip: "🥕 Tap looks like a Top (pointed)." },
+                    { name: "Fibrous Root", text: "Bunch of thin roots growing from stem base. No main root.", ex: "Grass, Wheat, Rice, Onion.", tip: "🌾 Fibrous = Fiber-like (messy hair)." },
+                    { name: "Functions", text: "1. Fix plant in soil. 2. Absorb water & minerals.", ex: "Eating carrots means eating roots!", tip: "" }
+                ]
+            },
+            {
+                topic: "3. Parts of a Plant: Stem",
+                content: "The stem grows above the soil.",
+                subtopics: [
+                    { name: "Functions", text: "1. Bears leaves, flowers, fruits. 2. Carries water from roots to leaves. 3. Carries food from leaves to all parts.", ex: "Potato, Ginger, Sugarcane are stems we eat.", tip: "🥤 Stem is like a Straw (pipe)." }
+                ]
+            },
+            {
+                topic: "4. Parts of a Plant: Leaves",
+                content: "The most important part for making food.",
+                subtopics: [
+                    { name: "Photosynthesis", text: "Process of making food using Sunlight + Water + Air (CO2) + Chlorophyll.", ex: "Chlorophyll makes leaves Green.", tip: "🍳 Leaf is the Kitchen." },
+                    { name: "Stomata", text: "Tiny holes under the leaf for breathing.", ex: "Like our nose.", tip: "" },
+                    { name: "Transpiration", text: "Loss of extra water from leaves as vapor.", ex: "Helps cool the plant.", tip: "💧 Plant sweating." }
+                ]
+            },
+            {
+                topic: "5. Flowers & Reproduction",
+                content: "Flowers are the beautiful part. They become fruits.",
+                subtopics: [
+                    { name: "Parts", text: "Sepals (Green cover), Petals (Colorful), Stamen (Male), Pistil (Female).", ex: "Hibiscus shows all parts clearly.", tip: "🌺 Flowers make Fruits." },
+                    { name: "Life Cycle", text: "Seed 🌱 -> Seedling -> Plant -> Flower 🌸 -> Fruit 🍎 -> Seed.", ex: "", tip: "Circle of Life." }
+                ]
+            },
+            {
+                topic: "6. Seed Dispersal",
+                content: "Seeds need to move away from parent plant to grow well.",
+                subtopics: [
+                    { name: "Wind", text: "Light, hairy, or winged seeds.", ex: "Cotton, Dandelion.", tip: "🌬️ Blows away." },
+                    { name: "Water", text: "Spongy or fibrous coat to float.", ex: "Coconut, Lotus.", tip: "🌊 Boats float." },
+                    { name: "Animals", text: "Hooks or spines to stick to fur; or tasty fruits.", ex: "Cocklebur (hooks), Mango (eaten).", tip: "🐶 Hitchhikers." },
+                    { name: "Explosion", text: "Pod bursts open when dry.", ex: "Peas, Ladyfinger.", tip: "💥 Pop!" }
+                ]
+            },
+            {
+                topic: "7. Adaptations (Where they grow)",
+                content: "Plants change to survive in their home (Habitat).",
+                subtopics: [
+                    { name: "Desert (Xerophytes)", text: "No leaves (spines) to save water. Fleshy stem.", ex: "Cactus, Date Palm.", tip: "🌵 Thirsty plants." },
+                    { name: "Aquatic (Hydrophytes)", text: "Floating leaves, wax coating, hollow stems.", ex: "Lotus, Water Lily.", tip: "💧 Water lovers." },
+                    { name: "Mountains", text: "Cone shape (to slide snow), needle leaves.", ex: "Pine, Fir, Deodar.", tip: "🌲 Christmas trees." }
+                ]
+            }
+        ];
+
+        // 2. IMPORTANT QUESTIONS (30)
+        const impQuestions = [
+            { q: "Why are leaves called the kitchen of the plant?", a: "Because they make food for the plant using sunlight, water, and air via photosynthesis." },
+            { q: "What is a tap root?", a: "A single main thick root that grows deep into the soil (e.g., Carrot)." },
+            { q: "Name the green pigment in leaves.", a: "Chlorophyll." },
+            { q: "What is the function of stomata?", a: "Stomata help the plant to breathe (exchange gases) and release extra water." },
+            { q: "Define Photosynthesis.", a: "The process by which green plants make their own food using sunlight, water, and carbon dioxide." },
+            { q: "Why do desert plants have spines instead of leaves?", a: "To prevent loss of water (transpiration) in the hot desert." },
+            { q: "What is germination?", a: "The process of a seed growing into a baby plant (seedling)." },
+            { q: "How does a coconut seed disperse?", a: "It has a fibrous coat that helps it float on water to travel far." },
+            { q: "What is the difference between a climber and a creeper?", a: "Climbers grow up using support; Creepers grow along the ground." },
+            { q: "Give two examples of edible roots.", a: "Carrot and Radish." },
+            { q: "Give two examples of edible stems.", a: "Potato and Ginger." },
+            { q: "What is the function of the stem?", a: "It supports the plant and transports water and food." },
+            { q: "What is transpiration?", a: "The loss of water vapor from the leaves of plants." },
+            { q: "Why do mountain plants have a conical shape?", a: "So that snow can slide off easily and not damage the branches." },
+            { q: "What are aquatic plants?", a: "Plants that grow in water (e.g., Lotus)." },
+            { q: "What are the parts of a flower?", a: "Sepals, Petals, Stamens, and Pistil." },
+            { q: "Which gas do plants take in to make food?", a: "Carbon Dioxide." },
+            { q: "Which gas do plants release during photosynthesis?", a: "Oxygen." },
+            { q: "Name a plant that eats insects.", a: "Pitcher plant or Venus Flytrap." },
+            { q: "What holds the plant firmly in the soil?", a: "Roots." },
+            { q: "What are fibrous roots?", a: "A bunch of thin roots growing from the base of the stem (e.g., Grass)." },
+            { q: "How do animals help in seed dispersal?", a: "Seeds with hooks stick to animal fur, or animals eat fruit and drop seeds elsewhere." },
+            { q: "What does a seed need to grow?", a: "Air, Water, and Warmth (Sunlight)." },
+            { q: "Why do lotus leaves have a waxy coating?", a: "To prevent them from rotting in water." },
+            { q: "Name a plant dispersed by explosion.", a: "Peas or Balsam." },
+            { q: "What is a shrub?", a: "A medium-sized plant with a woody stem branching near the base (e.g., Rose)." },
+            { q: "What is a herb?", a: "A small plant with a soft green stem (e.g., Mint)." },
+            { q: "Name the male part of a flower.", a: "Stamen." },
+            { q: "Name the female part of a flower.", a: "Pistil." },
+            { q: "Why are flowers brightly colored?", a: "To attract insects for pollination." }
+        ];
+
+        // 3. PRACTICE QUESTIONS (70)
+        // Helper to generate distinct questions
+        const practiceData = [
+            // Types of Plants (1-10)
+            { t: 'mcq', q: "Which of these is a herb?", o: ["Rose", "Mango", "Mint", "Pine"], a: "Mint", exp: "Mint is a small plant with a green, soft stem." },
+            { t: 'mcq', q: "The Banyan tree lives for ______ years.", o: ["Few", "Two", "Many", "One"], a: "Many", exp: "Trees live for many years." },
+            { t: 'tf', q: "Watermelon is a climber.", a: "False", exp: "Watermelon is a creeper because its fruit is heavy." },
+            { t: 'mcq', q: "Plants with weak stems that need support are called:", o: ["Trees", "Shrubs", "Climbers", "Herbs"], a: "Climbers", exp: "Climbers need sticks or walls to grow up." },
+            { t: 'fill', q: "A rose plant is a ______.", a: "Shrub", exp: "Rose is a woody medium-sized plant." },
+            { t: 'mcq', q: "Which of these has a thick woody trunk?", o: ["Neem", "Grass", "Pumpkin", "Tulsi"], a: "Neem", exp: "Neem is a tree." },
+            { t: 'mcq', q: "Coriander (Dhaniya) is a:", o: ["Tree", "Herb", "Shrub", "Creeper"], a: "Herb", exp: "It is small and green." },
+            { t: 'tf', q: "Shrubs are bigger than trees.", a: "False", exp: "Trees are the biggest; shrubs are medium." },
+            { t: 'mcq', q: "Grapevine is an example of:", o: ["Climber", "Creeper", "Tree", "Herb"], a: "Climber", exp: "It climbs using tendrils." },
+            { t: 'fill', q: "Pumpkin grows along the ______.", a: "Ground", exp: "Because it is a creeper." },
+            
+            // Roots (11-20)
+            { t: 'mcq', q: "Carrot is a modified ______.", o: ["Stem", "Root", "Leaf", "Flower"], a: "Root", exp: "Carrot is a Tap root that stores food." },
+            { t: 'mcq', q: "Grass has which type of roots?", o: ["Tap root", "Fibrous root", "Deep root", "No root"], a: "Fibrous root", exp: "Grass has many thin roots." },
+            { t: 'tf', q: "Roots absorb water from the soil.", a: "True", exp: "That is their main job." },
+            { t: 'mcq', q: "Which of these has a tap root?", o: ["Wheat", "Rice", "Bean", "Onion"], a: "Bean", exp: "Bean plants have one main root." },
+            { t: 'fill', q: "Roots hold the plant ______ in the soil.", a: "Firmly", exp: "They act like an anchor." },
+            { t: 'mcq', q: "Radish is a part of the plant we ______.", o: ["Wear", "Eat", "Throw", "Smell"], a: "Eat", exp: "Radish is an edible root." },
+            { t: 'tf', q: "Banyan trees have roots hanging from branches.", a: "True", exp: "These are called aerial prop roots." },
+            { t: 'mcq', q: "Onion has ______ roots.", o: ["Tap", "Fibrous", "Strong", "Woody"], a: "Fibrous", exp: "Onion roots are like a bunch of fibers." },
+            { t: 'mcq', q: "Which is NOT a function of roots?", o: ["Absorb water", "Fix plant", "Make food", "Store food (some)"], a: "Make food", exp: "Leaves make food, not roots (usually)." },
+            { t: 'fill', q: "The main root in a tap root system grows ______.", a: "Deep", exp: "It goes straight down." },
+
+            // Stem (21-30)
+            { t: 'mcq', q: "Potato is a modified ______.", o: ["Root", "Stem", "Leaf", "Fruit"], a: "Stem", exp: "Potato grows underground but is a stem (has buds)." },
+            { t: 'mcq', q: "Which part carries water from roots to leaves?", o: ["Flower", "Stem", "Fruit", "Seed"], a: "Stem", exp: "The stem acts like a pipeline." },
+            { t: 'tf', q: "The stem of a tree is called a trunk.", a: "True", exp: "It is hard and woody." },
+            { t: 'mcq', q: "Ginger is an underground ______.", o: ["Root", "Stem", "Leaf", "Flower"], a: "Stem", exp: "Ginger is a stem." },
+            { t: 'fill', q: "The stem supports branches and ______.", a: "Leaves", exp: "It holds them up to sunlight." },
+            { t: 'mcq', q: "In a cactus, the green part is actually the ______.", o: ["Leaf", "Stem", "Root", "Flower"], a: "Stem", exp: "The stem makes food in cactus." },
+            { t: 'mcq', q: "Sugarcane stores food in its ______.", o: ["Leaf", "Stem", "Root", "Flower"], a: "Stem", exp: "We eat the stem of sugarcane." },
+            { t: 'tf', q: "Herbs have hard woody stems.", a: "False", exp: "Herbs have soft green stems." },
+            { t: 'mcq', q: "Water flows up inside the stem through tiny ______.", o: ["Tubes", "Holes", "Wires", "Ropes"], a: "Tubes", exp: "Like straws inside the stem." },
+            { t: 'fill', q: "Stems transport ______ prepared by leaves to other parts.", a: "Food", exp: "Sugar/starch moves down from leaves." },
+
+            // Leaves & Photosynthesis (31-45)
+            { t: 'mcq', q: "Leaves are green because of ______.", o: ["Water", "Chlorophyll", "Sunlight", "Air"], a: "Chlorophyll", exp: "It is the green pigment." },
+            { t: 'mcq', q: "Which gas do plants use to make food?", o: ["Oxygen", "Nitrogen", "Carbon Dioxide", "Hydrogen"], a: "Carbon Dioxide", exp: "CO2 is taken from air." },
+            { t: 'fill', q: "The leaf is called the ______ of the plant.", a: "Kitchen", exp: "Because food is cooked (made) there." },
+            { t: 'tf', q: "Plants release Oxygen during photosynthesis.", a: "True", exp: "This helps humans breathe." },
+            { t: 'mcq', q: "Tiny holes on leaves are called:", o: ["Pores", "Stomata", "Dots", "Gaps"], a: "Stomata", exp: "Used for breathing." },
+            { t: 'mcq', q: "Plants make food in the presence of ______.", o: ["Moonlight", "Sunlight", "Torchlight", "Darkness"], a: "Sunlight", exp: "Photo means Light." },
+            { t: 'mcq', q: "The flat part of a leaf is called ______.", o: ["Vein", "Blade", "Stalk", "Tip"], a: "Blade", exp: "Leaf blade or lamina." },
+            { t: 'tf', q: "Transpiration cools the plant.", a: "True", exp: "Releasing water vapor cools it." },
+            { t: 'mcq', q: "Spinach is a ______ that we eat.", o: ["Root", "Stem", "Leaf", "Flower"], a: "Leaf", exp: "It is a leafy vegetable." },
+            { t: 'mcq', q: "Veins on a leaf transport ______.", o: ["Water", "Soil", "Air", "Insects"], a: "Water", exp: "Veins are small pipes in the leaf." },
+            { t: 'fill', q: "During the night, plants do not perform ______.", a: "Photosynthesis", exp: "Because there is no sunlight." },
+            { t: 'mcq', q: "Banana leaves have ______ venation.", o: ["Reticulate", "Parallel", "Zigzag", "No"], a: "Parallel", exp: "Veins run straight parallel to each other." },
+            { t: 'tf', q: "Cactus leaves are reduced to spines.", a: "True", exp: "To save water." },
+            { t: 'mcq', q: "Extra food in plants is stored as ______.", o: ["Fat", "Starch", "Meat", "Bone"], a: "Starch", exp: "A type of sugar." },
+            { t: 'mcq', q: "Iodine test turns starch which color?", o: ["Red", "Blue-Black", "Yellow", "Pink"], a: "Blue-Black", exp: "This proves food is present." },
+
+            // Flowers & Cycle (46-55)
+            { t: 'mcq', q: "The most beautiful part of a plant is:", o: ["Root", "Stem", "Flower", "Leaf"], a: "Flower", exp: "It attracts insects." },
+            { t: 'mcq', q: "Flowers change into ______.", o: ["Roots", "Leaves", "Fruits", "Stems"], a: "Fruits", exp: "Fruits develop from flowers." },
+            { t: 'tf', q: "Sepals protect the flower when it is a bud.", a: "True", exp: "The green outer part." },
+            { t: 'mcq', q: "Which part of the flower produces pollen?", o: ["Petal", "Sepal", "Stamen", "Pistil"], a: "Stamen", exp: "The male part." },
+            { t: 'mcq', q: "Cauliflower is a ______ that we eat.", o: ["Flower", "Fruit", "Leaf", "Root"], a: "Flower", exp: "It is an undeveloped flower." },
+            { t: 'fill', q: "Seeds differ in size, shape, and ______.", a: "Color", exp: "Every seed looks different." },
+            { t: 'mcq', q: "The baby plant inside a seed is called:", o: ["Embryo", "Cotyledon", "Coat", "Fruit"], a: "Embryo", exp: "It grows into a new plant." },
+            { t: 'mcq', q: "Hibiscus is a type of ______.", o: ["Fruit", "Flower", "Root", "Seed"], a: "Flower", exp: "Used for worship and medicine." },
+            { t: 'tf', q: "All flowers have a strong smell.", a: "False", exp: "Some have no smell." },
+            { t: 'mcq', q: "Petals are usually ______.", o: ["Green", "Colorful", "Brown", "Black"], a: "Colorful", exp: "To attract bees." },
+
+            // Dispersal (56-62)
+            { t: 'mcq', q: "Dandelion seeds are dispersed by ______.", o: ["Water", "Wind", "Animals", "Explosion"], a: "Wind", exp: "They are light and hairy." },
+            { t: 'mcq', q: "Coconut travels by ______.", o: ["Wind", "Water", "Bus", "Air"], a: "Water", exp: "It floats in the ocean." },
+            { t: 'mcq', q: "Seeds with hooks stick to ______.", o: ["Water", "Animals", "Air", "Soil"], a: "Animals", exp: "Like velcro." },
+            { t: 'fill', q: "Peas disperse by ______.", a: "Explosion", exp: "The pod bursts open." },
+            { t: 'mcq', q: "Why do seeds disperse?", o: ["To travel", "To avoid overcrowding", "To dry", "To die"], a: "To avoid overcrowding", exp: "They need space to grow." },
+            { t: 'mcq', q: "Maple seeds have ______ like wings.", o: ["Structures", "Legs", "Motors", "Fans"], a: "Structures", exp: "Helps them fly in wind." },
+            { t: 'tf', q: "Birds help in seed dispersal.", a: "True", exp: "They eat fruit and drop seeds." },
+
+            // Adaptations & Importance (63-70)
+            { t: 'mcq', q: "Plants in deserts have ______ roots.", o: ["Short", "Long", "No", "Weak"], a: "Long", exp: "To find water deep underground." },
+            { t: 'mcq', q: "Which plant grows in water?", o: ["Cactus", "Lotus", "Pine", "Neem"], a: "Lotus", exp: "It is an aquatic plant." },
+            { t: 'mcq', q: "Pine trees grow on ______.", o: ["Mountains", "Deserts", "Water", "Space"], a: "Mountains", exp: "It is cold there." },
+            { t: 'fill', q: "We get ______ from the rubber tree.", a: "Rubber", exp: "Used for tires and erasers." },
+            { t: 'mcq', q: "Tulsi is a ______ plant.", o: ["Medicinal", "Poisonous", "Useless", "Water"], a: "Medicinal", exp: "Cures cough and cold." },
+            { t: 'mcq', q: "Paper is made from ______.", o: ["Bamboo", "Rose", "Cactus", "Lotus"], a: "Bamboo", exp: "Bamboo pulp is used." },
+            { t: 'tf', q: "Plants keep the air fresh.", a: "True", exp: "They give Oxygen." },
+            { t: 'mcq', q: "Perfumes are made from ______.", o: ["Roots", "Flowers", "Leaves", "Stems"], a: "Flowers", exp: "Rose and Jasmine." }
+        ];
+
+        // 4. LONG ANSWER QUESTIONS (10)
+        const longQuestions = [
+            { id: 1, q: "Explain the process of photosynthesis in simple words.", keys: ["sunlight", "water", "air", "food", "kitchen", "leaf", "chlorophyll", "co2", "dioxide"], model: "Plants use sunlight, water, and air (CO2) to make food in their leaves. Chlorophyll helps this process." },
+            { id: 2, q: "Why do desert plants like Cactus have spines instead of leaves?", keys: ["water", "loss", "transpiration", "save", "prevent", "reduce"], model: "To reduce the loss of water (transpiration) because water is scarce in the desert." },
+            { id: 3, q: "How are roots useful to a plant? Write two points.", keys: ["fix", "hold", "absorb", "water", "soil", "minerals", "anchor"], model: "1. They fix the plant firmly in the soil. 2. They absorb water and minerals from the soil." },
+            { id: 4, q: "Describe the structure of a tap root with an example.", keys: ["main", "single", "thick", "carrot", "radish", "bean", "side", "small"], model: "A tap root has one main thick root growing deep, with small roots on the side. Example: Carrot." },
+            { id: 5, q: "How does a seed grow into a plant?", keys: ["air", "water", "sun", "warmth", "seedling", "shoot", "root", "germination"], model: "A seed needs air, water, and warmth. It first grows a root, then a shoot, becoming a seedling." },
+            { id: 6, q: "Why is seed dispersal important?", keys: ["space", "crowd", "sunlight", "nutrients", "grow", "fight", "competition"], model: "It prevents overcrowding so baby plants get enough sunlight, water, and space to grow." },
+            { id: 7, q: "What is the difference between a Climber and a Creeper?", keys: ["support", "stick", "wall", "ground", "heavy", "fruit", "weak"], model: "Climbers grow up using support (Money plant). Creepers grow along the ground due to heavy fruit (Watermelon)." },
+            { id: 8, q: "Write three uses of plants for humans.", keys: ["food", "oxygen", "medicine", "wood", "paper", "rubber", "cotton", "clothes"], model: "1. Give food. 2. Give Oxygen to breathe. 3. Give wood, medicine, and cotton." },
+            { id: 9, q: "How do floating plants like Lotus float on water?", keys: ["light", "spongy", "hollow", "stem", "wax", "broad"], model: "They have light, spongy, or hollow stems filled with air, and broad leaves to float." },
+            { id: 10, q: "What happens to the extra water in plants?", keys: ["transpiration", "vapor", "leaf", "stomata", "air", "release"], model: "It is released into the air as water vapor through stomata. This is called transpiration." }
+        ];
+
+        // --- STATE MANAGEMENT ---
+        let state = {
+            currentQIdx: 0,
+            score: {
+                correct: 0,
+                wrong: 0,
+                attempted: 0
+            },
+            quizActive: true
+        };
+
+        // --- DOM ELEMENTS ---
+        const dom = {
+            scoreCorrect: document.getElementById('score-correct'),
+            scoreWrong: document.getElementById('score-wrong'),
+            scoreTotal: document.getElementById('score-total'),
+            scorePerc: document.getElementById('score-perc'),
+            notesContainer: document.getElementById('notes-container'),
+            impQContainer: document.getElementById('imp-q-container'),
+            quizArea: document.getElementById('quiz-area'),
+            longQArea: document.getElementById('long-q-area'),
+            
+            // Quiz Elements
+            qText: document.getElementById('q-text'),
+            qOptions: document.getElementById('q-options'),
+            qFeedback: document.getElementById('q-feedback'),
+            nextBtn: document.getElementById('next-btn'),
+            qCounter: document.getElementById('q-counter'),
+            qImage: document.getElementById('q-image')
+        };
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderNotes();
+            renderImpQuestions();
+            loadQuestion(0);
+            renderLongQuestions();
+        });
+
+        // --- FUNCTIONS ---
+
+        function updateScore(isCorrect) {
+            state.score.attempted++;
+            if(isCorrect) state.score.correct++;
+            else state.score.wrong++;
+
+            dom.scoreCorrect.textContent = state.score.correct;
+            dom.scoreWrong.textContent = state.score.wrong;
+            dom.scoreTotal.textContent = state.score.attempted;
+            
+            const perc = Math.round((state.score.correct / state.score.attempted) * 100);
+            dom.scorePerc.textContent = perc + "%";
+        }
+
+        // 1. Render Notes
+        function renderNotes() {
+            let html = '';
+            notesData.forEach((section, idx) => {
+                html += `<div class="note-card">
+                    <div class="topic-badge">Topic ${idx + 1}</div>
+                    <h3>${section.topic}</h3>
+                    <p>${section.content}</p>
+                    <div class="img-placeholder">Image: ${section.topic}</div>`;
+                
+                section.subtopics.forEach(sub => {
+                    html += `<div style="margin-top:1rem; border-left: 3px solid #6c5ce7; padding-left: 10px;">
+                        <div style="font-size:1.1rem; color:#d63031;">${sub.name}</div>
+                        <div>${sub.text}</div>
+                        ${sub.ex ? `<div class="example-box"><b>Example:</b> ${sub.ex}</div>` : ''}
+                        ${sub.tip ? `<div class="memory-tip">💡 <b>Tip:</b> ${sub.tip}</div>` : ''}
+                    </div>`;
+                });
+                html += `</div>`;
+            });
+            dom.notesContainer.innerHTML = html;
+        }
+
+        // 2. Render Important Questions
+        function renderImpQuestions() {
+            let html = '';
+            impQuestions.forEach((item, i) => {
+                html += `<div class="imp-q-card">
+                    <div><b>Q${i+1}: ${item.q}</b></div>
+                    <div style="margin-top:0.5rem; color:#2d3436;">👉 ${item.a}</div>
+                </div>`;
+            });
+            dom.impQContainer.innerHTML = html;
+        }
+
+        // 3. Quiz Logic
+        function loadQuestion(idx) {
+            if (idx >= practiceData.length) {
+                dom.quizArea.innerHTML = `<div style="text-align:center;">
+                    <h3>🎉 Quiz Completed!</h3>
+                    <p>You attempted all 70 questions.</p>
+                    <p>Check your score above.</p>
+                    <button class="btn-primary" onclick="location.reload()">Restart</button>
+                </div>`;
+                return;
+            }
+
+            const q = practiceData[idx];
+            state.currentQIdx = idx;
+            state.quizActive = true;
+
+            dom.qCounter.textContent = `Question ${idx + 1} / 70`;
+            dom.qText.textContent = q.q;
+            dom.qFeedback.style.display = 'none';
+            dom.qFeedback.className = 'feedback-box';
+            dom.nextBtn.classList.add('hidden');
+            dom.qImage.classList.add('hidden'); // Simplified for text-heavy load
+
+            let optsHtml = '';
+            
+            if (q.t === 'mcq') {
+                // Shuffle options
+                const opts = [...q.o].sort(() => Math.random() - 0.5);
+                opts.forEach(opt => {
+                    optsHtml += `<button class="option-btn" onclick="checkAnswer('${opt}', '${q.a}', '${q.exp.replace(/'/g, "\\'")}')">${opt}</button>`;
+                });
+            } else if (q.t === 'tf') {
+                optsHtml += `<button class="option-btn" onclick="checkAnswer('True', '${q.a}', '${q.exp.replace(/'/g, "\\'")}')">True</button>`;
+                optsHtml += `<button class="option-btn" onclick="checkAnswer('False', '${q.a}', '${q.exp.replace(/'/g, "\\'")}')">False</button>`;
+            } else if (q.t === 'fill') {
+                optsHtml += `<input type="text" id="fill-input" placeholder="Type answer here" style="padding:10px; width:100%; margin-bottom:10px; border:2px solid #333; border-radius:5px;">`;
+                optsHtml += `<button class="btn-primary" onclick="checkFillAnswer('${q.a}', '${q.exp.replace(/'/g, "\\'")}')">Submit</button>`;
+            }
+
+            dom.qOptions.innerHTML = optsHtml;
+        }
+
+        function checkAnswer(selected, correct, explanation) {
+            if (!state.quizActive) return;
+            state.quizActive = false;
+
+            const isCorrect = selected === correct;
+            updateScore(isCorrect);
+            showFeedback(isCorrect, correct, explanation);
+        }
+
+        function checkFillAnswer(correct, explanation) {
+            if (!state.quizActive) return;
+            const input = document.getElementById('fill-input');
+            const val = input.value.trim();
+            if(!val) return;
+            
+            state.quizActive = false;
+            const isCorrect = val.toLowerCase() === correct.toLowerCase();
+            updateScore(isCorrect);
+            showFeedback(isCorrect, correct, explanation);
+        }
+
+        function showFeedback(isCorrect, correctAns, exp) {
+            dom.qFeedback.style.display = 'block';
+            if (isCorrect) {
+                dom.qFeedback.innerHTML = `<b>Excellent ⭐</b><br>${exp}`;
+                dom.qFeedback.classList.add('feedback-correct');
+            } else {
+                dom.qFeedback.innerHTML = `<b>Try Again!</b><br>Correct Answer: <b>${correctAns}</b><br>Reason: ${exp}`;
+                dom.qFeedback.classList.add('feedback-wrong');
+            }
+            dom.nextBtn.classList.remove('hidden');
+        }
+
+        dom.nextBtn.addEventListener('click', () => {
+            loadQuestion(state.currentQIdx + 1);
+        });
+
+        // 4. Long Answer Logic
+        function renderLongQuestions() {
+            let html = '';
+            longQuestions.forEach((q, i) => {
+                html += `<div class="question-container" id="long-q-${i}">
+                    <div class="q-text">Q${i+1}: ${q.q}</div>
+                    <textarea id="ans-box-${i}" placeholder="Write your answer here..."></textarea>
+                    <button class="btn-primary" onclick="evaluateLongAnswer(${i})">Check Answer</button>
+                    <div id="long-feed-${i}" class="feedback-box"></div>
+                </div>`;
+            });
+            dom.longQArea.innerHTML = html;
+        }
+
+        function evaluateLongAnswer(idx) {
+            const q = longQuestions[idx];
+            const userAns = document.getElementById(`ans-box-${idx}`).value.toLowerCase();
+            const feedBox = document.getElementById(`long-feed-${idx}`);
+            
+            if (userAns.length < 5) {
+                alert("Please write a proper answer.");
+                return;
+            }
+
+            // Keyword matching logic
+            let matches = 0;
+            q.keys.forEach(key => {
+                if (userAns.includes(key)) matches++;
+            });
+
+            // Pass threshold (at least 2 keywords)
+            const passed = matches >= 2;
+            
+            updateScore(passed);
+
+            feedBox.style.display = 'block';
+            if (passed) {
+                feedBox.className = 'feedback-box feedback-correct';
+                feedBox.innerHTML = `<b>Correct! ⭐</b><br>You used key concepts.<br><b>Model Answer:</b> ${q.model}`;
+            } else {
+                feedBox.className = 'feedback-box feedback-wrong';
+                feedBox.innerHTML = `<b>Incomplete / Incorrect</b><br>Your answer is missing key words like: ${q.keys.slice(0,3).join(", ")}.<br><b>Model Answer:</b> ${q.model}`;
+            }
+            
+            // Disable button
+            document.querySelector(`#long-q-${idx} button`).disabled = true;
+            document.querySelector(`#long-q-${idx} button`).innerText = "Checked";
+        }
+
+        // Navigation
+        window.scrollToSection = (id) => {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+    </script>
+</body>
+</html>

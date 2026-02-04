@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 4 - Chapter 5: Files and Folders</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+
+        :root {
+            --paper-bg: #fffdf0;
+            --ink-color: #2c3e50;
+            --accent-blue: #a3d8f4;
+            --accent-green: #caffbf;
+            --accent-pink: #ffadad;
+            --accent-yellow: #fdffb6;
+            --line-color: #a0c4ff;
+            --header-bg: #bdb2ff;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Patrick Hand', cursive;
+            font-weight: 700; /* STRICT RULE: Every word BOLD */
+        }
+
+        body {
+            background-color: #f0f4f8;
+            color: var(--ink-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            font-size: 18px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--paper-bg);
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        /* HEADER */
+        header {
+            background-color: var(--header-bg);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 4px dashed var(--ink-color);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            color: #fff;
+            text-shadow: 2px 2px 0px #000;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 5px;
+            color: #4a4e69;
+        }
+
+        /* LIVE SCORE PANEL */
+        #score-panel {
+            position: sticky;
+            top: 0;
+            background-color: var(--accent-yellow);
+            padding: 10px;
+            border-bottom: 2px solid var(--ink-color);
+            display: flex;
+            justify-content: space-around;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            font-size: 1.1rem;
+        }
+
+        .score-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .score-val {
+            font-size: 1.3rem;
+            color: #d00000;
+        }
+
+        /* SECTIONS */
+        section {
+            padding: 20px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .section-title {
+            background-color: var(--accent-blue);
+            padding: 10px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-bottom: 20px;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.2);
+        }
+
+        /* NOTES STYLING */
+        .topic-card {
+            background-image: linear-gradient(var(--line-color) 1px, transparent 1px);
+            background-size: 100% 1.5em;
+            padding: 15px;
+            margin-bottom: 30px;
+            border: 2px solid var(--ink-color);
+            border-radius: 10px;
+            background-color: #fff;
+        }
+
+        .topic-header {
+            font-size: 1.4rem;
+            color: #d00000;
+            background: var(--accent-yellow);
+            display: inline-block;
+            padding: 5px 10px;
+            transform: rotate(-2deg);
+            margin-bottom: 10px;
+            border: 1px solid var(--ink-color);
+        }
+
+        .note-content p {
+            margin-bottom: 10px;
+        }
+
+        .real-life-box {
+            background-color: var(--accent-green);
+            padding: 15px;
+            border-radius: 15px;
+            margin: 15px 0;
+            border: 2px dashed #2d6a4f;
+        }
+
+        .memory-tip {
+            background-color: var(--accent-pink);
+            padding: 10px;
+            border-radius: 50px; /* pill shape */
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .img-placeholder {
+            width: 100%;
+            height: 150px;
+            background-color: #eee;
+            border: 3px dashed #aaa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #777;
+            margin: 10px 0;
+            font-style: italic;
+        }
+
+        /* PRACTICE QUESTIONS */
+        .question-container {
+            background-color: #fff;
+            border: 2px solid var(--ink-color);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 5px 5px 0px var(--accent-blue);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button.option-btn {
+            padding: 10px;
+            background: #fff;
+            border: 2px solid var(--ink-color);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        button.option-btn:hover {
+            background-color: var(--accent-yellow);
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .feedback.correct {
+            background-color: var(--accent-green);
+            color: #006400;
+        }
+
+        .feedback.wrong {
+            background-color: var(--accent-pink);
+            color: #8b0000;
+        }
+
+        .nav-btn {
+            background-color: var(--ink-color);
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            margin-top: 10px;
+        }
+
+        /* LONG ANSWERS */
+        .long-q-box {
+            margin-bottom: 30px;
+            background: #fff;
+            padding: 15px;
+            border: 2px solid var(--ink-color);
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            margin-top: 10px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            font-family: 'Patrick Hand', cursive;
+            font-size: 1rem;
+        }
+
+        .check-btn {
+            background-color: #2a9d8f;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        .la-feedback {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            display: none;
+        }
+
+        /* REVISION */
+        .revision-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .revision-list li {
+            background: var(--accent-yellow);
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 5px solid #ff9f1c;
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: var(--ink-color);
+            color: white;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+            h1 { font-size: 2rem; }
+            .score-item { font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>COMPUTER SCIENCE</h1>
+        <h2>Chapter 5: Files and Folders</h2>
+        <p>Management Skills</p>
+    </header>
+
+    <div id="score-panel">
+        <div class="score-item">
+            <span>Attempted</span>
+            <span class="score-val" id="score-total">0</span>
+        </div>
+        <div class="score-item">
+            <span>Correct</span>
+            <span class="score-val" id="score-correct">0</span>
+        </div>
+        <div class="score-item">
+            <span>Score</span>
+            <span class="score-val" id="score-marks">0</span>
+        </div>
+        <div class="score-item">
+            <span>Accuracy</span>
+            <span class="score-val" id="score-percent">0%</span>
+        </div>
+    </div>
+
+    <!-- NOTES SECTION -->
+    <section id="notes">
+        <h2 class="section-title">Class Notes 📝</h2>
+
+        <!-- Topic 1 -->
+        <div class="topic-card">
+            <div class="topic-header">1. Concept of Files and Folders</div>
+            <div class="note-content">
+                <p><strong>Definition:</strong> A <strong>FILE</strong> is like a single sheet of paper where you store your work (drawing, poem, letter). A <strong>FOLDER</strong> is like a bag or a box where you keep many files together.</p>
+                <div class="real-life-box">
+                    <strong>🇮🇳 Indian Daily Life Example:</strong><br>
+                    Think of your <strong>School Bag</strong> as the Main Hard Drive.<br>
+                    Your <strong>Lunch Box</strong> is a Folder.<br>
+                    Inside it, the <strong>Roti</strong> and <strong>Sabzi</strong> are Files!
+                </div>
+                <div class="img-placeholder">IMAGE: Drawing of a paper (file) going into a yellow folder</div>
+                <div class="memory-tip">💡 Tip: Files have data. Folders have files.</div>
+            </div>
+        </div>
+
+        <!-- Topic 2 -->
+        <div class="topic-card">
+            <div class="topic-header">2. Creating Files and Folders</div>
+            <div class="note-content">
+                <p>To keep things organized, we must create new folders.</p>
+                <p><strong>Steps to Create a Folder:</strong></p>
+                <ol>
+                    <li>Right-click on an empty space.</li>
+                    <li>Select <strong>NEW</strong>.</li>
+                    <li>Click on <strong>FOLDER</strong>.</li>
+                    <li>Type a name and press Enter.</li>
+                </ol>
+                <div class="img-placeholder">IMAGE: Screenshot of Right Click Context Menu -> New -> Folder</div>
+                <div class="memory-tip">💡 Tip: Right-Click is your magic wand!</div>
+            </div>
+        </div>
+
+        <!-- Topic 3 -->
+        <div class="topic-card">
+            <div class="topic-header">3. Renaming Files and Folders</div>
+            <div class="note-content">
+                <p>Renaming means changing the name of a file or folder.</p>
+                <p><strong>Why?</strong> If you name everything "New Folder", you will get confused!</p>
+                <p><strong>Steps:</strong></p>
+                <ol>
+                    <li>Right-click the file/folder.</li>
+                    <li>Select <strong>RENAME</strong>.</li>
+                    <li>Type the new name (e.g., "Homework").</li>
+                    <li>Press Enter.</li>
+                </ol>
+                <div class="real-life-box">
+                    <strong>🇮🇳 Example:</strong> Just like we label our school notebooks "Maths", "English" so we don't pick the wrong one!
+                </div>
+            </div>
+        </div>
+
+        <!-- Topic 4 -->
+        <div class="topic-card">
+            <div class="topic-header">4. Opening and Saving Files</div>
+            <div class="note-content">
+                <p><strong>Opening:</strong> Double-click (click twice fast) with the left mouse button to open a file.</p>
+                <p><strong>Saving:</strong> When you finish work, you MUST save it so it doesn't get lost.</p>
+                <p>Shortcut: <strong>Ctrl + S</strong></p>
+                <div class="img-placeholder">IMAGE: Icon of a Floppy Disk (Save Button)</div>
+                <div class="memory-tip">💡 Tip: Save often, or cry later!</div>
+            </div>
+        </div>
+
+        <!-- Topic 5 -->
+        <div class="topic-card">
+            <div class="topic-header">5. Moving and Deleting</div>
+            <div class="note-content">
+                <p><strong>Moving (Cut & Paste):</strong> Changing the location of a file.</p>
+                <p><strong>Deleting:</strong> Removing a file you don't need.</p>
+                <p>Deleted files go to the <strong>Recycle Bin</strong> (Computer's Dustbin).</p>
+                <div class="real-life-box">
+                    <strong>🇮🇳 Example:</strong> Throwing waste paper in the dustbin (Delete). Putting books from table to shelf (Move).
+                </div>
+            </div>
+        </div>
+
+        <!-- Topic 6 -->
+        <div class="topic-card">
+            <div class="topic-header">6. Searching a File/Folder</div>
+            <div class="note-content">
+                <p>Can't find your drawing? Use the <strong>Search Bar</strong>.</p>
+                <p>Located at the top right of the file explorer window.</p>
+                <p>Just type the name, and the computer finds it for you!</p>
+                <div class="img-placeholder">IMAGE: Magnifying glass icon in a search bar</div>
+            </div>
+        </div>
+
+        <!-- Topic 7 -->
+        <div class="topic-card">
+            <div class="topic-header">7. Basic Organization Practices</div>
+            <div class="note-content">
+                <p>Do not keep all files on the Desktop! It makes the computer slow and messy.</p>
+                <p>Create main folders like: <strong>Music, Photos, School Work, Games</strong>.</p>
+                <div class="memory-tip">💡 Tip: A clean desktop = A happy computer.</div>
+            </div>
+        </div>
+
+        <!-- Topic 8 -->
+        <div class="topic-card">
+            <div class="topic-header">8. Why Organization Matters</div>
+            <div class="note-content">
+                <ol>
+                    <li><strong>Saves Time:</strong> You find things quickly.</li>
+                    <li><strong>Less Stress:</strong> You don't lose important homework.</li>
+                    <li><strong>Looks Good:</strong> Neat and tidy.</li>
+                </ol>
+                <div class="real-life-box">
+                    <strong>🇮🇳 Example:</strong> If your room is messy, can you find your socks? No! Same with computer files.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- IMPORTANT QUESTIONS -->
+    <section id="important-questions">
+        <h2 class="section-title">Important Questions (Read Carefully) 📖</h2>
+        <div id="imp-questions-list">
+            <!-- Populated by JS -->
+        </div>
+    </section>
+
+    <!-- PRACTICE QUESTIONS -->
+    <section id="practice-questions">
+        <h2 class="section-title">Practice Zone (70 Questions) 🎮</h2>
+        <div id="quiz-container" class="question-container">
+            <div id="quiz-question" style="font-size: 1.2rem; margin-bottom: 15px;">Loading...</div>
+            <div id="quiz-options" class="options-grid"></div>
+            <div id="quiz-feedback" class="feedback"></div>
+            <button id="next-btn" class="nav-btn" style="display:none;">Next Question ➡</button>
+        </div>
+    </section>
+
+    <!-- ADVANCED LONG QUESTIONS -->
+    <section id="advanced-questions">
+        <h2 class="section-title">Advanced Thinking Zone 🧠</h2>
+        <p>Answer these 10 questions. Be detailed!</p>
+        <div id="long-questions-list">
+            <!-- Populated by JS -->
+        </div>
+    </section>
+
+    <!-- REVISION -->
+    <section id="revision">
+        <h2 class="section-title">Quick Revision ⚡</h2>
+        <ul class="revision-list">
+            <li>File = Data holder. Folder = Container.</li>
+            <li>Ctrl + S = Save.</li>
+            <li>Rename to give meaningful names.</li>
+            <li>Deleted files go to Recycle Bin.</li>
+            <li>Search bar helps find lost files.</li>
+            <li>Keep the Desktop clean!</li>
+        </ul>
+    </section>
+
+    <footer>
+        <p>Designed & Created by SHRISHANT YADAV</p>
+        <p>ShanEduHub</p>
+    </footer>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    // --- DATA ---
+
+    const impQuestions = [
+        { q: "What is a file?", a: "A file is a collection of data stored on a computer, like a drawing or a letter." },
+        { q: "What is a folder?", a: "A folder is a container that stores files and other folders to keep them organized." },
+        { q: "What is the shortcut to save?", a: "Ctrl + S" },
+        { q: "What is the shortcut to copy?", a: "Ctrl + C" },
+        { q: "What is the shortcut to paste?", a: "Ctrl + V" },
+        { q: "Where do deleted files go?", a: "Recycle Bin" },
+        { q: "Can a folder contain another folder?", a: "Yes, this is called a sub-folder." },
+        { q: "Why should we rename files?", a: "To easily identify what is inside them later." },
+        { q: "What happens if you delete a file from the Recycle Bin?", a: "It is permanently removed from the computer." },
+        { q: "How do you open a file?", a: "By double-clicking the left mouse button on it." },
+        { q: "What is the desktop?", a: "The first screen that appears when the computer starts." },
+        { q: "What is a file extension?", a: "The letters after the dot (like .txt) that tell the computer what kind of file it is." },
+        { q: "Name one location to store files.", a: "Hard Drive, Pen Drive, or Documents folder." },
+        { q: "What is 'Cut' used for?", a: "To move a file from one place to another." },
+        { q: "What is 'Copy' used for?", a: "To make a duplicate of a file." },
+        { q: "Can two files have the same name in the same folder?", a: "No, the computer will ask to rename one." },
+        { q: "How do you select all files in a folder?", a: "Press Ctrl + A." },
+        { q: "What does the 'Search' bar do?", a: "It helps you find files you have lost or misplaced." },
+        { q: "Is it good to save everything on the Desktop?", a: "No, it slows down the computer." },
+        { q: "What icon represents a folder usually?", a: "A yellow colored briefcase or file packet." },
+        { q: "How do you create a new folder?", a: "Right Click > New > Folder." },
+        { q: "Can you change the icon of a folder?", a: "Yes, through Properties." },
+        { q: "What is a drive?", a: "A physical storage area, like C: Drive or D: Drive." },
+        { q: "What is 'Select'?", a: "Clicking once on an item to highlight it." },
+        { q: "Can we recover a permanently deleted file easily?", a: "No, it is very difficult." },
+        { q: "What key do you press to rename?", a: "F2 is the shortcut." },
+        { q: "What key do you press to delete?", a: "Delete key." },
+        { q: "What is Windows Explorer?", a: "The program used to view and manage files/folders." },
+        { q: "Why organize files?", a: "To save time and reduce confusion." },
+        { q: "Can a file exist without a name?", a: "No, every file must have a name." }
+    ];
+
+    const practiceQuestions = [
+        // Topic 1: Concepts (1-10)
+        { t: "mcq", q: "A collection of data is called a...", o: ["File", "Folder", "Box", "Mouse"], a: 0, exp: "Data is stored in Files." },
+        { t: "mcq", q: "A container for files is called a...", o: ["File", "Folder", "Monitor", "Wire"], a: 1, exp: "Folders hold files." },
+        { t: "tf", q: "A folder can hold other folders.", a: 0, exp: "True! These are sub-folders." },
+        { t: "mcq", q: "Which icon usually represents a folder?", o: ["Blue Circle", "Yellow Box", "Red Square", "Green Triangle"], a: 1, exp: "Folders are typically yellow." },
+        { t: "mcq", q: "Your drawing is saved as a...", o: ["Folder", "File", "Keyboard", "Screen"], a: 1, exp: "Drawings are files." },
+        { t: "tf", q: "A file can hold a folder inside it.", a: 1, exp: "False. Files go inside folders, not vice versa." },
+        { t: "mcq", q: "A Tiffin Box is like a...", o: ["File", "Folder", "Mouse", "Screen"], a: 1, exp: "It holds things inside." },
+        { t: "mcq", q: "A Chapati inside the tiffin is like a...", o: ["File", "Folder", "Table", "Chair"], a: 0, exp: "It is the content." },
+        { t: "tf", q: "Every file must have a name.", a: 0, exp: "True. Computers need names to find things." },
+        { t: "mcq", q: "Which is bigger in hierarchy?", o: ["File", "Folder", "Byte", "Pixel"], a: 1, exp: "Folder contains files." },
+
+        // Topic 2: Creating (11-20)
+        { t: "mcq", q: "To create a folder, first we...", o: ["Left Click", "Right Click", "Double Click", "Scroll"], a: 1, exp: "Right click opens the menu." },
+        { t: "mcq", q: "After Right Click, we select...", o: ["View", "Sort by", "New", "Refresh"], a: 2, exp: "New is the option to create." },
+        { t: "tf", q: "You can create a folder on the Desktop.", a: 0, exp: "True." },
+        { t: "mcq", q: "What is the default name of a new folder?", o: ["Folder", "New Folder", "Empty", "My Folder"], a: 1, exp: "Windows names it 'New Folder'." },
+        { t: "mcq", q: "Can you create a file inside a folder?", o: ["Yes", "No", "Only on Sundays", "Never"], a: 0, exp: "Yes, that is where they belong." },
+        { t: "tf", q: "You need a keyboard to type a folder name.", a: 0, exp: "True." },
+        { t: "mcq", q: "Which option creates a new text file?", o: ["New > Text Document", "New > Folder", "View > Icons", "Sort > Name"], a: 0, exp: "Text Document creates a text file." },
+        { t: "tf", q: "You can only create 5 folders on a computer.", a: 1, exp: "False. You can create thousands." },
+        { t: "mcq", q: "Where is the 'New' option found?", o: ["Start Menu", "Context Menu (Right Click)", "Taskbar", "Clock"], a: 1, exp: "In the Right Click menu." },
+        { t: "mcq", q: "After typing the name, which key do we press?", o: ["Enter", "Shift", "Ctrl", "Alt"], a: 0, exp: "Enter confirms the name." },
+
+        // Topic 3: Renaming (21-30)
+        { t: "mcq", q: "Renaming means...", o: ["Deleting", "Changing Name", "Moving", "Copying"], a: 1, exp: "Re-naming = New Name." },
+        { t: "mcq", q: "Shortcut key to Rename is...", o: ["F1", "F2", "F5", "F10"], a: 1, exp: "F2 is for Rename." },
+        { t: "tf", q: "You cannot rename a file once created.", a: 1, exp: "False. You can rename anytime." },
+        { t: "mcq", q: "To rename using mouse, we...", o: ["Right Click > Rename", "Left Click", "Double Click", "Scroll"], a: 0, exp: "Right click gives the option." },
+        { t: "mcq", q: "Why do we rename files?", o: ["To confuse us", "To organize better", "To delete them", "To hide them"], a: 1, exp: "Names help us know what's inside." },
+        { t: "tf", q: "Two files can have the exact same name in one folder.", a: 1, exp: "False. Names must be unique in a folder." },
+        { t: "mcq", q: "If you rename 'Homework' to 'Game', does the content change?", o: ["Yes", "No", "Maybe", "Sometimes"], a: 1, exp: "Only the label changes, not the inside work." },
+        { t: "mcq", q: "Can you use numbers in a file name?", o: ["Yes", "No", "Never", "Only 1"], a: 0, exp: "Yes, like 'Drawing1'." },
+        { t: "tf", q: "You can use the '?' symbol in a file name.", a: 1, exp: "False. Special characters like ? / \ < > * are not allowed." },
+        { t: "mcq", q: "What happens if you don't type a name and press Enter?", o: ["It deletes", "It keeps old name", "It explodes", "Nothing"], a: 1, exp: "It reverts to the original name." },
+
+        // Topic 4: Opening/Saving (31-40)
+        { t: "mcq", q: "To open a file, we usually...", o: ["Single Click", "Double Click", "Right Click", "Drag"], a: 1, exp: "Double click opens items." },
+        { t: "mcq", q: "Which button opens a file if you select it and press?", o: ["Space", "Enter", "Shift", "Esc"], a: 1, exp: "Enter opens selected items." },
+        { t: "mcq", q: "Saving a file keeps it safe on the...", o: ["Monitor", "Mouse", "Hard Disk", "Keyboard"], a: 2, exp: "Storage happens on the disk." },
+        { t: "mcq", q: "Shortcut for Save is...", o: ["Ctrl+S", "Ctrl+O", "Ctrl+P", "Ctrl+X"], a: 0, exp: "S for Save." },
+        { t: "tf", q: "If you don't save, your work might be lost if power goes.", a: 0, exp: "True! Always save." },
+        { t: "mcq", q: "Save As allows you to...", o: ["Save with new name", "Delete", "Open", "Print"], a: 0, exp: "Save As creates a copy with a new name." },
+        { t: "mcq", q: "Which menu usually has the Save option?", o: ["File", "Edit", "View", "Help"], a: 0, exp: "File menu contains Save." },
+        { t: "tf", q: "You can open a song file in MS Paint.", a: 1, exp: "False. Paint is for images." },
+        { t: "mcq", q: "When you open a folder, it opens in a...", o: ["Window", "Box", "Circle", "Line"], a: 0, exp: "Windows Explorer Window." },
+        { t: "mcq", q: "The X button on top right...", o: ["Saves", "Opens", "Closes", "Minimizes"], a: 2, exp: "X is for Close." },
+
+        // Topic 5: Move/Delete (41-50)
+        { t: "mcq", q: "To move a file, we use...", o: ["Cut and Paste", "Copy and Paste", "Delete", "Rename"], a: 0, exp: "Cut moves it. Copy duplicates it." },
+        { t: "mcq", q: "Shortcut for Cut is...", o: ["Ctrl+C", "Ctrl+X", "Ctrl+V", "Ctrl+Z"], a: 1, exp: "X looks like scissors (Cut)." },
+        { t: "mcq", q: "Shortcut for Paste is...", o: ["Ctrl+P", "Ctrl+V", "Ctrl+C", "Ctrl+S"], a: 1, exp: "V is for Paste." },
+        { t: "mcq", q: "Where do deleted files go?", o: ["Dustbin", "Recycle Bin", "Trash Can", "Space"], a: 1, exp: "Windows calls it Recycle Bin." },
+        { t: "tf", q: "You can restore files from Recycle Bin.", a: 0, exp: "True, unless emptied." },
+        { t: "mcq", q: "To delete permanently, press...", o: ["Shift+Delete", "Ctrl+Delete", "Alt+Delete", "Delete"], a: 0, exp: "Shift+Delete bypasses Recycle Bin." },
+        { t: "mcq", q: "Copying a file means...", o: ["Moving it", "Making a duplicate", "Deleting it", "Hiding it"], a: 1, exp: "You get two copies." },
+        { t: "tf", q: "Dragging a file to Recycle Bin deletes it.", a: 0, exp: "True." },
+        { t: "mcq", q: "Which key deletes a selected file?", o: ["Enter", "Shift", "Delete", "Space"], a: 2, exp: "The Delete key." },
+        { t: "mcq", q: "Can you empty the Recycle Bin?", o: ["Yes", "No", "Maybe", "Never"], a: 0, exp: "Yes, to free up space." },
+
+        // Topic 6: Search (51-60)
+        { t: "mcq", q: "If you lose a file, use...", o: ["Run", "Search", "Sleep", "Shutdown"], a: 1, exp: "Search helps find things." },
+        { t: "mcq", q: "The search bar usually has a...", o: ["Star", "Magnifying Glass", "Heart", "Cross"], a: 1, exp: "Symbol of search." },
+        { t: "tf", q: "You can search by file name.", a: 0, exp: "True." },
+        { t: "mcq", q: "Where is the search bar in a folder?", o: ["Top Right", "Bottom Left", "Center", "Hidden"], a: 0, exp: "Usually top right corner." },
+        { t: "mcq", q: "Can you search for all pictures?", o: ["Yes", "No", "Only text", "Never"], a: 0, exp: "Yes, by typing extension or kind." },
+        { t: "tf", q: "Search is very slow.", a: 1, exp: "False. It is usually very fast." },
+        { t: "mcq", q: "Does search look inside folders?", o: ["Yes", "No", "Sometimes", "Only on Desktop"], a: 0, exp: "It searches sub-folders too." },
+        { t: "mcq", q: "What helps search find files faster?", o: ["Indexing", "Typing slow", "Mouse", "Screen"], a: 0, exp: "Indexing creates a list for fast search." },
+        { t: "mcq", q: "If you type 'homework', it finds...", o: ["Games", "Files named homework", "Music", "Videos"], a: 1, exp: "Matches the name." },
+        { t: "tf", q: "You must type the full exact name to find a file.", a: 1, exp: "False. Part of the name works." },
+
+        // Topic 7 & 8: Org & General (61-70)
+        { t: "mcq", q: "A messy desktop makes the computer...", o: ["Fast", "Slow", "Happy", "Cold"], a: 1, exp: "It uses memory to display icons." },
+        { t: "mcq", q: "Best place to keep photos is...", o: ["Desktop", "Pictures Folder", "Recycle Bin", "Windows Folder"], a: 1, exp: "Organized correctly." },
+        { t: "tf", q: "Organizing files saves time.", a: 0, exp: "True." },
+        { t: "mcq", q: "You should delete...", o: ["Important files", "Unnecessary files", "Windows files", "System files"], a: 1, exp: "Clean up junk." },
+        { t: "mcq", q: "Sub-folder means...", o: ["A folder inside a folder", "A file inside a file", "A small file", "A big folder"], a: 0, exp: "Nested folders." },
+        { t: "mcq", q: "We organize files to...", o: ["Hide them", "Find them easily", "Lose them", "Break them"], a: 1, exp: "Efficiency." },
+        { t: "tf", q: "You should name files '1', '2', '3'.", a: 1, exp: "False. Use descriptive names like 'Maths HW'." },
+        { t: "mcq", q: "Where should you keep Games?", o: ["Documents", "Games Folder", "Photos", "Desktop"], a: 1, exp: "Keep categories separate." },
+        { t: "mcq", q: "Who is responsible for organizing your files?", o: ["The Computer", "You", " The Mouse", "The Internet"], a: 1, exp: "User management skills." },
+        { t: "mcq", q: "A clean computer is a...", o: ["Productive computer", "Broken computer", "Sad computer", "Slow computer"], a: 0, exp: "Efficiency." }
+    ];
+
+    const longQuestions = [
+        { 
+            id: "lq1", 
+            q: "Imagine you are planning a Birthday Party. How will you use folders to organize your plan? Create a structure.",
+            keywords: ["folder", "sub-folder", "list", "guest", "food", "music", "create"],
+            answer: "I will create a main folder named 'Birthday Party'. Inside it, I will create sub-folders named 'Guest List', 'Food Menu', 'Music Playlist', and 'Decoration Ideas'. I will put respective files in these folders."
+        },
+        { 
+            id: "lq2", 
+            q: "Your father's computer desktop is full of 100 files. He can't find anything. What advice will you give him?",
+            keywords: ["folder", "create", "move", "organize", "category", "desktop", "clean"],
+            answer: "I will advise him to create folders for different categories like 'Office Work', 'Personal', and 'Bills'. Then, select the files and Move (Cut/Paste) them into these folders to clean the desktop."
+        },
+        { 
+            id: "lq3", 
+            q: "What is the difference between COPYING a file and MOVING a file?",
+            keywords: ["copy", "move", "duplicate", "location", "original", "both", "stays"],
+            answer: "Copying creates a duplicate. The file remains in the old place AND the new place. Moving changes the location. The file leaves the old place and goes to the new place."
+        },
+        { 
+            id: "lq4", 
+            q: "You accidentally deleted your homework file! What steps will you take to get it back?",
+            keywords: ["recycle", "bin", "restore", "open", "find", "right click"],
+            answer: "1. Open Recycle Bin. 2. Search for the homework file. 3. Right-click on the file. 4. Select 'Restore'. The file will go back to its original folder."
+        },
+        { 
+            id: "lq5", 
+            q: "Why is renaming a file important? Give an example.",
+            keywords: ["identify", "find", "name", "confuse", "example", "know", "content"],
+            answer: "Renaming is important to identify what is inside the file without opening it. Example: Instead of 'Doc1', naming it 'Maths Homework' helps me find it quickly during exams."
+        },
+        { 
+            id: "lq6", 
+            q: "Explain the steps to create a folder named 'Class 4' inside 'Documents'.",
+            keywords: ["open", "documents", "right click", "new", "folder", "type", "enter"],
+            answer: "1. Open 'Documents'. 2. Right-click on empty space. 3. Select New > Folder. 4. Type 'Class 4'. 5. Press Enter."
+        },
+        { 
+            id: "lq7", 
+            q: "What is a file extension? Why does the computer need it?",
+            keywords: ["type", "kind", "program", "open", "dot", "software", "know"],
+            answer: "A file extension is the part of the name after the dot (like .jpg or .txt). It tells the computer what type of file it is and which program should open it."
+        },
+        { 
+            id: "lq8", 
+            q: "You are searching for a file named 'Project'. You typed 'Pro' in the search bar. Will it find it? Why?",
+            keywords: ["yes", "match", "part", "name", "find", "search", "letter"],
+            answer: "Yes, it will find it. The search bar looks for files that start with or contain the letters you type. Since 'Project' starts with 'Pro', it will show up."
+        },
+        { 
+            id: "lq9", 
+            q: "What is the difference between 'Save' and 'Save As'?",
+            keywords: ["existing", "new", "name", "copy", "change", "location"],
+            answer: "Save updates the current file with changes. Save As creates a new copy of the file with a different name or in a different location."
+        },
+        { 
+            id: "lq10", 
+            q: "Why should we NOT keep very important files only in the Recycle Bin?",
+            keywords: ["delete", "empty", "lost", "permanent", "temporary", "safe"],
+            answer: "The Recycle Bin is for trash. If someone empties the Recycle Bin, the files are deleted permanently and cannot be recovered easily. It is not a safe storage place."
+        }
+    ];
+
+    // --- STATE ---
+    let currentQIndex = 0;
+    let score = {
+        correct: 0,
+        wrong: 0,
+        attempted: 0,
+        marks: 0
+    };
+
+    // --- DOM ELEMENTS ---
+    const impList = document.getElementById('imp-questions-list');
+    const quizContainer = document.getElementById('quiz-container');
+    const questionEl = document.getElementById('quiz-question');
+    const optionsEl = document.getElementById('quiz-options');
+    const feedbackEl = document.getElementById('quiz-feedback');
+    const nextBtn = document.getElementById('next-btn');
+    const longList = document.getElementById('long-questions-list');
+
+    const scoreTotal = document.getElementById('score-total');
+    const scoreCorrect = document.getElementById('score-correct');
+    const scoreMarks = document.getElementById('score-marks');
+    const scorePercent = document.getElementById('score-percent');
+
+    // --- INITIALIZATION ---
+
+    function init() {
+        renderImpQuestions();
+        renderQuiz();
+        renderLongQuestions();
+    }
+
+    // --- RENDERERS ---
+
+    function renderImpQuestions() {
+        let html = '';
+        impQuestions.forEach((item, index) => {
+            html += `
+                <div style="margin-bottom: 15px; border-bottom: 1px dashed #ccc; padding-bottom: 10px;">
+                    <div style="color: #d00000;">Q${index+1}. ${item.q}</div>
+                    <div style="color: #2c3e50; margin-top: 5px;">Ans: ${item.a}</div>
+                </div>
+            `;
+        });
+        impList.innerHTML = html;
+    }
+
+    function renderQuiz() {
+        if (currentQIndex >= practiceQuestions.length) {
+            quizContainer.innerHTML = `<div style="text-align:center;"><h3>Practice Complete! 🎉</h3><p>You answered all 70 questions.</p></div>`;
+            return;
+        }
+
+        const q = practiceQuestions[currentQIndex];
+        questionEl.textContent = `Q${currentQIndex + 1}. ${q.q}`;
+        optionsEl.innerHTML = '';
+        feedbackEl.style.display = 'none';
+        nextBtn.style.display = 'none';
+
+        if (q.t === 'mcq') {
+            q.o.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = opt;
+                btn.onclick = () => handleAnswer(idx);
+                optionsEl.appendChild(btn);
+            });
+        } else if (q.t === 'tf') {
+            ['True', 'False'].forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = opt;
+                // For TF, usually 0 is True, 1 is False logic in my data? 
+                // Let's check data: a:0 for True, a:1 for False.
+                // Button 0 (True), Button 1 (False).
+                btn.onclick = () => handleAnswer(idx);
+                optionsEl.appendChild(btn);
+            });
+        }
+    }
+
+    function renderLongQuestions() {
+        let html = '';
+        longQuestions.forEach((item, index) => {
+            html += `
+                <div class="long-q-box" id="lq-box-${index}">
+                    <div style="font-weight: bold; margin-bottom: 10px;">Q${index+1}. ${item.q}</div>
+                    <textarea id="lq-input-${index}" placeholder="Write your answer here..."></textarea>
+                    <button class="check-btn" onclick="checkLongAnswer(${index})">Check Answer</button>
+                    <div class="la-feedback" id="lq-feed-${index}"></div>
+                </div>
+            `;
+        });
+        longList.innerHTML = html;
+    }
+
+    // --- LOGIC ---
+
+    function handleAnswer(selectedIndex) {
+        // Prevent multiple clicks
+        const buttons = optionsEl.querySelectorAll('button');
+        buttons.forEach(b => b.disabled = true);
+
+        const q = practiceQuestions[currentQIndex];
+        const isCorrect = selectedIndex === q.a;
+
+        score.attempted++;
+        if (isCorrect) {
+            score.correct++;
+            score.marks += 1;
+            feedbackEl.className = 'feedback correct';
+            feedbackEl.innerHTML = `<strong>Excellent ⭐</strong><br>${q.exp}`;
+        } else {
+            score.wrong++;
+            feedbackEl.className = 'feedback wrong';
+            feedbackEl.innerHTML = `<strong>Try Again</strong><br>Correct Answer: ${q.t === 'tf' ? (q.a === 0 ? 'True' : 'False') : q.o[q.a]}<br>${q.exp}`;
+        }
+
+        feedbackEl.style.display = 'block';
+        nextBtn.style.display = 'block';
+        updateScorePanel();
+    }
+
+    nextBtn.onclick = () => {
+        currentQIndex++;
+        renderQuiz();
+    };
+
+    window.checkLongAnswer = (index) => {
+        const input = document.getElementById(`lq-input-${index}`);
+        const feedback = document.getElementById(`lq-feed-${index}`);
+        const box = document.getElementById(`lq-box-${index}`);
+        const btn = box.querySelector('.check-btn');
+
+        if (btn.disabled) return; // Already checked
+
+        const userText = input.value.toLowerCase();
+        const qData = longQuestions[index];
+        const keywords = qData.keywords;
+
+        let matchCount = 0;
+        keywords.forEach(k => {
+            if (userText.includes(k)) matchCount++;
+        });
+
+        const threshold = Math.ceil(keywords.length * 0.4); // Need 40% keywords
+        const passed = matchCount >= threshold && userText.length > 10;
+
+        score.attempted++;
+        
+        let feedHTML = '';
+        if (passed) {
+            score.correct++;
+            score.marks += 5; // 5 marks for long answer
+            feedback.className = 'la-feedback correct';
+            feedHTML += `<strong style="color:green">Correct! Well Explained.</strong><br>`;
+        } else {
+            score.wrong++;
+            feedback.className = 'la-feedback wrong';
+            feedHTML += `<strong style="color:red">Needs Improvement.</strong><br>`;
+        }
+
+        feedHTML += `<strong>Keywords looked for:</strong> ${keywords.join(', ')}<br>`;
+        feedHTML += `<strong>Model Answer:</strong> ${qData.answer}`;
+        
+        feedback.innerHTML = feedHTML;
+        feedback.style.display = 'block';
+        feedback.style.backgroundColor = passed ? '#d4edda' : '#f8d7da';
+        
+        btn.disabled = true;
+        btn.innerText = "Checked";
+        input.disabled = true;
+
+        updateScorePanel();
+    };
+
+    function updateScorePanel() {
+        scoreTotal.innerText = score.attempted;
+        scoreCorrect.innerText = score.correct;
+        scoreMarks.innerText = score.marks;
+        
+        const percent = score.attempted === 0 ? 0 : Math.round((score.correct / score.attempted) * 100);
+        scorePercent.innerText = percent + "%";
+    }
+
+    // Run Init
+    init();
+
+});
+</script>
+
+</body>
+</html>

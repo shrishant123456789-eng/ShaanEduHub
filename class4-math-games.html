@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ShanEduHub - Ultimate Math Game Platform</title>
+    <style>
+        /* * DESIGN SYSTEM & VARIABLES 
+         * Pastel Palette: Warm, friendly, accessible
+         */
+        :root {
+            --bg-color: #FFF9E6; /* Creamy White */
+            --primary: #FFB347; /* Pastel Orange */
+            --secondary: #77DD77; /* Pastel Green */
+            --accent: #AEC6CF; /* Pastel Blue */
+            --text-main: #555555; /* Soft Dark Grey */
+            --card-bg: #FFFFFF;
+            --success: #77DD77;
+            --error: #FF6961; /* Pastel Red */
+            --font-stack: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none; /* Prevent selection for game feel */
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            font-family: var(--font-stack);
+            color: var(--text-main);
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* TYPOGRAPHY */
+        h1, h2, h3, button, .score-text {
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        /* HEADER */
+        header {
+            background: linear-gradient(180deg, #FFD1DC 0%, #FFF9E6 100%);
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin: 0;
+            color: #FF6961;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #779ECB;
+            margin-top: 10px;
+        }
+
+        .branding {
+            font-size: 0.9rem;
+            color: #B39EB5;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        .motivation {
+            font-style: italic;
+            color: #FFB347;
+            margin-top: 15px;
+            font-size: 1.1rem;
+        }
+
+        /* STICKY SCORE PANEL */
+        #score-panel {
+            position: sticky;
+            top: 10px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(5px);
+            margin: 0 10px;
+            padding: 10px 15px;
+            border-radius: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-items: center;
+            font-size: 0.9rem;
+            border: 2px solid var(--accent);
+        }
+
+        .score-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 2px 5px;
+        }
+
+        .score-value {
+            font-size: 1.1rem;
+            color: var(--primary);
+        }
+
+        .score-label {
+            font-size: 0.7rem;
+            color: #888;
+        }
+
+        /* GAME SECTIONS */
+        .game-section {
+            background: var(--card-bg);
+            margin: 20px 15px;
+            padding: 20px;
+            border-radius: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .game-section.active-game {
+            border-color: var(--primary);
+            background: #FFFBF0;
+        }
+
+        .game-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            border-bottom: 2px dashed #EEE;
+            padding-bottom: 10px;
+        }
+
+        .game-title {
+            font-size: 1.3rem;
+            color: var(--text-main);
+        }
+
+        .game-progress {
+            font-size: 0.9rem;
+            background: var(--accent);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+        }
+
+        .game-instructions {
+            font-size: 0.95rem;
+            color: #666;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        /* TASK CARD */
+        .task-container {
+            background: #F9F9F9;
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .task-question {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        /* INPUTS & BUTTONS */
+        input[type="text"], input[type="number"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #DDD;
+            border-radius: 15px;
+            font-size: 1rem;
+            font-family: var(--font-stack);
+            margin-bottom: 15px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--accent);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .option-btn {
+            background: white;
+            border: 2px solid #DDD;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 1rem;
+            cursor: pointer;
+            font-family: var(--font-stack);
+            font-weight: bold;
+            transition: transform 0.1s, background 0.2s;
+        }
+
+        .option-btn:active {
+            transform: scale(0.95);
+        }
+
+        .check-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 15px;
+            width: 100%;
+            max-width: 250px;
+            box-shadow: 0 4px 0 #E5A040;
+            transition: transform 0.1s;
+        }
+
+        .check-btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        .start-btn {
+            background: var(--secondary);
+            color: white;
+            font-size: 1.2rem;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 5px 0 #5CB35C;
+        }
+
+        /* FEEDBACK */
+        .feedback {
+            margin-top: 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            min-height: 25px;
+        }
+
+        .feedback.correct { color: var(--success); }
+        .feedback.wrong { color: var(--error); }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 30px;
+            background: #FFF;
+            margin-top: 50px;
+            border-top: 1px solid #EEE;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        /* UTILITY */
+        .hidden { display: none !important; }
+        
+        /* RESPONSIVE */
+        @media (max-width: 480px) {
+            h1 { font-size: 1.6rem; }
+            .score-item { margin: 2px 3px; }
+            .score-label { font-size: 0.6rem; }
+            .options-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+    <div class="branding">SHANEDUHUB</div>
+    <h1>Game-Based Practice Platform</h1>
+    <div class="subtitle">Maths Explorer | 10 Games | 500 Tasks</div>
+    <div class="motivation">"Every problem is a puzzle waiting to be solved! 🚀"</div>
+    <button class="start-btn" onclick="scrollToGame()">Start Games</button>
+</header>
+
+<!-- STICKY SCORE PANEL -->
+<div id="score-panel">
+    <div class="score-item">
+        <span class="score-value" id="disp-attempted">0</span>
+        <span class="score-label">Tasks</span>
+    </div>
+    <div class="score-item">
+        <span class="score-value" id="disp-score">0</span>
+        <span class="score-label">Correct</span>
+    </div>
+    <div class="score-item">
+        <span class="score-value" id="disp-wrong">0</span>
+        <span class="score-label">Wrong</span>
+    </div>
+    <div class="score-item">
+        <span class="score-value" id="disp-accuracy">0%</span>
+        <span class="score-label">Accuracy</span>
+    </div>
+    <div class="score-item">
+        <span class="score-value" id="disp-marks">0/0</span>
+        <span class="score-label">Marks</span>
+    </div>
+</div>
+
+<!-- GAME CONTAINER -->
+<div id="game-container">
+    <!-- Sections injected by JS -->
+</div>
+
+<!-- FOOTER -->
+<footer>
+    Designed & Created by SHRISHANT YADAV<br>
+    2026 – ShanEduHub
+</footer>
+
+<!-- LOGIC -->
+<script>
+    // --- STATE MANAGEMENT ---
+    const APP_STATE = {
+        totalTasks: 500,
+        tasksPerGame: 50,
+        currentTaskIndices: Array(10).fill(0), // Track progress per game
+        globalStats: {
+            attempted: 0,
+            correct: 0,
+            wrong: 0,
+            totalMarksObtained: 0,
+            totalPossibleMarks: 0
+        }
+    };
+
+    // --- SYLLABUS DATA (Structured for Generation) ---
+    const SYLLABUS = {
+        numbers: ["Place Value", "Face Value", "Expanded Form", "Roman Numerals", "Rounding", "Successor/Predecessor"],
+        operations: ["Addition", "Subtraction", "Multiplication", "Division", "Word Problems", "Estimation"],
+        factors: ["HCF", "LCM", "Prime Numbers", "Composite Numbers", "Factor Trees", "Divisibility Rules"],
+        fractions: ["Equivalent", "Improper to Mixed", "Ordering", "Addition of Like/Unlike", "Unitary Method"],
+        decimals: ["Tenths", "Hundredths", "Money", "Conversion", "Expanded Decimal"],
+        geometry: ["Angles", "Types of Angles", "Triangles", "Symmetry", "Nets", "3D Shapes"],
+        circles: ["Radius", "Diameter", "Circumference", "Chord", "Center"],
+        measurement: ["Metric Conversion", "Length", "Weight", "Capacity", "Time Duration"],
+        area: ["Perimeter Square/Rect", "Area Square/Rect", "Counting Grids"],
+        data: ["Bar Graphs", "Pictographs", "Pie Charts", "Profit & Loss", "Bills"]
+    };
+
+    // --- GAME TITLES & CONFIG ---
+    const GAMES_CONFIG = [
+        { id: 0, title: "1. Concept Quest", desc: "Complete missions by mastering the basics.", type: "mcq" },
+        { id: 1, title: "2. Error Hunter", desc: "Find the mistake in the given math statement.", type: "binary" },
+        { id: 2, title: "3. Build the Answer", desc: "Arrange the steps or numbers in correct logic.", type: "order" },
+        { id: 3, title: "4. Real-Life Simulator", desc: "Apply math to daily shopping and life.", type: "input" },
+        { id: 4, title: "5. Concept Mixer", desc: "Two chapters mixed into one problem!", type: "mcq" },
+        { id: 5, title: "6. Why & How Challenge", desc: "Don't just solve, explain the reason.", type: "long" },
+        { id: 6, title: "7. Memory Grid", desc: "Recall formulas and definitions quickly.", type: "input" },
+        { id: 7, title: "8. Think Like a Teacher", desc: "Judge if the answer is correct or frame a question.", type: "binary" },
+        { id: 8, title: "9. Time-Travel Tasks", desc: "Solve problems from the past, present, and future.", type: "mcq" },
+        { id: 9, title: "10. Mastery Arena", desc: "The ultimate challenge. Mixed difficult problems.", type: "mixed" }
+    ];
+
+    // --- TASK GENERATOR ENGINE ---
+    // This function generates 500 deterministic tasks based on the syllabus
+    const generateAllTasks = () => {
+        let allTasks = [];
+
+        for (let g = 0; g < 10; g++) {
+            let gameTasks = [];
+            for (let t = 0; t < 50; t++) {
+                gameTasks.push(createTask(g, t));
+            }
+            allTasks.push(gameTasks);
+        }
+        return allTasks;
+    };
+
+    // Helper to create a specific task
+    const createTask = (gameIdx, taskIdx) => {
+        const globalIdx = (gameIdx * 50) + taskIdx;
+        const isLong = (globalIdx % 3 === 0) || (gameIdx === 5); // Ensure ~150 long tasks (approx every 3rd + Game 6)
+        
+        let task = {
+            id: globalIdx,
+            gameId: gameIdx,
+            type: isLong ? 'long' : 'short',
+            question: "",
+            answer: "", // For short answers
+            keywords: [], // For long answers
+            options: [], // For MCQs
+            explanation: "" // Feedback
+        };
+
+        // --- CONTENT LOGIC PER GAME ---
+        
+        // GAME 1: CONCEPT QUEST (Basics - MCQs)
+        if (gameIdx === 0) {
+            task.type = 'mcq';
+            if (taskIdx < 10) { // Numbers
+                let num = 10000 + (taskIdx * 523);
+                task.question = `What is the Place Value of 5 in ${num}?`;
+                task.options = ["500", "50", "5000", "5"];
+                task.answer = "500";
+            } else if (taskIdx < 20) { // Add/Sub
+                let n1 = 500 + taskIdx; let n2 = 200 + taskIdx;
+                task.question = `Solve: ${n1} + ${n2}`;
+                task.options = [`${n1+n2}`, `${n1+n2+10}`, `${n1+n2-10}`, "None"];
+                task.answer = `${n1+n2}`;
+            } else if (taskIdx < 30) { // Geometry
+                const shapes = ["Triangle", "Square", "Rectangle", "Pentagon"];
+                task.question = `A ${shapes[taskIdx%4]} has how many sides?`;
+                task.options = ["3", "4", "5", "6"];
+                task.answer = (taskIdx%4 === 0) ? "3" : (taskIdx%4 === 3) ? "5" : "4";
+            } else { // Mixed
+                task.question = `Identify the smallest number formed by digits 1, 0, 5, 2.`;
+                task.options = ["1025", "0125", "1250", "5210"];
+                task.answer = "1025";
+            }
+        }
+
+        // GAME 2: ERROR HUNTER (True/False)
+        else if (gameIdx === 1) {
+            task.type = 'mcq';
+            const wrong = (taskIdx % 2 === 0);
+            if (taskIdx < 25) {
+                let n1 = 12 * (taskIdx+1);
+                let ans = wrong ? (n1 * 5) + 10 : (n1 * 5);
+                task.question = `Student claim: ${n1} x 5 = ${ans}. Is this correct?`;
+                task.options = ["Correct", "Incorrect"];
+                task.answer = wrong ? "Incorrect" : "Correct";
+            } else {
+                task.question = `Statement: A ray has ${wrong ? 'two' : 'one'} end point(s).`;
+                task.options = ["True", "False"];
+                task.answer = wrong ? "False" : "True";
+            }
+        }
+
+        // GAME 3: BUILD THE ANSWER (Logic/Sequencing - treated as MCQ for simplicity in input, or Input)
+        else if (gameIdx === 2) {
+            task.type = 'mcq';
+            task.question = `Arrange in Ascending Order: 400, 100, 300, 200`;
+            if (taskIdx % 2 === 0) {
+                 task.question = `Which step comes FIRST in (30 + 5) x 2?`;
+                 task.options = ["Multiply by 2", "Add 30 + 5", "Subtract 5", "Divide"];
+                 task.answer = "Add 30 + 5";
+            } else {
+                task.question = `To convert Kg to Grams, we must:`;
+                task.options = ["Multiply by 1000", "Divide by 1000", "Add 100", "Subtract 100"];
+                task.answer = "Multiply by 1000";
+            }
+        }
+
+        // GAME 4: REAL LIFE SIMULATOR (Input/Word Problems)
+        else if (gameIdx === 3) {
+            task.type = 'input';
+            let cost = (taskIdx + 1) * 5;
+            let qty = 3;
+            task.question = `Apples cost ₹${cost} per kg. Mom buys ${qty} kg. How much does she pay? (Write number only)`;
+            task.answer = `${cost * qty}`;
+        }
+
+        // GAME 5: CONCEPT MIXER (Multi-step)
+        else if (gameIdx === 4) {
+             task.type = 'mcq';
+             let side = 5 + taskIdx;
+             task.question = `A square park has side ${side}m. What is its Perimeter?`;
+             task.options = [`${4*side}m`, `${side*side}m`, `${2*side}m`, `${side+4}m`];
+             task.answer = `${4*side}m`;
+        }
+
+        // GAME 6: WHY & HOW (Reasoning - LONG ANSWER)
+        else if (gameIdx === 5) {
+            task.type = 'long';
+            if (taskIdx < 10) {
+                task.question = "Why is a square also a rectangle? Explain.";
+                task.keywords = ["angle", "90", "degree", "parallel", "opposite"];
+            } else if (taskIdx < 20) {
+                task.question = "How do you check if a number is divisible by 5?";
+                task.keywords = ["0", "5", "end", "digit", "place"];
+            } else {
+                task.question = "Explain the difference between Face Value and Place Value.";
+                task.keywords = ["position", "actual", "digit", "place", "location"];
+            }
+        }
+
+        // GAME 7: MEMORY GRID (Recall)
+        else if (gameIdx === 6) {
+            task.type = 'input';
+            if (taskIdx % 3 === 0) {
+                task.question = "What is the formula for Area of a Rectangle? (Use 'l' and 'b')";
+                task.answer = "l x b";
+            } else if (taskIdx % 3 === 1) {
+                task.question = "How many centimeters in 1 Meter?";
+                task.answer = "100";
+            } else {
+                task.question = "What represents 1000 in Roman Numerals?";
+                task.answer = "M";
+            }
+        }
+
+        // GAME 8: TEACHER MODE (Judgement)
+        else if (gameIdx === 7) {
+            task.type = 'mcq';
+            task.question = "A student wrote: 'All prime numbers are odd'. Is this True or False?";
+            task.options = ["True", "False (2 is even)"];
+            task.answer = "False (2 is even)";
+        }
+
+        // GAME 9: TIME TRAVEL (Past/Present)
+        else if (gameIdx === 8) {
+            task.type = 'mcq';
+            let year = 2000 + taskIdx;
+            task.question = `It is ${year}. A leap year comes every 4 years. When is the next one?`;
+            // Simple logic for game mock
+            let nextLeap = year + (4 - (year % 4));
+            task.options = [`${nextLeap}`, `${year+1}`, `${year+5}`, `${year+2}`];
+            task.answer = `${nextLeap}`;
+        }
+
+        // GAME 10: MASTERY ARENA (Hard Mixed)
+        else if (gameIdx === 9) {
+             if (taskIdx % 2 === 0) {
+                 task.type = 'long';
+                 task.question = "Word Problem: A train covers 400km in 4 hours. Explain how to find speed and calculate distance for 6 hours.";
+                 task.keywords = ["divide", "100", "multiply", "600", "unitary"];
+             } else {
+                 task.type = 'input';
+                 task.question = `Solve: (15 x 2) + (100 / 10) - 5 = ?`;
+                 task.answer = "35";
+             }
+        }
+
+        // OVERRIDES FOR VARIETY & FALLBACKS
+        // Ensure 150 Long Answers distributed
+        if (isLong && gameIdx !== 5 && gameIdx !== 9) {
+            task.type = 'long';
+            const topics = ["LCM usage", "Perimeter vs Area", "24-hour clock", "Improper fractions", "Symmetry"];
+            task.question = `Explain ${topics[taskIdx % 5]} with an example.`;
+            task.keywords = ["example", "is", "for", "when", "time", "measure"];
+        }
+
+        // Ensure proper input types for math
+        if (task.type === 'input' && !task.answer) task.answer = "0";
+
+        // Assign Marks
+        task.marks = (task.type === 'long') ? 5 : 2;
+
+        return task;
+    };
+
+    const TASKS_DATA = generateAllTasks();
+
+    // --- DOM ELEMENTS ---
+    const scorePanel = {
+        attempted: document.getElementById('disp-attempted'),
+        correct: document.getElementById('disp-score'),
+        wrong: document.getElementById('disp-wrong'),
+        accuracy: document.getElementById('disp-accuracy'),
+        marks: document.getElementById('disp-marks')
+    };
+    const gameContainer = document.getElementById('game-container');
+
+    // --- INITIALIZATION ---
+    function init() {
+        renderGames();
+        updateScorePanel();
+    }
+
+    // --- RENDER FUNCTIONS ---
+    function renderGames() {
+        gameContainer.innerHTML = '';
+        GAMES_CONFIG.forEach((game, index) => {
+            const section = document.createElement('section');
+            section.id = `game-${index}`;
+            section.className = 'game-section';
+            if (index === 0) section.classList.add('active-game');
+
+            section.innerHTML = `
+                <div class="game-header">
+                    <div>
+                        <div class="game-title">${game.title}</div>
+                        <div class="game-instructions">${game.desc}</div>
+                    </div>
+                    <div class="game-progress" id="prog-${index}">0 / 50 Tasks</div>
+                </div>
+                <div id="task-area-${index}">
+                    <!-- Task injected here -->
+                </div>
+            `;
+            gameContainer.appendChild(section);
+            loadTask(index);
+        });
+    }
+
+    function loadTask(gameIndex) {
+        const taskIndex = APP_STATE.currentTaskIndices[gameIndex];
+        const container = document.getElementById(`task-area-${gameIndex}`);
+        const progress = document.getElementById(`prog-${gameIndex}`);
+        
+        // Update Progress UI
+        progress.innerText = `${taskIndex} / 50 Tasks`;
+
+        if (taskIndex >= 50) {
+            container.innerHTML = `<div class="task-container"><h3>🎉 Game Completed! Great Job!</h3></div>`;
+            return;
+        }
+
+        const task = TASKS_DATA[gameIndex][taskIndex];
+        
+        let html = `<div class="task-container">
+            <div class="task-question">Q${taskIndex+1}: ${task.question}</div>`;
+
+        // Render Input based on Type
+        if (task.type === 'mcq') {
+            html += `<div class="options-grid">`;
+            // Shuffle options simple shuffle
+            const shuffled = [...task.options].sort(() => Math.random() - 0.5);
+            shuffled.forEach(opt => {
+                html += `<button class="option-btn" onclick="checkMCQ(${gameIndex}, '${opt.replace(/'/g, "\\'")}', '${task.answer.replace(/'/g, "\\'")}')">${opt}</button>`;
+            });
+            html += `</div>`;
+        } else if (task.type === 'input') {
+            html += `<input type="text" id="ans-${gameIndex}" placeholder="Type your answer here..." autocomplete="off">
+                     <button class="check-btn" onclick="checkInput(${gameIndex}, '${task.answer}')">Submit Answer</button>`;
+        } else if (task.type === 'long') {
+            html += `<textarea id="ans-${gameIndex}" placeholder="Write your explanation here..."></textarea>
+                     <button class="check-btn" onclick="checkLong(${gameIndex})">Check Explanation</button>`;
+        }
+
+        html += `<div id="feedback-${gameIndex}" class="feedback"></div></div>`;
+        container.innerHTML = html;
+    }
+
+    // --- INTERACTION LOGIC ---
+
+    // 1. MCQ CHECK
+    window.checkMCQ = (gIdx, selected, correct) => {
+        const feedback = document.getElementById(`feedback-${gIdx}`);
+        // disable buttons
+        const btns = document.querySelectorAll(`#task-area-${gIdx} .option-btn`);
+        btns.forEach(b => b.disabled = true);
+
+        if (selected === correct) {
+            handleSuccess(gIdx, 2, feedback);
+        } else {
+            handleFailure(gIdx, 2, feedback, correct);
+        }
+        setTimeout(() => nextTask(gIdx), 1500);
+    };
+
+    // 2. INPUT CHECK (Short Answer)
+    window.checkInput = (gIdx, correct) => {
+        const input = document.getElementById(`ans-${gIdx}`);
+        const userAns = input.value.trim().toLowerCase();
+        const feedback = document.getElementById(`feedback-${gIdx}`);
+        
+        if (!userAns) return;
+
+        // Loose equality for numbers and strings
+        if (userAns == correct.toLowerCase()) {
+            handleSuccess(gIdx, 2, feedback);
+        } else {
+            handleFailure(gIdx, 2, feedback, correct);
+        }
+        setTimeout(() => nextTask(gIdx), 2000);
+    };
+
+    // 3. LONG ANSWER CHECK (Keyword Matching)
+    window.checkLong = (gIdx) => {
+        const input = document.getElementById(`ans-${gIdx}`);
+        const userText = input.value.toLowerCase();
+        const feedback = document.getElementById(`feedback-${gIdx}`);
+        const task = TASKS_DATA[gIdx][APP_STATE.currentTaskIndices[gIdx]];
+        
+        if (userText.length < 5) {
+            feedback.innerText = "Please write a bit more!";
+            feedback.style.color = "orange";
+            return;
+        }
+
+        // Check keywords
+        const found = task.keywords.filter(k => userText.includes(k.toLowerCase()));
+        const matchRatio = found.length / task.keywords.length;
+
+        if (matchRatio >= 0.3) { // Lenient checking for kids
+            let pts = matchRatio > 0.8 ? 5 : 3;
+            handleSuccess(gIdx, pts, feedback, true);
+        } else {
+            handleFailure(gIdx, 5, feedback, "Include keywords like: " + task.keywords.slice(0,3).join(", "));
+        }
+        setTimeout(() => nextTask(gIdx), 3000);
+    };
+
+    // --- CORE HANDLERS ---
+
+    function handleSuccess(gIdx, points, feedbackEl, isLong=false) {
+        feedbackEl.innerText = isLong ? "Excellent Explanation! ⭐" : "Excellent ⭐";
+        feedbackEl.className = "feedback correct";
+        updateStats(true, points);
+    }
+
+    function handleFailure(gIdx, points, feedbackEl, corrAns) {
+        feedbackEl.innerText = corrAns.includes("Include") ? corrAns : `Try Again. Answer: ${corrAns}`;
+        feedbackEl.className = "feedback wrong";
+        updateStats(false, points);
+    }
+
+    function updateStats(isCorrect, points) {
+        APP_STATE.globalStats.attempted++;
+        APP_STATE.globalStats.totalPossibleMarks += points;
+        
+        if (isCorrect) {
+            APP_STATE.globalStats.correct++;
+            APP_STATE.globalStats.totalMarksObtained += points;
+        } else {
+            APP_STATE.globalStats.wrong++;
+        }
+        updateScorePanel();
+    }
+
+    function updateScorePanel() {
+        const s = APP_STATE.globalStats;
+        scorePanel.attempted.innerText = s.attempted;
+        scorePanel.correct.innerText = s.correct;
+        scorePanel.wrong.innerText = s.wrong;
+        scorePanel.marks.innerText = `${s.totalMarksObtained}/${s.totalPossibleMarks}`;
+        
+        const acc = s.attempted === 0 ? 0 : Math.round((s.correct / s.attempted) * 100);
+        scorePanel.accuracy.innerText = `${acc}%`;
+    }
+
+    function nextTask(gIdx) {
+        APP_STATE.currentTaskIndices[gIdx]++;
+        loadTask(gIdx);
+        
+        // Auto-scroll to next if it's the active view logic (optional, keeping it simple)
+    }
+
+    // Scroll helper
+    window.scrollToGame = () => {
+        document.getElementById('game-0').scrollIntoView({ behavior: 'smooth' });
+    };
+
+    // --- START ---
+    document.addEventListener('DOMContentLoaded', init);
+
+</script>
+</body>
+</html>

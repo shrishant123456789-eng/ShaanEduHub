@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ShanEduHub: Class 4 EVS Master Suite</title>
+    <style>
+        :root {
+            --primary: #4A90E2;
+            --success: #66BB6A;
+            --wrong: #EF5350;
+            --bg-color: #FFF9C4; /* Pastel Yellow */
+            --card-bg: #FFFFFF;
+            --text-color: #333;
+            --font-main: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- HEADER & SCOREBOARD --- */
+        header {
+            background-color: #B3E5FC; /* Pastel Blue */
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            text-align: center;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: #0277BD;
+        }
+
+        .score-panel {
+            display: flex;
+            justify-content: space-around;
+            background: white;
+            margin-top: 8px;
+            padding: 5px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .score-item span {
+            display: block;
+            font-size: 0.8rem;
+            color: #777;
+        }
+
+        /* --- NAVIGATION & MENU --- */
+        #game-menu {
+            padding: 15px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+            padding-bottom: 60px;
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 0 #ddd;
+            cursor: pointer;
+            transition: transform 0.1s;
+            border: 2px solid #eee;
+        }
+
+        .game-card:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #ddd;
+        }
+
+        .game-icon {
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+        }
+
+        .game-title {
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        /* --- GAME PLAY AREA --- */
+        #game-area {
+            display: none; /* Hidden by default */
+            flex: 1;
+            padding: 15px;
+            flex-direction: column;
+            align-items: center;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .task-header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .btn-back {
+            background: #FFCC80;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .level-indicator {
+            background: #E1BEE7;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+        }
+
+        .question-box {
+            background: white;
+            width: 100%;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.05);
+            font-size: 1.1rem;
+            line-height: 1.4;
+        }
+
+        .question-highlight {
+            font-size: 2rem;
+            display: block;
+            margin: 10px 0;
+        }
+
+        /* --- INTERACTIVE ELEMENTS --- */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .option-btn {
+            background: white;
+            border: 2px solid #B3E5FC;
+            padding: 15px;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .option-btn.selected {
+            background: #B3E5FC;
+            border-color: #0288D1;
+        }
+
+        .option-btn.correct {
+            background: #C8E6C9;
+            border-color: #2E7D32;
+            color: #1B5E20;
+        }
+
+        .option-btn.wrong {
+            background: #FFCDD2;
+            border-color: #C62828;
+            color: #B71C1C;
+        }
+
+        /* Sort/Bin Game Styles */
+        .bins-container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .bin {
+            flex: 1;
+            background: rgba(255,255,255,0.6);
+            border: 3px dashed #aaa;
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bin-active {
+            background: #E1F5FE;
+            border-color: #03A9F4;
+        }
+
+        /* Feedback Overlay */
+        #feedback-modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .feedback-content {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .feedback-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .feedback-text {
+            margin-bottom: 20px;
+            font-size: 1rem;
+            color: #555;
+        }
+
+        .next-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 0 #1565C0;
+        }
+
+        .next-btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            margin-top: auto;
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            font-size: 0.8rem;
+        }
+
+        .highlight-blue { color: #1976D2; }
+        .highlight-green { color: #388E3C; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>ShanEduHub EVS Suite (Class 4)</h1>
+        <div class="score-panel">
+            <div class="score-item">Correct<br><span id="score-correct" style="color:var(--success)">0</span></div>
+            <div class="score-item">Wrong<br><span id="score-wrong" style="color:var(--wrong)">0</span></div>
+            <div class="score-item">Total<br><span id="score-total">0</span></div>
+            <div class="score-item">Score<br><span id="score-percent">0%</span></div>
+        </div>
+    </header>
+
+    <!-- MENU SCREEN -->
+    <div id="game-menu">
+        <!-- Generated by JS -->
+    </div>
+
+    <!-- GAME SCREEN -->
+    <div id="game-area">
+        <div class="task-header">
+            <button class="btn-back" onclick="app.showMenu()">❮ Menu</button>
+            <div class="level-indicator">Task <span id="current-task-num">1</span>/25</div>
+        </div>
+
+        <div id="game-canvas">
+            <!-- Dynamic Content -->
+        </div>
+    </div>
+
+    <!-- FEEDBACK MODAL -->
+    <div id="feedback-modal">
+        <div class="feedback-content">
+            <span id="fb-icon" style="font-size: 3rem;"></span>
+            <strong id="fb-title" class="feedback-title"></strong>
+            <p id="fb-reason" class="feedback-text"></p>
+            <button class="next-btn" onclick="app.nextTask()">Next Task ➜</button>
+        </div>
+    </div>
+
+    <footer>
+        Designed & Created by SHRISHANT YADAV<br>ShanEduHub
+    </footer>
+
+<script>
+/**
+ * SHANEDUHUB GAME ENGINE
+ * Handles 20 Games, 500 Tasks, Unified Scoring.
+ */
+
+// --- GLOBAL STATE ---
+const state = {
+    currentGameId: null,
+    currentTaskIndex: 0,
+    scores: { correct: 0, wrong: 0, total: 0 },
+    globalHistory: {} // Tracks progress per game
+};
+
+// --- DATA: THE 20 GAMES ---
+// Each game generates 25 tasks procedurally or from a list
+const gameDefinitions = [
+    {
+        id: 1, title: "Life Identifier", icon: "🌱",
+        color: "#E8F5E9",
+        gen: () => generateSorter(["Cat 🐱", "Tree 🌳", "Boy 👦", "Ant 🐜", "Fish 🐟"], ["Rock 🪨", "Car 🚗", "Chair 🪑", "Sun ☀️", "Laptop 💻"], ["Dried Leaf 🍂", "Wooden Log 🪵", "Paper 📄", "Bone 🦴"], "Is this Living, Non-Living, or Once-Living?")
+    },
+    {
+        id: 2, title: "Plant Builder", icon: "🌻",
+        color: "#C8E6C9",
+        gen: () => generateMatcher([
+            {q: "Where does the plant get water?", a: "Roots", w: ["Leaves", "Flower"]},
+            {q: "Which part makes food?", a: "Leaf", w: ["Stem", "Root"]},
+            {q: "Which part holds the plant up?", a: "Stem", w: ["Flower", "Fruit"]},
+            {q: "Which part becomes a fruit?", a: "Flower", w: ["Root", "Stem"]},
+            {q: "Where are seeds found?", a: "Fruit", w: ["Leaf", "Root"]},
+            // Adaptation
+            {q: "Cactus has spines instead of leaves to...", a: "Save Water", w: ["Look scary", "Eat insects"]},
+            {q: "Lotus has broad leaves to...", a: "Float", w: ["Sink", "Fly"]},
+            {q: "Roots of Banyan tree...", a: "Support branches", w: ["Make food", "Look nice"]}
+        ], 25)
+    },
+    {
+        id: 3, title: "Animal Adapt", icon: "🐪",
+        color: "#FFF9C4",
+        gen: () => generateMatcher([
+            {q: "Where does a Camel live?", a: "Desert", w: ["Water", "Forest"]},
+            {q: "Where does a Polar Bear live?", a: "Polar Region", w: ["Desert", "Jungle"]},
+            {q: "Fish use gills to...", a: "Breathe", w: ["Swim", "Eat"]},
+            {q: "Birds have hollow bones to...", a: "Fly easily", w: ["Swim", "Run fast"]},
+            {q: "Frogs live in...", a: "Land & Water", w: ["Only Water", "Only Land"]},
+            {q: "Who eats the grass?", a: "Deer", w: ["Lion", "Eagle"]},
+            {q: "Who eats the Deer?", a: "Tiger", w: ["Rabbit", "Cow"]}
+        ], 25)
+    },
+    {
+        id: 4, title: "Body Control", icon: "🧠",
+        color: "#FFCDD2",
+        gen: () => generateMatcher([
+            {q: "Which organ pumps blood?", a: "Heart", w: ["Lungs", "Stomach"]},
+            {q: "Which organ helps us breathe?", a: "Lungs", w: ["Heart", "Liver"]},
+            {q: "Where does food get digested?", a: "Stomach", w: ["Lungs", "Brain"]},
+            {q: "Which organ controls the body?", a: "Brain", w: ["Heart", "Stomach"]},
+            {q: "How many kidneys do we have?", a: "Two", w: ["One", "Three"]},
+            {q: "Before eating, we must...", a: "Wash hands", w: ["Sleep", "Run"]},
+            {q: "To keep lungs healthy, avoid...", a: "Smoke", w: ["Water", "Fruits"]}
+        ], 25)
+    },
+    {
+        id: 5, title: "Nutrition Plan", icon: "🍎",
+        color: "#FFECB3",
+        gen: () => generateMatcher([
+            {q: "To build muscles, eat...", a: "Proteins (Eggs/Dal)", w: ["Sweets", "Oil"]},
+            {q: "For energy, eat...", a: "Carbohydrates (Rice)", w: ["Water", "Vitamins"]},
+            {q: "For strong bones, drink...", a: "Milk", w: ["Cola", "Tea"]},
+            {q: "Vitamin C is found in...", a: "Lemons/Oranges", w: ["Bread", "Chicken"]},
+            {q: "Eating too much sugar causes...", a: "Cavities", w: ["Muscles", "Height"]},
+            {q: "Lack of Iron causes...", a: "Anaemia", w: ["Fever", "Cough"]},
+            {q: "Is Pizza a healthy daily meal?", a: "No", w: ["Yes", "Maybe"]}
+        ], 25)
+    },
+    {
+        id: 6, title: "House Architect", icon: "🏠",
+        color: "#D7CCC8",
+        gen: () => generateMatcher([
+            {q: "Houses in heavy rain areas have...", a: "Sloping roofs", w: ["Flat roofs", "No roof"]},
+            {q: "Igloos are made of...", a: "Ice blocks", w: ["Mud", "Bricks"]},
+            {q: "Houseboats are found in...", a: "Kashmir/Kerala", w: ["Delhi", "Rajasthan"]},
+            {q: "Bricks are made of...", a: "Baked Mud (Clay)", w: ["Sand", "Plastic"]},
+            {q: "A house protects us from...", a: "Heat, Cold, Rain", w: ["Friends", "Oxygen"]},
+            {q: "To keep a house clean...", a: "Sweep daily", w: ["Keep windows shut", "Paint daily"]},
+            {q: "Stilt houses are built on...", a: "Bamboo poles", w: ["Ground", "Water"]}
+        ], 25)
+    },
+    {
+        id: 7, title: "Water Cycle", icon: "💧",
+        color: "#B3E5FC",
+        gen: () => generateMatcher([
+            {q: "Sun turns water into vapor. This is...", a: "Evaporation", w: ["Condensation", "Rain"]},
+            {q: "Water vapor forming clouds is...", a: "Condensation", w: ["Evaporation", "Precipitation"]},
+            {q: "Water falling as rain is...", a: "Precipitation", w: ["Evaporation", "Collection"]},
+            {q: "Saving rainwater is called...", a: "Rainwater Harvesting", w: ["Wasting", "Draining"]},
+            {q: "Can we drink sea water?", a: "No, it's salty", w: ["Yes", "Maybe"]},
+            {q: "To kill germs in water...", a: "Boil it", w: ["Freeze it", "Color it"]},
+            {q: "Closing the tap while brushing...", a: "Saves water", w: ["Wastes water", "Does nothing"]}
+        ], 25)
+    },
+    {
+        id: 8, title: "Air Detective", icon: "💨",
+        color: "#CFD8DC",
+        gen: () => generateMatcher([
+            {q: "Air contains mostly...", a: "Nitrogen & Oxygen", w: ["Smoke", "Water"]},
+            {q: "We breathe in...", a: "Oxygen", w: ["Carbon Dioxide", "Dust"]},
+            {q: "We breathe out...", a: "Carbon Dioxide", w: ["Oxygen", "Gold"]},
+            {q: "Smoke from factories causes...", a: "Air Pollution", w: ["Rain", "Wind"]},
+            {q: "Trees make the air...", a: "Fresh & Clean", w: ["Dirty", "Hot"]},
+            {q: "Moving air is called...", a: "Wind", w: ["Storm", "Cloud"]},
+            {q: "During Diwali, crackers cause...", a: "Pollution", w: ["Clean air", "Rain"]}
+        ], 25)
+    },
+    {
+        id: 9, title: "Soil Scientist", icon: "🌱",
+        color: "#795548",
+        style: "color:white",
+        gen: () => generateMatcher([
+            {q: "Best soil for plants is...", a: "Loamy Soil", w: ["Sandy Soil", "Clayey Soil"]},
+            {q: "Soil used for pots/toys...", a: "Clayey Soil", w: ["Sand", "Loam"]},
+            {q: "Soil found in deserts...", a: "Sandy Soil", w: ["Clay", "Loam"]},
+            {q: "Earthworms are...", a: "Farmers' friends", w: ["Pests", "Enemies"]},
+            {q: "Roots hold soil to prevent...", a: "Soil Erosion", w: ["Growth", "Rain"]},
+            {q: "Adding manure makes soil...", a: "Fertile", w: ["Dry", "Hard"]},
+            {q: "Plastic in soil is...", a: "Bad", w: ["Good", "Okay"]}
+        ], 25)
+    },
+    {
+        id: 10, title: "Energy Explorer", icon: "⚡",
+        color: "#FFF176",
+        gen: () => generateMatcher([
+            {q: "Sun gives us...", a: "Solar Energy", w: ["Wind Energy", "Sound"]},
+            {q: "Windmills use...", a: "Wind Energy", w: ["Sun", "Water"]},
+            {q: "Dams produce electricity from...", a: "Water", w: ["Air", "Fire"]},
+            {q: "To move a cart, we use...", a: "Push or Pull", w: ["Sleep", "Heat"]},
+            {q: "Friction helps us...", a: "Walk without slipping", w: ["Fly", "Swim"]},
+            {q: "Petrol is a...", a: "Fuel", w: ["Food", "Drink"]},
+            {q: "Should we waste electricity?", a: "No", w: ["Yes", "Sometimes"]}
+        ], 25)
+    },
+    {
+        id: 11, title: "Machine Factory", icon: "⚙️",
+        color: "#B0BEC5",
+        gen: () => generateMatcher([
+            {q: "A slide is an example of...", a: "Inclined Plane", w: ["Lever", "Pulley"]},
+            {q: "A see-saw is a...", a: "Lever", w: ["Wheel", "Screw"]},
+            {q: "Used to draw water from a well...", a: "Pulley", w: ["Wedge", "Lever"]},
+            {q: "A knife is a...", a: "Wedge", w: ["Screw", "Pulley"]},
+            {q: "Bottle cap is a...", a: "Screw", w: ["Wedge", "Lever"]},
+            {q: "Wheels help to...", a: "Move heavy things", w: ["Cut things", "Lift things"]},
+            {q: "Scissors are...", a: "Simple Machines", w: ["Toys", "Food"]}
+        ], 25)
+    },
+    {
+        id: 12, title: "Transport Tycoon", icon: "🚌",
+        color: "#81D4FA",
+        gen: () => generateMatcher([
+            {q: "Fastest way to travel...", a: "Aeroplane", w: ["Train", "Bus"]},
+            {q: "Travels on tracks...", a: "Train", w: ["Car", "Boat"]},
+            {q: "Water transport vehicle...", a: "Ship", w: ["Bus", "Truck"]},
+            {q: "Vehicle with 2 wheels...", a: "Bicycle", w: ["Car", "Auto"]},
+            {q: "Ambulance is for...", a: "Sick people", w: ["Shopping", "Police"]},
+            {q: "Red traffic light means...", a: "Stop", w: ["Go", "Wait"]},
+            {q: "Zebra crossing is for...", a: "Walking across", w: ["Dancing", "Parking"]}
+        ], 25)
+    },
+    {
+        id: 13, title: "Comm. Time Machine", icon: "☎️",
+        color: "#E1BEE7",
+        gen: () => generateMatcher([
+            {q: "Oldest way to send messages...", a: "Pigeons/Smoke", w: ["Email", "SMS"]},
+            {q: "Fastest way to talk today...", a: "Mobile Phone", w: ["Letter", "Newspaper"]},
+            {q: "Mass communication example...", a: "Newspaper/TV", w: ["Letter", "Postcard"]},
+            {q: "Internet helps us...", a: "Search Info", w: ["Sleep", "Eat"]},
+            {q: "We must not share...", a: "Passwords", w: ["Jokes", "Photos"]},
+            {q: "Urgent written message (Old)...", a: "Telegram", w: ["Book", "Diary"]},
+            {q: "Example of social media...", a: "Facebook/WhatsApp", w: ["Calculator", "Compass"]}
+        ], 25)
+    },
+    {
+        id: 14, title: "Earth Guardian", icon: "🌍",
+        color: "#A5D6A7",
+        gen: () => generateMatcher([
+            {q: "Throwing plastic in rivers causes...", a: "Water Pollution", w: ["Air Pollution", "Noise"]},
+            {q: "Cutting down forests is...", a: "Deforestation", w: ["Afforestation", "Gardening"]},
+            {q: "We should plant...", a: "More Trees", w: ["Plastic flowers", "Poles"]},
+            {q: "Using cloth bags is...", a: "Eco-friendly", w: ["Harmful", "Bad"]},
+            {q: "Global warming is caused by...", a: "Pollution", w: ["Ice cream", "Cycling"]},
+            {q: "Save paper to...", a: "Save Trees", w: ["Save Ink", "Save Water"]},
+            {q: "Loudspeakers cause...", a: "Noise Pollution", w: ["Air Pollution", "Water Pollution"]}
+        ], 25)
+    },
+    {
+        id: 15, title: "Food Chain", icon: "🦁",
+        color: "#FFCC80",
+        gen: () => generateSorter(["Grass 🌿", "Carrot 🥕", "Fruit 🍎"], ["Deer 🦌", "Rabbit 🐇", "Goat 🐐"], ["Lion 🦁", "Tiger 🐯", "Eagle 🦅"], "Is this a Producer (Plant), Herbivore, or Carnivore?", ["Producer", "Herbivore", "Carnivore"])
+    },
+    {
+        id: 16, title: "Disaster Safety", icon: "🚨",
+        color: "#EF9A9A",
+        gen: () => generateMatcher([
+            {q: "If earth shakes, it is...", a: "Earthquake", w: ["Flood", "Storm"]},
+            {q: "Too much rain causes...", a: "Flood", w: ["Drought", "Fire"]},
+            {q: "No rain for long time...", a: "Drought", w: ["Flood", "Tsunami"]},
+            {q: "During earthquake, hide under...", a: "Table", w: ["Tree", "Building"]},
+            {q: "Fire needs...", a: "Air", w: ["Water", "Sand"]},
+            {q: "Number for Fire Station...", a: "101", w: ["100", "102"]},
+            {q: "First aid box contains...", a: "Bandage/Antiseptic", w: ["Toys", "Candy"]}
+        ], 25)
+    },
+    {
+        id: 17, title: "Observation Diary", icon: "👀",
+        color: "#F48FB1",
+        gen: () => generateMatcher([
+            {q: "Leaves are green because of...", a: "Chlorophyll", w: ["Paint", "Water"]},
+            {q: "Ants walk in a...", a: "Line", w: ["Circle", "Square"]},
+            {q: "Birds build nests to...", a: "Lay eggs", w: ["Sleep", "Play"]},
+            {q: "Sun rises in the...", a: "East", w: ["West", "North"]},
+            {q: "Shadows are longest in...", a: "Morning/Evening", w: ["Noon", "Night"]},
+            {q: "Water takes shape of...", a: "Container", w: ["Ball", "Square"]},
+            {q: "Ice melts into...", a: "Water", w: ["Steam", "Solid"]}
+        ], 25)
+    },
+    {
+        id: 18, title: "Recycle Lab", icon: "♻️",
+        color: "#80CBC4",
+        gen: () => generateSorter(["Banana Peel 🍌", "Paper 📄", "Leftover Food 🍛"], ["Plastic Bottle 🥤", "Glass Jar 🫙", "Metal Can 🥫"], ["Battery 🔋", "Broken Bulb 💡", "Medicine 💊"], "Biodegradable (Rot), Recyclable, or Hazardous?", ["Compost/Wet", "Recycle/Dry", "Hazardous"])
+    },
+    {
+        id: 19, title: "Science Reason", icon: "💡",
+        color: "#CE93D8",
+        gen: () => generateMatcher([
+            {q: "Why do we sweat?", a: "To cool body", w: ["To warm body", "To cry"]},
+            {q: "Why do things fall down?", a: "Gravity", w: ["Wind", "Magic"]},
+            {q: "Why boil milk?", a: "Kill germs", w: ["Make it tasty", "Change color"]},
+            {q: "Why wear wool in winter?", a: "Traps heat", w: ["Lets air in", "Looks good"]},
+            {q: "Why preserve food?", a: "Prevent spoiling", w: ["Make it sour", "Dry it"]},
+            {q: "Why do stars twinkle?", a: "Air layers", w: ["They blink", "Bulbs"]},
+            {q: "Why use solar cooker?", a: "Save fuel", w: ["Cook fast", "Taste better"]}
+        ], 25)
+    },
+    {
+        id: 20, title: "Mega Adventure", icon: "🚀",
+        color: "#FFF59D",
+        gen: () => generateMatcher([
+            // Mix of all topics
+            {q: "Ultimate source of energy?", a: "Sun", w: ["Moon", "Earth"]},
+            {q: "Standard unit of length?", a: "Meter", w: ["Liter", "Gram"]},
+            {q: "Largest sense organ?", a: "Skin", w: ["Eye", "Tongue"]},
+            {q: "Fastest animal?", a: "Cheetah", w: ["Lion", "Horse"]},
+            {q: "Gas plants need?", a: "Carbon Dioxide", w: ["Oxygen", "Nitrogen"]},
+            {q: "Freezing point of water?", a: "0°C", w: ["100°C", "10°C"]},
+            {q: "National Animal of India?", a: "Tiger", w: ["Lion", "Elephant"]},
+            {q: "Planet we live on?", a: "Earth", w: ["Mars", "Venus"]}
+        ], 25)
+    }
+];
+
+// --- GENERATOR FUNCTIONS (To ensure 25 tasks per game) ---
+
+/**
+ * Creates a Drag-Drop style MCQ (Categorization)
+ * Takes 3 arrays of items and category names.
+ */
+function generateSorter(cat1Items, cat2Items, cat3Items, promptTitle, labels = ["Category 1", "Category 2", "Category 3"]) {
+    let tasks = [];
+    const allItems = [
+        ...cat1Items.map(i => ({t: i, c: labels[0]})),
+        ...cat2Items.map(i => ({t: i, c: labels[1]})),
+        ...cat3Items.map(i => ({t: i, c: labels[2]}))
+    ];
+    
+    // Shuffle and pick 25 (loop if needed)
+    for(let i=0; i<25; i++) {
+        let item = allItems[i % allItems.length];
+        tasks.push({
+            type: "sort",
+            question: `${promptTitle}`,
+            highlight: item.t,
+            correct: item.c,
+            options: labels,
+            expl: `${item.t} belongs to ${item.c}.`
+        });
+    }
+    return shuffle(tasks);
+}
+
+/**
+ * Creates MCQ from a Question Bank
+ */
+function generateMatcher(baseQuestions, count) {
+    let tasks = [];
+    for(let i=0; i<count; i++) {
+        let q = baseQuestions[i % baseQuestions.length];
+        tasks.push({
+            type: "mcq",
+            question: q.q,
+            correct: q.a,
+            options: shuffle([q.a, ...q.w]),
+            expl: `Correct! ${q.a} is the right answer.`
+        });
+    }
+    return shuffle(tasks);
+}
+
+function shuffle(array) {
+    return array.sort(() => Math.random() - 0.5);
+}
+
+// --- ENGINE LOGIC ---
+
+const app = {
+    init: () => {
+        app.renderMenu();
+        app.loadScores();
+    },
+
+    loadScores: () => {
+        const s = JSON.parse(localStorage.getItem('evs_scores')) || { correct: 0, wrong: 0, total: 0 };
+        state.scores = s;
+        app.updateScoreUI();
+    },
+
+    saveScores: () => {
+        localStorage.setItem('evs_scores', JSON.stringify(state.scores));
+        app.updateScoreUI();
+    },
+
+    updateScoreUI: () => {
+        document.getElementById('score-correct').innerText = state.scores.correct;
+        document.getElementById('score-wrong').innerText = state.scores.wrong;
+        document.getElementById('score-total').innerText = state.scores.total;
+        let pct = state.scores.total === 0 ? 0 : Math.round((state.scores.correct / state.scores.total) * 100);
+        document.getElementById('score-percent').innerText = pct + "%";
+    },
+
+    renderMenu: () => {
+        const menu = document.getElementById('game-menu');
+        menu.innerHTML = "";
+        gameDefinitions.forEach(g => {
+            let el = document.createElement('div');
+            el.className = 'game-card';
+            el.style.borderColor = g.color;
+            el.innerHTML = `<div class="game-icon">${g.icon}</div><div class="game-title">${g.title}</div>`;
+            el.onclick = () => app.startGame(g.id);
+            menu.appendChild(el);
+        });
+        document.getElementById('game-menu').style.display = 'grid';
+        document.getElementById('game-area').style.display = 'none';
+        window.scrollTo(0,0);
+    },
+
+    showMenu: () => {
+        document.getElementById('game-menu').style.display = 'grid';
+        document.getElementById('game-area').style.display = 'none';
+    },
+
+    startGame: (id) => {
+        state.currentGameId = id;
+        state.currentTaskIndex = 0;
+        
+        // Generate Fresh Tasks
+        const gameDef = gameDefinitions.find(g => g.id === id);
+        state.currentTasks = gameDef.gen();
+
+        document.getElementById('game-menu').style.display = 'none';
+        document.getElementById('game-area').style.display = 'flex';
+        app.renderTask();
+    },
+
+    renderTask: () => {
+        const task = state.currentTasks[state.currentTaskIndex];
+        const canvas = document.getElementById('game-canvas');
+        document.getElementById('current-task-num').innerText = state.currentTaskIndex + 1;
+        canvas.innerHTML = '';
+
+        // Render based on type
+        if(task.type === "mcq") {
+            let html = `
+                <div class="question-box">
+                    ${task.question}
+                </div>
+                <div class="options-grid">
+                    ${task.options.map(opt => `<button class="option-btn" onclick="app.checkAnswer(this, '${opt.replace(/'/g, "\\'")}')">${opt}</button>`).join('')}
+                </div>
+            `;
+            canvas.innerHTML = html;
+        } else if (task.type === "sort") {
+            let html = `
+                <div class="question-box">
+                    <div>${task.question}</div>
+                    <span class="question-highlight">${task.highlight}</span>
+                </div>
+                <div class="options-grid" style="grid-template-columns: 1fr;">
+                     ${task.options.map(opt => `<button class="option-btn" onclick="app.checkAnswer(this, '${opt}')">Place in: ${opt}</button>`).join('')}
+                </div>
+            `;
+            canvas.innerHTML = html;
+        }
+    },
+
+    checkAnswer: (btnElement, selectedAnswer) => {
+        // Prevent double click
+        if(btnElement.classList.contains('correct') || btnElement.classList.contains('wrong')) return;
+
+        const task = state.currentTasks[state.currentTaskIndex];
+        const isCorrect = selectedAnswer === task.correct;
+
+        state.scores.total++;
+        if(isCorrect) {
+            state.scores.correct++;
+            btnElement.classList.add('correct');
+            app.showFeedback(true, "Excellent! ⭐", task.expl);
+        } else {
+            state.scores.wrong++;
+            btnElement.classList.add('wrong');
+            // Highlight correct one
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(b => {
+                if(b.innerText.includes(task.correct)) b.classList.add('correct');
+            });
+            app.showFeedback(false, "Try Again", task.expl);
+        }
+        app.saveScores();
+    },
+
+    showFeedback: (isCorrect, title, msg) => {
+        const modal = document.getElementById('feedback-modal');
+        const icon = document.getElementById('fb-icon');
+        const tit = document.getElementById('fb-title');
+        const txt = document.getElementById('fb-reason');
+
+        icon.innerText = isCorrect ? "🌟" : "🤔";
+        tit.innerText = title;
+        tit.style.color = isCorrect ? "var(--success)" : "var(--wrong)";
+        txt.innerText = msg;
+        
+        setTimeout(() => {
+            modal.style.display = 'flex';
+        }, 500);
+    },
+
+    nextTask: () => {
+        document.getElementById('feedback-modal').style.display = 'none';
+        state.currentTaskIndex++;
+        if(state.currentTaskIndex < 25) {
+            app.renderTask();
+        } else {
+            alert("Game Completed! Well done! 🎉 Returning to Menu.");
+            app.renderMenu();
+        }
+    }
+};
+
+// Start
+document.addEventListener('DOMContentLoaded', app.init);
+
+</script>
+</body>
+</html>

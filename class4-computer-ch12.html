@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 4 Computer Ch-12: Projects & Advanced Skills</title>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #e67e22;
+            --success: #27ae60;
+            --error: #c0392b;
+            --bg: #fdf6e3;
+            --note-bg: #fff9c4;
+            --card-bg: #ffffff;
+            --border: #bdc3c7;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Patrick Hand', cursive;
+            background-color: var(--bg);
+            color: var(--primary);
+            line-height: 1.6;
+            font-weight: 700; /* GLOBAL BOLD */
+            font-size: 18px;
+            overflow-x: hidden;
+            padding-bottom: 80px;
+        }
+
+        /* HEADER */
+        header {
+            background: #34495e;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 5px solid var(--accent);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 0 #000;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #f1c40f;
+        }
+
+        /* SCORE PANEL */
+        #score-panel {
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 1000;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            border-bottom: 3px solid var(--primary);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            font-size: 0.9em;
+        }
+
+        .score-item {
+            margin: 2px 5px;
+            padding: 5px 10px;
+            border-radius: 15px;
+            background: #ecf0f1;
+            border: 2px solid var(--primary);
+        }
+
+        .score-val { color: var(--accent); }
+
+        /* SECTIONS */
+        section {
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 800px;
+            background: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 5px 5px 0 rgba(0,0,0,0.1);
+            border: 2px solid var(--primary);
+        }
+
+        h2 {
+            background: var(--accent);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 2px solid var(--primary);
+        }
+
+        /* NOTES */
+        .topic-card {
+            background: var(--note-bg);
+            border: 2px dashed var(--primary);
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+
+        .topic-title {
+            font-size: 1.4em;
+            color: #d35400;
+            text-decoration: underline;
+            margin-bottom: 10px;
+        }
+
+        .img-placeholder {
+            width: 100%;
+            height: 150px;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
+            border: 2px solid #999;
+            color: #555;
+            font-style: italic;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .tip-box {
+            background: #d4efdf;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border-left: 5px solid var(--success);
+        }
+
+        /* QUESTIONS */
+        .question-card {
+            background: #fff;
+            padding: 20px;
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .q-text {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-weight: bold;
+            font-size: 1em;
+            cursor: pointer;
+            transition: transform 0.1s;
+            box-shadow: 3px 3px 0 #000;
+        }
+
+        button:active {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0 #000;
+        }
+
+        button.correct { background: var(--success); }
+        button.wrong { background: var(--error); }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .feedback.success { background: #d5f5e3; color: var(--success); border: 2px solid var(--success); }
+        .feedback.error { background: #fadbd8; color: var(--error); border: 2px solid var(--error); }
+
+        /* LONG ANSWER */
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1em;
+            resize: vertical;
+        }
+
+        /* REVISION */
+        .revision-point {
+            background: #e8f8f5;
+            padding: 10px;
+            margin: 5px 0;
+            border-left: 5px solid var(--accent);
+        }
+
+        /* FOOTER */
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            border-top: 5px solid var(--accent);
+        }
+
+        /* UTILS */
+        .hidden { display: none !important; }
+        .btn-nav { background: var(--accent); width: 100%; margin-top: 10px; }
+
+        @media (min-width: 600px) {
+            .options-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Computer Science Class 4</h1>
+        <div class="subtitle">Chapter 12: Projects, Practical Activities & Advanced Skills</div>
+    </header>
+
+    <div id="score-panel">
+        <div class="score-item">✅ Correct: <span id="score-correct" class="score-val">0</span></div>
+        <div class="score-item">❌ Wrong: <span id="score-wrong" class="score-val">0</span></div>
+        <div class="score-item">📝 Try: <span id="score-total" class="score-val">0</span></div>
+        <div class="score-item">📊 Score: <span id="score-percent" class="score-val">0%</span></div>
+    </div>
+
+    <!-- NOTES SECTION -->
+    <section id="notes-section">
+        <h2>📚 Chapter Notes</h2>
+
+        <!-- Topic 1 -->
+        <div class="topic-card">
+            <div class="topic-title">1. Practical Projects Using Learned Tools</div>
+            <p><strong>Definition:</strong> Using software like Word, Paint, and Calculator together to solve a problem or create something new.</p>
+            <p><strong>Steps:</strong> 1. Plan what you want to make. 2. Choose the right tool (Paint for drawing, Word for writing). 3. Combine them.</p>
+            <div class="img-placeholder">[IMAGE: Screen showing MS Word with a picture pasted from MS Paint]</div>
+            <p><strong>Example:</strong> Creating a Birthday Invitation using Paint for balloons and Word for the text.</p>
+            <div class="tip-box">💡 <strong>Tip:</strong> Always save your work often using Ctrl + S!</div>
+        </div>
+
+        <!-- Topic 2 -->
+        <div class="topic-card">
+            <div class="topic-title">2. Creating a Digital Poster (Word + Paint)</div>
+            <p><strong>Definition:</strong> A digital document that uses big text and images to share a message.</p>
+            <p><strong>Steps:</strong> Open MS Word -> Page Layout -> Page Color -> Insert WordArt for Title -> Insert Pictures.</p>
+            <div class="img-placeholder">[IMAGE: A colorful poster about 'Save Trees' created in MS Word]</div>
+            <p><strong>Example:</strong> Making a "Republic Day" poster for your school notice board.</p>
+            <div class="tip-box">🎨 <strong>Tip:</strong> Use bright colors and simple fonts for posters.</div>
+        </div>
+
+        <!-- Topic 3 -->
+        <div class="topic-card">
+            <div class="topic-title">3. File Organization Project</div>
+            <p><strong>Definition:</strong> Keeping your computer clean by putting files into correct folders.</p>
+            <p><strong>Steps:</strong> Right-click on Desktop -> New -> Folder -> Type Name (e.g., "Homework") -> Drag files into it.</p>
+            <div class="img-placeholder">[IMAGE: A folder structure: School -> Class 4 -> Subjects -> Computer]</div>
+            <p><strong>Example:</strong> Creating separate folders for "Maths", "English", and "Computer" on your home PC.</p>
+            <div class="tip-box">📁 <strong>Tip:</strong> Never delete a file if you don't know what it is!</div>
+        </div>
+
+        <!-- Topic 4 -->
+        <div class="topic-card">
+            <div class="topic-title">4. Creating a Simple Presentation</div>
+            <p><strong>Definition:</strong> Showing information slide by slide using PowerPoint or Impress.</p>
+            <p><strong>Steps:</strong> Open PowerPoint -> Click "Click to add title" -> Type Topic -> New Slide -> Add Content.</p>
+            <div class="img-placeholder">[IMAGE: PowerPoint slide view showing a Title Slide and a Picture Slide]</div>
+            <p><strong>Example:</strong> A 3-slide presentation on "My Favorite Animal".</p>
+            <div class="tip-box">🖥️ <strong>Tip:</strong> Keep text small. Pictures speak louder than words!</div>
+        </div>
+
+        <!-- Topic 5 -->
+        <div class="topic-card">
+            <div class="topic-title">5. Internet Research & Safe Reporting</div>
+            <p><strong>Definition:</strong> Finding information on Google responsibly and using it for homework.</p>
+            <p><strong>Steps:</strong> Open Browser -> Go to Google.com -> Type keywords (e.g., "History of Taj Mahal") -> Read -> Write in your own words.</p>
+            <div class="img-placeholder">[IMAGE: Google search bar with 'Safe Search' lock icon visible]</div>
+            <p><strong>Example:</strong> Finding out who invented the Computer for a school project.</p>
+            <div class="tip-box">🔒 <strong>Tip:</strong> Never talk to strangers online while researching.</div>
+        </div>
+
+        <!-- Topic 6 -->
+        <div class="topic-card">
+            <div class="topic-title">6. Practice Tests & Quizzes</div>
+            <p><strong>Definition:</strong> Using computer programs or websites to test your knowledge.</p>
+            <p><strong>Activity:</strong> Taking an online typing test to improve speed.</p>
+            <div class="img-placeholder">[IMAGE: Screen showing a typing tutor game with wpm score]</div>
+            <p><strong>Example:</strong> Using a math quiz app.</p>
+            <div class="tip-box">⚡ <strong>Tip:</strong> Treat computer quizzes like real exams. No cheating!</div>
+        </div>
+
+        <!-- Topic 7 -->
+        <div class="topic-card">
+            <div class="topic-title">7. Digital Citizenship and Ethics</div>
+            <p><strong>Definition:</strong> Being a good person while using the internet (Netiquette).</p>
+            <p><strong>Rules:</strong> Be polite, don't copy-paste without permission, respect privacy.</p>
+            <div class="img-placeholder">[IMAGE: Icons representing 'Be Kind', 'No Bullying', 'Respect Privacy']</div>
+            <p><strong>Example:</strong> Not typing in ALL CAPS because it looks like shouting.</p>
+            <div class="tip-box">🤝 <strong>Tip:</strong> If you wouldn't say it to their face, don't type it!</div>
+        </div>
+
+        <!-- Topic 8 -->
+        <div class="topic-card">
+            <div class="topic-title">8. Review & Assessment Tasks</div>
+            <p><strong>Definition:</strong> Checking if everything works correctly before submitting.</p>
+            <p><strong>Steps:</strong> Spell check in Word -> Slide show preview in PowerPoint -> Open links.</p>
+            <div class="img-placeholder">[IMAGE: A checklist with 'Spelling OK', 'Images OK', 'Saved OK' ticked]</div>
+            <p><strong>Example:</strong> Reading your essay one last time before printing.</p>
+            <div class="tip-box">✅ <strong>Tip:</strong> Always "Preview" before "Print".</div>
+        </div>
+    </section>
+
+    <!-- IMPORTANT QUESTIONS -->
+    <section id="imp-questions">
+        <h2>⭐ Important Questions</h2>
+        <div id="imp-q-container">
+            <!-- Populated by JS -->
+        </div>
+    </section>
+
+    <!-- PRACTICE QUESTIONS -->
+    <section id="practice-section">
+        <h2>🎮 Practice Arena (70 Qs)</h2>
+        <div id="practice-container" class="question-card">
+            <div id="p-question-text" class="q-text">Loading...</div>
+            <div id="p-options" class="options-grid"></div>
+            <div id="p-feedback" class="feedback"></div>
+            <button id="p-next-btn" class="btn-nav hidden" onclick="nextPracticeQuestion()">Next Question ➡️</button>
+        </div>
+    </section>
+
+    <!-- LONG QUESTIONS -->
+    <section id="long-section">
+        <h2>✍️ Advanced Projects (10 Qs)</h2>
+        <div id="long-q-tracker" style="text-align:center; margin-bottom:10px;">Question 1 of 10</div>
+        <div class="question-card">
+            <div id="l-question-text" class="q-text">Loading...</div>
+            <textarea id="l-answer-input" placeholder="Type your answer here..."></textarea>
+            <button id="l-check-btn" onclick="checkLongAnswer()">Check Answer</button>
+            <div id="l-feedback" class="feedback"></div>
+            <button id="l-next-btn" class="btn-nav hidden" onclick="nextLongQuestion()">Next Challenge ➡️</button>
+        </div>
+    </section>
+
+    <!-- REVISION -->
+    <section id="revision-section">
+        <h2>🔄 Quick Revision</h2>
+        <button onclick="toggleRevision()" style="width:100%; margin-bottom:10px;">Show/Hide Key Points</button>
+        <div id="rev-content" class="hidden">
+            <div class="revision-point">1. <strong>Project:</strong> A task requiring planning and multiple tools.</div>
+            <div class="revision-point">2. <strong>Folder:</strong> A container to store files and keep desktop clean.</div>
+            <div class="revision-point">3. <strong>Presentation:</strong> Displaying info using slides (PowerPoint).</div>
+            <div class="revision-point">4. <strong>Netiquette:</strong> Good manners on the internet.</div>
+            <div class="revision-point">5. <strong>Search Engine:</strong> A tool like Google to find information.</div>
+            <div class="revision-point">6. <strong>WordArt:</strong> Decorative text used for headings in Word.</div>
+            <div class="revision-point">7. <strong>Slide Show:</strong> The full-screen view of a presentation.</div>
+            <div class="revision-point">8. <strong>Plagiarism:</strong> Copying someone's work without saying thanks (Avoid it!).</div>
+        </div>
+    </section>
+
+    <footer>
+        <p>Designed & Created by SHRISHANT YADAV</p>
+        <p>ShanEduHub</p>
+    </footer>
+
+    <script>
+        /* DATA: IMPORTANT QUESTIONS (30) */
+        const impQuestions = [
+            {q: "What is a digital poster?", a: "A digital poster is a document created on a computer using text, images, and colors to display a message or announcement."},
+            {q: "Which tool helps draw shapes in MS Word?", a: "The 'Shapes' tool in the Insert tab helps draw circles, squares, and arrows."},
+            {q: "Why do we use folders?", a: "We use folders to organize files so we can find them easily and keep the computer tidy."},
+            {q: "What is a slide?", a: "A slide is a single page in a presentation created using software like PowerPoint."},
+            {q: "Define Netiquette.", a: "Netiquette means 'Internet Etiquette', which are the rules for good behavior online."},
+            {q: "What is the shortcut to save a file?", a: "Ctrl + S is the shortcut to save a file."},
+            {q: "How can we make text bold?", a: "Select the text and press Ctrl + B, or click the 'B' button on the toolbar."},
+            {q: "What is a search engine?", a: "A program like Google or Bing that searches for documents and images on the World Wide Web."},
+            {q: "Why should we not type in ALL CAPS?", a: "Typing in ALL CAPS is considered rude because it looks like you are SHOUTING."},
+            {q: "What is a sub-folder?", a: "A folder created inside another folder is called a sub-folder."},
+            {q: "Name two presentation software.", a: "Microsoft PowerPoint and LibreOffice Impress."},
+            {q: "What is a backdrop?", a: "In projects like Scratch, a backdrop is the background image of the stage."},
+            {q: "How do you rename a folder?", a: "Right-click the folder -> Select Rename -> Type new name -> Press Enter."},
+            {q: "What is cyber safety?", a: "Staying safe online by not sharing personal info like passwords or address."},
+            {q: "What is 'Clip Art'?", a: "Clip Art is a collection of ready-made pictures available in MS Word/PowerPoint."},
+            {q: "Which key starts a slide show?", a: "The F5 key starts the slide show from the beginning."},
+            {q: "What is 'Font Style'?", a: "It is the design or look of the text (e.g., Arial, Comic Sans)."},
+            {q: "Why use 'Save As'?", a: "To save an existing file with a different name or in a different location."},
+            {q: "What is a keyword?", a: "A word you type into a search engine to find specific information."},
+            {q: "Is it safe to meet online friends alone?", a: "No, never meet online strangers alone. Tell your parents first."},
+            {q: "What does URL stand for?", a: "Uniform Resource Locator (it is the address of a website)."},
+            {q: "How to copy an image from Paint to Word?", a: "Select image in Paint -> Ctrl+C -> Go to Word -> Ctrl+V."},
+            {q: "What is the 'Title Bar'?", a: "The top bar of a window that shows the name of the file and program."},
+            {q: "What is 'Alignment'?", a: "Positioning text to the Left, Center, or Right of the page."},
+            {q: "What is a 'Transition' in PowerPoint?", a: "The effect that happens when you move from one slide to the next."},
+            {q: "Why should we cite sources?", a: "To give credit to the person who wrote the information we used."},
+            {q: "What is a 'Hyperlink'?", a: "A link that takes you to another page or document when clicked."},
+            {q: "How to undo a mistake?", a: "Press Ctrl + Z."},
+            {q: "What is a 'Soft Copy'?", a: "A document stored on the computer (not printed on paper)."},
+            {q: "What is a 'Hard Copy'?", a: "A printed version of a document."}
+        ];
+
+        /* DATA: PRACTICE QUESTIONS (70) */
+        const practiceData = [
+            // MCQ - General Tools
+            { type: "mcq", q: "Which shortcut key saves your project?", options: ["Ctrl+P", "Ctrl+S", "Ctrl+X", "Ctrl+V"], a: "Ctrl+S" },
+            { type: "mcq", q: "Which tool is best for drawing?", options: ["MS Word", "MS Paint", "Calculator", "Notepad"], a: "MS Paint" },
+            { type: "mcq", q: "To make text look heavy and dark, we use:", options: ["Italic", "Bold", "Underline", "Strike"], a: "Bold" },
+            { type: "mcq", q: "Where do you organize your files?", options: ["In the Bin", "In Folders", "On the Keyboard", "In the Mouse"], a: "In Folders" },
+            { type: "mcq", q: "What do we use to type a report?", options: ["MS Paint", "MS Word", "Music Player", "Games"], a: "MS Word" },
+            
+            // Fill Blanks - Presentation
+            { type: "fill", q: "A presentation is made up of many ______.", options: ["Pages", "Slides", "Sheets", "Docs"], a: "Slides" },
+            { type: "fill", q: "Press ______ to start a Slide Show.", options: ["F1", "F5", "Esc", "Enter"], a: "F5" },
+            { type: "fill", q: "The first slide is usually the ______ slide.", options: ["End", "Title", "Blank", "Graph"], a: "Title" },
+            { type: "fill", q: "To add a picture, go to the ______ tab.", options: ["Home", "Insert", "View", "File"], a: "Insert" },
+            { type: "fill", q: "PowerPoint is used for ______.", options: ["Drawing", "Presentations", "Math", "Music"], a: "Presentations" },
+
+            // True/False - Ethics
+            { type: "tf", q: "It is okay to share your password with friends.", options: ["True", "False"], a: "False" },
+            { type: "tf", q: "Typing in ALL CAPS is considered polite.", options: ["True", "False"], a: "False" },
+            { type: "tf", q: "You should always check if information online is true.", options: ["True", "False"], a: "True" },
+            { type: "tf", q: "We can copy any picture from Google for our project.", options: ["True", "False"], a: "False" },
+            { type: "tf", q: "Netiquette means rules for using the internet.", options: ["True", "False"], a: "True" },
+
+            // One Word - File Management
+            { type: "word", q: "A container for files.", options: ["Box", "Folder", "Bag", "Bin"], a: "Folder" },
+            { type: "word", q: "Changing the name of a file.", options: ["Naming", "Renaming", "Typing", "Saving"], a: "Renaming" },
+            { type: "word", q: "The main screen of the computer.", options: ["Desktop", "Table", "Floor", "Wall"], a: "Desktop" },
+            { type: "word", q: "Small pictures on the desktop.", options: ["Photos", "Icons", "Dots", "Files"], a: "Icons" },
+            { type: "word", q: "Deleting a file sends it here.", options: ["Home", "Recycle Bin", "Folder", "Cloud"], a: "Recycle Bin" },
+
+            // Scenarios
+            { type: "mcq", q: "Rahul wants to make a poster. Which software?", options: ["Excel", "Word", "Calculator", "Notepad"], a: "Word" },
+            { type: "mcq", q: "Priya wants to present her science project. Which tool?", options: ["Paint", "PowerPoint", "Word", "Excel"], a: "PowerPoint" },
+            { type: "mcq", q: "Amit found a cool image online. What should he do?", options: ["Steal it", "Cite the source", "Sell it", "Delete it"], a: "Cite the source" },
+            { type: "mcq", q: "The computer is slow. Too many files on Desktop. Solution?", options: ["Buy new PC", "Create Folders", "Delete OS", "Stop using"], a: "Create Folders" },
+            { type: "mcq", q: "You receive a mean message. What to do?", options: ["Reply angrily", "Tell a parent", "Cry", "Delete account"], a: "Tell a parent" },
+
+            // Mixed Bag
+            { type: "mcq", q: "Ctrl + C means:", options: ["Cut", "Copy", "Call", "Close"], a: "Copy" },
+            { type: "mcq", q: "Ctrl + V means:", options: ["Very", "View", "Paste", "Print"], a: "Paste" },
+            { type: "mcq", q: "Ctrl + X means:", options: ["X-ray", "Cut", "Exit", "Extra"], a: "Cut" },
+            { type: "mcq", q: "A blinking line where you type text is:", options: ["Pointer", "Cursor", "Arrow", "Bar"], a: "Cursor" },
+            { type: "mcq", q: "Which device is used to type?", options: ["Mouse", "Keyboard", "Monitor", "Printer"], a: "Keyboard" },
+
+            // More True/False
+            { type: "tf", q: "A folder can contain other folders.", options: ["True", "False"], a: "True" },
+            { type: "tf", q: "You cannot change the color of text in Word.", options: ["True", "False"], a: "False" },
+            { type: "tf", q: "Google is a Search Engine.", options: ["True", "False"], a: "True" },
+            { type: "tf", q: "We should sit close to the monitor.", options: ["True", "False"], a: "False" },
+            { type: "tf", q: "Food and drinks are allowed near computers.", options: ["True", "False"], a: "False" },
+
+            // Project Steps
+            { type: "mcq", q: "First step in creating a new file?", options: ["Save", "Open Program", "Print", "Close"], a: "Open Program" },
+            { type: "mcq", q: "Last step before shutting down?", options: ["Save Work", "Unplug", "Sleep", "Run"], a: "Save Work" },
+            { type: "mcq", q: "To select all text, press:", options: ["Ctrl+A", "Ctrl+S", "Ctrl+Z", "Ctrl+O"], a: "Ctrl+A" },
+            { type: "mcq", q: "Which tab has 'Font' options?", options: ["Insert", "Home", "View", "Layout"], a: "Home" },
+            { type: "mcq", q: "Which tool erases mistakes in Paint?", options: ["Pencil", "Eraser", "Brush", "Fill"], a: "Eraser" },
+
+            // File Extensions & Tech
+            { type: "word", q: "Extension for Word file.", options: [".txt", ".docx", ".bmp", ".ppt"], a: ".docx" },
+            { type: "word", q: "Extension for PowerPoint.", options: [".xls", ".pptx", ".doc", ".png"], a: ".pptx" },
+            { type: "word", q: "Extension for Paint image.", options: [".mp3", ".png", ".txt", ".exe"], a: ".png" },
+            { type: "mcq", q: "Device to click photos for project?", options: ["Scanner", "Camera", "Printer", "Speaker"], a: "Camera" },
+            { type: "mcq", q: "Device to put paper drawing into computer?", options: ["Scanner", "Printer", "Mouse", "Monitor"], a: "Scanner" },
+
+            // Colors & Design
+            { type: "mcq", q: "Tool to fill color in a shape?", options: ["Brush", "Fill with Color", "Pencil", "Text"], a: "Fill with Color" },
+            { type: "mcq", q: "To draw a perfect circle hold:", options: ["Alt", "Shift", "Ctrl", "Tab"], a: "Shift" },
+            { type: "mcq", q: "Text that is slanted is called:", options: ["Bold", "Italic", "Regular", "Strike"], a: "Italic" },
+            { type: "mcq", q: "To make a list with dots use:", options: ["Numbers", "Bullets", "Bold", "Align"], a: "Bullets" },
+            { type: "mcq", q: "To put text in center:", options: ["Align Left", "Center Align", "Justify", "Right"], a: "Center Align" },
+
+            // General Knowledge
+            { type: "tf", q: "Email is slower than post.", options: ["True", "False"], a: "False" },
+            { type: "tf", q: "We can send photos via Email.", options: ["True", "False"], a: "True" },
+            { type: "tf", q: "A mouse has 5 buttons.", options: ["True", "False"], a: "False" },
+            { type: "tf", q: "CPU is the brain of computer.", options: ["True", "False"], a: "True" },
+            { type: "tf", q: "Tablets are touch screen computers.", options: ["True", "False"], a: "True" },
+
+            // Safety 2
+            { type: "mcq", q: "If a website asks for home address:", options: ["Give it", "Ask Parents", "Guess it", "Ignore"], a: "Ask Parents" },
+            { type: "mcq", q: "Strong password has:", options: ["12345", "Name", "Letters+Numbers", "Date of Birth"], a: "Letters+Numbers" },
+            { type: "mcq", q: "Who is a stranger online?", options: ["Mom", "Teacher", "Person you don't know", "Brother"], a: "Person you don't know" },
+            { type: "mcq", q: "Should you download free games from anywhere?", options: ["Yes", "No", "Maybe", "Only big ones"], a: "No" },
+            { type: "mcq", q: "Cyber bullying is:", options: ["Good", "Fun", "Bad/Crime", "Okay"], a: "Bad/Crime" },
+
+            // Final 5
+            { type: "mcq", q: "Key to delete character to left?", options: ["Delete", "Backspace", "Space", "Enter"], a: "Backspace" },
+            { type: "mcq", q: "Key to delete character to right?", options: ["Delete", "Backspace", "Shift", "Alt"], a: "Delete" },
+            { type: "mcq", q: "Longest key on keyboard?", options: ["Enter", "Spacebar", "Shift", "Ctrl"], a: "Spacebar" },
+            { type: "mcq", q: "F1 key is usually for:", options: ["Help", "Save", "Print", "Exit"], a: "Help" },
+            { type: "mcq", q: "Pressing Esc usually:", options: ["Saves", "Cancels/Exits", "Prints", "Pastes"], a: "Cancels/Exits" }
+        ];
+
+        /* DATA: LONG QUESTIONS (10) */
+        const longQuestions = [
+            {
+                id: 1,
+                q: "Write the steps to create a new folder named 'Project' on the Desktop.",
+                keywords: ["right click", "new", "folder", "name", "type", "enter", "desktop"],
+                model: "1. Right-click on a blank area of the Desktop.\n2. Select 'New' from the menu.\n3. Click on 'Folder'.\n4. Type the name 'Project'.\n5. Press Enter key."
+            },
+            {
+                id: 2,
+                q: "How can you insert a picture into an MS Word document?",
+                keywords: ["insert", "tab", "picture", "click", "select", "file"],
+                model: "1. Open MS Word.\n2. Click on the 'Insert' tab.\n3. Click on the 'Pictures' button.\n4. Select the picture from your computer.\n5. Click 'Insert'."
+            },
+            {
+                id: 3,
+                q: "Explain the difference between 'Save' and 'Save As'.",
+                keywords: ["save", "existing", "name", "location", "copy", "changes", "save as", "new"],
+                model: "'Save' updates the changes in the current file. 'Save As' allows you to save the file with a NEW name or in a NEW location, creating a copy."
+            },
+            {
+                id: 4,
+                q: "List 3 rules of Netiquette (Digital Manners).",
+                keywords: ["polite", "rude", "caps", "spam", "kind", "respect", "privacy"],
+                model: "1. Be polite and kind.\n2. Do not type in ALL CAPS (it means shouting).\n3. Respect others' privacy and do not spam."
+            },
+            {
+                id: 5,
+                q: "Write the steps to Rename a file.",
+                keywords: ["right click", "rename", "type", "new", "enter", "name", "select"],
+                model: "1. Right-click on the file you want to rename.\n2. Click 'Rename' from the menu.\n3. Type the new name.\n4. Press Enter."
+            },
+            {
+                id: 6,
+                q: "How do you create a bulleted list in MS Word?",
+                keywords: ["home", "tab", "bullet", "list", "select", "click"],
+                model: "1. Select the text.\n2. Go to the 'Home' tab.\n3. Click on the 'Bullets' icon in the Paragraph group."
+            },
+            {
+                id: 7,
+                q: "What should you do if you find mean comments about you online?",
+                keywords: ["parents", "teacher", "adult", "tell", "report", "block", "respond", "reply"],
+                model: "1. Do not reply to the mean comments.\n2. Save the message (screenshot).\n3. Tell a trusted adult (Parent or Teacher) immediately."
+            },
+            {
+                id: 8,
+                q: "How can you move a file from Desktop to a Folder?",
+                keywords: ["drag", "drop", "cut", "paste", "move", "select"],
+                model: "Method 1: Click and hold the file (Drag) and drop it into the folder.\nMethod 2: Right-click file -> Cut -> Open Folder -> Right-click -> Paste."
+            },
+            {
+                id: 9,
+                q: "Write the steps to start a Slide Show in PowerPoint.",
+                keywords: ["slide show", "tab", "beginning", "f5", "start"],
+                model: "1. Click on the 'Slide Show' tab.\n2. Click 'From Beginning'.\nOR simply press the F5 key on the keyboard."
+            },
+            {
+                id: 10,
+                q: "Why is it important to organize files in folders?",
+                keywords: ["find", "easy", "time", "mess", "clean", "tidy", "organized"],
+                model: "1. It keeps the computer desktop tidy.\n2. It makes it easy and fast to find files later.\n3. It prevents important files from getting lost."
+            }
+        ];
+
+        /* STATE */
+        let score = { correct: 0, wrong: 0, total: 0 };
+        let currentPracticeIndex = 0;
+        let currentLongIndex = 0;
+
+        /* INITIALIZATION */
+        document.addEventListener('DOMContentLoaded', () => {
+            renderImpQuestions();
+            loadPracticeQuestion();
+            loadLongQuestion();
+            updateScoreUI();
+        });
+
+        /* RENDER FUNCTIONS */
+        function renderImpQuestions() {
+            const container = document.getElementById('imp-q-container');
+            let html = '';
+            impQuestions.forEach((item, index) => {
+                html += `
+                <div style="margin-bottom:10px; border-bottom:1px dashed #ccc; padding-bottom:5px;">
+                    <div style="color:#e67e22;">Q${index+1}. ${item.q}</div>
+                    <div style="color:#2c3e50;">Ans: ${item.a}</div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        /* PRACTICE LOGIC */
+        function loadPracticeQuestion() {
+            const q = practiceData[currentPracticeIndex];
+            document.getElementById('p-question-text').textContent = `Q${currentPracticeIndex+1}: ${q.q}`;
+            
+            const optionsDiv = document.getElementById('p-options');
+            optionsDiv.innerHTML = '';
+            
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.textContent = opt;
+                btn.onclick = () => checkPracticeAnswer(opt, q.a, btn);
+                optionsDiv.appendChild(btn);
+            });
+
+            document.getElementById('p-feedback').style.display = 'none';
+            document.getElementById('p-next-btn').classList.add('hidden');
+        }
+
+        function checkPracticeAnswer(selected, correct, btnElement) {
+            // Disable all buttons
+            const buttons = document.getElementById('p-options').querySelectorAll('button');
+            buttons.forEach(b => b.disabled = true);
+
+            score.total++;
+            const feedback = document.getElementById('p-feedback');
+            feedback.style.display = 'block';
+
+            if (selected === correct) {
+                score.correct++;
+                btnElement.classList.add('correct');
+                feedback.className = 'feedback success';
+                feedback.innerHTML = `Excellent ⭐<br>Correct Answer: <strong>${correct}</strong>`;
+            } else {
+                score.wrong++;
+                btnElement.classList.add('wrong');
+                feedback.className = 'feedback error';
+                feedback.innerHTML = `Try Again ❌<br>Correct Answer: <strong>${correct}</strong>`;
+                
+                // Highlight correct one
+                buttons.forEach(b => {
+                    if (b.textContent === correct) b.classList.add('correct');
+                });
+            }
+
+            updateScoreUI();
+            document.getElementById('p-next-btn').classList.remove('hidden');
+        }
+
+        function nextPracticeQuestion() {
+            currentPracticeIndex++;
+            if (currentPracticeIndex < practiceData.length) {
+                loadPracticeQuestion();
+            } else {
+                document.getElementById('practice-section').innerHTML = `
+                <div class="question-card" style="text-align:center;">
+                    <h2>🎉 Practice Complete!</h2>
+                    <p>You answered all 70 questions.</p>
+                </div>`;
+            }
+        }
+
+        /* LONG ANSWER LOGIC */
+        function loadLongQuestion() {
+            const q = longQuestions[currentLongIndex];
+            document.getElementById('long-q-tracker').textContent = `Question ${currentLongIndex+1} of 10`;
+            document.getElementById('l-question-text').textContent = q.q;
+            document.getElementById('l-answer-input').value = '';
+            document.getElementById('l-feedback').style.display = 'none';
+            document.getElementById('l-next-btn').classList.add('hidden');
+            document.getElementById('l-check-btn').style.display = 'inline-block';
+        }
+
+        function checkLongAnswer() {
+            const userAns = document.getElementById('l-answer-input').value.toLowerCase();
+            const q = longQuestions[currentLongIndex];
+            
+            if (userAns.trim().length < 5) {
+                alert("Please type a longer answer.");
+                return;
+            }
+
+            let matches = 0;
+            q.keywords.forEach(key => {
+                if (userAns.includes(key)) matches++;
+            });
+
+            score.total++;
+            const feedback = document.getElementById('l-feedback');
+            feedback.style.display = 'block';
+            document.getElementById('l-check-btn').style.display = 'none';
+
+            // Simple Logic: 3+ keywords = Correct, else Incorrect
+            // Adjust threshold based on total keywords for that Q
+            const threshold = Math.ceil(q.keywords.length / 2); // 50% match
+            
+            if (matches >= threshold) {
+                score.correct++;
+                feedback.className = 'feedback success';
+                feedback.innerHTML = `<strong>Correct!</strong> Well done.<br><br><strong>Model Answer:</strong><br><pre style="white-space:pre-wrap; font-family:inherit;">${q.model}</pre>`;
+            } else {
+                score.wrong++;
+                feedback.className = 'feedback error';
+                feedback.innerHTML = `<strong>Needs Improvement.</strong> Missing key terms.<br><br><strong>Model Answer:</strong><br><pre style="white-space:pre-wrap; font-family:inherit;">${q.model}</pre>`;
+            }
+
+            updateScoreUI();
+            document.getElementById('l-next-btn').classList.remove('hidden');
+        }
+
+        function nextLongQuestion() {
+            currentLongIndex++;
+            if (currentLongIndex < longQuestions.length) {
+                loadLongQuestion();
+            } else {
+                document.getElementById('long-section').innerHTML = `
+                <div class="question-card" style="text-align:center;">
+                    <h2>🏆 Challenge Complete!</h2>
+                    <p>You finished all project challenges.</p>
+                </div>`;
+            }
+        }
+
+        /* UTILITIES */
+        function updateScoreUI() {
+            document.getElementById('score-correct').textContent = score.correct;
+            document.getElementById('score-wrong').textContent = score.wrong;
+            document.getElementById('score-total').textContent = score.total;
+            
+            const percent = score.total === 0 ? 0 : Math.round((score.correct / score.total) * 100);
+            document.getElementById('score-percent').textContent = percent + "%";
+        }
+
+        function toggleRevision() {
+            const revContent = document.getElementById('rev-content');
+            revContent.classList.toggle('hidden');
+        }
+    </script>
+</body>
+</html>

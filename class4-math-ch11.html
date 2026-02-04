@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 11: Time and Calendar | ShanEduHub</title>
+    
+    <!-- Google Fonts: Patrick Hand for Cursive/Handwriting feel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --pastel-yellow: #fff9c4;
+            --pastel-green: #dcedc8;
+            --pastel-blue: #b3e5fc;
+            --pastel-orange: #ffe0b2;
+            --pastel-purple: #e1bee7;
+            --pastel-white: #ffffff;
+            --text-color: #4a4a4a;
+            --border-radius: 20px;
+            --shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Patrick Hand', cursive;
+            background: linear-gradient(135deg, var(--pastel-blue), var(--pastel-purple), var(--pastel-yellow));
+            color: var(--text-color);
+            line-height: 1.6;
+            font-weight: bold;
+            font-size: 19px;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* --- Header / Hero --- */
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(5px);
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            border-bottom: 5px solid #ab47bc;
+        }
+
+        h1 {
+            font-size: 2.6rem;
+            color: #7b1fa2;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px #fff;
+        }
+
+        .subtitle {
+            font-size: 1.6rem;
+            color: #1565c0;
+            margin-bottom: 15px;
+        }
+
+        .quote {
+            font-size: 1.8rem;
+            color: #2e7d32;
+            margin: 20px 0;
+            font-style: italic;
+        }
+
+        .brand {
+            font-size: 1.3rem;
+            color: #e65100;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .start-btn {
+            background: #ff7043;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.6rem;
+            font-family: 'Patrick Hand', cursive;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #d84315;
+            transition: transform 0.1s;
+        }
+
+        .start-btn:active {
+            transform: translateY(5px);
+            box-shadow: none;
+        }
+
+        /* --- Live Score Panel --- */
+        #score-panel {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: var(--pastel-white);
+            border: 3px solid #7b1fa2;
+            border-radius: 15px;
+            padding: 10px;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            font-size: 1.1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 130px;
+        }
+
+        .score-item {
+            margin: 2px 0;
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .score-val { color: #d32f2f; }
+        .score-correct { color: #2e7d32; }
+
+        /* --- Common Section Styles --- */
+        section {
+            padding: 20px;
+            max-width: 850px;
+            margin: 0 auto 50px auto;
+        }
+
+        .section-title {
+            font-size: 2.3rem;
+            text-align: center;
+            margin-bottom: 35px;
+            color: #512da8;
+            background: var(--pastel-white);
+            display: inline-block;
+            padding: 12px 35px;
+            border-radius: 50px;
+            position: relative;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: var(--shadow);
+            border: 3px dashed #512da8;
+        }
+
+        /* --- Notes Section --- */
+        .note-card {
+            background: var(--pastel-white);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            border-left: 12px solid;
+            transition: transform 0.2s;
+        }
+
+        .note-card:hover { transform: translateY(-3px); }
+        .note-card:nth-child(odd) { border-left-color: #42a5f5; background: linear-gradient(to right, #fff, var(--pastel-blue)); }
+        .note-card:nth-child(even) { border-left-color: #66bb6a; background: linear-gradient(to right, #fff, var(--pastel-green)); }
+
+        .note-title { font-size: 1.9rem; color: #bf360c; margin-bottom: 15px; border-bottom: 3px dotted #ccc; display: inline-block; width: 100%;}
+        .note-content { font-size: 1.35rem; margin-bottom: 15px; text-align: left; }
+        .example-box { background: rgba(255,255,255,0.7); padding: 15px; border-radius: 15px; border: 2px solid #ffa726; margin: 15px 0; color: #e65100; }
+        .memory-tip { background: #d1c4e9; padding: 15px; border-radius: 15px; margin-top: 15px; color: #4527a0; }
+        .check-q { background: #b2dfdb; padding: 15px; border-radius: 15px; margin-top: 15px; color: #004d40; font-style: italic; }
+
+        /* --- Important Questions --- */
+        .imp-q-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border-left: 8px solid;
+            box-shadow: var(--shadow);
+        }
+        
+        .imp-q-card:nth-child(3n+1) { border-left-color: #ff7043; }
+        .imp-q-card:nth-child(3n+2) { border-left-color: #5c6bc0; }
+        .imp-q-card:nth-child(3n+3) { border-left-color: #26a69a; }
+
+        .imp-q-text { font-size: 1.4rem; color: #37474f; margin-bottom: 12px; }
+        .imp-a-text { font-size: 1.3rem; color: #1b5e20; background: #e8f5e9; padding: 8px 15px; border-radius: 8px; display: inline-block; }
+        .imp-exp { font-size: 1.2rem; color: #616161; margin-top: 8px; font-style: italic; }
+
+        /* --- NEW: Advanced Word Problems Section --- */
+        .advanced-card {
+            background: #fff3e0;
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            border: 2px solid #ffb74d;
+            box-shadow: var(--shadow);
+        }
+        .adv-q-text { font-size: 1.4rem; color: #d84315; margin-bottom: 15px; }
+        .adv-input {
+            width: 100%;
+            height: 100px;
+            padding: 15px;
+            font-size: 1.2rem;
+            border: 2px solid #ffe0b2;
+            border-radius: 15px;
+            font-family: 'Patrick Hand', cursive;
+            margin-bottom: 15px;
+            resize: vertical;
+        }
+        .adv-submit-btn {
+            background: #29b6f6;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            font-size: 1.3rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Patrick Hand', cursive;
+        }
+        .adv-submit-btn:hover { background: #0288d1; }
+
+        /* --- Practice Questions (Quiz) --- */
+        #quiz-container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            min-height: 450px;
+            position: relative;
+        }
+
+        #q-text { font-size: 1.7rem; color: #1565c0; margin-bottom: 30px; }
+        
+        .options-grid {
+            display: grid;
+            gap: 15px;
+            grid-template-columns: 1fr;
+        }
+
+        .option-btn {
+            background: var(--pastel-blue);
+            border: 2px solid #42a5f5;
+            padding: 18px;
+            font-size: 1.3rem;
+            border-radius: 15px;
+            cursor: pointer;
+            font-family: 'Patrick Hand', cursive;
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover { background: #90caf9; transform: scale(1.02); }
+        .option-btn.correct { background: #a5d6a7; border-color: #2e7d32; color: #1b5e20; }
+        .option-btn.wrong { background: #ef9a9a; border-color: #c62828; color: #b71c1c; }
+
+        #feedback-area {
+            margin-top: 25px;
+            font-size: 1.5rem;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .next-btn {
+            background: #fbc02d;
+            border: none;
+            padding: 12px 35px;
+            font-size: 1.5rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Patrick Hand', cursive;
+            margin-top: 20px;
+            display: none;
+            box-shadow: 0 4px 0 #f9a825;
+        }
+
+        .next-btn:active { box-shadow: none; transform: translateY(4px); }
+
+        /* --- Revision --- */
+        .revision-list {
+            list-style: none;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+        }
+
+        .revision-list li {
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+            padding-left: 35px;
+            position: relative;
+            color: #455a64;
+        }
+
+        .revision-list li::before {
+            content: "⏰";
+            position: absolute;
+            left: 0;
+            font-size: 1.5rem;
+        }
+
+        #revise-toggle {
+            background: #00bcd4;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.4rem;
+            font-family: 'Patrick Hand', cursive;
+            cursor: pointer;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        /* --- Footer --- */
+        footer {
+            text-align: center;
+            padding: 40px;
+            background: #4527a0;
+            color: white;
+            font-size: 1.2rem;
+            margin-top: 60px;
+            border-top-left-radius: 30px;
+            border-top-right-radius: 30px;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            h1 { font-size: 2.2rem; }
+            .section-title { font-size: 1.8rem; width: 100%; }
+            #score-panel { bottom: 10px; top: auto; width: 100%; flex-direction: row; justify-content: space-around; border-radius: 0; border: none; border-top: 3px solid #7b1fa2; }
+            section { padding: 15px; margin-bottom: 90px; } 
+            .note-card { padding: 20px; }
+            .adv-input { font-size: 1rem; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- LIVE SCORE PANEL -->
+    <div id="score-panel">
+        <div class="score-item">Correct: <span id="score-c" class="score-correct">0</span></div>
+        <div class="score-item">Wrong: <span id="score-w" class="score-val">0</span></div>
+        <div class="score-item">Total: <span id="score-t">0</span></div>
+        <div class="score-item">Score: <span id="score-p">0%</span></div>
+    </div>
+
+    <!-- HEADER -->
+    <header>
+        <span class="brand">ShanEduHub Presents</span>
+        <h1>Chapter 11: Time and Calendar</h1>
+        <p class="subtitle">Class 5 • Mathematics</p>
+        <p class="quote">"Time is the most precious gift. Spend it wisely!" ⏳</p>
+        <button class="start-btn" onclick="document.getElementById('notes').scrollIntoView({behavior: 'smooth'})">Start Learning 🚀</button>
+    </header>
+
+    <!-- SECTION 1: NOTES -->
+    <section id="notes">
+        <h2 class="section-title">My Study Notes 📝</h2>
+
+        <!-- Topic 1: Reading Time to exact minute -->
+        <div class="note-card">
+            <div class="note-title">1. Reading Time to the Exact Minute</div>
+            <div class="note-content">
+                <ul>
+                    <li>The clock has 60 small marks. Each mark is <strong>1 minute</strong>.</li>
+                    <li>The numbers 1 to 12 show hours. The gap between two numbers is <strong>5 minutes</strong>.</li>
+                    <li>To read exact time:
+                        <ul>
+                            <li>Look at the Hour hand (Short). It tells the hour.</li>
+                            <li>Look at the Minute hand (Long). Multiply the number it has passed by 5, then add the small lines.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div class="example-box">
+                Example: Hour hand is past 4. Minute hand is on the 3rd small line after 2.<br>
+                2 stands for 10 mins. + 3 small lines = 13 mins.<br>
+                Time is <strong>4:13</strong>.
+            </div>
+            <div class="check-q">
+                ❓ Check: If the minute hand is on the 2nd dot after 7, how many minutes have passed? (Ans: 37 mins)
+            </div>
+        </div>
+
+        <!-- Topic 2: AM and PM -->
+        <div class="note-card">
+            <div class="note-title">2. Use of A.M. and P.M.</div>
+            <div class="note-content">
+                A day has 24 hours, but our normal clock shows only 12. So we divide the day into two parts:
+                <ul>
+                    <li><strong>A.M. (Ante Meridiem):</strong> From 12:00 Midnight to 12:00 Noon. (Morning time).</li>
+                    <li><strong>P.M. (Post Meridiem):</strong> From 12:00 Noon to 12:00 Midnight. (Afternoon, Evening, Night).</li>
+                </ul>
+            </div>
+            <div class="example-box">
+                Breakfast at 8:00 <strong>A.M.</strong><br>
+                Dinner at 8:00 <strong>P.M.</strong><br>
+                Note: 12:00 Noon and 12:00 Midnight do not have AM or PM usually, but we say 12 Noon or 12 Midnight.
+            </div>
+            <div class="memory-tip">
+                💡 Tip: A comes before P in alphabet. So A.M. comes first (Morning).
+            </div>
+        </div>
+
+        <!-- Topic 3: Reading Calendar -->
+        <div class="note-card">
+            <div class="note-title">3. Reading the Calendar</div>
+            <div class="note-content">
+                <ul>
+                    <li><strong>Year:</strong> Has 12 months. Total 365 days (366 in Leap Year).</li>
+                    <li><strong>Month:</strong> Has 30 or 31 days. February has 28 or 29.</li>
+                    <li><strong>Week:</strong> Has 7 days (Monday to Sunday).</li>
+                </ul>
+                <br>
+                <strong>Days in Months Trick (Knuckles):</strong>
+                Jan(31), Feb(28/29), Mar(31), Apr(30), May(31), Jun(30), Jul(31), Aug(31), Sep(30), Oct(31), Nov(30), Dec(31).
+            </div>
+            <div class="example-box">
+                If today is Monday, 5th Jan. The next Monday will be 5 + 7 = 12th Jan.
+            </div>
+        </div>
+
+        <!-- Topic 4: 24-Hour Clock -->
+        <div class="note-card">
+            <div class="note-title">4. The 24-Hour Clock Format</div>
+            <div class="note-content">
+                Used in railways, airlines, and military to avoid AM/PM confusion.
+                <ul>
+                    <li>The day starts at <strong>00:00</strong> (Midnight).</li>
+                    <li>From 1 AM to 12 Noon, time is same as 12-hour clock (just remove AM).</li>
+                    <li>From 1 PM onwards, we <strong>add 12</strong> to the hours.</li>
+                </ul>
+            </div>
+            <div class="example-box">
+                1:00 PM → 1 + 12 = 13:00 hours.<br>
+                8:30 PM → 8 + 12 = 20:30 hours.<br>
+                12 Midnight → 00:00 hours (Start of new day).
+            </div>
+        </div>
+
+        <!-- Topic 5: Conversion of Time -->
+        <div class="note-card">
+            <div class="note-title">5. Conversion of Time</div>
+            <div class="note-content">
+                <strong>Standard Units:</strong>
+                <ul>
+                    <li>1 Day = 24 Hours</li>
+                    <li>1 Hour = 60 Minutes</li>
+                    <li>1 Minute = 60 Seconds</li>
+                </ul>
+                <br>
+                <strong>Rules:</strong>
+                <ul>
+                    <li>Big Unit to Small Unit → <strong>Multiply</strong> (Days to Hours: ×24).</li>
+                    <li>Small Unit to Big Unit → <strong>Divide</strong> (Minutes to Hours: ÷60).</li>
+                </ul>
+            </div>
+            <div class="example-box">
+                Convert 3 days into hours: <br>
+                3 × 24 = 72 hours.<br>
+                Convert 2 hours 10 mins into mins: <br>
+                (2 × 60) + 10 = 120 + 10 = 130 minutes.
+            </div>
+        </div>
+
+        <!-- Topic 6: Calculating Time Duration -->
+        <div class="note-card">
+            <div class="note-title">6. Calculating Time Duration</div>
+            <div class="note-content">
+                Elapsed time is the duration between a Start Time and an End Time.
+                <ul>
+                    <li><strong>Method 1:</strong> Count forward on a clock.</li>
+                    <li><strong>Method 2:</strong> Subtraction (End Time - Start Time). *Be careful crossing 12:00*.</li>
+                </ul>
+            </div>
+            <div class="example-box">
+                School starts at 8:00 AM and closes at 2:00 PM.<br>
+                8 AM to 12 Noon = 4 hours.<br>
+                12 Noon to 2 PM = 2 hours.<br>
+                Total Duration = 4 + 2 = 6 hours.
+            </div>
+        </div>
+
+        <!-- Topic 7: Concept of Leap Year -->
+        <div class="note-card">
+            <div class="note-title">7. Concept of Leap Year</div>
+            <div class="note-content">
+                <ul>
+                    <li>An ordinary year has 365 days.</li>
+                    <li>The Earth takes approx 365 ¼ days to revolve around Sun.</li>
+                    <li>These ¼ days add up (¼ + ¼ + ¼ + ¼ = 1) every 4 years to make an extra day.</li>
+                    <li>A <strong>Leap Year</strong> has 366 days. The extra day is added to <strong>February (29 days)</strong>.</li>
+                    <li><strong>Check:</strong> If a year is divisible by 4, it is a Leap Year. (For century years like 1900, 2000, must divide by 400).</li>
+                </ul>
+            </div>
+            <div class="example-box">
+                2024 ÷ 4 = 506 (No remainder) → Leap Year.<br>
+                2025 ÷ 4 = Remainder 1 → Not a Leap Year.
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: IMPORTANT QUESTIONS -->
+    <section>
+        <h2 class="section-title">Important Questions 🌟</h2>
+
+        <div id="imp-questions-container">
+            <!-- 30 Questions -->
+            <div class="imp-q-card">
+                <div class="imp-q-text">1. How many minutes are there in 3 hours?</div>
+                <div class="imp-a-text">Ans: 180 minutes</div>
+                <div class="imp-exp">3 × 60 = 180.</div>
+            </div>
+
+            <div class="imp-q-card">
+                <div class="imp-q-text">2. Convert 4:00 PM to 24-hour clock time.</div>
+                <div class="imp-a-text">Ans: 16:00 hours</div>
+                <div class="imp-exp">4 + 12 = 16.</div>
+            </div>
+
+            <div class="imp-q-card">
+                <div class="imp-q-text">3. Which month has 28 or 29 days?</div>
+                <div class="imp-a-text">Ans: February</div>
+            </div>
+
+            <div class="imp-q-card">
+                <div class="imp-q-text">4. Was the year 2020 a leap year?</div>
+                <div class="imp-a-text">Ans: Yes</div>
+                <div class="imp-exp">2020 is exactly divisible by 4.</div>
+            </div>
+
+            <div class="imp-q-card">
+                <div class="imp-q-text">5. How many hours in 2 days?</div>
+                <div class="imp-a-text">Ans: 48 hours</div>
+                <div class="imp-exp">2 × 24 = 48.</div>
+            </div>
+
+            <div class="imp-q-card">
+                <div class="imp-q-text">6. What time is 12:00 Midnight in 24-hour format?</div>
+                <div class="imp-a-text">Ans: 00:00 hours</div>
+            </div>
+
+            <div class="imp-q-card">
+                <div class="imp-q-text">7. Convert 15:30 hours to 12-hour clock time.</div>
+                <div class="imp-a-text">Ans: 3:30 PM</div>
+                <div class="imp-exp">15 - 12 = 3.</div>
+            </div>
+
+            <div class="imp-q-card">
+                <div class="imp-q-text">8. How many days in a leap year?</div>
+                <div class="imp-a-text">Ans: 366 days</div>
+            </div>
+
+            <div class="imp-q-card">
+                <div class="imp-q-text">9. Write 5 minutes past 10 in numbers.</div>
+                <div class="imp-a-text">Ans: 10:05</div>
+            </div>
+
+            <div class="imp-q-card">
+                <div class="imp-q-text">10. Add 2 hours 30 mins and 1 hour 15 mins.</div>
+                <div class="imp-a-text">Ans: 3 hours 45 mins</div>
+            </div>
+
+            <div class="imp-q-card">
+                <div class="imp-q-text">11. A movie started at 6 PM and ended at 9 PM. Duration?</div>
+                <div class="imp-a-text">Ans: 3 hours</div>
+            </div>
+
+            <div class="imp-q-card">
+                <div class="imp-q-text">12. What does A.M. stand for?</div>
+                <div class="imp-a-text">Ans: Ante Meridiem</div>
+            </div>
+
+            <div class="imp-q-card">
+                <div class="imp-q-text">13. How many seconds in 5 minutes?</div>
+                <div class="imp-a-text">Ans: 300 seconds</div>
+                <div class="imp-exp">5 × 60 = 300.</div>
+            </div>
+
+            <div class="imp-q-card">
+                <div class="imp-q-text">14. If today is Monday, what day is 7 days later?</div>
+                <div class="imp-a-text">Ans: Monday</div>
+            </div>
+
+            <div class="imp-q-card">
+                <div class="imp-q-text">15. Convert 20:00 hours to 12-hour format.</div>
+                <div class="imp-a-text">Ans: 8:00 PM</div>
+                <div class="imp-exp">20 - 12 = 8.</div>
+            </div>
+
+            <div class="imp-q-card">
+                <div class="imp-q-text">16. Half an hour is how many minutes?</div>
+                <div class="imp-a-text">Ans: 30 minutes</div>
+            </div>
+
+            <div class="imp-q-card">
+                <div class="imp-q-text">17. Quarter past 5 means?</div>
+                <div class="imp-a-text">Ans: 5:15</div>
+            </div>
+
+            <div class="imp-q-card">
+                <div class="imp-q-text">18. Quarter to 6 means?</div>
+                <div class="imp-a-text">Ans: 5:45</div>
+            </div>
+
+            <div class="imp-q-card">
+                <div class="imp-q-text">19. How many weeks in a year?</div>
+                <div class="imp-a-text">Ans: 52 weeks</div>
+            </div>
+
+            <div class="imp-q-card">
+                <div class="imp-q-text">20. What comes after July?</div>
+                <div class="imp-a-text">Ans: August</div>
+            </div>
+
+            <div class="imp-q-card">
+                <div class="imp-q-text">21. 23:59 is AM or PM?</div>
+                <div class="imp-a-text">Ans: PM</div>
+                <div class="imp-exp">It is just 1 minute before midnight.</div>
+            </div>
+
+            <div class="imp-q-card">
+                <div class="imp-q-text">22. How many days in July and August combined?</div>
+                <div class="imp-a-text">Ans: 62 days</div>
+                <div class="imp-exp">31 + 31 = 62.</div>
+            </div>
+
+            <div class="imp-q-card">
+                <div class="imp-q-text">23. Train leaves at 13:00. What time is this in AM/PM?</div>
+                <div class="imp-a-text">Ans: 1:00 PM</div>
+            </div>
+
+            <div class="imp-q-card">
+                <div class="imp-q-text">24. 120 minutes = ? hours.</div>
+                <div class="imp-a-text">Ans: 2 hours</div>
+            </div>
+
+            <div class="imp-q-card">
+                <div class="imp-q-text">25. If 1st Feb is Sunday, is 1st March Sunday? (Non-leap year).</div>
+                <div class="imp-a-text">Ans: Yes</div>
+                <div class="imp-exp">28 days is exactly 4 weeks. So day repeats.</div>
+            </div>
+
+            <div class="imp-q-card">
+                <div class="imp-q-text">26. How many hours from 10 AM to 4 PM?</div>
+                <div class="imp-a-text">Ans: 6 hours</div>
+                <div class="imp-exp">10 to 12 = 2hrs. 12 to 4 = 4hrs. 2+4=6.</div>
+            </div>
+
+            <div class="imp-q-card">
+                <div class="imp-q-text">27. Which is the 10th month?</div>
+                <div class="imp-a-text">Ans: October</div>
+            </div>
+
+            <div class="imp-q-card">
+                <div class="imp-q-text">28. 200 minutes in hours and minutes?</div>
+                <div class="imp-a-text">Ans: 3 hours 20 mins</div>
+                <div class="imp-exp">60+60+60=180. Remainder 20.</div>
+            </div>
+
+            <div class="imp-q-card">
+                <div class="imp-q-text">29. When does a new day start?</div>
+                <div class="imp-a-text">Ans: 12:00 Midnight</div>
+            </div>
+
+            <div class="imp-q-card">
+                <div class="imp-q-text">30. How many times does the hour hand rotate in a day?</div>
+                <div class="imp-a-text">Ans: 2 times</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: ADVANCED WORD PROBLEMS (NEW) -->
+    <section>
+        <h2 class="section-title">Advanced Word Problems / Long Answer 🧠</h2>
+        
+        <div class="advanced-card">
+            <div class="adv-q-text">1. A train leaves Delhi at 22:30 hours and reaches Mumbai at 14:15 hours the next day. Calculate the total duration of the journey.</div>
+            <textarea class="adv-input" placeholder="Type your step-by-step solution here..."></textarea>
+            <button class="adv-submit-btn" onclick="saveAnswer(this)">Submit Answer 💾</button>
+        </div>
+
+        <div class="advanced-card">
+            <div class="adv-q-text">2. Rahul was born on 29th February 2012. His sister says his birthday comes only once in 4 years. Explain why this happens and list the next 3 leap years after 2012.</div>
+            <textarea class="adv-input" placeholder="Explain about Leap Year..."></textarea>
+            <button class="adv-submit-btn" onclick="saveAnswer(this)">Submit Answer 💾</button>
+        </div>
+
+        <div class="advanced-card">
+            <div class="adv-q-text">3. A school function started at 9:45 AM. It continued for 3 hours and 30 minutes. At what time did the function end? (Show addition of time).</div>
+            <textarea class="adv-input" placeholder="Show calculation..."></textarea>
+            <button class="adv-submit-btn" onclick="saveAnswer(this)">Submit Answer 💾</button>
+        </div>
+
+        <div class="advanced-card">
+            <div class="adv-q-text">4. Convert 4 days, 12 hours, and 20 minutes entirely into minutes. Show your multiplication steps.</div>
+            <textarea class="adv-input" placeholder="Step 1: Convert days to hours... Step 2: Total hours to minutes..."></textarea>
+            <button class="adv-submit-btn" onclick="saveAnswer(this)">Submit Answer 💾</button>
+        </div>
+
+        <div class="advanced-card">
+            <div class="adv-q-text">5. Priya studies for 1 hour 45 minutes in the morning and 2 hours 30 minutes in the evening. How much total time does she spend studying?</div>
+            <textarea class="adv-input" placeholder="Add hours and minutes separately..."></textarea>
+            <button class="adv-submit-btn" onclick="saveAnswer(this)">Submit Answer 💾</button>
+        </div>
+
+        <div class="advanced-card">
+            <div class="adv-q-text">6. A manufacturing date on a medicine is 15/07/2023. It expires after 18 months. Calculate the expiry date (Month and Year).</div>
+            <textarea class="adv-input" placeholder="Add months to the date..."></textarea>
+            <button class="adv-submit-btn" onclick="saveAnswer(this)">Submit Answer 💾</button>
+        </div>
+
+        <div class="advanced-card">
+            <div class="adv-q-text">7. An airplane takes off at 11:50 PM on Tuesday and lands after 5 hours 20 minutes. What is the day and time of landing?</div>
+            <textarea class="adv-input" placeholder="Think about crossing midnight..."></textarea>
+            <button class="adv-submit-btn" onclick="saveAnswer(this)">Submit Answer 💾</button>
+        </div>
+
+        <div class="advanced-card">
+            <div class="adv-q-text">8. Why do we need the 24-hour clock system? Give two examples where using AM/PM might cause dangerous confusion.</div>
+            <textarea class="adv-input" placeholder="Write your reasoning..."></textarea>
+            <button class="adv-submit-btn" onclick="saveAnswer(this)">Submit Answer 💾</button>
+        </div>
+
+        <div class="advanced-card">
+            <div class="adv-q-text">9. Calculate the number of days between Independence Day (15th August) and Gandhi Jayanti (2nd October) in a non-leap year. (Do not include the starting date).</div>
+            <textarea class="adv-input" placeholder="Days in Aug + Days in Sept + Days in Oct..."></textarea>
+            <button class="adv-submit-btn" onclick="saveAnswer(this)">Submit Answer 💾</button>
+        </div>
+
+        <div class="advanced-card">
+            <div class="adv-q-text">10. If 1st January 2023 was a Sunday, calculate what day of the week 1st February 2023 was. (Hint: Count the total days in January).</div>
+            <textarea class="adv-input" placeholder="Use division by 7..."></textarea>
+            <button class="adv-submit-btn" onclick="saveAnswer(this)">Submit Answer 💾</button>
+        </div>
+    </section>
+
+    <!-- SECTION 4: PRACTICE QUESTIONS -->
+    <section>
+        <h2 class="section-title">Practice Zone 🎯</h2>
+        <div id="quiz-container">
+            <div id="q-number">Question 1/70</div>
+            <div id="q-text">Loading Question...</div>
+            <div class="options-grid" id="options-area"></div>
+            
+            <div id="feedback-area"></div>
+            <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next ➡</button>
+        </div>
+    </section>
+
+    <!-- REVISION SECTION -->
+    <section>
+        <button id="revise-toggle" onclick="toggleRevision()">Show Quick Revision ⚡</button>
+        <div class="revision-list" id="rev-list" style="display:none;">
+            <ul>
+                <li><strong>1 Day</strong> = 24 Hours.</li>
+                <li><strong>1 Hour</strong> = 60 Minutes.</li>
+                <li><strong>1 Minute</strong> = 60 Seconds.</li>
+                <li><strong>A.M.</strong> = Midnight to Noon.</li>
+                <li><strong>P.M.</strong> = Noon to Midnight.</li>
+                <li><strong>24-Hour Clock</strong>: Add 12 to PM time (except 12 Noon).</li>
+                <li><strong>Leap Year</strong>: Year divisible by 4. Feb has 29 days.</li>
+                <li><strong>1 Year</strong> = 365 days (366 in leap).</li>
+                <li><strong>Duration</strong> = End Time - Start Time.</li>
+                <li>Knuckle trick helps remember days in months.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        Designed & Created by SHRISHANT YADAV <br>
+        2026 – ShanEduHub
+    </footer>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- STATE ---
+            let score = { correct: 0, wrong: 0, total: 0 };
+            let currentQIndex = 0;
+            const qContainer = document.getElementById('q-text');
+            const optionsContainer = document.getElementById('options-area');
+            const feedbackContainer = document.getElementById('feedback-area');
+            const nextBtn = document.getElementById('next-btn');
+            
+            // --- QUESTION BANK (70 Questions Generated) ---
+            const questions = [
+                // 1-10: Basic Reading Time
+                { q: "Small markings on a clock represent?", options: ["Hours", "Minutes", "Seconds", "Days"], a: 1 },
+                { q: "Gap between two numbers on a clock is?", options: ["5 mins", "1 min", "10 mins", "15 mins"], a: 0 },
+                { q: "If minute hand is at 3, minutes passed are?", options: ["3", "15", "30", "45"], a: 1 },
+                { q: "If minute hand is at 6, it is?", options: ["Quarter past", "Half past", "O'clock", "Quarter to"], a: 1 },
+                { q: "Short hand points to 4, Long hand to 12. Time is?", options: ["4:00", "12:04", "4:12", "4:30"], a: 0 },
+                { q: "Long hand is at 9. How many minutes to next hour?", options: ["45", "15", "30", "10"], a: 1 },
+                { q: "7:15 can be read as?", options: ["Quarter to 7", "Quarter past 7", "Half past 7", "7 past 15"], a: 1 },
+                { q: "Minute hand moves from 12 to 1. Minutes passed?", options: ["1", "5", "10", "60"], a: 1 },
+                { q: "How many small divisions on a clock face?", options: ["12", "24", "60", "100"], a: 2 },
+                { q: "Time is 3:45. Minute hand is at?", options: ["3", "6", "9", "8"], a: 2 },
+
+                // 11-20: AM/PM
+                { q: "Sun rises in the?", options: ["A.M.", "P.M.", "Night", "Noon"], a: 0 },
+                { q: "We eat dinner at 8:00?", options: ["A.M.", "P.M."], a: 1 },
+                { q: "School starts at 8:00?", options: ["A.M.", "P.M."], a: 0 },
+                { q: "12:00 at night is called?", options: ["12 Noon", "12 Midnight", "12 PM", "00 PM"], a: 1 },
+                { q: "11:59 in the morning is?", options: ["AM", "PM"], a: 0 },
+                { q: "12:01 in the afternoon is?", options: ["AM", "PM"], a: 1 },
+                { q: "You sleep at night at 10?", options: ["AM", "PM"], a: 1 },
+                { q: "Sun is overhead at 12?", options: ["Noon", "Midnight", "AM", "Eve"], a: 0 },
+                { q: "One hour after 11 AM is?", options: ["12 AM", "12 PM (Noon)", "1 PM", "10 AM"], a: 1 },
+                { q: "Just before noon is?", options: ["AM", "PM"], a: 0 },
+
+                // 21-30: Calendar & Leap Year
+                { q: "Days in a normal year?", options: ["365", "366", "360", "354"], a: 0 },
+                { q: "Days in a leap year?", options: ["365", "366", "364", "360"], a: 1 },
+                { q: "Which month has extra day in Leap Year?", options: ["Jan", "Dec", "Feb", "March"], a: 2 },
+                { q: "Is 2024 a leap year?", options: ["Yes", "No"], a: 0 },
+                { q: "Is 2023 a leap year?", options: ["Yes", "No"], a: 1 },
+                { q: "How many months have 31 days?", options: ["4", "5", "6", "7"], a: 3 },
+                { q: "Which month comes before June?", options: ["July", "May", "April", "Aug"], a: 1 },
+                { q: "Shortest month is?", options: ["Dec", "Feb", "June", "Sep"], a: 1 },
+                { q: "How often does a leap year come?", options: ["Every 2 years", "Every 4 years", "Every 5 years", "Every 10 years"], a: 1 },
+                { q: "Days in December?", options: ["30", "31", "28", "29"], a: 1 },
+
+                // 31-40: 24-Hour Clock
+                { q: "1 PM in 24-hour clock?", options: ["01:00", "13:00", "14:00", "15:00"], a: 1 },
+                { q: "15:00 hours is?", options: ["3 AM", "3 PM", "5 PM", "5 AM"], a: 1 },
+                { q: "6 PM in 24-hour clock?", options: ["06:00", "16:00", "18:00", "20:00"], a: 2 },
+                { q: "23:00 hours is?", options: ["10 PM", "11 PM", "11 AM", "9 PM"], a: 1 },
+                { q: "00:00 hours is?", options: ["12 Noon", "12 Midnight", "1 PM", "1 AM"], a: 1 },
+                { q: "20:30 hours is?", options: ["8:30 AM", "8:30 PM", "10:30 PM", "6:30 PM"], a: 1 },
+                { q: "10:00 AM in 24-hour clock?", options: ["10:00", "22:00", "20:00", "12:00"], a: 0 },
+                { q: "12 Noon in 24-hour clock?", options: ["00:00", "12:00", "24:00", "10:00"], a: 1 },
+                { q: "Convert 2:15 PM.", options: ["02:15", "14:15", "12:15", "16:15"], a: 1 },
+                { q: "Convert 17:45.", options: ["7:45 PM", "5:45 PM", "5:45 AM", "4:45 PM"], a: 1 },
+
+                // 41-50: Conversions
+                { q: "1 hour = ? mins", options: ["100", "60", "24", "30"], a: 1 },
+                { q: "2 hours = ? mins", options: ["100", "120", "200", "80"], a: 1 },
+                { q: "3 days = ? hours", options: ["48", "72", "60", "36"], a: 1 },
+                { q: "180 minutes = ? hours", options: ["2", "3", "4", "1.5"], a: 1 },
+                { q: "1 day 2 hours = ? hours", options: ["26", "22", "14", "12"], a: 0 },
+                { q: "4 minutes = ? seconds", options: ["400", "240", "120", "60"], a: 1 },
+                { q: "Half day = ? hours", options: ["6", "12", "18", "24"], a: 1 },
+                { q: "240 minutes = ? hours", options: ["2", "3", "4", "5"], a: 2 },
+                { q: "1 week = ? days", options: ["5", "6", "7", "10"], a: 2 },
+                { q: "2 weeks = ? days", options: ["10", "12", "14", "15"], a: 2 },
+
+                // 51-60: Duration
+                { q: "2 PM to 4 PM is?", options: ["1 hr", "2 hrs", "3 hrs", "4 hrs"], a: 1 },
+                { q: "10 AM to 1 PM is?", options: ["2 hrs", "3 hrs", "4 hrs", "11 hrs"], a: 1 },
+                { q: "9:30 to 10:30 is?", options: ["30 mins", "1 hour", "2 hours", "45 mins"], a: 1 },
+                { q: "Start 5:00, End 5:45. Duration?", options: ["45 mins", "1 hr", "30 mins", "15 mins"], a: 0 },
+                { q: "Start 11 AM, End 2 PM. Duration?", options: ["2 hrs", "3 hrs", "4 hrs", "5 hrs"], a: 1 },
+                { q: "Movie is 2 hrs long. Starts 4 PM. Ends?", options: ["5 PM", "6 PM", "7 PM", "8 PM"], a: 1 },
+                { q: "Class is 40 mins. Starts 9:00. Ends?", options: ["9:30", "9:40", "9:50", "10:00"], a: 1 },
+                { q: "From 10 PM to 2 AM next day?", options: ["2 hrs", "4 hrs", "6 hrs", "12 hrs"], a: 1 },
+                { q: "30 mins after 1:45?", options: ["2:00", "2:15", "2:30", "1:75"], a: 1 },
+                { q: "1 hour before 1:00 PM?", options: ["12 AM", "12 Noon", "2 PM", "11 AM"], a: 1 },
+
+                // 61-70: Mixed / Word Problems
+                { q: "Train leaves at 18:00. What is it in PM?", options: ["8 PM", "6 PM", "4 PM", "9 PM"], a: 1 },
+                { q: "How many hours in a week?", options: ["100", "168", "144", "120"], a: 1 },
+                { q: "Seconds in 2 minutes?", options: ["100", "120", "200", "60"], a: 1 },
+                { q: "If today is Friday, yesterday was?", options: ["Thursday", "Saturday", "Wednesday", "Sunday"], a: 0 },
+                { q: "If today is Saturday, tomorrow is?", options: ["Friday", "Sunday", "Monday", "Tuesday"], a: 1 },
+                { q: "Leap year happens because Earth takes...", options: ["365 days", "365 1/4 days", "366 days", "360 days"], a: 1 },
+                { q: "A fortnight has how many days?", options: ["7", "10", "14", "15"], a: 2 },
+                { q: "Which year is a leap year?", options: ["2018", "2019", "2016", "2021"], a: 2 },
+                { q: "Time 15 mins to 8 means?", options: ["8:15", "7:45", "8:45", "7:15"], a: 1 },
+                { q: "Time 10 mins past 5 means?", options: ["5:10", "4:50", "5:50", "10:05"], a: 0 }
+            ];
+
+            // --- FUNCTIONS ---
+
+            function updateScorePanel() {
+                document.getElementById('score-c').textContent = score.correct;
+                document.getElementById('score-w').textContent = score.wrong;
+                document.getElementById('score-t').textContent = score.total;
+                const percent = score.total === 0 ? 0 : Math.round((score.correct / score.total) * 100);
+                document.getElementById('score-p').textContent = percent + "%";
+            }
+
+            function loadQuestion() {
+                if (currentQIndex >= questions.length) {
+                    qContainer.textContent = "🎉 Amazing! You completed all questions!";
+                    optionsContainer.innerHTML = "";
+                    nextBtn.style.display = 'none';
+                    return;
+                }
+
+                const q = questions[currentQIndex];
+                document.getElementById('q-number').textContent = `Question ${currentQIndex + 1}/${questions.length}`;
+                qContainer.textContent = q.q;
+                
+                optionsContainer.innerHTML = '';
+                feedbackContainer.textContent = '';
+                feedbackContainer.className = '';
+                nextBtn.style.display = 'none';
+
+                q.options.forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.textContent = opt;
+                    btn.onclick = () => checkAnswer(idx, btn);
+                    optionsContainer.appendChild(btn);
+                });
+            }
+
+            function checkAnswer(selectedIdx, btnElement) {
+                // Prevent multiple clicks
+                if (nextBtn.style.display === 'block') return;
+
+                const q = questions[currentQIndex];
+                const allBtns = document.querySelectorAll('.option-btn');
+                
+                score.total++;
+
+                if (selectedIdx === q.a) {
+                    score.correct++;
+                    btnElement.classList.add('correct');
+                    feedbackContainer.textContent = "Excellent ⭐";
+                    feedbackContainer.style.color = "#2e7d32";
+                } else {
+                    score.wrong++;
+                    btnElement.classList.add('wrong');
+                    allBtns[q.a].classList.add('correct'); // Show correct one
+                    feedbackContainer.textContent = "Try Again! Correct: " + q.options[q.a];
+                    feedbackContainer.style.color = "#c62828";
+                }
+
+                updateScorePanel();
+                nextBtn.style.display = 'block';
+            }
+
+            // New Function for Advanced Section
+            window.saveAnswer = function(btnElement) {
+                const textarea = btnElement.previousElementSibling;
+                const answer = textarea.value.trim();
+                
+                if(answer === "") {
+                    alert("Please write an answer first! ✍️");
+                    return;
+                }
+
+                console.log("Saved Answer:", answer); // In real app, this would go to DB
+                
+                // UX Feedback
+                const originalText = btnElement.textContent;
+                btnElement.textContent = "Saved ✅";
+                btnElement.style.background = "#4caf50";
+                textarea.disabled = true; // Lock the answer
+                
+                setTimeout(() => {
+                    // Optional: Re-enable if needed, but for "Exam feel" we keep it locked or just leave success state
+                }, 2000);
+            };
+
+            window.nextQuestion = function() {
+                currentQIndex++;
+                loadQuestion();
+            };
+
+            window.toggleRevision = function() {
+                const list = document.getElementById('rev-list');
+                const btn = document.getElementById('revise-toggle');
+                if (list.style.display === 'none') {
+                    list.style.display = 'block';
+                    btn.textContent = 'Hide Revision 🙈';
+                } else {
+                    list.style.display = 'none';
+                    btn.textContent = 'Show Quick Revision ⚡';
+                }
+            };
+
+            // Initialize
+            loadQuestion();
+        });
+    </script>
+</body>
+</html>

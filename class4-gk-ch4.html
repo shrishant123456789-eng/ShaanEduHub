@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 4 GK - Ch 4: Plants</title>
+    <style>
+        /* --------------------------------------------------
+           FONTS & GLOBAL RESET
+           -------------------------------------------------- */
+        @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+
+        :root {
+            --paper-bg: #fffdf0;
+            --line-col: #a2d2ff;
+            --margin-col: #ffadad;
+            --text-col: #2b2d42;
+            --note-yellow: #fff9c4;
+            --note-blue: #e3f2fd;
+            --note-green: #e8f5e9;
+            --note-pink: #fce4ec;
+            --correct: #4caf50;
+            --wrong: #f44336;
+            --btn-primary: #6c5ce7;
+            --btn-secondary: #00b894;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-weight: bold !important; /* STRICT RULE */
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Patrick Hand', 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+            background-color: var(--paper-bg);
+            color: var(--text-col);
+            font-size: 18px;
+            line-height: 1.4;
+            /* Notebook lines effect */
+            background-image: linear-gradient(var(--line-col) 1px, transparent 1px);
+            background-size: 100% 1.5em; 
+            background-attachment: local;
+        }
+
+        /* --------------------------------------------------
+           LAYOUT UTILS
+           -------------------------------------------------- */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            min-height: 100vh;
+            border-left: 2px solid var(--margin-col); /* Red margin line */
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h1, h2, h3 {
+            text-transform: uppercase;
+            text-align: center;
+            margin-top: 0.5em;
+            margin-bottom: 0.5em;
+            color: #d63031;
+            text-shadow: 2px 2px 0px #fff;
+        }
+
+        h1 { font-size: 2rem; border-bottom: 3px dashed #000; padding-bottom: 10px; }
+        h2 { font-size: 1.6rem; background: var(--note-yellow); display: inline-block; padding: 5px 15px; border-radius: 20px; border: 2px solid #000; transform: rotate(-1deg); }
+        h3 { font-size: 1.3rem; color: #0984e3; text-align: left; }
+
+        .btn {
+            background: var(--btn-primary);
+            color: white;
+            border: 2px solid #000;
+            padding: 10px 20px;
+            font-family: inherit;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 3px 3px 0px #000;
+            transition: transform 0.1s;
+            margin: 5px;
+            display: inline-block;
+        }
+        
+        .btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px #000;
+        }
+
+        .btn-green { background: var(--btn-secondary); }
+        .btn-red { background: var(--wrong); }
+
+        .section {
+            margin-bottom: 50px;
+            padding-bottom: 20px;
+            border-bottom: 4px dotted #ccc;
+        }
+
+        .hidden { display: none !important; }
+
+        /* --------------------------------------------------
+           LIVE SCORE PANEL
+           -------------------------------------------------- */
+        #score-panel {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: #fff;
+            border: 3px solid #000;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            font-size: 0.9rem;
+        }
+
+        .score-item {
+            text-align: center;
+        }
+        
+        .score-val {
+            font-size: 1.2rem;
+            color: #6c5ce7;
+        }
+
+        /* --------------------------------------------------
+           NOTES SECTION
+           -------------------------------------------------- */
+        .topic-card {
+            background: white;
+            border: 2px solid #000;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+        }
+
+        .topic-card:nth-child(odd) { background: var(--note-blue); }
+        .topic-card:nth-child(even) { background: var(--note-green); }
+
+        .definition { border-left: 5px solid #fd79a8; padding-left: 10px; margin: 10px 0; }
+        .example { background: rgba(255,255,255,0.6); padding: 5px; border-radius: 5px; margin: 5px 0; }
+        .memory-tip { color: #d63031; background: #fff; display: inline-block; padding: 2px 8px; border: 1px dashed #000; border-radius: 5px; transform: rotate(1deg); }
+        
+        .img-placeholder {
+            width: 100%;
+            height: 120px;
+            background: #eee;
+            border: 2px dashed #aaa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            border-radius: 10px;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        /* --------------------------------------------------
+           IMPORTANT QUESTIONS
+           -------------------------------------------------- */
+        .imp-q-card {
+            background: var(--note-pink);
+            border: 2px solid #333;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .imp-q-card p { margin: 5px 0; }
+        .imp-ans { color: #00b894; }
+
+        /* --------------------------------------------------
+           PRACTICE AREA
+           -------------------------------------------------- */
+        #practice-container {
+            background: #fff;
+            padding: 20px;
+            border: 3px solid #000;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .option-btn {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 12px;
+            background: #f1f2f6;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .option-btn:hover { background: #dfe6e9; }
+        .option-btn.correct { background: var(--correct); color: white; border-color: #006400; }
+        .option-btn.wrong { background: var(--wrong); color: white; border-color: #8b0000; }
+        .option-btn.disabled { pointer-events: none; opacity: 0.8; }
+
+        .feedback-box {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+        }
+        .feedback-correct { background: var(--note-green); border: 2px solid var(--correct); }
+        .feedback-wrong { background: var(--note-pink); border: 2px solid var(--wrong); }
+
+        .input-blank {
+            border: none;
+            border-bottom: 2px solid #000;
+            background: transparent;
+            width: 150px;
+            text-align: center;
+            font-family: inherit;
+            font-size: 1.1rem;
+            color: #2d3436;
+        }
+        .input-blank:focus { outline: none; border-bottom: 3px solid var(--btn-primary); }
+
+        /* --------------------------------------------------
+           LONG ANSWER AREA
+           -------------------------------------------------- */
+        .long-q-card {
+            background: #fff;
+            border: 2px solid #000;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 4px 4px 0 #888;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            border: 2px solid #000;
+            border-radius: 5px;
+            padding: 10px;
+            font-family: inherit;
+            font-size: 1rem;
+            margin: 10px 0;
+            resize: vertical;
+        }
+
+        .eval-result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            background: #f0f0f0;
+            border: 1px solid #999;
+            font-size: 0.95rem;
+        }
+
+        /* --------------------------------------------------
+           FOOTER
+           -------------------------------------------------- */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #2d3436;
+            color: #fff;
+            margin-top: 50px;
+            border-top: 5px solid #000;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="score-panel">
+        <div class="score-item">Correct<br><span id="score-correct" class="score-val">0</span></div>
+        <div class="score-item">Wrong<br><span id="score-wrong" class="score-val" style="color:var(--wrong)">0</span></div>
+        <div class="score-item">Total<br><span id="score-total" class="score-val" style="color:#000">0</span></div>
+        <div class="score-item">Score<br><span id="score-perc" class="score-val">0%</span></div>
+    </div>
+
+    <div class="container">
+        
+        <!-- HEADER -->
+        <header class="section">
+            <h1>Class 4 - GK<br>Chapter 4: Plants</h1>
+            <p style="text-align: center;">Life, Uses & Conservation</p>
+            <div style="text-align: center; margin-top: 10px;">
+                <span style="background: #ffeaa7; padding: 5px 10px; border: 1px solid #000; transform: rotate(-2deg); display: inline-block;">Notebook Edition</span>
+            </div>
+        </header>
+
+        <!-- NOTES SECTION -->
+        <section id="notes-section" class="section">
+            <h2>📝 Chapter Notes</h2>
+            <div id="topics-container">
+                <!-- JS will populate topics here -->
+            </div>
+        </section>
+
+        <!-- IMPORTANT QUESTIONS -->
+        <section id="imp-q-section" class="section">
+            <h2>⭐ Important Questions</h2>
+            <div id="imp-q-container">
+                <!-- JS will populate important questions -->
+            </div>
+        </section>
+
+        <!-- PRACTICE QUESTIONS -->
+        <section id="practice-section" class="section">
+            <h2>🚀 Practice Quiz (70 Q)</h2>
+            <div id="practice-container">
+                <div id="quiz-progress" style="margin-bottom: 10px; color: #666;">Question 1 / 70</div>
+                <div id="question-box">
+                    <!-- Dynamic Question Content -->
+                </div>
+                <div id="feedback-display" class="feedback-box"></div>
+                <div style="margin-top: 20px;">
+                    <button id="next-btn" class="btn hidden">Next Question ➡</button>
+                    <button id="check-btn" class="btn">Check Answer ✅</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ADVANCED LONG QUESTIONS -->
+        <section id="long-q-section" class="section">
+            <h2>🧠 Advanced Thinking Zone</h2>
+            <p style="text-align: center;">Type your answer using keywords!</p>
+            <div id="long-q-container">
+                <!-- JS will populate long questions -->
+            </div>
+        </section>
+
+        <!-- REVISION -->
+        <section id="revision-section" class="section">
+            <h2>⚡ Quick Revision</h2>
+            <button class="btn btn-green" onclick="toggleRevision()">Show/Hide Summary</button>
+            <div id="revision-content" class="hidden" style="margin-top: 20px; background: #fff; padding: 20px; border: 2px solid #000; border-radius: 10px;">
+                <ul style="list-style-type: square; padding-left: 20px;">
+                    <li>Plants give us Oxygen, Food, and Medicine.</li>
+                    <li>Roots hold the plant; Leaves make food (Photosynthesis).</li>
+                    <li>Herbs = Small (Tulsi). Shrubs = Bushy (Rose). Trees = Big (Mango).</li>
+                    <li>Climbers need support (Money Plant). Creepers crawl (Watermelon).</li>
+                    <li>Photosynthesis needs: Sunlight + Water + CO2.</li>
+                    <li>Medicinal plants: Neem, Tulsi, Aloe Vera, Turmeric.</li>
+                    <li>Van Mahotsav is the festival of trees.</li>
+                    <li>We must not cut trees (Deforestation) but plant more (Afforestation).</li>
+                </ul>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        Designed & Created by SHRISHANT YADAV<br>
+        ShanEduHub
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // ----------------------------------------------------------------
+            // DATA: TOPICS (10 Strictly Ordered)
+            // ----------------------------------------------------------------
+            const topics = [
+                {
+                    title: "1. Types of Plants",
+                    def: "Plants are of different shapes and sizes.",
+                    points: [
+                        "HERBS: Very small, green soft stems. (e.g., Tulsi, Coriander)",
+                        "SHRUBS: Medium size, woody stems, bushy. (e.g., Rose, Hibiscus)",
+                        "TREES: Big, tall, strong woody trunk. (e.g., Mango, Banyan)",
+                        "CLIMBERS: Weak stem, need support. (e.g., Money Plant)",
+                        "CREEPERS: Grow along the ground. (e.g., Watermelon)"
+                    ],
+                    example: "Tulsi in your courtyard is a Herb. The Mango tree in the park is a Tree.",
+                    tip: "C for Climber = C for Climb up!",
+                    check: "Is Rose a herb or shrub?",
+                    img: "Image: Different Plant Types"
+                },
+                {
+                    title: "2. Parts of a Plant",
+                    def: "Different parts do different jobs.",
+                    points: [
+                        "ROOT: Fixes plant in soil, absorbs water.",
+                        "STEM: Carries water/food to all parts.",
+                        "LEAF: Makes food (Kitchen).",
+                        "FLOWER: Grows into fruit.",
+                        "FRUIT: Protects seeds.",
+                        "SEED: Baby plant inside."
+                    ],
+                    example: "Spinach is a leaf we eat. Carrot is a root we eat.",
+                    tip: "Roots are the Anchor ⚓",
+                    check: "Which part turns into a fruit?",
+                    img: "Image: Diagram of Plant Parts"
+                },
+                {
+                    title: "3. Photosynthesis",
+                    def: "The process by which plants make their own food.",
+                    points: [
+                        "Needs: Sunlight ☀️ + Water 💧 + Air (Carbon Dioxide) 🌬️ + Chlorophyll (Green color).",
+                        "Output: Food (Sugar) + Oxygen.",
+                        "Only green plants can do this."
+                    ],
+                    example: "Like mom cooks in the kitchen, leaves cook using sunlight.",
+                    tip: "Photo = Light, Synthesis = Mixing.",
+                    check: "What gas do plants take in?",
+                    img: "Image: Sun + Leaf = Food"
+                },
+                {
+                    title: "4. Life Cycle of Plants",
+                    def: "How a plant grows from a seed.",
+                    points: [
+                        "1. Seed sown in soil.",
+                        "2. Germination (Baby plant comes out).",
+                        "3. Seedling grows roots and shoots.",
+                        "4. Adult Plant grows flowers.",
+                        "5. Flowers become Fruits with Seeds."
+                    ],
+                    example: "Moong dal sprouts are germinated seeds.",
+                    tip: "Seed -> Sprout -> Plant -> Flower -> Fruit",
+                    check: "What comes first: Flower or Fruit?",
+                    img: "Image: Seed Germination Cycle"
+                },
+                {
+                    title: "5. Medicinal Plants",
+                    def: "Plants used to cure diseases.",
+                    points: [
+                        "TULSI: Cures cough and cold.",
+                        "NEEM: Good for skin, kills germs.",
+                        "ALOE VERA: Good for skin and burns.",
+                        "TURMERIC (Haldi): Heals wounds (Antiseptic)."
+                    ],
+                    example: "Mom puts Turmeric on cuts.",
+                    tip: "Neem is the village pharmacy.",
+                    check: "Which plant is used for cough?",
+                    img: "Image: Tulsi & Neem Leaves"
+                },
+                {
+                    title: "6. Trees & Importance",
+                    def: "Trees are our best friends.",
+                    points: [
+                        "Give Oxygen to breathe.",
+                        "Provide shade and wood.",
+                        "Bring rainfall.",
+                        "Home to birds and animals."
+                    ],
+                    example: "We sit under a Banyan tree for shade.",
+                    tip: "No Trees = No Oxygen = No Life.",
+                    check: "What do trees give us to breathe?",
+                    img: "Image: Tree giving Oxygen"
+                },
+                {
+                    title: "7. Crops & Food Plants",
+                    def: "Plants grown by farmers for food.",
+                    points: [
+                        "CEREALS: Wheat (Roti), Rice (Chawal), Maize.",
+                        "PULSES: Dals (Moong, Masoor).",
+                        "Vegetables & Fruits."
+                    ],
+                    example: "We eat Wheat chapati daily.",
+                    tip: "Cereals give Energy.",
+                    check: "Name one cereal crop.",
+                    img: "Image: Wheat Field"
+                },
+                {
+                    title: "8. Plant Adaptations",
+                    def: "How plants change to survive in their home.",
+                    points: [
+                        "DESERT PLANTS: Cactus has thorns (no leaves) to save water.",
+                        "AQUATIC PLANTS: Lotus has floating leaves and wax coating.",
+                        "MOUNTAIN PLANTS: Pine trees are cone-shaped for snow to slide off."
+                    ],
+                    example: "Cactus survives in Rajasthan deserts.",
+                    tip: "Adaptation = Adjustment.",
+                    check: "Where does a Lotus grow?",
+                    img: "Image: Cactus vs Lotus"
+                },
+                {
+                    title: "9. Save Trees & Afforestation",
+                    def: "Protecting green cover.",
+                    points: [
+                        "Deforestation: Cutting down trees (BAD).",
+                        "Afforestation: Planting new trees (GOOD).",
+                        "Van Mahotsav: Festival of planting trees in India (July)."
+                    ],
+                    example: "School plantation drive.",
+                    tip: "Each One, Plant One.",
+                    check: "What is cutting trees called?",
+                    img: "Image: Kids planting sapling"
+                },
+                {
+                    title: "10. Environmental Responsibility",
+                    def: "Our duty towards nature.",
+                    points: [
+                        "Do not pluck flowers.",
+                        "Water plants daily.",
+                        "Do not use plastic in gardens.",
+                        "Save paper (Paper comes from trees)."
+                    ],
+                    example: "Don't walk on grass beds.",
+                    tip: "Nature protects if she is protected.",
+                    check: "Why should we save paper?",
+                    img: "Image: Save Earth Icon"
+                }
+            ];
+
+            // ----------------------------------------------------------------
+            // DATA: IMPORTANT QUESTIONS (30)
+            // ----------------------------------------------------------------
+            const impQuestions = [
+                { q: "What is photosynthesis?", a: "Process of making food by leaves using sunlight, water, and CO2.", exp: "It happens only in green plants." },
+                { q: "Name two medicinal plants.", a: "Tulsi and Neem.", exp: "Tulsi for cold, Neem for skin." },
+                { q: "Difference between herb and tree?", a: "Herbs have soft green stems; Trees have hard woody trunks.", exp: "Example: Coriander vs Mango." },
+                { q: "What is germination?", a: "Process of a seed growing into a baby plant.", exp: "Needs water, air, and warmth." },
+                { q: "Why are leaves green?", a: "Due to a substance called Chlorophyll.", exp: "It helps trap sunlight." },
+                { q: "What are creepers?", a: "Plants with weak stems that grow along the ground.", exp: "Example: Pumpkin, Watermelon." },
+                { q: "Function of the root?", a: "Absorbs water/minerals and holds plant firmly.", exp: "Without roots, plants die." },
+                { q: "What is Van Mahotsav?", a: "A tree-planting festival celebrated in India.", exp: "Usually in the first week of July." },
+                { q: "Why does Cactus have thorns?", a: "To prevent water loss in the desert.", exp: "Thorns are actually modified leaves." },
+                { q: "Name a plant that eats insects.", a: "Pitcher Plant or Venus Flytrap.", exp: "They grow in soil with less nutrients." },
+                { q: "What is a trunk?", a: "The hard, woody stem of a tree.", exp: "It supports the crown of the tree." },
+                { q: "Name a spice obtained from plants.", a: "Cardamom, Clove, or Pepper.", exp: "Used for flavor in food." },
+                { q: "Which part of the potato do we eat?", a: "The Stem.", exp: "It grows underground but is a stem tuber." },
+                { q: "What do seeds need to grow?", a: "Air, Water, and Warmth (Sunlight).", exp: "Soil is also needed for nutrients." },
+                { q: "Name a plant fibre.", a: "Cotton or Jute.", exp: "Used to make clothes and bags." },
+                { q: "Why are forests called 'Lungs of Earth'?", a: "They give oxygen and take in carbon dioxide.", exp: "Essential for breathing." },
+                { q: "Example of a climber?", a: "Money Plant, Grapevine.", exp: "They have tendrils to hold support." },
+                { q: "What is the kitchen of the plant?", a: "The Leaf.", exp: "Food is prepared here." },
+                { q: "What is a shrub?", a: "Medium-sized bushy plant with woody stems.", exp: "Rose, Jasmine." },
+                { q: "Edible root examples?", a: "Carrot, Radish, Beetroot.", exp: "They store food underground." },
+                { q: "What is deforestation?", a: "Cutting down trees on a large scale.", exp: "Harmful to nature." },
+                { q: "What gas do plants release?", a: "Oxygen.", exp: "During photosynthesis." },
+                { q: "Use of Aloe Vera?", a: "Good for skin and hair.", exp: "Has soothing gel." },
+                { q: "Name an aquatic plant.", a: "Lotus, Water Lily.", exp: "They float on water." },
+                { q: "What is chlorophyll?", a: "Green pigment in leaves.", exp: "Traps solar energy." },
+                { q: "Why do we need plants?", a: "For food, wood, oxygen, medicine.", exp: "Survival depends on them." },
+                { q: "What is a sapling?", a: "A young, small tree.", exp: "Used in plantation drives." },
+                { q: "Fruit vs Vegetable?", a: "Fruit has seeds; vegetable is other plant parts.", exp: "Tomato is scientifically a fruit!" },
+                { q: "Role of flower?", a: "Reproduction; turns into fruit.", exp: "Attracts bees." },
+                { q: "How do plants help rain?", a: "They release water vapor (Transpiration) helping cloud formation.", exp: "Forests bring rain." }
+            ];
+
+            // ----------------------------------------------------------------
+            // DATA: PRACTICE QUIZ (70 Questions)
+            // ----------------------------------------------------------------
+            // Types: mcq, tf (true/false), blank, one_word
+            const practiceDB = [
+                // TOPIC 1: TYPES
+                { type: 'mcq', q: "Which of these is a Herb?", opt: ["Mango", "Rose", "Tulsi", "Pine"], a: 2, exp: "Tulsi is a small plant with a soft green stem." },
+                { type: 'mcq', q: "Grapevine is an example of?", opt: ["Herb", "Climber", "Tree", "Shrub"], a: 1, exp: "It needs support to grow upwards." },
+                { type: 'tf', q: "True or False: Watermelon is a climber.", a: "false", exp: "Watermelon is a Creeper, it grows on the ground." },
+                { type: 'one_word', q: "I am big and strong with a woody trunk. Who am I?", a: "tree", exp: "Trees are the largest plants." },
+                { type: 'blank', q: "Rose is a ______.", a: "shrub", exp: "It is bushy and woody." },
+                { type: 'mcq', q: "Which stem is soft and green?", opt: ["Tree", "Shrub", "Herb", "All"], a: 2, exp: "Herbs have non-woody stems." },
+                { type: 'tf', q: "Pumpkin grows on a tree.", a: "false", exp: "Pumpkin is a creeper." },
+                
+                // TOPIC 2: PARTS
+                { type: 'mcq', q: "Which part makes food?", opt: ["Root", "Stem", "Leaf", "Flower"], a: 2, exp: "Leaf is the kitchen." },
+                { type: 'mcq', q: "I hold the plant firmly in soil.", opt: ["Leaf", "Root", "Flower", "Fruit"], a: 1, exp: "Roots anchor the plant." },
+                { type: 'blank', q: "Flowers grow into ______.", a: "fruits", exp: "After pollination, flowers become fruits." },
+                { type: 'one_word', q: "The beautiful colored part of a plant.", a: "flower", exp: "Attracts insects." },
+                { type: 'tf', q: "Seeds are found inside the stem.", a: "false", exp: "Seeds are inside the fruit." },
+                { type: 'mcq', q: "Carrot is a modified...?", opt: ["Root", "Stem", "Leaf", "Flower"], a: 0, exp: "It stores food in the root." },
+                { type: 'blank', q: "The ______ carries water to leaves.", a: "stem", exp: "It acts like a pipe." },
+
+                // TOPIC 3: PHOTOSYNTHESIS
+                { type: 'mcq', q: "Plants need this gas to make food.", opt: ["Oxygen", "Carbon Dioxide", "Nitrogen", "Argon"], a: 1, exp: "CO2 is taken from air." },
+                { type: 'blank', q: "Green color in leaves is due to ______.", a: "chlorophyll", exp: "It traps sunlight." },
+                { type: 'tf', q: "Plants make food at night.", a: "false", exp: "They need sunlight." },
+                { type: 'mcq', q: "The food made by plants is a type of?", opt: ["Salt", "Sugar", "Spice", "Oil"], a: 1, exp: "It is Glucose/Sugar/Starch." },
+                { type: 'one_word', q: "The main source of energy for plants.", a: "sun", exp: "Sunlight is essential." },
+                { type: 'mcq', q: "Kitchen of the plant is?", opt: ["Root", "Leaf", "Stem", "Seed"], a: 1, exp: "Photosynthesis happens here." },
+                { type: 'tf', q: "Mushrooms are green plants.", a: "false", exp: "They lack chlorophyll." },
+
+                // TOPIC 4: LIFE CYCLE
+                { type: 'mcq', q: "Baby plant coming out of seed is called?", opt: ["Germination", "Pollination", "Decay", "Harvest"], a: 0, exp: "The seed sprouts." },
+                { type: 'blank', q: "A seed needs air, water and ______ to grow.", a: "warmth", exp: "Or sunlight." },
+                { type: 'mcq', q: "Which comes first?", opt: ["Fruit", "Flower", "Seedling", "Tree"], a: 2, exp: "Seed -> Seedling -> Tree." },
+                { type: 'tf', q: "All seeds are edible.", a: "false", exp: "Some are poisonous." },
+                { type: 'one_word', q: "Protected inside the fruit.", a: "seed", exp: "Grows into new plant." },
+                { type: 'mcq', q: "Gram (Chana) is a...?", opt: ["Leaf", "Root", "Seed", "Flower"], a: 2, exp: "It's a pulse/seed." },
+                { type: 'blank', q: "Baby plant is also called ______.", a: "seedling", exp: "Young plant." },
+
+                // TOPIC 5: MEDICINAL
+                { type: 'mcq', q: "Used to cure cough and cold.", opt: ["Rose", "Tulsi", "Cactus", "Grass"], a: 1, exp: "Holy Basil (Tulsi)." },
+                { type: 'mcq', q: "Applied on wounds as antiseptic.", opt: ["Salt", "Sugar", "Turmeric", "Pepper"], a: 2, exp: "Haldi helps healing." },
+                { type: 'blank', q: "______ is used for skin problems.", a: "neem", exp: "Or Aloe Vera." },
+                { type: 'one_word', q: "A gel-based plant for burns.", a: "aloe vera", exp: "Soothing effect." },
+                { type: 'tf', q: "Mint is used for stomach ache.", a: "true", exp: "Pudina helps digestion." },
+                { type: 'mcq', q: "Quinine for malaria comes from?", opt: ["Cinchona", "Neem", "Tulsi", "Rose"], a: 0, exp: "Cinchona bark." },
+                { type: 'blank', q: "Clove is used for ______ ache.", a: "tooth", exp: "Clove oil relieves pain." },
+
+                // TOPIC 6: TREES
+                { type: 'mcq', q: "Our national tree.", opt: ["Mango", "Peepal", "Banyan", "Neem"], a: 2, exp: "Banyan is the national tree of India." },
+                { type: 'tf', q: "Trees reduce noise pollution.", a: "true", exp: "They absorb sound." },
+                { type: 'mcq', q: "What do trees give out?", opt: ["Smoke", "Oxygen", "Dust", "Noise"], a: 1, exp: "Vital for life." },
+                { type: 'blank', q: "Wood comes from the ______ of trees.", a: "trunk", exp: "Used for furniture." },
+                { type: 'one_word', q: "Home for birds in trees.", a: "nest", exp: "Built on branches." },
+                { type: 'mcq', q: "Which tree gives us rubber?", opt: ["Rubber Tree", "Mango", "Neem", "Pine"], a: 0, exp: "From latex." },
+                { type: 'tf', q: "Trees help in bringing rain.", a: "true", exp: "Through transpiration." },
+
+                // TOPIC 7: CROPS
+                { type: 'mcq', q: "Rice and Wheat are examples of?", opt: ["Pulses", "Cereals", "Spices", "Fruits"], a: 1, exp: "Energy giving food." },
+                { type: 'blank', q: "Moong and Masoor are ______.", a: "pulses", exp: "Also called Dals." },
+                { type: 'mcq', q: "Which is a spice?", opt: ["Potato", "Spinach", "Pepper", "Apple"], a: 2, exp: "Black pepper." },
+                { type: 'one_word', q: "A beverage plant (drink).", a: "tea", exp: "Or Coffee." },
+                { type: 'tf', q: "Farmers grow crops in fields.", a: "true", exp: "Agriculture." },
+                { type: 'mcq', q: "Which is a fibre crop?", opt: ["Cotton", "Wheat", "Rice", "Gram"], a: 0, exp: "For clothes." },
+                { type: 'blank', q: "Jaggery (Gur) comes from ______.", a: "sugarcane", exp: "Sweet stem." },
+
+                // TOPIC 8: ADAPTATIONS
+                { type: 'mcq', q: "Cactus grows in?", opt: ["Water", "Desert", "Snow", "Mud"], a: 1, exp: "Dry areas." },
+                { type: 'mcq', q: "Lotus is an ______ plant.", opt: ["Aquatic", "Desert", "Mountain", "Air"], a: 0, exp: "Hydrophyte." },
+                { type: 'blank', q: "Conifers grow on ______.", a: "mountains", exp: "Cone shaped trees." },
+                { type: 'tf', q: "Cactus leaves are thorns.", a: "true", exp: "To save water." },
+                { type: 'one_word', q: "Tree that grows in coastal areas (beaches).", a: "coconut", exp: "Salt tolerant." },
+                { type: 'mcq', q: "Why do floating plants have wax?", opt: ["To shine", "To prevent rotting", "To look good", "To eat"], a: 1, exp: "Waterproof coating." },
+                { type: 'blank', q: "Pine trees have needle-like ______.", a: "leaves", exp: "Snow slides off." },
+
+                // TOPIC 9 & 10: ENV & CONSERVATION
+                { type: 'mcq', q: "Cutting trees in large numbers.", opt: ["Afforestation", "Deforestation", "Reforestation", "Pollution"], a: 1, exp: "It is bad." },
+                { type: 'blank', q: "We celebrate ______ Mahotsav in July.", a: "van", exp: "Festival of trees." },
+                { type: 'tf', q: "We should use plastic bags.", a: "false", exp: "Use paper or cloth bags." },
+                { type: 'mcq', q: "Which bin for dry leaves?", opt: ["Blue", "Green", "Red", "Yellow"], a: 1, exp: "Compost/Green bin." },
+                { type: 'one_word', q: "Gas responsible for global warming.", a: "co2", exp: "Trees absorb this." },
+                { type: 'mcq', q: "Best time to water plants?", opt: ["Noon", "Midnight", "Morning", "Never"], a: 2, exp: "Or Evening. Not hot sun." },
+                { type: 'tf', q: "Dried leaves can make manure.", a: "true", exp: "Composting." },
+
+                // EXTRA MIXED
+                { type: 'mcq', q: "Spinach is a...", opt: ["Root", "Leaf", "Flower", "Stem"], a: 1, exp: "Leafy vegetable." },
+                { type: 'blank', q: "Perfume is made from ______.", a: "flowers", exp: "Like Rose and Jasmine." },
+                { type: 'one_word', q: "I am the national flower of India.", a: "lotus", exp: "Aquatic plant." },
+                { type: 'mcq', q: "Paper is made from?", opt: ["Plastic", "Bamboo/Wood", "Metal", "Glass"], a: 1, exp: "Tree pulp." },
+                { type: 'tf', q: "We eat the seed of corn.", a: "true", exp: "Maize." },
+                { type: 'mcq', q: "Ginger grows...", opt: ["On tree", "Underground", "On creeper", "In water"], a: 1, exp: "It is a stem." },
+                { type: 'blank', q: "Gum is obtained from ______ tree.", a: "acacia", exp: "Or Keekar." }
+            ];
+
+            // ----------------------------------------------------------------
+            // DATA: LONG QUESTIONS (10)
+            // ----------------------------------------------------------------
+            const longQuestions = [
+                { 
+                    id: 1, 
+                    q: "Why are leaves called the 'Kitchen of the Plant'?", 
+                    keys: ["make", "food", "photosynthesis", "sunlight", "prepare"], 
+                    model: "Leaves make food for the plant using sunlight, water, and air, just like a kitchen is used to cook food." 
+                },
+                { 
+                    id: 2, 
+                    q: "Explain how a seed becomes a plant.", 
+                    keys: ["germination", "water", "air", "warmth", "root", "shoot"], 
+                    model: "A seed gets air, water and warmth. It sprouts (germination). Roots go down, shoot comes up." 
+                },
+                { 
+                    id: 3, 
+                    q: "Write 3 uses of the Neem tree.", 
+                    keys: ["medicine", "skin", "soap", "toothpaste", "insects", "germs"], 
+                    model: "1. Cures skin diseases. 2. Used in soaps/toothpaste. 3. Keeps insects away." 
+                },
+                { 
+                    id: 4, 
+                    q: "Difference between Climbers and Creepers?", 
+                    keys: ["support", "ground", "up", "climb", "weak"], 
+                    model: "Climbers grow up using support (Money plant). Creepers grow along the ground (Watermelon)." 
+                },
+                { 
+                    id: 5, 
+                    q: "Why do we say 'No Trees, No Life'?", 
+                    keys: ["oxygen", "breathe", "food", "rain"], 
+                    model: "Trees give Oxygen to breathe and food to eat. Without them, we cannot survive." 
+                },
+                { 
+                    id: 6, 
+                    q: "Describe the process of Photosynthesis simply.", 
+                    keys: ["sunlight", "water", "carbon", "dioxide", "chlorophyll", "food"], 
+                    model: "Green plants take Water from soil, CO2 from air, and use Sunlight to make food." 
+                },
+                { 
+                    id: 7, 
+                    q: "How does a cactus survive in the desert?", 
+                    keys: ["thorns", "water", "leaves", "stem", "fleshy"], 
+                    model: "It has thorns instead of leaves to save water. Its green stem stores water." 
+                },
+                { 
+                    id: 8, 
+                    q: "What can you do to save trees?", 
+                    keys: ["plant", "paper", "cut", "water", "protect"], 
+                    model: "1. Plant saplings. 2. Don't waste paper. 3. Don't cut trees. 4. Water them." 
+                },
+                { 
+                    id: 9, 
+                    q: "Features of aquatic plants like Lotus.", 
+                    keys: ["float", "hollow", "stem", "wax", "broad"], 
+                    model: "They have broad floating leaves, waxy coating to prevent rotting, and hollow stems." 
+                },
+                { 
+                    id: 10, 
+                    q: "What is the function of the Stem?", 
+                    keys: ["transport", "water", "food", "support", "upright"], 
+                    model: "Stem keeps plant upright and carries water/food to all parts." 
+                }
+            ];
+
+            // ----------------------------------------------------------------
+            // STATE VARIABLES
+            // ----------------------------------------------------------------
+            let currentQIndex = 0;
+            let score = { correct: 0, wrong: 0, total: 0 };
+            
+            // ----------------------------------------------------------------
+            // INIT FUNCTIONS
+            // ----------------------------------------------------------------
+            function renderNotes() {
+                const container = document.getElementById('topics-container');
+                topics.forEach(t => {
+                    const html = `
+                        <div class="topic-card">
+                            <h3>${t.title}</h3>
+                            <div class="img-placeholder">📷 ${t.img}</div>
+                            <div class="definition"><strong>Def:</strong> ${t.def}</div>
+                            <ul style="list-style-type:circle; padding-left:20px;">
+                                ${t.points.map(p => `<li>${p}</li>`).join('')}
+                            </ul>
+                            <div class="example">🇮🇳 <strong>Eg:</strong> ${t.example}</div>
+                            <div style="margin-top:10px;">
+                                <span class="memory-tip">💡 ${t.tip}</span>
+                            </div>
+                            <p style="border-top:1px dashed #000; margin-top:10px; padding-top:5px;">
+                                ❓ <em>Check: ${t.check}</em>
+                            </p>
+                        </div>
+                    `;
+                    container.innerHTML += html;
+                });
+            }
+
+            function renderImpQuestions() {
+                const container = document.getElementById('imp-q-container');
+                impQuestions.forEach((item, i) => {
+                    const html = `
+                        <div class="imp-q-card">
+                            <p><strong>Q${i+1}: ${item.q}</strong></p>
+                            <p class="imp-ans">Ans: ${item.a}</p>
+                            <p style="font-size:0.9em; color:#555;">(${item.exp})</p>
+                        </div>
+                    `;
+                    container.innerHTML += html;
+                });
+            }
+
+            function renderLongQuestions() {
+                const container = document.getElementById('long-q-container');
+                longQuestions.forEach((item) => {
+                    const html = `
+                        <div class="long-q-card" id="lq-card-${item.id}">
+                            <p><strong>Q${item.id}: ${item.q}</strong></p>
+                            <textarea id="lq-input-${item.id}" placeholder="Type your answer here..."></textarea>
+                            <br>
+                            <button class="btn btn-primary" onclick="checkLongAnswer(${item.id})">Check Answer</button>
+                            <div id="lq-result-${item.id}" class="eval-result hidden"></div>
+                        </div>
+                    `;
+                    container.innerHTML += html;
+                });
+            }
+
+            // ----------------------------------------------------------------
+            // PRACTICE QUIZ ENGINE
+            // ----------------------------------------------------------------
+            function loadPracticeQuestion() {
+                const q = practiceDB[currentQIndex];
+                const box = document.getElementById('question-box');
+                const feedback = document.getElementById('feedback-display');
+                const nextBtn = document.getElementById('next-btn');
+                const checkBtn = document.getElementById('check-btn');
+                const progress = document.getElementById('quiz-progress');
+
+                // Reset UI
+                feedback.style.display = 'none';
+                feedback.className = 'feedback-box';
+                nextBtn.classList.add('hidden');
+                checkBtn.classList.remove('hidden');
+                checkBtn.onclick = () => checkPracticeAnswer(); // Bind click
+                progress.innerText = `Question ${currentQIndex + 1} / ${practiceDB.length}`;
+
+                let html = `<p style="font-size:1.3rem;">Q: ${q.q}</p>`;
+
+                if (q.type === 'mcq') {
+                    html += `<div style="text-align:left;">`;
+                    q.opt.forEach((opt, i) => {
+                        html += `<button class="option-btn" onclick="selectOption(this, ${i})">${opt}</button>`;
+                    });
+                    html += `</div>`;
+                } else if (q.type === 'tf') {
+                    html += `<div style="display:flex; gap:10px;">
+                        <button class="option-btn" onclick="selectOption(this, 'true')">TRUE</button>
+                        <button class="option-btn" onclick="selectOption(this, 'false')">FALSE</button>
+                    </div>`;
+                } else {
+                    // Blank or One Word
+                    html += `<input type="text" id="text-answer" class="input-blank" placeholder="Type here" autocomplete="off">`;
+                }
+
+                box.innerHTML = html;
+                box.dataset.selected = ""; // Clear selection
+            }
+
+            window.selectOption = function(btn, val) {
+                // Deselect others
+                const all = document.querySelectorAll('.option-btn');
+                all.forEach(b => b.style.border = '2px solid #ccc');
+                all.forEach(b => b.style.background = '#f1f2f6');
+                
+                // Select current
+                btn.style.border = '2px solid var(--btn-primary)';
+                btn.style.background = '#d1ccc0';
+                
+                document.getElementById('question-box').dataset.selected = val;
+            };
+
+            window.checkPracticeAnswer = function() {
+                const q = practiceDB[currentQIndex];
+                const box = document.getElementById('question-box');
+                const feedback = document.getElementById('feedback-display');
+                const checkBtn = document.getElementById('check-btn');
+                const nextBtn = document.getElementById('next-btn');
+
+                let userVal = box.dataset.selected;
+                let isCorrect = false;
+
+                // Validation logic
+                if (q.type === 'mcq') {
+                    if (userVal === "") return alert("Please select an option!");
+                    isCorrect = (parseInt(userVal) === q.a);
+                } else if (q.type === 'tf') {
+                    if (userVal === "") return alert("Please select True or False!");
+                    isCorrect = (userVal === q.a);
+                } else {
+                    const input = document.getElementById('text-answer');
+                    if (!input.value.trim()) return alert("Please type an answer!");
+                    userVal = input.value.trim().toLowerCase();
+                    isCorrect = (userVal === q.a.toLowerCase());
+                }
+
+                // Update Score
+                score.total++;
+                if (isCorrect) score.correct++;
+                else score.wrong++;
+                updateScoreboard();
+
+                // Show Feedback
+                feedback.style.display = 'block';
+                if (isCorrect) {
+                    feedback.className = 'feedback-box feedback-correct';
+                    feedback.innerHTML = `<strong>Excellent! ⭐</strong><br>${q.exp}`;
+                } else {
+                    feedback.className = 'feedback-box feedback-wrong';
+                    let correctText = "";
+                    if(q.type === 'mcq') correctText = q.opt[q.a];
+                    else if(q.type === 'tf') correctText = q.a.toUpperCase();
+                    else correctText = q.a;
+                    
+                    feedback.innerHTML = `<strong>Try Again!</strong><br>Correct Answer: ${correctText}<br><em>${q.exp}</em>`;
+                }
+
+                // Lock UI
+                const opts = document.querySelectorAll('.option-btn');
+                opts.forEach(b => b.classList.add('disabled'));
+                if(document.getElementById('text-answer')) document.getElementById('text-answer').disabled = true;
+
+                checkBtn.classList.add('hidden');
+                nextBtn.classList.remove('hidden');
+
+                // Next Button Logic
+                nextBtn.onclick = () => {
+                    if (currentQIndex < practiceDB.length - 1) {
+                        currentQIndex++;
+                        loadPracticeQuestion();
+                    } else {
+                        alert("Quiz Completed! Check your final score.");
+                        nextBtn.disabled = true;
+                        nextBtn.innerText = "Finished";
+                    }
+                };
+            };
+
+            // ----------------------------------------------------------------
+            // LONG ANSWER ENGINE
+            // ----------------------------------------------------------------
+            window.checkLongAnswer = function(id) {
+                const qData = longQuestions.find(q => q.id === id);
+                const input = document.getElementById(`lq-input-${id}`);
+                const resultBox = document.getElementById(`lq-result-${id}`);
+                const btn = document.querySelector(`#lq-card-${id} button`);
+
+                if (!input.value.trim()) return alert("Please write something!");
+
+                const userText = input.value.toLowerCase();
+                let matchCount = 0;
+                let missing = [];
+
+                // Keyword matching logic
+                qData.keys.forEach(k => {
+                    if (userText.includes(k)) matchCount++;
+                    else missing.push(k);
+                });
+
+                const percentage = (matchCount / qData.keys.length) * 100;
+                let isPass = percentage >= 40; // 40% keywords needed to be "Correct"
+
+                // Update Score
+                score.total++;
+                if (isPass) score.correct++;
+                else score.wrong++;
+                updateScoreboard();
+
+                resultBox.classList.remove('hidden');
+                if (isPass) {
+                    resultBox.style.background = "var(--note-green)";
+                    resultBox.innerHTML = `<strong>Good Job!</strong><br>You used key concepts.<br><br><strong>Model Answer:</strong> ${qData.model}`;
+                } else {
+                    resultBox.style.background = "var(--note-pink)";
+                    resultBox.innerHTML = `<strong>Needs Improvement</strong><br>Missing keywords: ${missing.join(', ')}<br><br><strong>Correct Answer:</strong> ${qData.model}`;
+                }
+
+                input.disabled = true;
+                btn.disabled = true;
+            };
+
+            // ----------------------------------------------------------------
+            // UTILS
+            // ----------------------------------------------------------------
+            function updateScoreboard() {
+                document.getElementById('score-correct').innerText = score.correct;
+                document.getElementById('score-wrong').innerText = score.wrong;
+                document.getElementById('score-total').innerText = score.total;
+                
+                const perc = score.total === 0 ? 0 : Math.round((score.correct / score.total) * 100);
+                document.getElementById('score-perc').innerText = perc + "%";
+            }
+
+            window.toggleRevision = function() {
+                const rev = document.getElementById('revision-content');
+                rev.classList.toggle('hidden');
+            };
+
+            // ----------------------------------------------------------------
+            // INITIALIZE
+            // ----------------------------------------------------------------
+            renderNotes();
+            renderImpQuestions();
+            renderLongQuestions();
+            loadPracticeQuestion();
+
+        });
+    </script>
+</body>
+</html>

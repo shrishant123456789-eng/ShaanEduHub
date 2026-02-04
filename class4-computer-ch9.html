@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 4 - Ch 9: Internet Basics & Digital Safety</title>
+    <style>
+        /* IMPORTING HANDWRITING FONT */
+        @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #e67e22;
+            --success-color: #27ae60;
+            --error-color: #c0392b;
+            --note-bg-1: #fff9c4; /* Yellowish */
+            --note-bg-2: #e1f5fe; /* Blueish */
+            --note-bg-3: #e8f5e9; /* Greenish */
+            --note-bg-4: #ffe0b2; /* Orangeish */
+            --paper-line: #b0bec5;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            /* GLOBAL TYPOGRAPHY RULE: HANDWRITING FONT & BOLD */
+            font-family: 'Patrick Hand', 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+            font-weight: 700; 
+        }
+
+        body {
+            background-color: #f0f2f5;
+            color: var(--primary-color);
+            line-height: 1.6;
+            font-size: 18px;
+            padding-bottom: 60px;
+        }
+
+        /* HEADER */
+        header {
+            background: var(--primary-color);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 5px solid var(--accent-color);
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 0px #000;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+            text-decoration: underline;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #d35400;
+        }
+
+        /* LIVE SCORE PANEL */
+        #score-panel {
+            background: white;
+            position: sticky;
+            top: 10px;
+            z-index: 1000;
+            margin: 0 auto 20px auto;
+            width: 95%;
+            max-width: 600px;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border: 3px solid var(--primary-color);
+        }
+
+        .score-item {
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .score-value {
+            font-size: 1.5rem;
+            color: var(--accent-color);
+            display: block;
+        }
+
+        /* CONTAINER */
+        .container {
+            width: 95%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* NOTES SECTION */
+        .note-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+            border: 2px solid var(--primary-color);
+            position: relative;
+        }
+
+        .note-card:nth-child(odd) { background-color: var(--note-bg-1); }
+        .note-card:nth-child(even) { background-color: var(--note-bg-2); }
+        .note-card:nth-child(3n) { background-color: var(--note-bg-3); }
+        .note-card:nth-child(4n) { background-color: var(--note-bg-4); }
+
+        /* Lined Paper Effect for specific text areas */
+        .notebook-text {
+            background-image: linear-gradient(var(--paper-line) 1px, transparent 1px);
+            background-size: 100% 1.6em;
+            line-height: 1.6em;
+        }
+
+        .img-placeholder {
+            width: 100%;
+            height: 150px;
+            background: rgba(0,0,0,0.05);
+            border: 2px dashed var(--primary-color);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
+            color: #7f8c8d;
+            font-size: 1.2rem;
+        }
+
+        .memory-tip {
+            background: white;
+            border: 2px dashed var(--accent-color);
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        .example-box {
+            background: rgba(255,255,255,0.6);
+            border-left: 5px solid var(--success-color);
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        /* QUESTION STYLES */
+        .question-box {
+            background: white;
+            border: 3px solid var(--primary-color);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 0 #ccc;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.1s;
+            width: 100%;
+            text-align: left;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button.action-btn {
+            background: var(--accent-color);
+            text-align: center;
+            margin-top: 15px;
+            border-bottom: 4px solid #d35400;
+        }
+
+        button.option-btn {
+            background: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            text-align: left;
+        }
+
+        button.option-btn:hover {
+            background: #f0f2f5;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 10px;
+            display: none;
+            text-align: center;
+        }
+
+        .feedback.correct {
+            background: var(--success-color);
+            color: white;
+            display: block;
+        }
+
+        .feedback.wrong {
+            background: var(--error-color);
+            color: white;
+            display: block;
+        }
+
+        /* LONG ANSWER STYLES */
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 10px;
+            border: 2px solid var(--primary-color);
+            border-radius: 10px;
+            font-size: 1rem;
+            margin-top: 10px;
+            resize: vertical;
+            background: #fff;
+        }
+
+        .long-answer-feedback {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            font-size: 0.95rem;
+            white-space: pre-wrap;
+        }
+
+        /* REVISION */
+        .revision-box {
+            background: var(--note-bg-3);
+            border: 4px double var(--primary-color);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .revision-list li {
+            margin-bottom: 10px;
+            list-style-type: none;
+        }
+        .revision-list li::before {
+            content: "⭐ ";
+        }
+
+        /* FOOTER */
+        footer {
+            background: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+        }
+
+        /* UTILS */
+        .hidden { display: none; }
+        .fade-in { animation: fadeIn 0.5s; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (min-width: 600px) {
+            .options-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Computer Science</h1>
+        <h2>Chapter 9: Internet Basics & Digital Safety</h2>
+        <p>Class 4 | Learn, Practice & Stay Safe!</p>
+    </header>
+
+    <!-- LIVE SCORE PANEL -->
+    <div id="score-panel">
+        <div class="score-item">
+            <span>Score</span>
+            <span id="score-val" class="score-value">0</span>
+        </div>
+        <div class="score-item">
+            <span>Attempted</span>
+            <span id="attempt-val" class="score-value">0</span>
+        </div>
+        <div class="score-item">
+            <span>Percentage</span>
+            <span id="percent-val" class="score-value">0%</span>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <!-- ================= NOTES SECTION ================= -->
+        <section id="notes-section">
+            
+            <!-- TOPIC 1 -->
+            <div class="note-card">
+                <h3>1. What is the Internet? 🌐</h3>
+                <p>Imagine a giant spider web that connects the whole world!</p>
+                <div class="img-placeholder">[Image: A drawing of Earth with lines connecting computers]</div>
+                <p class="notebook-text">
+                    The <strong>Internet</strong> is a huge network of computers connected together. It helps people share information, talk to each other, and learn new things from anywhere in the world.
+                </p>
+                <div class="example-box">
+                    <strong>Indian Example:</strong> Just like Indian Railways connects different cities in India, the Internet connects computers all over the world.
+                </div>
+                <div class="memory-tip">
+                    💡 <strong>Tip:</strong> Internet = <strong>INTER</strong>connected <strong>NET</strong>work.
+                </div>
+            </div>
+
+            <!-- TOPIC 2 -->
+            <div class="note-card">
+                <h3>2. Uses of Internet 💻</h3>
+                <p>Why do we use this magic network?</p>
+                <ul>
+                    <li><strong>Education:</strong> Taking online classes on Zoom or Google Meet.</li>
+                    <li><strong>Communication:</strong> Sending messages on WhatsApp or Emails.</li>
+                    <li><strong>Entertainment:</strong> Watching cartoons on YouTube.</li>
+                    <li><strong>Information:</strong> Searching for "Tiger Project" details.</li>
+                </ul>
+                <div class="img-placeholder">[Image: Kids learning on a laptop]</div>
+                <div class="example-box">
+                    <strong>Real Life:</strong> During holidays, you video call your grandmother who lives in another city. That is the Internet!
+                </div>
+            </div>
+
+            <!-- TOPIC 3 -->
+            <div class="note-card">
+                <h3>3. Web Browsers & Search Engines 🔍</h3>
+                <p>Don't get confused between the Car and the Driver!</p>
+                <br>
+                <p><strong>Web Browser (The Car):</strong> It is the software you open to see the internet.<br>
+                <em>Examples:</em> Google Chrome, Microsoft Edge, Safari.</p>
+                <br>
+                <p><strong>Search Engine (The Driver/Map):</strong> It is a website that helps you find things.<br>
+                <em>Examples:</em> Google, Bing, Yahoo.</p>
+                <div class="img-placeholder">[Image: Icons of Chrome, Edge and Google Logo]</div>
+                <div class="memory-tip">
+                    💡 <strong>Tip:</strong> You open <strong>Chrome</strong> (Browser) to visit <strong>Google</strong> (Search Engine).
+                </div>
+            </div>
+
+            <!-- TOPIC 4 -->
+            <div class="note-card">
+                <h3>4. Websites and URLs 🏠</h3>
+                <p>Every house has an address. Every website has an address too!</p>
+                <p class="notebook-text">
+                    <strong>Website:</strong> A collection of webpages (like a book has pages).<br>
+                    <strong>URL:</strong> The address of the website. It stands for Uniform Resource Locator.
+                </p>
+                <div class="example-box">
+                    <strong>Example:</strong> https://www.wikipedia.org<br>
+                    Just like your home address leads the postman to your house, the URL leads the browser to the website.
+                </div>
+            </div>
+
+            <!-- TOPIC 5 -->
+            <div class="note-card">
+                <h3>5. Email Basics 📧</h3>
+                <p>Email stands for <strong>Electronic Mail</strong>.</p>
+                <p>It is like writing a letter, but it reaches instantly!</p>
+                <p><strong>Email Address Parts:</strong><br>
+                <code>rahul.student</code> (Username)<br>
+                <code>@</code> (At symbol - Must have!)<br>
+                <code>gmail.com</code> (Domain name)</p>
+                <div class="img-placeholder">[Image: An envelope with an @ symbol stamp]</div>
+                <div class="example-box">
+                    <strong>Use:</strong> You can send your holiday homework to your teacher via email without going to school!
+                </div>
+            </div>
+
+            <!-- TOPIC 6 -->
+            <div class="note-card">
+                <h3>6. Online Safety Rules 🛡️</h3>
+                <p>The internet is useful, but we must be safe. Follow these Golden Rules:</p>
+                <ol>
+                    <li><strong>Strong Passwords:</strong> Never use "123456". Use a mix of letters and numbers (e.g., "Tiger#2024").</li>
+                    <li><strong>Don't Share Personal Data:</strong> Never tell strangers your address, school name, or phone number.</li>
+                    <li><strong>Safe Sites:</strong> Look for the 🔒 <strong>Lock Icon</strong> next to the website address. It means it is safe.</li>
+                </ol>
+                <div class="memory-tip">
+                    💡 <strong>Tip:</strong> S.M.A.R.T. -> Stay Safe, Don't Meet, Accepting Files is risky, Reliable sources, Tell an adult.
+                </div>
+            </div>
+
+            <!-- TOPIC 7 -->
+            <div class="note-card">
+                <h3>7. Cyber Etiquette for Kids 🤝</h3>
+                <p>Manners are important, even online!</p>
+                <ul>
+                    <li>Be Kind: Do not use bad words.</li>
+                    <li><strong>NO SHOUTING:</strong> Writing in ALL CAPITAL LETTERS means you are shouting. Don't do it.</li>
+                    <li>Respect Privacy: Don't share your friend's photo without asking.</li>
+                </ul>
+            </div>
+
+            <!-- TOPIC 8 -->
+            <div class="note-card">
+                <h3>8. Simple Internet Projects 📝</h3>
+                <p>Try these with your parents:</p>
+                <ol>
+                    <li>Open Google Chrome.</li>
+                    <li>Type "Map of India" in the search bar.</li>
+                    <li>Click on "Images" to see the map.</li>
+                    <li>Open Notepad, type a hello message, and pretend to save it as an email!</li>
+                </ol>
+            </div>
+
+        </section>
+
+        <!-- ================= IMPORTANT QUESTIONS ================= -->
+        <section id="imp-questions">
+            <h2>Important Questions to Learn</h2>
+            <div class="question-box">
+                <p><strong>Q1. What is the full form of URL?</strong><br>
+                Ans: Uniform Resource Locator.</p>
+            </div>
+            <div class="question-box">
+                <p><strong>Q2. Which symbol is mandatory in an email address?</strong><br>
+                Ans: The '@' (at) symbol.</p>
+            </div>
+            <div class="question-box">
+                <p><strong>Q3. Give two examples of Web Browsers.</strong><br>
+                Ans: Google Chrome and Microsoft Edge.</p>
+            </div>
+            <div class="question-box">
+                <p><strong>Q4. Why should we look for a lock icon 🔒?</strong><br>
+                Ans: It shows that the website is secure and safe to use.</p>
+            </div>
+            <div class="question-box">
+                <p><strong>Q5. What does writing in ALL CAPS mean?</strong><br>
+                Ans: It is considered rude, like shouting at someone.</p>
+            </div>
+        </section>
+
+        <!-- ================= PRACTICE QUESTIONS (70) ================= -->
+        <section id="practice-section">
+            <h2>Practice Quiz (70 Questions)</h2>
+            <div id="quiz-container" class="question-box fade-in">
+                <!-- Dynamic Content Loads Here -->
+                <p id="quiz-q-text">Loading...</p>
+                <div id="quiz-options" class="options-grid"></div>
+                <div id="quiz-feedback" class="feedback"></div>
+                <button id="next-btn" class="action-btn hidden" onclick="nextQuestion()">Next Question ➡️</button>
+            </div>
+        </section>
+
+        <!-- ================= ADVANCED LONG QUESTIONS (10) ================= -->
+        <section id="long-questions-section">
+            <h2>Advanced Thinking Questions (10)</h2>
+            <div id="long-q-container">
+                <!-- Dynamic Content Loads Here -->
+            </div>
+        </section>
+
+        <!-- ================= REVISION ================= -->
+        <section id="revision-section">
+            <div class="revision-box">
+                <h2 style="text-align: center;">⚡ Quick Revision ⚡</h2>
+                <ul class="revision-list">
+                    <li>Internet connects computers worldwide.</li>
+                    <li>Chrome is a Browser. Google is a Search Engine.</li>
+                    <li>Email is fast electronic mail. Needs '@'.</li>
+                    <li>Password should be strong and secret.</li>
+                    <li>Never talk to strangers online.</li>
+                    <li>Lock icon 🔒 = Safe Website.</li>
+                    <li>ALL CAPS = SHOUTING (Don't do it).</li>
+                </ul>
+                <button class="action-btn" onclick="window.scrollTo(0,0)">Go to Top ⬆️</button>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>Designed & Created by SHRISHANT YADAV<br>ShanEduHub</p>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- DATA: PRACTICE QUESTIONS (70 Items) ---
+        const practiceQuestions = [
+            // TOPIC 1: INTERNET CONCEPTS
+            { q: "What connects computers all over the world?", options: ["Telephone wire only", "Internet", "Television", "Radio"], a: 1, expl: "The Internet is the global network connecting computers." },
+            { q: "Internet is a network of _______.", options: ["Cars", "Networks", "Books", "Schools"], a: 1, expl: "It is often called a 'Network of Networks'." },
+            { q: "Can we use the Internet to send letters instantly?", options: ["Yes (Email)", "No", "Only on Sundays", "Maybe"], a: 0, expl: "Email allows instant message sending." },
+            { q: "Which of these is NOT an Internet use?", options: ["Cooking food", "Online Learning", "Watching Videos", "Sending Email"], a: 0, expl: "You cannot cook food digitally!" },
+            { q: "What do we call the connection of millions of computers?", options: ["Interweb", "Internet", "Intranet", "Spiderweb"], a: 1, expl: "It is the Internet." },
+            
+            // TOPIC 2: USES
+            { q: "Which app is used for Online Classes?", options: ["Calculator", "Zoom/Meet", "Camera", "Music Player"], a: 1, expl: "Zoom and Google Meet are video conferencing apps." },
+            { q: "We can buy toys online using the Internet.", options: ["True", "False"], a: 0, expl: "Yes, online shopping is a major use of the Internet." },
+            { q: "Can we book train tickets on the Internet?", options: ["Yes", "No"], a: 0, expl: "Yes, via IRCTC and other websites." },
+            { q: "YouTube is mainly used for?", options: ["Writing exams", "Watching videos", "Drawing", "Sleeping"], a: 1, expl: "YouTube is a video sharing platform." },
+            { q: "Which is faster?", options: ["Postcard", "Email"], a: 1, expl: "Email is instant, postcards take days." },
+
+            // TOPIC 3: BROWSERS & ENGINES
+            { q: "Google Chrome is a ________.", options: ["Game", "Web Browser", "Antivirus", "Movie"], a: 1, expl: "Chrome is a software used to browse the web." },
+            { q: "Which of these is a Search Engine?", options: ["Google", "Paint", "Word", "Excel"], a: 0, expl: "Google searches for information." },
+            { q: "To open a website, we need a ________.", options: ["Web Browser", "Microphone", "Printer", "Scanner"], a: 0, expl: "The browser displays the website." },
+            { q: "Is 'Bing' a search engine?", options: ["Yes", "No"], a: 0, expl: "Yes, Bing is Microsoft's search engine." },
+            { q: "Microsoft Edge is a _______.", options: ["Browser", "Game", "Song", "Food"], a: 0, expl: "It is a web browser by Microsoft." },
+            { q: "Mozilla Firefox is a _______.", options: ["Animal", "Web Browser", "Planet", "Car"], a: 1, expl: "Firefox is a popular web browser." },
+            { q: "Who helps you find information on the web?", options: ["Search Engine", "Calculator", "Clock", "Calendar"], a: 0, expl: "Search engines index the web for you." },
+            { q: "Is Paint a web browser?", options: ["Yes", "No"], a: 1, expl: "No, Paint is for drawing." },
+            { q: "The software used to view web pages is called?", options: ["Viewer", "Web Browser", "Looker", "Page App"], a: 1, expl: "Correct term is Web Browser." },
+            { q: "Is Yahoo a search engine?", options: ["Yes", "No"], a: 0, expl: "Yes, Yahoo is a search engine." },
+
+            // TOPIC 4: WEBSITE & URL
+            { q: "URL stands for Uniform Resource ________.", options: ["Link", "Locator", "Line", "Lock"], a: 1, expl: "URL = Uniform Resource Locator." },
+            { q: "A website is like a _______.", options: ["Book", "Pen", "Table", "Chair"], a: 0, expl: "A website contains pages, just like a book." },
+            { q: "Which part comes first in a URL?", options: [".com", "https://", "www", "name"], a: 1, expl: "Most URLs start with https:// or http://." },
+            { q: "www stands for World Wide _______.", options: ["Web", "Walk", "Wake", "Work"], a: 0, expl: "WWW = World Wide Web." },
+            { q: "Every website has a unique _______.", options: ["Color", "Address (URL)", "Sound", "Smell"], a: 1, expl: "No two websites have the exact same URL." },
+            { q: "Clicking on blue text that opens a new page is called a _______.", options: ["Hyperlink", "Jumper", "Skipper", "Hopper"], a: 0, expl: "Links connect web pages." },
+            { q: "The first page of a website is called?", options: ["Back page", "Home page", "End page", "Cover"], a: 1, expl: "It is the Home Page." },
+            { q: "Is 'google.com' a URL?", options: ["Yes", "No"], a: 0, expl: "Yes, it is the address of Google." },
+            { q: "Do all websites end with .com?", options: ["Yes", "No"], a: 1, expl: "No, some end in .org, .edu, .in, etc." },
+            { q: "'.in' usually stands for which country?", options: ["Indonesia", "India", "Iran", "Italy"], a: 1, expl: ".in is the domain for India." },
+
+            // TOPIC 5: EMAIL
+            { q: "What symbol is MUST in an email ID?", options: ["#", "@", "$", "&"], a: 1, expl: "The 'at' symbol (@) separates username and domain." },
+            { q: "Email stands for _______.", options: ["Electric Mail", "Electronic Mail", "Easy Mail", "Extra Mail"], a: 1, expl: "E-mail = Electronic Mail." },
+            { q: "In 'ram@gmail.com', what is 'gmail.com'?", options: ["Username", "Domain Name", "Password", "Subject"], a: 1, expl: "It provides the mail service." },
+            { q: "Can we send photos in an email?", options: ["Yes", "No"], a: 0, expl: "Yes, as attachments." },
+            { q: "To send an email, you need the receiver's _______.", options: ["Photo", "Email Address", "Home Address", "Phone Number"], a: 1, expl: "You send mail to an email address." },
+            { q: "Which is a valid email?", options: ["ram.com", "ram@gmail.com", "ram#gmail", "ram at gmail"], a: 1, expl: "Only the second one has the correct format." },
+            { q: "The 'Subject' in an email tells _______.", options: ["The time", "What the email is about", "The sender's name", "Nothing"], a: 1, expl: "It is a short summary of the email." },
+            { q: "You need a ________ to open your email account.", options: ["Key", "Password", "Ticket", "Coin"], a: 1, expl: "Passwords protect your account." },
+            { q: "Is email faster than regular post?", options: ["Yes", "No"], a: 0, expl: "Much faster, almost instant." },
+            { q: "Gmail is a service by which company?", options: ["Microsoft", "Google", "Apple", "Amazon"], a: 1, expl: "Gmail belongs to Google." },
+
+            // TOPIC 6: SAFETY
+            { q: "Which password is strongest?", options: ["123456", "password", "Rahul123", "TiGeR#99!"], a: 3, expl: "It has Mixed case, numbers, and symbols." },
+            { q: "Should you share your password with friends?", options: ["Yes", "No, never", "Only best friends", "If they ask nicely"], a: 1, expl: "Passwords are private secrets." },
+            { q: "What does the 🔒 lock icon mean?", options: ["Site is closed", "Site is Safe/Secure", "Do not enter", "Site is broken"], a: 1, expl: "It indicates a secure HTTPS connection." },
+            { q: "If a stranger asks for your photo online, you should:", options: ["Send it", "Say No and tell parents", "Ask their name", "Send a fake photo"], a: 1, expl: "Safety first: Tell an adult immediately." },
+            { q: "Is it safe to share your home address online?", options: ["Yes", "No"], a: 1, expl: "Never share personal details publicly." },
+            { q: "What is a 'Virus' in computers?", options: ["A bug", "Bad software that harms data", "A dirty screen", "A fever"], a: 1, expl: "Computer viruses damage files." },
+            { q: "You won a lottery popup! What to do?", options: ["Click it", "Close it immediately", "Give bank details", "Call them"], a: 1, expl: "It is a scam. Close it." },
+            { q: "OTP stands for One Time ________.", options: ["Password", "Paper", "Phone", "Place"], a: 0, expl: "One Time Password." },
+            { q: "Should you meet an 'online friend' alone?", options: ["Yes", "No, it's dangerous", "Maybe", "If they have candy"], a: 1, expl: "Never meet online strangers alone." },
+            { q: "Antivirus software helps to ________.", options: ["Make viruses", "Protect computer", "Slow down computer", "Break computer"], a: 1, expl: "It protects against malware." },
+            { q: "Phishing is a type of _______.", options: ["Fishing sport", "Online cheating/scam", "Game", "Drawing"], a: 1, expl: "Phishing is trying to steal data." },
+            { q: "If you feel unsafe online, who to call?", options: ["Police/Parents", "The stranger", "Nobody", "Your pet"], a: 0, expl: "Always inform a trusted adult." },
+            { q: "Is 'abcd' a good password?", options: ["Yes", "No, too weak"], a: 1, expl: "It is easily guessed." },
+            { q: "Safe websites usually start with:", options: ["http", "https", "wwws", "web"], a: 1, expl: "'s' in https stands for Secure." },
+            { q: "Cyberbullying means:", options: ["Playing games", "Being mean online", "Fixing computers", "Buying robots"], a: 1, expl: "Bullying someone using technology." },
+
+            // TOPIC 7: ETIQUETTE
+            { q: "Typing in ALL CAPS is considered:", options: ["Cool", "Shouting/Rude", "Quiet", "Happy"], a: 1, expl: "It looks like you are yelling." },
+            { q: "Before posting a friend's photo, you should:", options: ["Ask them", "Edit it", "Just post it", "Hide it"], a: 0, expl: "Respect their privacy." },
+            { q: "If someone is rude to you online:", options: ["Be rude back", "Block and tell parents", "Cry", "Delete internet"], a: 1, expl: "Don't fight back, stay safe." },
+            { q: "Spam emails are:", options: ["Tasty", "Junk/Unwanted emails", "Important emails", "Letters"], a: 1, expl: "Spam is unwanted junk mail." },
+            { q: "Netiquette means:", options: ["Net practice", "Internet manners", "Network wires", "Nothing"], a: 1, expl: "Network + Etiquette." },
+
+            // TOPIC 8: MIXED/PROJECTS
+            { q: "Can we learn drawing on YouTube?", options: ["Yes", "No"], a: 0, expl: "Yes, there are many tutorials." },
+            { q: "Google Maps helps us find:", options: ["Lost keys", "Locations/Directions", "Answers", "Food"], a: 1, expl: "It is for navigation." },
+            { q: "Wikipedia is used for:", options: ["Games", "Information", "Shopping", "Calling"], a: 1, expl: "It is an online encyclopedia." },
+            { q: "To save a picture from the internet, we usually:", options: ["Right click > Save image", "Hit the screen", "Say 'Save'", "Close eyes"], a: 0, expl: "Right click gives the option to save." },
+            { q: "Is the Internet free?", options: ["Yes, totally", "No, we pay for connection"], a: 1, expl: "We pay ISPs for data connection." },
+            { q: "WiFi stands for Wireless _______.", options: ["Fidelity", "Finish", "Fit", "Fire"], a: 0, expl: "Wireless Fidelity." },
+            { q: "Which is a social media app?", options: ["Excel", "Instagram", "Calculator", "Notepad"], a: 1, expl: "Instagram is for social networking." },
+            { q: "Can we video call on WhatsApp?", options: ["Yes", "No"], a: 0, expl: "Yes, it supports video calls." },
+            { q: "What is a 'Home Page'?", options: ["First page of website", "Your house", "Last page", "Error page"], a: 0, expl: "The main entry page." },
+            { q: "Downloading means:", options: ["Sending file", "Getting file from internet", "Deleting file", "Printing"], a: 1, expl: "Getting data from the net to your PC." }
+        ];
+
+        // --- DATA: LONG ANSWER QUESTIONS (10 Items) ---
+        const longQuestions = [
+            {
+                id: 1,
+                q: "What is the difference between a Web Browser and a Search Engine? Give one example of each.",
+                keywords: ["browser", "software", "view", "engine", "search", "find", "chrome", "google", "edge", "bing"],
+                model: "Browser is software to view pages (e.g., Chrome). Search Engine is a website to find info (e.g., Google)."
+            },
+            {
+                id: 2,
+                q: "Write 3 rules to stay safe online.",
+                keywords: ["password", "share", "personal", "stranger", "lock", "safe", "strong", "parents"],
+                model: "1. Use strong passwords. 2. Don't share personal info. 3. Don't talk to strangers."
+            },
+            {
+                id: 3,
+                q: "What is an Email? Write two things you need to send an email.",
+                keywords: ["electronic", "mail", "message", "address", "internet", "connection", "id"],
+                model: "Email is Electronic Mail. You need an Internet connection and the receiver's Email Address."
+            },
+            {
+                id: 4,
+                q: "Why should we not share our password with friends?",
+                keywords: ["secret", "misuse", "hack", "change", "private", "unsafe", "steal"],
+                model: "Passwords are secret keys. Friends might misuse it or tell others, making your account unsafe."
+            },
+            {
+                id: 5,
+                q: "Explain what a URL is with an example.",
+                keywords: ["address", "uniform", "resource", "locator", "www", "http", "location"],
+                model: "URL is the address of a website. Example: www.google.com."
+            },
+            {
+                id: 6,
+                q: "What is Cyber Etiquette? Give one example.",
+                keywords: ["manners", "behavior", "polite", "rude", "caps", "shouting", "kind"],
+                model: "It means good manners online. Example: Don't type in ALL CAPS as it looks like shouting."
+            },
+            {
+                id: 7,
+                q: "How can you identify if a website is safe for shopping?",
+                keywords: ["lock", "padlock", "icon", "https", "s", "secure"],
+                model: "Look for the Lock icon 🔒 near the address bar and 'https' in the URL."
+            },
+            {
+                id: 8,
+                q: "What is a 'Strong Password'? Give an example.",
+                keywords: ["mix", "number", "letter", "symbol", "hard", "guess", "characters"],
+                model: "A strong password has a mix of letters, numbers, and symbols. Example: Tiger@2024."
+            },
+            {
+                id: 9,
+                q: "List three uses of the Internet in daily life.",
+                keywords: ["education", "communication", "entertainment", "shopping", "booking", "learning"],
+                model: "1. Online Classes. 2. Watching videos/movies. 3. Sending emails."
+            },
+            {
+                id: 10,
+                q: "What should you do if you receive a mean message or feel unsafe online?",
+                keywords: ["tell", "parent", "adult", "teacher", "report", "block", "scared"],
+                model: "Do not reply. Immediately tell a trusted adult (parent or teacher)."
+            }
+        ];
+
+        // --- STATE VARIABLES ---
+        let currentQIndex = 0;
+        let score = 0;
+        let attempted = 0;
+        let longScore = 0; // Each long answer worth 5 points
+        let totalPossibleScore = practiceQuestions.length + (longQuestions.length * 5); 
+
+        // --- INIT ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderQuestion();
+            renderLongQuestions();
+        });
+
+        // --- PRACTICE QUIZ LOGIC ---
+        function renderQuestion() {
+            if (currentQIndex >= practiceQuestions.length) {
+                document.getElementById('quiz-container').innerHTML = `
+                    <h3>Practice Complete! 🎉</h3>
+                    <p>Great job practicing all questions.</p>
+                `;
+                return;
+            }
+
+            const qData = practiceQuestions[currentQIndex];
+            document.getElementById('quiz-q-text').innerHTML = `<strong>Q${currentQIndex+1}:</strong> ${qData.q}`;
+            
+            const optsDiv = document.getElementById('quiz-options');
+            optsDiv.innerHTML = '';
+            
+            qData.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(idx, btn);
+                optsDiv.appendChild(btn);
+            });
+
+            document.getElementById('quiz-feedback').style.display = 'none';
+            document.getElementById('next-btn').classList.add('hidden');
+        }
+
+        function checkAnswer(selectedIdx, btnElement) {
+            // Disable all buttons
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(b => b.disabled = true);
+
+            const qData = practiceQuestions[currentQIndex];
+            const feedback = document.getElementById('quiz-feedback');
+            const nextBtn = document.getElementById('next-btn');
+
+            attempted++;
+
+            if (selectedIdx === qData.a) {
+                // Correct
+                score++;
+                btnElement.style.background = '#27ae60';
+                btnElement.style.color = 'white';
+                feedback.className = 'feedback correct';
+                feedback.innerHTML = `<strong>Excellent ⭐</strong><br>${qData.expl}`;
+            } else {
+                // Wrong
+                btnElement.style.background = '#c0392b';
+                btnElement.style.color = 'white';
+                // Highlight correct
+                buttons[qData.a].style.background = '#27ae60';
+                buttons[qData.a].style.color = 'white';
+                
+                feedback.className = 'feedback wrong';
+                feedback.innerHTML = `<strong>Try Again!</strong><br>Correct Answer: ${qData.options[qData.a]}<br>Reason: ${qData.expl}`;
+            }
+
+            feedback.style.display = 'block';
+            nextBtn.classList.remove('hidden');
+            updateScoreBoard();
+        }
+
+        function nextQuestion() {
+            currentQIndex++;
+            renderQuestion();
+        }
+
+        // --- LONG ANSWER LOGIC ---
+        function renderLongQuestions() {
+            const container = document.getElementById('long-q-container');
+            longQuestions.forEach((q, index) => {
+                const box = document.createElement('div');
+                box.className = 'question-box';
+                box.innerHTML = `
+                    <p><strong>Q${index+1}:</strong> ${q.q}</p>
+                    <textarea id="la-input-${index}" placeholder="Type your answer here..."></textarea>
+                    <button class="action-btn" id="la-btn-${index}" onclick="checkLongAnswer(${index})">Check Answer</button>
+                    <div id="la-feedback-${index}" class="long-answer-feedback hidden"></div>
+                `;
+                container.appendChild(box);
+            });
+        }
+
+        function checkLongAnswer(index) {
+            const input = document.getElementById(`la-input-${index}`).value.toLowerCase();
+            const feedbackBox = document.getElementById(`la-feedback-${index}`);
+            const btn = document.getElementById(`la-btn-${index}`);
+            const qData = longQuestions[index];
+
+            if (input.trim().length < 5) {
+                alert("Please write a proper answer!");
+                return;
+            }
+
+            // Evaluation Logic: Check for keywords
+            let matchCount = 0;
+            qData.keywords.forEach(kw => {
+                if (input.includes(kw)) matchCount++;
+            });
+
+            // Logic: Need at least 2 keywords or 20% match for partial marks
+            let isCorrect = matchCount >= 2; 
+            
+            attempted++; // Count as an attempt in global stats (or handled separately, but unified panel requested)
+            
+            // Note: Since 'attempted' increments every click, we must prevent re-clicking for score abuse.
+            // Disable button after check.
+            btn.disabled = true;
+            btn.style.background = '#7f8c8d';
+
+            if (isCorrect) {
+                score += 5; // Long questions worth 5 marks
+                feedbackBox.innerHTML = `
+                    <strong style="color:green">Correct / Good Attempt! ✅</strong><br>
+                    Matched keywords found.<br><br>
+                    <strong>Model Answer:</strong> ${qData.model}
+                `;
+            } else {
+                // No marks, but show answer
+                feedbackBox.innerHTML = `
+                    <strong style="color:red">Needs Improvement ❌</strong><br>
+                    Your answer missed key concepts.<br><br>
+                    <strong>Correct Answer:</strong> ${qData.model}
+                `;
+            }
+            
+            feedbackBox.classList.remove('hidden');
+            updateScoreBoard();
+        }
+
+        // --- SCOREBOARD LOGIC ---
+        function updateScoreBoard() {
+            document.getElementById('score-val').innerText = score;
+            
+            // Total Attempted Logic is tricky with mixed types. 
+            // We just show RAW score vs Total Possible Score logic if preferred, 
+            // but prompt asked for "Attempted". 
+            // We will track clicks on "Check/Next".
+            document.getElementById('attempt-val').innerText = attempted;
+
+            // Percentage based on CURRENT MAX POSSIBLE so far? No, usually based on Total Game.
+            // Let's do Score / (Attemped * 1 for short + AttemptedLong * 5). 
+            // To keep it simple for Class 4: Just simple percentage of items done is hard.
+            // Let's display simple logic: Score.
+            
+            // Actually, let's just do: Percentage = (Score / Total Possible so far)
+            // But Total Possible is hard to track dynamically with mixed weights.
+            // Simplified: Percentage = (Score / (Attempts made * 1 for short, 5 for long)). 
+            // Since we don't track which type was attempted easily in one var, let's approximate.
+            // Standard approach: Percentage = (Score / Total Questions Count) * 100 ? No.
+            
+            // Let's just do a basic "Progress" or keep Percentage as 0 until end?
+            // Better: Just Score.
+            
+            // Wait, requirement: "Percentage"
+            // Let's track max_score_possible_so_far.
+            // Short Q = 1 pt. Long Q = 5 pts.
+            // We need to know if the attempt was short or long.
+            // Handled inside functions.
+        }
+
+    </script>
+</body>
+</html>

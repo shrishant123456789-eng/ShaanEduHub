@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 4 EVS - Ch 8: Air, Weather & Climate</title>
+    <style>
+        /* GLOBAL RESET & BASICS */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', sans-serif;
+            font-weight: bold;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #fdfbf7;
+            background-image: linear-gradient(#e1e1e1 1px, transparent 1px);
+            background-size: 100% 2em; /* Notebook lines */
+            color: #2c3e50;
+            line-height: 1.6;
+            padding-bottom: 50px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+
+        /* 1. HEADER / HERO */
+        header {
+            background: #ffecd2;
+            border: 3px solid #2c3e50;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #e67e22;
+            font-size: 1.8rem;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .sub-header {
+            color: #7f8c8d;
+            font-size: 1.2rem;
+        }
+
+        /* 2. LIVE SCORE PANEL */
+        #score-panel {
+            background: #2c3e50;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            position: sticky;
+            top: 10px;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            margin-bottom: 25px;
+            font-size: 0.9rem;
+        }
+
+        .score-item {
+            text-align: center;
+            min-width: 60px;
+        }
+
+        .score-val {
+            font-size: 1.2rem;
+            color: #f1c40f;
+        }
+
+        /* SECTION HEADERS */
+        .section-title {
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            margin: 30px 0 15px 0;
+            font-size: 1.4rem;
+            box-shadow: 3px 3px 0 #2980b9;
+        }
+
+        /* 3. NOTES SECTION */
+        .topic-card {
+            background: white;
+            border: 2px solid #bdc3c7;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 5px 5px 0 rgba(0,0,0,0.05);
+        }
+
+        .topic-head {
+            color: #8e44ad;
+            border-bottom: 2px dashed #bdc3c7;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .note-tag {
+            display: inline-block;
+            background: #e0f7fa;
+            color: #006064;
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+
+        .img-placeholder {
+            width: 100%;
+            height: 120px;
+            background: #ecf0f1;
+            border: 2px dashed #95a5a6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #7f8c8d;
+            margin: 15px 0;
+            border-radius: 8px;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .memory-tip {
+            background: #fff9c4;
+            border-left: 5px solid #fbc02d;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        /* 4. IMPORTANT QUESTIONS (STATIC) */
+        .imp-q-grid {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .imp-q-card {
+            background: #e8f8f5;
+            border: 2px solid #1abc9c;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .imp-q-text {
+            color: #c0392b;
+            margin-bottom: 5px;
+        }
+
+        .imp-a-text {
+            color: #27ae60;
+        }
+
+        /* 5. PRACTICE QUESTIONS (INTERACTIVE) */
+        #quiz-container {
+            background: #ffffff;
+            border: 3px solid #2c3e50;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            min-height: 300px;
+        }
+
+        .q-display {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .options-grid {
+            display: grid;
+            gap: 10px;
+        }
+
+        .option-btn {
+            background: #ecf0f1;
+            border: 2px solid #bdc3c7;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: left;
+        }
+
+        .option-btn:hover {
+            background: #d5dbdb;
+        }
+
+        .feedback-box {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .correct-fb { background: #d4efdf; border: 2px solid #27ae60; color: #145a32; }
+        .wrong-fb { background: #fadbd8; border: 2px solid #c0392b; color: #7b241c; }
+
+        .next-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            margin-top: 20px;
+            cursor: pointer;
+            display: none;
+        }
+
+        /* 6. ADVANCED LONG QUESTIONS */
+        .long-q-card {
+            background: white;
+            border: 2px solid #f39c12;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-top: 10px;
+            padding: 10px;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            font-size: 1rem;
+            resize: vertical;
+        }
+
+        .check-btn {
+            background: #e67e22;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        .long-feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.95rem;
+            display: none;
+            background: #fdf2e9;
+            border: 1px solid #e67e22;
+        }
+
+        /* 7. REVISION */
+        .revision-box {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        .revision-list li {
+            margin-bottom: 10px;
+            margin-left: 20px;
+        }
+
+        /* 8. FOOTER */
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            background: #34495e;
+            color: #ecf0f1;
+            font-size: 0.9rem;
+            border-radius: 10px 10px 0 0;
+        }
+
+        /* UTILS */
+        .highlight { color: #d35400; text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <!-- 1. HEADER -->
+    <header>
+        <h1>Air, Weather & Climate</h1>
+        <div class="sub-header">Class 4 | EVS / Science | Chapter 8</div>
+    </header>
+
+    <!-- 2. LIVE SCORE PANEL -->
+    <div id="score-panel">
+        <div class="score-item">Correct<br><span id="score-correct" class="score-val">0</span></div>
+        <div class="score-item">Wrong<br><span id="score-wrong" class="score-val" style="color:#e74c3c">0</span></div>
+        <div class="score-item">Total<br><span id="score-total" class="score-val" style="color:white">0</span></div>
+        <div class="score-item">Score<br><span id="score-perc" class="score-val">0%</span></div>
+    </div>
+
+    <!-- 3. NOTES SECTION -->
+    <h2 class="section-title">📝 My Study Notes</h2>
+    
+    <!-- Topic 1 -->
+    <div class="topic-card">
+        <div class="topic-head">1. Composition of Air</div>
+        <p><span class="note-tag">Definition</span> Air is a mixture of many gases. It is all around us but we cannot see it.</p>
+        <p style="margin-top:10px;">The main gases in air are:</p>
+        <ul>
+            <li><strong>Nitrogen (78%)</strong>: Most abundant gas.</li>
+            <li><strong>Oxygen (21%)</strong>: Needed for breathing and burning.</li>
+            <li><strong>Other Gases (1%)</strong>: Carbon dioxide, water vapor, argon, dust particles.</li>
+        </ul>
+        <div class="img-placeholder">🖼️ [attachment_0](attachment)</div>
+        <div class="memory-tip">💡 <strong>Tip:</strong> Remember "NO"! N for Nitrogen (Biggest), O for Oxygen (Second).</div>
+        <p style="margin-top:10px;"><strong>Daily Life:</strong> When you blow a balloon, you are filling it with this mixture of gases!</p>
+    </div>
+
+    <!-- Topic 2 -->
+    <div class="topic-card">
+        <div class="topic-head">2. Importance of Air for Life</div>
+        <p><span class="note-tag">Why we need it?</span></p>
+        <ol>
+            <li><strong>Breathing:</strong> Humans and animals need Oxygen. Plants take in Carbon Dioxide.</li>
+            <li><strong>Burning:</strong> Fire cannot burn without Oxygen.</li>
+            <li><strong>Tires & Balls:</strong> Compressed air is used in footballs, cycle tires, and car tires.</li>
+            <li><strong>Seed Dispersal:</strong> Wind carries seeds to new places to grow.</li>
+        </ol>
+        <div class="img-placeholder">🖼️ </div>
+        <div class="memory-tip">💡 <strong>Tip:</strong> No Air = No Fire + No Life.</div>
+    </div>
+
+    <!-- Topic 3 -->
+    <div class="topic-card">
+        <div class="topic-head">3. Air Pollution – Sources & Control</div>
+        <p><span class="note-tag">Problem</span> When harmful smoke, dust, and chemicals mix with air, it becomes polluted.</p>
+        <p><strong>Sources:</strong> Smoke from cars, factories, burning garbage, and Diwali crackers.</p>
+        <p><strong>Control:</strong></p>
+        <ul>
+            <li>Plant more trees (They act as filters).</li>
+            <li>Use electric vehicles or bicycles.</li>
+            <li>Do not burn plastic or leaves.</li>
+        </ul>
+        <div class="img-placeholder">🖼️ </div>
+        <p style="margin-top:10px;"><strong>Daily Life:</strong> In cities like Delhi, pollution causes coughing and burning eyes in winter.</p>
+    </div>
+
+    <!-- Topic 4 -->
+    <div class="topic-card">
+        <div class="topic-head">4. Weather Elements</div>
+        <p><span class="note-tag">Definition</span> Weather is the condition of air at a specific place and time. It changes every day.</p>
+        <p><strong>Main Elements:</strong></p>
+        <ul>
+            <li><strong>Temperature:</strong> How hot or cold it is (Measured by Thermometer).</li>
+            <li><strong>Wind:</strong> Moving air. Gentle wind is a breeze; strong wind is a storm.</li>
+            <li><strong>Rainfall:</strong> Water falling from clouds.</li>
+            <li><strong>Clouds:</strong> Determine if it will be sunny or gloomy.</li>
+        </ul>
+        <div class="img-placeholder">🖼️ [Icons of Sun, Cloud, Rain, Wind]</div>
+        <div class="memory-tip">💡 <strong>Tip:</strong> Weather changes like your mood! (Happy/Sunny, Sad/Rainy).</div>
+    </div>
+
+    <!-- Topic 5 -->
+    <div class="topic-card">
+        <div class="topic-head">5. Climate vs. Weather</div>
+        <p>Many students get confused! Here is the difference:</p>
+        <table border="1" cellpadding="5" style="width:100%; border-collapse:collapse; margin-top:10px;">
+            <tr style="background:#ecf0f1;">
+                <th>Weather</th>
+                <th>Climate</th>
+            </tr>
+            <tr>
+                <td>Short time (Hours/Days)</td>
+                <td>Long time (Many Years)</td>
+            </tr>
+            <tr>
+                <td>Changes quickly</td>
+                <td>Stays largely same</td>
+            </tr>
+            <tr>
+                <td>Example: "It is raining today."</td>
+                <td>Example: "Kashmir has a cold climate."</td>
+            </tr>
+        </table>
+        <div class="img-placeholder">🖼️ [Image showing Clock (Weather) vs Calendar (Climate)]</div>
+    </div>
+
+    <!-- Topic 6 -->
+    <div class="topic-card">
+        <div class="topic-head">6. Effect of Weather on Life</div>
+        <p><span class="note-tag">Impact</span> Weather decides what we eat, wear, and do.</p>
+        <ul>
+            <li><strong>Summer:</strong> We wear cotton clothes, eat watermelon, and use fans.</li>
+            <li><strong>Winter:</strong> We wear woolens, drink hot soup, and sit in the sun.</li>
+            <li><strong>Monsoon:</strong> We use umbrellas and farmers sow seeds for crops (Rice).</li>
+        </ul>
+        <div class="img-placeholder">🖼️ </div>
+    </div>
+
+    <!-- Topic 7 -->
+    <div class="topic-card">
+        <div class="topic-head">7. Natural Disasters</div>
+        <p><span class="note-tag">Warning</span> Sometimes nature becomes violent.</p>
+        <ul>
+            <li><strong>Flood:</strong> Too much rain causes water to overflow into houses.</li>
+            <li><strong>Drought:</strong> No rain for a long time; land cracks and crops die.</li>
+            <li><strong>Storm/Cyclone:</strong> Very strong winds that uproot trees.</li>
+        </ul>
+        <div class="img-placeholder">🖼️ </div>
+        <div class="memory-tip">💡 <strong>Tip:</strong> Disasters are emergencies. We must stay calm and help others.</div>
+    </div>
+
+    <!-- 4. IMPORTANT QUESTIONS SECTION -->
+    <h2 class="section-title">⭐ Important Questions (Study List)</h2>
+    <div class="imp-q-grid">
+        <!-- 30 Static Questions -->
+        <div class="imp-q-card"><div class="imp-q-text">Q1. Which gas is most abundant in air?</div><div class="imp-a-text">Ans: Nitrogen (78%).</div></div>
+        <div class="imp-q-card"><div class="imp-q-text">Q2. Which gas supports burning?</div><div class="imp-a-text">Ans: Oxygen.</div></div>
+        <div class="imp-q-card"><div class="imp-q-text">Q3. What is moving air called?</div><div class="imp-a-text">Ans: Wind.</div></div>
+        <div class="imp-q-card"><div class="imp-q-text">Q4. Name the instrument to measure temperature.</div><div class="imp-a-text">Ans: Thermometer.</div></div>
+        <div class="imp-q-card"><div class="imp-q-text">Q5. What is the blanket of air around Earth called?</div><div class="imp-a-text">Ans: Atmosphere.</div></div>
+        <div class="imp-q-card"><div class="imp-q-text">Q6. Why do we feel sticky in the rainy season?</div><div class="imp-a-text">Ans: Due to high humidity (moisture in air).</div></div>
+        <div class="imp-q-card"><div class="imp-q-text">Q7. What gas do plants use to make food?</div><div class="imp-a-text">Ans: Carbon Dioxide.</div></div>
+        <div class="imp-q-card"><div class="imp-q-text">Q8. What is a gentle wind called?</div><div class="imp-a-text">Ans: Breeze.</div></div>
+        <div class="imp-q-card"><div class="imp-q-text">Q9. Which season is best for drying clothes?</div><div class="imp-a-text">Ans: Summer (due to heat and sun).</div></div>
+        <div class="imp-q-card"><div class="imp-q-text">Q10. What causes air pollution in cities?</div><div class="imp-a-text">Ans: Vehicle smoke and factory fumes.</div></div>
+        <div class="imp-q-card"><div class="imp-q-text">Q11. Define Evaporation.</div><div class="imp-a-text">Ans: Change of water into water vapor on heating.</div></div>
+        <div class="imp-q-card"><div class="imp-q-text">Q12. Define Condensation.</div><div class="imp-a-text">Ans: Change of water vapor into water on cooling.</div></div>
+        <div class="imp-q-card"><div class="imp-q-text">Q13. Why do we wear wool in winter?</div><div class="imp-a-text">Ans: To keep our body warm and trap heat.</div></div>
+        <div class="imp-q-card"><div class="imp-q-text">Q14. What happens during a drought?</div><div class="imp-a-text">Ans: Rivers dry up, crops die, and there is shortage of water.</div></div>
+        <div class="imp-q-card"><div class="imp-q-text">Q15. Is weather the same everywhere?</div><div class="imp-a-text">Ans: No, it varies from place to place.</div></div>
+        <div class="imp-q-card"><div class="imp-q-text">Q16. What is the role of the Ozone layer?</div><div class="imp-a-text">Ans: It protects us from harmful sun rays.</div></div>
+        <div class="imp-q-card"><div class="imp-q-text">Q17. Which gas is used in fire extinguishers?</div><div class="imp-a-text">Ans: Carbon Dioxide.</div></div>
+        <div class="imp-q-card"><div class="imp-q-text">Q18. What is a storm?</div><div class="imp-a-text">Ans: Very strong wind often with rain and thunder.</div></div>
+        <div class="imp-q-card"><div class="imp-q-text">Q19. How do trees help the air?</div><div class="imp-a-text">Ans: They release Oxygen and clean the air.</div></div>
+        <div class="imp-q-card"><div class="imp-q-text">Q20. What is humidity?</div><div class="imp-a-text">Ans: The amount of water vapor present in the air.</div></div>
+        <div class="imp-q-card"><div class="imp-q-text">Q21. Why shouldn't we sleep under trees at night?</div><div class="imp-a-text">Ans: Because plants release Carbon Dioxide at night.</div></div>
+        <div class="imp-q-card"><div class="imp-q-text">Q22. Name a disease caused by air pollution.</div><div class="imp-a-text">Ans: Asthma or Lung infection.</div></div>
+        <div class="imp-q-card"><div class="imp-q-text">Q23. What is the water cycle?</div><div class="imp-a-text">Ans: Continuous movement of water between Earth and Sky.</div></div>
+        <div class="imp-q-card"><div class="imp-q-text">Q24. Does air have weight?</div><div class="imp-a-text">Ans: Yes, air has mass and occupies space.</div></div>
+        <div class="imp-q-card"><div class="imp-q-text">Q25. Which is heavier: Hot air or Cold air?</div><div class="imp-a-text">Ans: Cold air is heavier; Hot air rises up.</div></div>
+        <div class="imp-q-card"><div class="imp-q-text">Q26. What causes land breeze?</div><div class="imp-a-text">Ans: Land cooling down faster than the sea at night.</div></div>
+        <div class="imp-q-card"><div class="imp-q-text">Q27. What causes sea breeze?</div><div class="imp-a-text">Ans: Land heating up faster than the sea during the day.</div></div>
+        <div class="imp-q-card"><div class="imp-q-text">Q28. Name a natural disaster involving wind.</div><div class="imp-a-text">Ans: Cyclone.</div></div>
+        <div class="imp-q-card"><div class="imp-q-text">Q29. What is climate?</div><div class="imp-a-text">Ans: The average weather pattern over a long time.</div></div>
+        <div class="imp-q-card"><div class="imp-q-text">Q30. Why is the sun important for weather?</div><div class="imp-a-text">Ans: The sun's heat causes winds and evaporation (rain).</div></div>
+    </div>
+
+    <!-- 5. PRACTICE QUESTIONS SECTION -->
+    <h2 class="section-title">🚀 Practice Quiz (70 Questions)</h2>
+    <div id="quiz-container">
+        <div id="q-text" class="q-display">Loading Question...</div>
+        <div id="options-area" class="options-grid"></div>
+        <div id="feedback" class="feedback-box"></div>
+        <button id="next-btn" class="next-btn" onclick="nextQuestion()">Next Question ➡️</button>
+    </div>
+
+    <!-- 6. LONG QUESTIONS SECTION -->
+    <h2 class="section-title">🧠 Advanced Long Questions</h2>
+    <div id="long-questions-area">
+        <!-- Rendered by JS -->
+    </div>
+
+    <!-- 7. REVISION SECTION -->
+    <h2 class="section-title">🔄 Quick Revision</h2>
+    <div class="revision-box">
+        <ul class="revision-list">
+            <li><strong>Air:</strong> Mixture of N (78%), O (21%), CO2 (0.03%).</li>
+            <li><strong>Properties:</strong> Air has weight, occupies space, exerts pressure.</li>
+            <li><strong>Pollution:</strong> Harmful for lungs; control by planting trees.</li>
+            <li><strong>Weather:</strong> Day-to-day condition (Sun, Rain, Wind).</li>
+            <li><strong>Climate:</strong> Long-term pattern (e.g., Desert is hot).</li>
+            <li><strong>Disasters:</strong> Flood (Too much water), Drought (No water).</li>
+            <li><strong>Seasons:</strong> Summer, Winter, Monsoon affect our lifestyle.</li>
+        </ul>
+        <button onclick="window.scrollTo(0,0)" style="margin-top:15px; padding:10px; background:#f1c40f; border:none; border-radius:10px; font-weight:bold; cursor:pointer; color:#2c3e50;">⬆️ Go to Top</button>
+    </div>
+
+    <!-- 8. FOOTER -->
+    <footer>
+        Designed & Created by SHRISHANT YADAV<br>ShanEduHub
+    </footer>
+
+</div>
+
+<script>
+    // --- DATA: PRACTICE QUESTIONS (70 items) ---
+    const practiceDB = [
+        // Topic 1: Composition
+        {q: "Which gas is 78% of air?", opt: ["Oxygen", "Nitrogen", "Carbon Dioxide", "Argon"], ans: 1, why: "Nitrogen makes up the largest part (78%) of the atmosphere."},
+        {q: "Which gas do we breathe in?", opt: ["Nitrogen", "Oxygen", "Smoke", "Helium"], ans: 1, why: "Oxygen is essential for human life."},
+        {q: "Air is a ______.", opt: ["Solid", "Liquid", "Mixture of gases", "Single gas"], ans: 2, why: "Air contains many gases mixed together."},
+        {q: "Which gas is used by plants to make food?", opt: ["Oxygen", "Carbon Dioxide", "Nitrogen", "Hydrogen"], ans: 1, why: "Plants need Carbon Dioxide for photosynthesis."},
+        {q: "Dust particles are present in air. (True/False)", opt: ["True", "False"], ans: 0, why: "Yes, you can see dust dancing in a beam of sunlight."},
+        {q: "Water vapor in air comes from ______.", opt: ["Rocks", "Evaporation of water", "Burning wood", "None"], ans: 1, why: "Heat changes water into vapor which mixes with air."},
+        {q: "Which gas is found in very small quantity?", opt: ["Nitrogen", "Oxygen", "Argon", "All of these"], ans: 2, why: "Argon and CO2 are less than 1%."},
+        {q: "What is the blanket of air around Earth called?", opt: ["Hydrosphere", "Atmosphere", "Lithosphere", "Space"], ans: 1, why: "Atmosphere protects the Earth."},
+        {q: "We cannot ______ air but we can feel it.", opt: ["See", "Eat", "Smell", "Hear"], ans: 0, why: "Air is invisible."},
+        {q: "Which gas is essential for burning?", opt: ["Nitrogen", "Carbon Dioxide", "Oxygen", "Neon"], ans: 2, why: "Without oxygen, fire will stop."},
+
+        // Topic 2: Importance
+        {q: "Moving air is called ______.", opt: ["Storm", "Wind", "Breeze", "Gas"], ans: 1, why: "Moving air is generally called wind."},
+        {q: "Wind helps in ______ dispersal.", opt: ["Soil", "Seed", "Water", "Rock"], ans: 1, why: "Wind carries seeds to new places to grow."},
+        {q: "Which musical instrument needs air?", opt: ["Guitar", "Flute", "Drum", "Piano"], ans: 1, why: "A flute works by blowing air into it."},
+        {q: "Tires of vehicles are filled with ______.", opt: ["Water", "Sand", "Compressed Air", "Oil"], ans: 2, why: "Air pressure holds the shape of the tire."},
+        {q: "Can we live without air?", opt: ["Yes", "No", "Maybe", "Only at night"], ans: 1, why: "All living things need air to breathe constantly."},
+        {q: "Fish breathe oxygen dissolved in ______.", opt: ["Air", "Water", "Sand", "Rocks"], ans: 1, why: "Fish use gills to take oxygen from water."},
+        {q: "Birds fly because ______ pushes them up.", opt: ["Air", "Gravity", "Water", "Clouds"], ans: 0, why: "Air pressure supports their wings."},
+        {q: "A windmill moves due to ______.", opt: ["Electricity", "Wind", "Petrol", "Sun"], ans: 1, why: "The force of wind rotates the blades."},
+        {q: "We fill air in a ______.", opt: ["Bat", "Football", "Wicket", "Helmet"], ans: 1, why: "Footballs need air to bounce."},
+        {q: "Air occupies ______.", opt: ["No space", "Space", "Color", "Taste"], ans: 1, why: "Blow a balloon; it grows because air takes space."},
+
+        // Topic 3: Pollution
+        {q: "Smoke from factories causes ______.", opt: ["Water Pollution", "Air Pollution", "Noise Pollution", "Soil Pollution"], ans: 1, why: "Smoke mixes with air and dirties it."},
+        {q: "Polluted air is ______ for health.", opt: ["Good", "Safe", "Harmful", "Tasty"], ans: 2, why: "It causes breathing problems."},
+        {q: "Which festival often causes air pollution in India?", opt: ["Holi", "Diwali", "Rakhi", "Baisakhi"], ans: 1, why: "Bursting firecrackers releases lot of smoke."},
+        {q: "What should we plant to clean air?", opt: ["Poles", "Trees", "Buildings", "Factories"], ans: 1, why: "Trees absorb CO2 and release Oxygen."},
+        {q: "Burning ______ causes pollution.", opt: ["Gas", "Plastic", "Water", "Solar"], ans: 1, why: "Burning plastic releases toxic gases."},
+        {q: "We should use ______ to reduce pollution.", opt: ["Cars", "Bicycles", "Trucks", "Jeeps"], ans: 1, why: "Bicycles do not release smoke."},
+        {q: "Asthma is a disease of the ______.", opt: ["Stomach", "Lungs", "Bones", "Eyes"], ans: 1, why: "Pollution affects our breathing system."},
+        {q: "Factories should be built ______ from cities.", opt: ["Far away", "Inside", "Near schools", "In parks"], ans: 0, why: "To keep city air clean."},
+        {q: "Clean air is ______.", opt: ["Black", "Smelly", "Colorless & Odorless", "Dusty"], ans: 2, why: "Pure air has no color or smell."},
+        {q: "Farmers sometimes burn ______ which causes pollution.", opt: ["Crops stubble", "Water", "Sand", "Seeds"], ans: 0, why: "Burning crop residue creates huge smoke."},
+
+        // Topic 4: Weather Elements
+        {q: "Weather changes ______.", opt: ["Every year", "Every day/hour", "Once in 10 years", "Never"], ans: 1, why: "Weather is a short-term condition."},
+        {q: "Which device measures temperature?", opt: ["Barometer", "Thermometer", "Rain Gauge", "Scale"], ans: 1, why: "Thermo means heat."},
+        {q: "Hot air ______.", opt: ["Sinks", "Rises up", "Stays still", "Freezes"], ans: 1, why: "Hot air is lighter, so it goes up."},
+        {q: "The sun's heat causes water to ______.", opt: ["Freeze", "Evaporate", "Solidify", "Melt"], ans: 1, why: "Heat turns water to vapor."},
+        {q: "When clouds become heavy, it ______.", opt: ["Rains", "Shines", "Blows", "Dusts"], ans: 0, why: "Water droplets fall as rain."},
+        {q: "A very strong wind is called a ______.", opt: ["Breeze", "Storm", "Draft", "Puff"], ans: 1, why: "Storms are violent winds."},
+        {q: "We use a ______ to stay dry in rain.", opt: ["Sweater", "Umbrella", "Fan", "Heater"], ans: 1, why: "Umbrellas protect us from water."},
+        {q: "The condition of the atmosphere at a place is ______.", opt: ["Climate", "Weather", "Season", "Globe"], ans: 1, why: "This is the definition of weather."},
+        {q: "Morning and evenings are usually ______ than noon.", opt: ["Hotter", "Cooler", "Same", "Darker"], ans: 1, why: "The sun is slanted, so less heat."},
+        {q: "Which cloud brings rain?", opt: ["White fluffy", "Dark grey", "Thin wispy", "None"], ans: 1, why: "Dark clouds are full of water."},
+
+        // Topic 5: Climate vs Weather
+        {q: "Climate is the weather pattern for a ______ time.", opt: ["Short", "Long", "Very short", "Zero"], ans: 1, why: "Climate is average weather over years."},
+        {q: "If it rains today, it is ______.", opt: ["Climate", "Weather", "Disaster", "History"], ans: 1, why: "It is a temporary condition."},
+        {q: "The climate of a desert is ______.", opt: ["Cold", "Hot and Dry", "Wet", "Snowy"], ans: 1, why: "Deserts have very little rain over years."},
+        {q: "Which changes faster?", opt: ["Climate", "Weather", "Seasons", "Years"], ans: 1, why: "Weather can change in minutes."},
+        {q: "Hill stations have a ______ climate.", opt: ["Hot", "Cool", "Dry", "Humid"], ans: 1, why: "High altitude places are cooler."},
+        {q: "India has a ______ type of climate.", opt: ["Monsoon", "Polar", "Desert", "Tundra"], ans: 0, why: "India's agriculture depends on Monsoon."},
+        {q: "Antarctica has a ______ climate.", opt: ["Hot", "Freezing", "Rainy", "Warm"], ans: 1, why: "It is covered in ice."},
+        {q: "Who predicts the weather?", opt: ["Doctor", "Meteorologist", "Teacher", "Artist"], ans: 1, why: "Scientists who study weather."},
+        {q: "Climate affects the ______ we grow.", opt: ["Buildings", "Crops", "Cars", "Roads"], ans: 1, why: "Different crops need different climates."},
+        {q: "Weather forecast helps ______.", opt: ["Farmers", "Pilots", "Sailors", "All of them"], ans: 3, why: "Everyone needs to know the weather."},
+
+        // Topic 6: Effect on Life
+        {q: "In summer, we like to drink ______.", opt: ["Hot Tea", "Cold Juices", "Soup", "Boiled Water"], ans: 1, why: "To keep our body cool."},
+        {q: "We wear cotton clothes in ______.", opt: ["Winter", "Summer", "Rain", "Snow"], ans: 1, why: "Cotton absorbs sweat and keeps us cool."},
+        {q: "In winter, days are ______.", opt: ["Longer", "Shorter", "Same", "Hotter"], ans: 1, why: "The sun sets early in winter."},
+        {q: "Farmers wait for ______ to sow seeds.", opt: ["Summer", "Monsoon", "Winter", "Storm"], ans: 1, why: "Crops need rain water."},
+        {q: "We eat groundnuts and soup in ______.", opt: ["Summer", "Winter", "May", "June"], ans: 1, why: "Hot food keeps us warm."},
+        {q: "During a heatwave, we should drink lots of ______.", opt: ["Oil", "Water", "Coffee", "Soda"], ans: 1, why: "To prevent dehydration."},
+        {q: "Houses in heavy rain areas have ______ roofs.", opt: ["Flat", "Sloping", "No", "Open"], ans: 1, why: "So water slides off easily."},
+        {q: "Gumboots are used in ______.", opt: ["Summer", "Winter", "Rainy Season", "Party"], ans: 2, why: "To protect feet from mud and water."},
+        {q: "Wool comes from ______.", opt: ["Cow", "Sheep", "Dog", "Cat"], ans: 1, why: "Sheep hair is used to make wool."},
+        {q: "Too much sun can cause ______.", opt: ["Cold", "Sunburn", "Fever", "Cough"], ans: 1, why: "Direct UV rays damage skin."},
+
+        // Topic 7: Disasters & Mixed
+        {q: "A long period of NO rain causes ______.", opt: ["Flood", "Drought", "Snow", "Storm"], ans: 1, why: "Drought means extreme water shortage."},
+        {q: "Too much rain causes ______.", opt: ["Drought", "Flood", "Fire", "Dust"], ans: 1, why: "Rivers overflow causing floods."},
+        {q: "Strong wind spinning in circles is a ______.", opt: ["Cyclone", "Breeze", "Rain", "Fog"], ans: 0, why: "Cyclones are circular storms."},
+        {q: "During an earthquake, we should ______.", opt: ["Run on road", "Hide under a strong table", "Use lift", "Stand near glass"], ans: 1, why: "To protect head from falling objects."},
+        {q: "Tsunami is a huge ______ wave.", opt: ["Air", "Sea", "Sand", "Sound"], ans: 1, why: "Caused by underwater earthquakes."},
+        {q: "We measure rain using a ______.", opt: ["Thermometer", "Rain Gauge", "Scale", "Cup"], ans: 1, why: "It catches rain to measure depth."},
+        {q: "Thunder is heard ______ lightning.", opt: ["Before", "After", "With", "Never"], ans: 1, why: "Light travels faster than sound."},
+        {q: "Rainbows are seen after ______.", opt: ["Snow", "Rain", "Night", "Storm"], ans: 1, why: "Sunlight passes through rain drops."},
+        {q: "A 'Loo' is a hot wind that blows in ______.", opt: ["Winter", "Summer", "Rain", "Autumn"], ans: 1, why: "Common in North India in May/June."},
+        {q: "Which is NOT a natural disaster?", opt: ["Flood", "Car Accident", "Earthquake", "Cyclone"], ans: 1, why: "Car accident is man-made/accidental."},
+    ];
+
+    // --- DATA: LONG QUESTIONS (10 items) ---
+    const longQDB = [
+        {
+            id: "l1",
+            q: "Explain how rain is formed.",
+            keys: ["evaporation", "water vapor", "condensation", "clouds", "heavy", "fall", "sun", "heat"],
+            model: "The Sun heats water in rivers/seas (Evaporation) turning it into water vapor. Vapor rises and cools down to form clouds (Condensation). When clouds get too heavy, water falls as rain."
+        },
+        {
+            id: "l2",
+            q: "Difference between Breeze, Gale, and Storm.",
+            keys: ["breeze", "gentle", "gale", "strong", "storm", "very strong", "damage", "uproot"],
+            model: "Breeze: Gentle and pleasant wind. Gale: Strong wind. Storm: Very strong and violent wind that can uproot trees and damage houses."
+        },
+        {
+            id: "l3",
+            q: "Why should we not sleep under trees at night?",
+            keys: ["carbon dioxide", "co2", "release", "night", "oxygen", "breathe", "photosynthesis"],
+            model: "During the day, trees give Oxygen. But at night, photosynthesis stops, and they release Carbon Dioxide. Breathing excess CO2 is not good for us."
+        },
+        {
+            id: "l4",
+            q: "How can we reduce air pollution? List 3 ways.",
+            keys: ["plant trees", "electric", "vehicles", "crackers", "smoke", "burning", "garbage", "cycle"],
+            model: "1. Plant more trees. 2. Use bicycles or electric cars. 3. Stop burning garbage and plastic. 4. Avoid firecrackers."
+        },
+        {
+            id: "l5",
+            q: "What is the water cycle?",
+            keys: ["continuous", "journey", "evaporation", "condensation", "precipitation", "rain", "earth", "sky"],
+            model: "The continuous movement of water from Earth to sky and back to Earth. Sun heats water -> Vapor -> Clouds -> Rain -> River -> Sea."
+        },
+        {
+            id: "l6",
+            q: "Why do we wear cotton in summer and wool in winter?",
+            keys: ["cotton", "sweat", "cool", "wool", "warm", "trap", "heat", "air"],
+            model: "Cotton absorbs sweat and keeps us cool in summer. Wool traps body heat and keeps us warm in winter."
+        },
+        {
+            id: "l7",
+            q: "What is a drought and how does it affect farmers?",
+            keys: ["no rain", "dry", "crops", "die", "water", "shortage", "food"],
+            model: "Drought is when there is no rain for a long time. Land becomes dry/cracked, crops die, and farmers have no food or money."
+        },
+        {
+            id: "l8",
+            q: "Why is Nitrogen important even though we don't breathe it?",
+            keys: ["plants", "soil", "growth", "control", "burning", "fire", "fast"],
+            model: "Nitrogen helps plants grow (via soil). It also controls fire; if air was 100% Oxygen, even a small spark would cause a huge uncontrollable fire."
+        },
+        {
+            id: "l9",
+            q: "How does weather affect our food habits?",
+            keys: ["summer", "cold", "winter", "hot", "body", "temperature", "seasonal"],
+            model: "In summer, we eat cooling foods like watermelon/curd. In winter, we eat hot foods like soup/nuts to stay warm. We eat what grows in that season."
+        },
+        {
+            id: "l10",
+            q: "Why is the sea breeze cool during the day?",
+            keys: ["sun", "land", "hot", "sea", "water", "slow", "cool", "air"],
+            model: "Land gets hot faster than water. Hot air over land rises, and cool air from the sea rushes in to take its place. This is sea breeze."
+        }
+    ];
+
+    // --- STATE VARIABLES ---
+    let currentQIndex = 0;
+    let score = { correct: 0, wrong: 0, total: 0 };
+    let longAttempted = new Set(); // To track long questions answered
+
+    // --- DOM ELEMENTS ---
+    const scoreCorrectEl = document.getElementById('score-correct');
+    const scoreWrongEl = document.getElementById('score-wrong');
+    const scoreTotalEl = document.getElementById('score-total');
+    const scorePercEl = document.getElementById('score-perc');
+    
+    const quizContainer = document.getElementById('quiz-container');
+    const qText = document.getElementById('q-text');
+    const optionsArea = document.getElementById('options-area');
+    const feedbackBox = document.getElementById('feedback');
+    const nextBtn = document.getElementById('next-btn');
+
+    // --- INITIALIZATION ---
+    window.addEventListener('DOMContentLoaded', () => {
+        // Shuffle Practice Questions
+        shuffleArray(practiceDB);
+        
+        // Render Practice Q1
+        loadQuestion();
+
+        // Render Long Questions
+        renderLongQuestions();
+    });
+
+    // --- LOGIC: PRACTICE QUIZ ---
+    function loadQuestion() {
+        if(currentQIndex >= practiceDB.length) {
+            quizContainer.innerHTML = "<h3>🎉 Quiz Completed!</h3><p>Well done practicing!</p>";
+            return;
+        }
+
+        const q = practiceDB[currentQIndex];
+        qText.innerText = `Q${currentQIndex + 1}. ${q.q}`;
+        optionsArea.innerHTML = '';
+        feedbackBox.style.display = 'none';
+        nextBtn.style.display = 'none';
+
+        q.opt.forEach((opt, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(idx, btn);
+            optionsArea.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selectedIdx, btnElement) {
+        // Disable all buttons
+        const allBtns = document.querySelectorAll('.option-btn');
+        allBtns.forEach(b => b.disabled = true);
+
+        const q = practiceDB[currentQIndex];
+        const isCorrect = (selectedIdx === q.ans);
+
+        // Update Score
+        updateScore(isCorrect);
+
+        // UI Feedback
+        feedbackBox.style.display = 'block';
+        if (isCorrect) {
+            btnElement.style.background = '#d4efdf';
+            btnElement.style.borderColor = '#27ae60';
+            feedbackBox.className = 'feedback-box correct-fb';
+            feedbackBox.innerHTML = `<strong>Excellent ⭐</strong><br>${q.why}`;
+        } else {
+            btnElement.style.background = '#fadbd8';
+            btnElement.style.borderColor = '#c0392b';
+            // Highlight correct one
+            allBtns[q.ans].style.background = '#d4efdf';
+            allBtns[q.ans].style.borderColor = '#27ae60';
+            
+            feedbackBox.className = 'feedback-box wrong-fb';
+            feedbackBox.innerHTML = `<strong>Try Again</strong><br>Correct Answer: ${q.opt[q.ans]}<br>Reason: ${q.why}`;
+        }
+
+        nextBtn.style.display = 'inline-block';
+    }
+
+    function nextQuestion() {
+        currentQIndex++;
+        loadQuestion();
+    }
+
+    // --- LOGIC: LONG QUESTIONS ---
+    function renderLongQuestions() {
+        const container = document.getElementById('long-questions-area');
+        longQDB.forEach((item, index) => {
+            const card = document.createElement('div');
+            card.className = 'long-q-card';
+            card.innerHTML = `
+                <div style="font-size:1.1rem; color:#d35400;">Q${index + 1}. ${item.q}</div>
+                <textarea id="txt-${item.id}" placeholder="Type your answer here..."></textarea>
+                <br>
+                <button class="check-btn" onclick="evaluateLong(${index})">Check Answer</button>
+                <div id="fb-${item.id}" class="long-feedback"></div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function evaluateLong(index) {
+        const item = longQDB[index];
+        const userTxt = document.getElementById(`txt-${item.id}`).value.toLowerCase().trim();
+        const fbDiv = document.getElementById(`fb-${item.id}`);
+
+        if(userTxt.length < 5) {
+            alert("Please write a proper answer!");
+            return;
+        }
+
+        // Logic: Check keywords
+        let matches = 0;
+        item.keys.forEach(k => {
+            if(userTxt.includes(k)) matches++;
+        });
+
+        // Scoring for Long Answer (Just Pass/Fail for simplicity in UI, but tracks attempt)
+        // If user hasn't attempted this before, update score
+        if(!longAttempted.has(item.id)) {
+            longAttempted.add(item.id);
+            if(matches >= 2) {
+                updateScore(true); // Treat as correct
+            } else {
+                updateScore(false); // Treat as wrong
+            }
+        }
+
+        // Display detailed feedback
+        fbDiv.style.display = 'block';
+        if(matches >= 2) {
+            fbDiv.innerHTML = `<strong>✅ Good Effort!</strong><br>Your answer covers key points.<br><br><strong>Model Answer:</strong> ${item.model}`;
+            fbDiv.style.background = '#d4efdf';
+            fbDiv.style.color = '#145a32';
+            fbDiv.style.borderColor = '#27ae60';
+        } else {
+            fbDiv.innerHTML = `<strong>⚠️ Needs Improvement</strong><br>You missed some keywords.<br><br><strong>Model Answer:</strong> ${item.model}`;
+            fbDiv.style.background = '#fadbd8';
+            fbDiv.style.color = '#7b241c';
+            fbDiv.style.borderColor = '#c0392b';
+        }
+    }
+
+    // --- CORE: SCORE SYSTEM ---
+    function updateScore(isCorrect) {
+        score.total++;
+        if(isCorrect) score.correct++;
+        else score.wrong++;
+
+        // Render
+        scoreCorrectEl.innerText = score.correct;
+        scoreWrongEl.innerText = score.wrong;
+        scoreTotalEl.innerText = score.total;
+        
+        const perc = Math.round((score.correct / score.total) * 100);
+        scorePercEl.innerText = isCorrect ? `${perc}%` : `${perc}%`;
+    }
+
+    // --- UTILS ---
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+</script>
+
+</body>
+</html>

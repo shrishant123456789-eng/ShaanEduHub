@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 4 - Chapter 7: Paint & Digital Drawing</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+
+        :root {
+            --primary-color: #4a90e2;
+            --accent-color: #ff6b6b;
+            --bg-color: #fdf6e3; /* Notebook paper color */
+            --paper-line: #b3d4fc;
+            --text-color: #2c3e50;
+            --success-color: #27ae60;
+            --error-color: #c0392b;
+            --card-bg: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-weight: bold !important; /* STRICT REQUIREMENT */
+            font-family: 'Patrick Hand', 'Comic Sans MS', 'Chalkboard SE', sans-serif; /* Fallback to system handwritten fonts */
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            font-size: 18px;
+            overflow-x: hidden;
+        }
+
+        /* HERO SECTION */
+        header {
+            background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 3px dashed #333;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.2em;
+            color: #d32f2f;
+            text-shadow: 2px 2px 0px #fff;
+        }
+
+        h2 {
+            margin: 5px 0 0;
+            font-size: 1.4em;
+            color: #333;
+        }
+
+        /* LIVE SCORE PANEL */
+        #score-panel {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: #fff;
+            border-bottom: 2px solid #333;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            font-size: 1.1em;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .score-item {
+            margin: 0 5px;
+            padding: 2px 8px;
+            border-radius: 15px;
+            background: #eee;
+        }
+
+        .score-correct { color: var(--success-color); background: #e8f8f5; }
+        .score-wrong { color: var(--error-color); background: #fdedec; }
+        .score-total { color: var(--primary-color); background: #ebf5fb; }
+
+        /* SECTIONS */
+        section {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            border-bottom: 2px dashed #ccc;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2em;
+            color: var(--primary-color);
+            text-decoration: underline;
+            text-decoration-style: wavy;
+            margin-bottom: 25px;
+        }
+
+        /* NOTES STYLING */
+        .topic-card {
+            background: var(--card-bg);
+            border: 2px solid #333;
+            border-radius: 15px; /* Rounded corners */
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+            position: relative;
+            background-image: linear-gradient(#e1e1e1 1px, transparent 1px);
+            background-size: 100% 1.5em; /* Notebook lines */
+        }
+
+        .topic-title {
+            font-size: 1.5em;
+            color: #d35400;
+            background: #fff;
+            display: inline-block;
+            padding: 0 10px;
+            border: 2px solid #333;
+            border-radius: 10px;
+            margin-top: -35px;
+            margin-bottom: 15px;
+        }
+
+        .icon-box {
+            display: inline-block;
+            background: #f0f0f0;
+            border: 1px solid #999;
+            padding: 5px;
+            border-radius: 5px;
+            margin: 0 5px;
+            vertical-align: middle;
+            font-size: 0.9em;
+        }
+
+        .memory-tip {
+            background: #fff9c4;
+            border-left: 5px solid #fbc02d;
+            padding: 10px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .indian-example {
+            background: #e1bee7;
+            border-left: 5px solid #8e24aa;
+            padding: 10px;
+            margin: 15px 0;
+            border-radius: 5px;
+            color: #4a148c;
+        }
+
+        .placeholder-box {
+            width: 100%;
+            height: 150px;
+            background: #eee;
+            border: 2px dashed #999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+            color: #777;
+            font-size: 0.9em;
+            border-radius: 10px;
+        }
+
+        /* IMPORTANT QUESTIONS */
+        .imp-q-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border-left: 5px solid var(--accent-color);
+        }
+
+        /* PRACTICE QUIZ */
+        #quiz-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            border: 3px solid var(--primary-color);
+            text-align: center;
+        }
+
+        .question-text {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        @media (min-width: 600px) {
+            .options-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        .option-btn {
+            padding: 15px;
+            background: #f8f9fa;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover { background: #e9ecef; }
+        
+        .feedback-box {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+        }
+        .feedback-correct { background: #d4edda; color: #155724; border: 2px solid #c3e6cb; }
+        .feedback-wrong { background: #f8d7da; color: #721c24; border: 2px solid #f5c6cb; }
+
+        /* LONG QUESTIONS */
+        .long-q-card {
+            background: #fff;
+            padding: 20px;
+            border: 2px solid #333;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1em;
+            resize: vertical;
+        }
+
+        .check-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 1.1em;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .long-feedback {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            background: #f1f1f1;
+            display: none;
+        }
+
+        /* REVISION */
+        .revision-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 15px;
+            text-align: center;
+        }
+        .rev-item {
+            background: #fff;
+            padding: 10px;
+            border: 1px solid #333;
+            border-radius: 8px;
+        }
+
+        /* FOOTER */
+        footer {
+            background: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        /* Utility */
+        .hidden { display: none; }
+        .btn-next {
+            background: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 20px;
+            margin-top: 15px;
+            cursor: pointer;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>CLASS 4 - COMPUTER</h1>
+        <h2>CHAPTER 7: Paint & Digital Drawing</h2>
+    </header>
+
+    <div id="score-panel">
+        <div class="score-item score-correct">Correct: <span id="score-val">0</span></div>
+        <div class="score-item score-wrong">Wrong: <span id="wrong-val">0</span></div>
+        <div class="score-item score-total">Total: <span id="total-val">0</span></div>
+        <div class="score-item">Score: <span id="percent-val">0%</span></div>
+    </div>
+
+    <!-- NOTES SECTION -->
+    <section id="notes-section">
+        <h3 class="section-title">Class Notes 📝</h3>
+
+        <!-- Topic 1 -->
+        <div class="topic-card">
+            <div class="topic-title">1. Opening MS Paint</div>
+            <p><strong>Definition:</strong> MS Paint is a simple program used to draw, colour, and edit pictures on a computer.</p>
+            <div class="indian-example">
+                🏠 <strong>Indian Life Example:</strong> Just like you take out your drawing book from your school bag, we open Paint to start drawing on the computer screen!
+            </div>
+            <p><strong>Steps to Open:</strong></p>
+            <ol>
+                <li>Click on the <strong>Start Button</strong>.</li>
+                <li>Scroll down to <strong>Windows Accessories</strong>.</li>
+                <li>Click on <strong>Paint</strong>.</li>
+            </ol>
+            <div class="placeholder-box">[Image: Screenshot showing Start Menu -> Windows Accessories -> Paint]</div>
+            <div class="memory-tip">
+                🎨 <strong>Memory Tip:</strong> Remember "S-W-P" (Start - Windows - Paint).
+            </div>
+        </div>
+
+        <!-- Topic 2 -->
+        <div class="topic-card">
+            <div class="topic-title">2. Basic Drawing Tools</div>
+            <p><strong>Where are they?</strong> In the <strong>Home Tab</strong> inside the <strong>Tools Group</strong>.</p>
+            
+            <ul>
+                <li>✏️ <strong>Pencil Tool:</strong> Used for free-hand drawing (like writing your name).</li>
+                <li>🖌️ <strong>Brushes:</strong> Used to draw with different textures (crayon, marker, oil paint, watercolor).</li>
+                <li>⬜ <strong>Shapes:</strong> Ready-made shapes like Rectangle, Oval, Triangle, and Stars.</li>
+                <li>🪣 <strong>Fill with Color:</strong> Used to fill a closed shape with selected color.</li>
+            </ul>
+
+            <div class="indian-example">
+                🏫 <strong>School Task:</strong> Use the Rectangle tool to draw your school blackboard and Fill tool to color it black!
+            </div>
+            <div class="placeholder-box">[Image: Icons of Pencil, Brush, Bucket, and Shapes group]</div>
+        </div>
+
+        <!-- Topic 3 -->
+        <div class="topic-card">
+            <div class="topic-title">3. Colour Selection</div>
+            <p>To make our drawing beautiful, we need colors!</p>
+            <ul>
+                <li><strong>Color 1 (Foreground Color):</strong> Used for Pencil and Brushes (Outline color).</li>
+                <li><strong>Color 2 (Background Color):</strong> Used for the Eraser and shape fills.</li>
+            </ul>
+            <p><strong>How to choose?</strong> Click on Color 1, then click any color box in the <strong>Colors Group</strong>.</p>
+            <div class="memory-tip">
+                💡 <strong>Tip:</strong> Left click uses Color 1. Right click uses Color 2!
+            </div>
+        </div>
+
+        <!-- Topic 4 -->
+        <div class="topic-card">
+            <div class="topic-title">4. Copying and Moving</div>
+            <p>Why draw the same flower 10 times? Just draw one and COPY it!</p>
+            
+            <p><strong>Steps to Copy:</strong></p>
+            <ol>
+                <li>Use <strong>Select Tool</strong> to draw a box around the object.</li>
+                <li>Click <strong>Copy</strong> (or press Ctrl + C).</li>
+                <li>Click <strong>Paste</strong> (or press Ctrl + V).</li>
+            </ol>
+            
+            <p><strong>Moving (Cut & Paste):</strong> Removes the object from one place and puts it in another.</p>
+            <div class="indian-example">
+                🌸 <strong>Rangoli Time:</strong> Draw one Rangoli pattern, Copy it, and Paste it 4 times to complete the design quickly!
+            </div>
+        </div>
+
+        <!-- Topic 5 -->
+        <div class="topic-card">
+            <div class="topic-title">5. Eraser Tool Practice</div>
+            <p>Made a mistake? Don't worry!</p>
+            <ul>
+                <li>Select the <strong>Eraser Tool</strong> (Pink rubber icon).</li>
+                <li>Click and drag over the mistake to remove it.</li>
+            </ul>
+            <div class="memory-tip">
+                📏 <strong>Pro Tip:</strong> Press <strong>Ctrl + Plus(+)</strong> to make the eraser bigger!
+            </div>
+        </div>
+
+        <!-- Topic 6 -->
+        <div class="topic-card">
+            <div class="topic-title">6. Drawing a Creative Picture</div>
+            <p>Let's combine tools to make a Scenery.</p>
+            <ol>
+                <li>Use <strong>Line Tool</strong> for mountains.</li>
+                <li>Use <strong>Oval Tool</strong> for the Sun.</li>
+                <li>Use <strong>Pencil</strong> for birds.</li>
+                <li>Use <strong>Fill with Color</strong> to color the sky blue and grass green.</li>
+            </ol>
+            <div class="indian-example">
+                🇮🇳 <strong>Project:</strong> Drawing the Indian Flag using Rectangle tool (for bands) and Oval/Line tools (for Ashoka Chakra).
+            </div>
+            <div class="placeholder-box">[Image: Simple scenery drawing created in Paint]</div>
+        </div>
+
+        <!-- Topic 7 -->
+        <div class="topic-card">
+            <div class="topic-title">7. Saving Artwork</div>
+            <p>If you close the computer without saving, your drawing will vanish!</p>
+            <p><strong>Steps:</strong></p>
+            <ol>
+                <li>Click on the <strong>File</strong> tab (Blue button).</li>
+                <li>Click <strong>Save</strong>.</li>
+                <li>Type a name (e.g., "MyDiwaliCard").</li>
+                <li>Click <strong>Save Button</strong>.</li>
+            </ol>
+            <div class="memory-tip">
+                💾 <strong>Shortcut:</strong> Press <strong>Ctrl + S</strong> to save quickly.
+            </div>
+        </div>
+
+        <!-- Topic 8 -->
+        <div class="topic-card">
+            <div class="topic-title">8. Understanding Icons</div>
+            <p>Match the tool to the work:</p>
+            <ul>
+                <li>🔍 <strong>Magnifier:</strong> Zooms in to see details (like a detective!).</li>
+                <li>🅰️ <strong>Text Tool:</strong> Used to type your name on the drawing.</li>
+                <li>🧪 <strong>Color Picker:</strong> Picks a color from the drawing to use again.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- IMPORTANT QUESTIONS SECTION -->
+    <section id="important-questions">
+        <h3 class="section-title">Important Questions (Exam Special) 🌟</h3>
+        <div id="imp-q-container">
+            <!-- Content filled by JS -->
+        </div>
+    </section>
+
+    <!-- PRACTICE QUESTIONS SECTION -->
+    <section id="practice-questions">
+        <h3 class="section-title">Practice Quiz (70 Questions) 🚀</h3>
+        <div id="quiz-container">
+            <div id="quiz-progress">Question 1 of 70</div>
+            <div id="question-text" class="question-text">Loading...</div>
+            <div id="options-grid" class="options-grid"></div>
+            <div id="feedback" class="feedback-box"></div>
+            <button id="next-btn" class="btn-next hidden" onclick="nextQuestion()">Next Question ➡️</button>
+        </div>
+    </section>
+
+    <!-- ADVANCED LONG QUESTIONS -->
+    <section id="long-questions">
+        <h3 class="section-title">Advanced Long Answer Zone 🧠</h3>
+        <p style="text-align:center;">Type your answer. The computer will check for keywords!</p>
+        <div id="long-q-container">
+            <!-- Content filled by JS -->
+        </div>
+    </section>
+
+    <!-- REVISION SECTION -->
+    <section id="revision">
+        <h3 class="section-title">Quick Revision ⚡</h3>
+        <div class="revision-grid">
+            <div class="rev-item">✏️<br>Pencil<br>(Freehand)</div>
+            <div class="rev-item">🪣<br>Fill<br>(Coloring)</div>
+            <div class="rev-item">🧴<br>Eraser<br>(Corrector)</div>
+            <div class="rev-item">💾<br>Ctrl+S<br>(Save)</div>
+            <div class="rev-item">📋<br>Ctrl+C<br>(Copy)</div>
+            <div class="rev-item">📑<br>Ctrl+V<br>(Paste)</div>
+            <div class="rev-item">🅰️<br>Text<br>(Typing)</div>
+            <div class="rev-item">🔍<br>Zoom<br>(Magnifier)</div>
+        </div>
+    </section>
+
+    <footer>
+        <p>Designed & Created by SHRISHANT YADAV<br>ShanEduHub</p>
+    </footer>
+
+    <script>
+        // DATA: IMPORTANT QUESTIONS (30)
+        const importantQuestions = [
+            { q: "What is MS Paint?", a: "MS Paint is a graphics program used to draw, color, and edit pictures on a computer." },
+            { q: "Which tool is used for freehand drawing?", a: "The Pencil tool is used for freehand drawing." },
+            { q: "What is the shortcut key to Save a drawing?", a: "Ctrl + S" },
+            { q: "Which tool fills the entire shape with color?", a: "The Fill with Color tool (Bucket icon)." },
+            { q: "What is the use of the Magnifier tool?", a: "It is used to zoom in and see the drawing in larger size." },
+            { q: "Which group contains the Rectangle and Oval tools?", a: "The Shapes group." },
+            { q: "Difference between Copy and Cut?", a: "Copy makes a duplicate. Cut moves the original object to a new place." },
+            { q: "What is Color 1 used for?", a: "Color 1 is the foreground color, used for outlines and pencil/brushes." },
+            { q: "What is Color 2 used for?", a: "Color 2 is the background color, used for eraser and shape fills." },
+            { q: "How do you increase Eraser size?", a: "By pressing Ctrl and '+' (plus) key." },
+            { q: "Which tool is used to write text?", a: "The Text tool (represented by 'A')." },
+            { q: "Where is the Ribbon located?", a: "It is located at the top of the Paint window." },
+            { q: "What is the shortcut for Copy?", a: "Ctrl + C" },
+            { q: "What is the shortcut for Paste?", a: "Ctrl + V" },
+            { q: "Which tool picks a color from an existing drawing?", a: "The Color Picker tool (Eye Dropper)." },
+            { q: "Can we draw a perfect circle in Paint?", a: "Yes, by holding the Shift key while using the Oval tool." },
+            { q: "How to select a free-form area?", a: "Use the Free-form Select tool." },
+            { q: "What is the default background color in Paint?", a: "White." },
+            { q: "Which tab has the Save option?", a: "The File tab." },
+            { q: "Name two types of brushes.", a: "Airbrush and Crayon." },
+            { q: "What happens if we click 'New' in File menu?", a: "A new blank drawing area opens." },
+            { q: "How to draw a straight line?", a: "Hold the Shift key while using the Line tool." },
+            { q: "Which bar shows the zoom level?", a: "The Status Bar (at the bottom)." },
+            { q: "What is the Quick Access Toolbar?", a: "It contains shortcuts like Save, Undo, and Redo." },
+            { q: "What does Ctrl + Z do?", a: "It Undo's the last action (goes back one step)." },
+            { q: "Can we set our drawing as Desktop Wallpaper?", a: "Yes, via File > Set as desktop background." },
+            { q: "What is the extension of a Paint file?", a: ".png or .jpg" },
+            { q: "Which key deletes the selected object?", a: "The Delete key." },
+            { q: "How to select the whole drawing?", a: "Press Ctrl + A." },
+            { q: "Can we resize a picture in Paint?", a: "Yes, using the Resize option in the Image group." }
+        ];
+
+        // DATA: PRACTICE QUESTIONS (70)
+        const practiceQuestions = [
+            // BASIC TOOLS
+            { q: "Which tool looks like a bucket?", options: ["Pencil", "Fill with Color", "Brush", "Eraser"], correct: 1, why: "The bucket icon represents pouring color into a shape." },
+            { q: "The Pencil tool is used for drawing straight lines only. (True/False)", options: ["True", "False"], correct: 1, why: "Pencil is for freehand drawing, not just straight lines." },
+            { q: "Which tool is used to spray color?", options: ["Airbrush", "Marker", "Pencil", "Line"], correct: 0, why: "Airbrush sprays paint like a spray can." },
+            { q: "To draw a perfect square, hold the ___ key.", options: ["Ctrl", "Alt", "Shift", "Enter"], correct: 2, why: "Shift key constraints the Rectangle tool to a Square." },
+            { q: "The Eraser tool is used to ___ mistakes.", options: ["Highlight", "Remove", "Copy", "Save"], correct: 1, why: "Eraser removes parts of the drawing." },
+            { q: "Which tool helps you type your name?", options: ["Text Tool", "Pencil", "Brush", "Bucket"], correct: 0, why: "The Text tool (A) adds typed text." },
+            { q: "The shape tool used to draw a circle is called ___.", options: ["Circle", "Round", "Oval", "Ball"], correct: 2, why: "It is technically called the Oval tool." },
+            { q: "Polygon tool is used to draw shapes with many ___.", options: ["Curves", "Sides", "Colors", "Texts"], correct: 1, why: "Polygons are shapes with multiple straight sides." },
+            { q: "To draw a cloud, you can use the ___ tool.", options: ["Cloud Callout", "Line", "Square", "Triangle"], correct: 0, why: "Cloud Callout is a shape in the Shapes group." },
+            { q: "The Curve tool allows you to bend a line ___ times.", options: ["1", "2", "3", "4"], correct: 1, why: "You can bend a curve twice in MS Paint." },
+
+            // COLORS
+            { q: "Color 1 is usually the ___ color.", options: ["Background", "Foreground", "Eraser", "Invisible"], correct: 1, why: "Color 1 is foreground/outline." },
+            { q: "To change the background color of a shape, we use Color 2. (True/False)", options: ["True", "False"], correct: 0, why: "True, Fill uses Color 2 if you select 'Solid Fill'." },
+            { q: "Which tool picks a color from the canvas?", options: ["Color Picker", "Eraser", "Zoom", "Select"], correct: 0, why: "Color Picker (Dropper) samples color." },
+            { q: "To open the 'Edit Colors' dialog box, click on ___.", options: ["Edit Colors", "View", "File", "Text"], correct: 0, why: "It is located in the Colors group." },
+            { q: "The default foreground color is ___.", options: ["White", "Black", "Red", "Blue"], correct: 1, why: "Paint starts with Black as Color 1." },
+            { q: "The default background color is ___.", options: ["White", "Black", "Green", "Yellow"], correct: 0, why: "The canvas starts White." },
+            { q: "Right-clicking with the Eraser replaces Color 1 with Color 2. (True/False)", options: ["True", "False"], correct: 0, why: "This is a color replacement trick in Paint!" },
+            { q: "Which group contains the Color Palette?", options: ["Tools", "Shapes", "Colors", "Image"], correct: 2, why: "It is the Colors group." },
+            { q: "How many colors are in the basic palette row?", options: ["10", "20", "30", "5"], correct: 1, why: "Standard row has 10, expanded has 20." },
+            { q: "Can you create custom colors in Paint?", options: ["Yes", "No"], correct: 0, why: "Yes, via 'Edit Colors'." },
+
+            // COMMANDS & SHORTCUTS
+            { q: "Shortcut for Undo is ___.", options: ["Ctrl+Z", "Ctrl+Y", "Ctrl+X", "Ctrl+C"], correct: 0, why: "Ctrl+Z undoes the last action." },
+            { q: "Shortcut for Redo is ___.", options: ["Ctrl+Z", "Ctrl+Y", "Ctrl+R", "Ctrl+D"], correct: 1, why: "Ctrl+Y redos the undone action." },
+            { q: "Ctrl + N opens a ___.", options: ["New File", "Old File", "Save Dialog", "Exit"], correct: 0, why: "N stands for New." },
+            { q: "Ctrl + O is used to ___.", options: ["Open", "Close", "Output", "Order"], correct: 0, why: "O stands for Open." },
+            { q: "To Select All, press ___.", options: ["Ctrl+S", "Ctrl+A", "Ctrl+X", "Shift+A"], correct: 1, why: "A stands for All." },
+            { q: "Which key is used to delete a selected object?", options: ["Backspace", "Delete", "Enter", "Shift"], correct: 1, why: "Delete key removes selection." },
+            { q: "To copy an object while dragging, hold ___.", options: ["Ctrl", "Alt", "Shift", "Tab"], correct: 0, why: "Ctrl + Drag creates a copy." },
+            { q: "Which command removes the item and saves it to clipboard?", options: ["Cut", "Copy", "Paste", "Delete"], correct: 0, why: "Cut removes and stores." },
+            { q: "Where is the Paste button located?", options: ["Clipboard Group", "Tools Group", "Shapes Group", "View Tab"], correct: 0, why: "First group on the left." },
+            { q: "Can you flip a picture in Paint?", options: ["Yes", "No"], correct: 0, why: "Using Rotate > Flip Vertical/Horizontal." },
+
+            // INTERFACE
+            { q: "The top bar showing the file name is called ___.", options: ["Title Bar", "Menu Bar", "Status Bar", "Task Bar"], correct: 0, why: "Title bar is at the very top." },
+            { q: "The large white area where you draw is called ___.", options: ["Drawing Area", "Playground", "Screen", "Board"], correct: 0, why: "It's called Canvas or Drawing Area." },
+            { q: "The Ribbon contains Tabs and ___.", options: ["Groups", "Lists", "Files", "Folders"], correct: 0, why: "Ribbon structure: Tabs > Groups > Commands." },
+            { q: "Zoom slider is present on the ___.", options: ["Title Bar", "Status Bar", "Menu Bar", "Ruler"], correct: 1, why: "Bottom right corner on Status Bar." },
+            { q: "Which tab is used to view the drawing in full screen?", options: ["Home", "View", "File", "Text"], correct: 1, why: "View tab controls display." },
+            { q: "Rulers help to ___ the drawing.", options: ["Measure", "Color", "Erase", "Save"], correct: 0, why: "Rulers show measurements." },
+            { q: "Gridlines help in ___.", options: ["Coloring", "Aligning", "Saving", "Printing"], correct: 1, why: "Gridlines help align shapes precisely." },
+            { q: "The 'X' button at top right is used to ___.", options: ["Maximize", "Minimize", "Close", "Help"], correct: 2, why: "X closes the application." },
+            { q: "Start button is part of Paint.", options: ["True", "False"], correct: 1, why: "Start button is part of Windows Taskbar, not Paint." },
+            { q: "Paint is an Operating System.", options: ["True", "False"], correct: 1, why: "False, Paint is an Application Software." },
+
+            // ADVANCED/LOGICAL
+            { q: "If you draw a circle without closing it, can you fill it with color?", options: ["Yes", "No"], correct: 1, why: "Color will leak out if the shape is not closed!" },
+            { q: "Which selection shape is irregular?", options: ["Rectangular", "Free-form", "Square", "Circle"], correct: 1, why: "Free-form allows custom selection shapes." },
+            { q: "Transparent Selection makes the background ___.", options: ["White", "Black", "Transparent", "Blue"], correct: 2, why: "It removes the background color from selection." },
+            { q: "To draw a star, go to ___.", options: ["Tools", "Shapes", "Brushes", "Colors"], correct: 1, why: "Stars are in the Shapes library." },
+            { q: "Can we crop images in Paint?", options: ["Yes", "No"], correct: 0, why: "Yes, Select area > Crop." },
+            { q: "What tool allows you to zoom into a specific part?", options: ["Magnifier", "Resizer", "Selector", "Cropper"], correct: 0, why: "The Magnifier glass icon." },
+            { q: "Which file format creates a high quality photo?", options: [".txt", ".mp3", ".jpg", ".doc"], correct: 2, why: ".jpg and .png are image formats." },
+            { q: "To make a brush stroke thicker, click on ___.", options: ["Size", "Color", "Paste", "Select"], correct: 0, why: "Size dropdown changes thickness." },
+            { q: "Can we type in Bold in Paint?", options: ["Yes", "No"], correct: 0, why: "Text toolbar has Bold (B) option." },
+            { q: "Which tool looks like a dropper?", options: ["Color Picker", "Pencil", "Brush", "Fill"], correct: 0, why: "Dropper picks color." },
+
+            // MIXED BAG
+            { q: "You cannot undo more than once.", options: ["True", "False"], correct: 1, why: "You can undo multiple steps." },
+            { q: "Paint button creates a new folder.", options: ["True", "False"], correct: 1, why: "It opens the file menu." },
+            { q: "You can rotate an image by 90 degrees.", options: ["True", "False"], correct: 0, why: "Rotate Right 90 is an option." },
+            { q: "Sketches are always Black and White.", options: ["True", "False"], correct: 1, why: "You can sketch in any color." },
+            { q: "The keyboard shortcut for Print is ___.", options: ["Ctrl+P", "Ctrl+O", "Ctrl+I", "Ctrl+D"], correct: 0, why: "P for Print." },
+            { q: "Resize is used to change ___.", options: ["Color", "Dimensions", "Name", "Location"], correct: 1, why: "Dimensions (Width and Height)." },
+            { q: "Skew command ___ the image.", options: ["Slants", "Deletes", "Colors", "Saves"], correct: 0, why: "Skew makes the image slant horizontally or vertically." },
+            { q: "Paint 3D is the newer version of Paint.", options: ["True", "False"], correct: 0, why: "True, usually available in Windows 10/11." },
+            { q: "You can draw with a mouse.", options: ["True", "False"], correct: 0, why: "Mouse is the primary input device for Paint." },
+            { q: "Can you draw on a touch screen laptop with a finger?", options: ["Yes", "No"], correct: 0, why: "Yes, Paint supports touch." },
+            
+            // SCENARIO
+            { q: "Rohan wants to draw a smiley face. Which tool for the face outline?", options: ["Line", "Oval", "Rectangle", "Triangle"], correct: 1, why: "Oval is used for circular faces." },
+            { q: "Sita's drawing is too small. What should she use?", options: ["Crop", "Resize", "Rotate", "Cut"], correct: 1, why: "Resize can make it bigger." },
+            { q: "Identify the icon: ✂️", options: ["Copy", "Cut", "Paste", "Select"], correct: 1, why: "Scissors represent Cut." },
+            { q: "Identify the icon: 📄 (Double page)", options: ["Copy", "Cut", "Paste", "Delete"], correct: 0, why: "Two pages represent Copy." },
+            { q: "Identify the icon: 💾", options: ["Open", "Save", "Print", "New"], correct: 1, why: "Floppy disk represents Save." },
+            { q: "Can you insert a picture into Paint?", options: ["Yes", "No"], correct: 0, why: "Using 'Paste From' option." },
+            { q: "Which tool is best for writing your signature?", options: ["Text", "Pencil", "Line", "Rectangle"], correct: 1, why: "Pencil mimics handwriting." },
+            { q: "The maximize button turns into ___ when clicked.", options: ["Restore Down", "Minimize", "Close", "Hide"], correct: 0, why: "It toggles between Maximize and Restore." },
+            { q: "Status bar shows coordinates of the mouse.", options: ["True", "False"], correct: 0, why: "True, bottom left corner." },
+            { q: "Paint allows layers like Photoshop.", options: ["True", "False"], correct: 1, why: "False, MS Paint does not support layers." }
+        ];
+
+        // DATA: ADVANCED LONG QUESTIONS (10)
+        const longQuestions = [
+            {
+                q: "1. Write the steps to Draw a Hut using shapes.",
+                keywords: ["rectangle", "triangle", "line", "fill", "roof", "door", "window"],
+                answer: "1. Select Rectangle tool to draw the walls and door.\n2. Select Triangle tool to draw the roof.\n3. Use Line tool for details.\n4. Use Fill with Color tool to paint the hut."
+            },
+            {
+                q: "2. How do you Copy a flower and Paste it 3 times?",
+                keywords: ["select", "copy", "ctrl+c", "paste", "ctrl+v", "drag", "group"],
+                answer: "1. Use Select tool to box the flower.\n2. Click Copy (Ctrl+C).\n3. Click Paste (Ctrl+V) three times.\n4. Drag each new flower to a position."
+            },
+            {
+                q: "3. Explain the difference between 'Save' and 'Save As'.",
+                keywords: ["save", "existing", "name", "new", "copy", "format", "location"],
+                answer: "Save updates the current file. Save As creates a new copy of the file with a different name or format."
+            },
+            {
+                q: "4. What is the use of the Polygon Tool? How do you use it?",
+                keywords: ["sides", "click", "drag", "double", "close", "shape"],
+                answer: "It draws shapes with straight sides. Drag first line, then click at points for other sides. Double click to close the shape."
+            },
+            {
+                q: "5. How do you set your drawing as Desktop Wallpaper?",
+                keywords: ["file", "menu", "set as desktop background", "fill", "tile", "center"],
+                answer: "Click File tab > Click 'Set as desktop background'. Choose Fill, Tile, or Center."
+            },
+            {
+                q: "6. How can you type your name in Red color?",
+                keywords: ["text", "tool", "click", "color", "red", "font", "type"],
+                answer: "1. Click Text tool (A).\n2. Click on canvas.\n3. Select Red from Colors.\n4. Type your name."
+            },
+            {
+                q: "7. Explain the function of the Magnifier tool with an example.",
+                keywords: ["zoom", "bigger", "details", "mistake", "pixel", "closer"],
+                answer: "It makes the drawing look bigger. Example: Use it to zoom in and erase a tiny dot mistake."
+            },
+            {
+                q: "8. What is Transparent Selection? Why is it useful?",
+                keywords: ["background", "white", "transparent", "overlap", "move", "hide"],
+                answer: "It makes the background of the selected area invisible. Useful when moving objects so they don't cover what's behind."
+            },
+            {
+                q: "9. Write steps to fix a mistake using the Eraser.",
+                keywords: ["eraser", "tool", "rub", "mistake", "size", "click", "drag"],
+                answer: "1. Click Eraser tool.\n2. Increase size if needed.\n3. Click and drag over the wrong part to remove it."
+            },
+            {
+                q: "10. How do you resize an image to 50%?",
+                keywords: ["resize", "image", "percentage", "50", "ok", "pixels"],
+                answer: "1. Click Select > Select All.\n2. Click Resize.\n3. Type 50 in Percentage Horizontal/Vertical.\n4. Click OK."
+            }
+        ];
+
+        // STATE VARIABLES
+        let currentQIndex = 0;
+        let score = 0;
+        let wrong = 0;
+        let totalAttempted = 0;
+        let longQScore = 0; // Separate internal tracking, adds to total marks
+
+        // DOM ELEMENTS
+        const impQContainer = document.getElementById('imp-q-container');
+        const longQContainer = document.getElementById('long-q-container');
+        const quizContainer = document.getElementById('quiz-container');
+        const scoreVal = document.getElementById('score-val');
+        const wrongVal = document.getElementById('wrong-val');
+        const totalVal = document.getElementById('total-val');
+        const percentVal = document.getElementById('percent-val');
+
+        // INIT FUNCTIONS
+        document.addEventListener('DOMContentLoaded', () => {
+            renderImportantQuestions();
+            renderPracticeQuestion();
+            renderLongQuestions();
+        });
+
+        // RENDER IMPORTANT QUESTIONS
+        function renderImportantQuestions() {
+            impQContainer.innerHTML = importantQuestions.map((item, index) => `
+                <div class="imp-q-card">
+                    <div><strong>Q${index + 1}:</strong> ${item.q}</div>
+                    <div style="margin-top:5px; color:#444;">👉 <em>${item.a}</em></div>
+                </div>
+            `).join('');
+        }
+
+        // PRACTICE QUIZ LOGIC
+        function renderPracticeQuestion() {
+            if (currentQIndex >= practiceQuestions.length) {
+                quizContainer.innerHTML = `
+                    <h3>🎉 Quiz Completed! 🎉</h3>
+                    <p>You answered all 70 questions!</p>
+                    <p>Check your final score above.</p>
+                `;
+                return;
+            }
+
+            const q = practiceQuestions[currentQIndex];
+            document.getElementById('quiz-progress').innerText = `Question ${currentQIndex + 1} of 70`;
+            document.getElementById('question-text').innerText = q.q;
+            
+            const optionsHtml = q.options.map((opt, i) => 
+                `<button class="option-btn" onclick="checkPracticeAnswer(${i})">${opt}</button>`
+            ).join('');
+            
+            document.getElementById('options-grid').innerHTML = optionsHtml;
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('next-btn').classList.add('hidden');
+        }
+
+        function checkPracticeAnswer(selectedIndex) {
+            const q = practiceQuestions[currentQIndex];
+            const feedbackEl = document.getElementById('feedback');
+            const btns = document.querySelectorAll('.option-btn');
+
+            // Disable buttons
+            btns.forEach(btn => btn.disabled = true);
+
+            totalAttempted++;
+            
+            if (selectedIndex === q.correct) {
+                score++;
+                feedbackEl.className = 'feedback-box feedback-correct';
+                feedbackEl.innerHTML = `<strong>Excellent! ⭐</strong><br>${q.why}`;
+                btns[selectedIndex].style.background = '#d4edda';
+            } else {
+                wrong++;
+                feedbackEl.className = 'feedback-box feedback-wrong';
+                feedbackEl.innerHTML = `<strong>Try Again!</strong><br>Correct: ${q.options[q.correct]}<br><em>${q.why}</em>`;
+                btns[selectedIndex].style.background = '#f8d7da';
+                btns[q.correct].style.background = '#d4edda';
+            }
+
+            feedbackEl.style.display = 'block';
+            document.getElementById('next-btn').classList.remove('hidden');
+            updateScoreBoard();
+        }
+
+        function nextQuestion() {
+            currentQIndex++;
+            renderPracticeQuestion();
+        }
+
+        // LONG QUESTION LOGIC
+        function renderLongQuestions() {
+            longQContainer.innerHTML = longQuestions.map((q, index) => `
+                <div class="long-q-card">
+                    <h4>${q.q}</h4>
+                    <textarea id="long-ans-${index}" placeholder="Type your answer here..."></textarea>
+                    <button class="check-btn" onclick="checkLongAnswer(${index})">Check Answer</button>
+                    <div id="long-feedback-${index}" class="long-feedback"></div>
+                </div>
+            `).join('');
+        }
+
+        function checkLongAnswer(index) {
+            const userAns = document.getElementById(`long-ans-${index}`).value.toLowerCase();
+            const q = longQuestions[index];
+            const feedbackEl = document.getElementById(`long-feedback-${index}`);
+            
+            if (userAns.length < 5) {
+                alert("Please type a detailed answer!");
+                return;
+            }
+
+            let foundKeywords = 0;
+            q.keywords.forEach(key => {
+                if (userAns.includes(key)) foundKeywords++;
+            });
+
+            const isCorrect = foundKeywords >= 2; // Threshold for correctness
+            
+            if (isCorrect) {
+                // Prevent double scoring if checked multiple times (basic implementation)
+                if (!feedbackEl.dataset.scored) {
+                    score++; // Count as correct answer point
+                    totalAttempted++;
+                    feedbackEl.dataset.scored = "true";
+                }
+                feedbackEl.innerHTML = `<strong style="color:green">Good Job! ✔️</strong><br>You used key terms.<br><br><strong>Model Answer:</strong><br>${q.answer.replace(/\n/g, '<br>')}`;
+                feedbackEl.style.background = "#e8f8f5";
+            } else {
+                if (!feedbackEl.dataset.scored) {
+                    wrong++;
+                    totalAttempted++;
+                    feedbackEl.dataset.scored = "true";
+                }
+                feedbackEl.innerHTML = `<strong style="color:red">Needs Improvement ❌</strong><br>Try to include words like: ${q.keywords.join(', ')}.<br><br><strong>Correct Answer:</strong><br>${q.answer.replace(/\n/g, '<br>')}`;
+                feedbackEl.style.background = "#fdedec";
+            }
+            
+            feedbackEl.style.display = 'block';
+            updateScoreBoard();
+        }
+
+        // SCOREBOARD UPDATE
+        function updateScoreBoard() {
+            scoreVal.innerText = score;
+            wrongVal.innerText = wrong;
+            totalVal.innerText = totalAttempted;
+            
+            if (totalAttempted > 0) {
+                const percent = Math.round((score / totalAttempted) * 100);
+                percentVal.innerText = percent + "%";
+            }
+        }
+
+    </script>
+</body>
+</html>

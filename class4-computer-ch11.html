@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 4 Computer - Problem Solving & Logic</title>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --paper-bg: #fffdf0;
+            --ink-color: #2c3e50;
+            --accent-blue: #d4e6f1;
+            --accent-green: #d5f5e3;
+            --accent-pink: #fadbd8;
+            --accent-yellow: #fcf3cf;
+            --border-color: #bdc3c7;
+            --primary-btn: #3498db;
+            --success: #27ae60;
+            --error: #c0392b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Patrick Hand', cursive;
+            font-weight: bold;
+        }
+
+        body {
+            background-color: #f0f3f4;
+            color: var(--ink-color);
+            font-size: 18px;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* HEADER */
+        header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 5px solid #34495e;
+        }
+
+        h1 { font-size: 2.2rem; }
+        h2 { font-size: 1.5rem; margin-top: 10px; }
+
+        /* LIVE SCORE PANEL */
+        #score-panel {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: var(--paper-bg);
+            border-bottom: 3px solid var(--border-color);
+            padding: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .score-item {
+            text-align: center;
+            padding: 5px 10px;
+            background: white;
+            border-radius: 10px;
+            border: 2px solid var(--border-color);
+            margin: 2px;
+            flex: 1 1 auto;
+            min-width: 80px;
+        }
+
+        .score-val { font-size: 1.4rem; color: var(--primary-btn); }
+        .score-label { font-size: 0.9rem; color: #7f8c8d; }
+
+        /* CONTAINERS */
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        section {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+            border: 2px solid var(--border-color);
+        }
+
+        .section-title {
+            background: var(--accent-yellow);
+            display: inline-block;
+            padding: 5px 15px;
+            transform: rotate(-2deg);
+            border: 2px solid var(--ink-color);
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.2);
+        }
+
+        /* NOTES STYLES */
+        .topic-card {
+            background: var(--paper-bg);
+            border: 2px dashed var(--border-color);
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .topic-card::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e74c3c;
+            opacity: 0.3;
+        }
+
+        .topic-header { font-size: 1.4rem; color: #d35400; margin-bottom: 10px; text-decoration: underline; }
+        .example-box { background: var(--accent-blue); padding: 10px; border-radius: 8px; margin: 10px 0; }
+        .memory-tip { background: var(--accent-pink); padding: 10px; border-radius: 8px; margin: 10px 0; border: 2px solid #eec0c0; }
+        .check-q { background: var(--accent-green); padding: 10px; border-radius: 8px; font-style: italic; }
+        
+        .img-placeholder {
+            width: 100%;
+            height: 150px;
+            background: #ecf0f1;
+            border: 2px dashed #95a5a6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #7f8c8d;
+            margin: 10px 0;
+            font-size: 1.2rem;
+        }
+
+        /* QUESTION STYLES */
+        .q-card {
+            background: #fff;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .imp-q-answer { color: #27ae60; margin-top: 5px; display: none; }
+        .show-ans-btn {
+            background: #95a5a6; color: white; border: none; padding: 5px 10px; 
+            border-radius: 5px; cursor: pointer; margin-top: 5px; font-size: 0.9rem;
+        }
+
+        /* PRACTICE INTERFACE */
+        #practice-area { text-align: center; }
+        #current-question-box {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: var(--accent-yellow);
+            border-radius: 10px;
+            border: 2px solid var(--ink-color);
+        }
+        
+        .option-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: white;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover { background: var(--accent-blue); }
+        .option-btn.correct { background: var(--success); color: white; border-color: #1e8449; }
+        .option-btn.wrong { background: var(--error); color: white; border-color: #922b21; }
+
+        .feedback-msg { margin-top: 15px; font-size: 1.2rem; min-height: 30px; }
+        .next-btn {
+            background: var(--primary-btn);
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 25px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 4px #2980b9;
+            display: none;
+        }
+        .next-btn:active { transform: translateY(4px); box-shadow: none; }
+
+        /* LONG ANSWER */
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            margin: 10px 0;
+            background: #fafafa;
+        }
+
+        .long-q-feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            background: #f8f9f9;
+            border: 1px solid #ddd;
+            display: none;
+            text-align: left;
+        }
+
+        /* REVISION */
+        .revision-point { margin-bottom: 10px; padding-left: 20px; position: relative; }
+        .revision-point::before { content: '📌'; position: absolute; left: 0; }
+        #rev-content { display: none; }
+
+        /* FOOTER */
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Problem Solving & Logic</h1>
+    <h2>Class 4 • Chapter 11</h2>
+</header>
+
+<div id="score-panel">
+    <div class="score-item">
+        <div class="score-val" id="score-correct">0</div>
+        <div class="score-label">Correct</div>
+    </div>
+    <div class="score-item">
+        <div class="score-val" id="score-wrong">0</div>
+        <div class="score-label">Wrong</div>
+    </div>
+    <div class="score-item">
+        <div class="score-val" id="score-total">0</div>
+        <div class="score-label">Attempted</div>
+    </div>
+    <div class="score-item">
+        <div class="score-val" id="score-perc">0%</div>
+        <div class="score-label">Accuracy</div>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- NOTES SECTION -->
+    <section id="notes">
+        <div class="section-title">Classroom Notes 📖</div>
+        
+        <!-- Topic 1 -->
+        <div class="topic-card">
+            <div class="topic-header">1. Introduction to Computational Thinking</div>
+            <p>Computational thinking is not about thinking like a robot! It is a way of solving problems so that a computer (or a human) can understand them.</p>
+            <div class="img-placeholder">IMAGE: A child planning a lego tower</div>
+            <div class="example-box"><strong>🇮🇳 Indian Life Example:</strong> Imagine planning a Birthday Party. You don't just "do it". You plan the guest list, the food (samosas & cake), and the games. This planning is Computational Thinking!</div>
+            <div class="memory-tip">💡 TIP: Think -> Plan -> Solve.</div>
+            <div class="check-q">❓ Quick Check: Is planning a picnic a type of problem solving? (Yes/No)</div>
+        </div>
+
+        <!-- Topic 2 -->
+        <div class="topic-card">
+            <div class="topic-header">2. Understanding Patterns</div>
+            <p>A pattern is something that repeats or follows a rule. Computers love patterns because they help predict what comes next.</p>
+            <div class="img-placeholder">IMAGE: Rangoli design showing repetition</div>
+            <div class="example-box"><strong>🇮🇳 Indian Life Example:</strong> Look at a Rangoli design during Diwali. It has repeating shapes (flowers, dots, lines). Or the stripes on a Zebra crossing.</div>
+            <div class="memory-tip">💡 TIP: Look for the repeat! Red, Blue, Red, Blue... what's next?</div>
+            <div class="check-q">❓ Quick Check: If a sequence is 2, 4, 6, 8... what comes next?</div>
+        </div>
+
+        <!-- Topic 3 -->
+        <div class="topic-card">
+            <div class="topic-header">3. Simple Algorithms</div>
+            <p>An algorithm is just a fancy word for "Step-by-Step Instructions". It must be in the correct order to work.</p>
+            <div class="img-placeholder">IMAGE: Steps to brush teeth</div>
+            <div class="example-box"><strong>🇮🇳 Indian Life Example:</strong> Making Maggi Noodles. 1. Boil water. 2. Add noodles. 3. Add masala. 4. Cook. If you eat the masala first, it won't be noodles! Order matters.</div>
+            <div class="memory-tip">💡 TIP: Algorithms = Recipes for Computers.</div>
+            <div class="check-q">❓ Quick Check: Can you wear shoes before socks?</div>
+        </div>
+
+        <!-- Topic 4 -->
+        <div class="topic-card">
+            <div class="topic-header">4. Decomposition</div>
+            <p>Decomposition means breaking a BIG problem into SMALL, easy pieces. It makes hard work look easy.</p>
+            <div class="img-placeholder">IMAGE: Breaking a chocolate bar into pieces</div>
+            <div class="example-box"><strong>🇮🇳 Indian Life Example:</strong> Getting ready for school. Break it down: 1. Brush teeth. 2. Bath. 3. Wear Uniform. 4. Pack Bag. 5. Eat Breakfast.</div>
+            <div class="memory-tip">💡 TIP: Break it to make it!</div>
+            <div class="check-q">❓ Quick Check: Is packing a school bag a small part of "Going to School"?</div>
+        </div>
+
+        <!-- Topic 5 -->
+        <div class="topic-card">
+            <div class="topic-header">5. Logical Reasoning</div>
+            <p>Logic is using facts to make a decision. We use "IF... THEN..." rules.</p>
+            <div class="img-placeholder">IMAGE: Rain clouds and an umbrella</div>
+            <div class="example-box"><strong>🇮🇳 Indian Life Example:</strong> IF it is raining outside, THEN take an umbrella. IF the traffic light is Red, THEN stop.</div>
+            <div class="memory-tip">💡 TIP: If This happens, Then do That.</div>
+            <div class="check-q">❓ Quick Check: If you are hungry, then you should...?</div>
+        </div>
+
+        <!-- Topic 6 -->
+        <div class="topic-card">
+            <div class="topic-header">6. Debugging</div>
+            <p>A "Bug" is a mistake. "Debugging" is finding and fixing that mistake.</p>
+            <div class="img-placeholder">IMAGE: Finding a spelling mistake</div>
+            <div class="example-box"><strong>🇮🇳 Indian Life Example:</strong> You made tea but it tastes salty! The bug: You added salt instead of sugar. The fix: Make new tea with sugar.</div>
+            <div class="memory-tip">💡 TIP: Be a Detective! Find the error.</div>
+            <div class="check-q">❓ Quick Check: Is a spelling mistake a type of bug?</div>
+        </div>
+
+        <!-- Topic 7 -->
+        <div class="topic-card">
+            <div class="topic-header">7. Hands-on Logic Tasks</div>
+            <p>Using our brains to solve puzzles, mazes, and sorting games helps us think like a computer programmer.</p>
+            <div class="img-placeholder">IMAGE: A maze puzzle</div>
+            <div class="example-box"><strong>🇮🇳 Indian Life Example:</strong> Sorting vegetables from the market. Potatoes in one basket, onions in another. This is sorting logic!</div>
+            <div class="memory-tip">💡 TIP: Practice makes logic perfect.</div>
+            <div class="check-q">❓ Quick Check: Is arranging books by size a logic task?</div>
+        </div>
+    </section>
+
+    <!-- IMPORTANT QUESTIONS -->
+    <section id="important-questions">
+        <div class="section-title">Important Questions (Exam Special) 🌟</div>
+        <div id="imp-q-container"></div>
+    </section>
+
+    <!-- PRACTICE QUESTIONS -->
+    <section id="practice">
+        <div class="section-title">Practice Zone (70 Questions) 🎮</div>
+        <div id="practice-area">
+            <div id="q-progress">Question 1 of 70</div>
+            <div id="current-question-box">Loading...</div>
+            <div id="options-box"></div>
+            <div class="feedback-msg" id="feedback"></div>
+            <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next Question ➡️</button>
+        </div>
+    </section>
+
+    <!-- ADVANCED LONG QUESTIONS -->
+    <section id="advanced">
+        <div class="section-title">Challenger Zone (Long Answers) 🚀</div>
+        <div id="long-q-container"></div>
+    </section>
+
+    <!-- REVISION -->
+    <section id="revision">
+        <div class="section-title">Quick Revision ⚡</div>
+        <button class="option-btn" style="background:var(--accent-yellow);" onclick="toggleRevision()">Tap to Show/Hide Revision Points</button>
+        <div id="rev-content" style="margin-top:20px;">
+            <div class="revision-point">Computers solve problems using Computational Thinking.</div>
+            <div class="revision-point">Patterns are repeating things that help us predict the future.</div>
+            <div class="revision-point">An Algorithm is a step-by-step plan (like a recipe).</div>
+            <div class="revision-point">Decomposition means breaking big problems into small pieces.</div>
+            <div class="revision-point">Logic uses "If... Then..." rules to make decisions.</div>
+            <div class="revision-point">A Bug is an error; Debugging is fixing the error.</div>
+            <div class="revision-point">Sorting and arranging are examples of logical tasks.</div>
+        </div>
+    </section>
+
+</div>
+
+<footer>
+    Designed & Created by SHRISHANT YADAV<br>
+    ShanEduHub
+</footer>
+
+<script>
+    // --- DATA STORE ---
+    
+    // 30 IMPORTANT QUESTIONS
+    const impQuestions = [
+        { q: "What is Computational Thinking?", a: "It is a thought process involved in formulating a problem and expressing its solution in a way that a computer can execute." },
+        { q: "Define Algorithm.", a: "An algorithm is a step-by-step set of instructions to complete a specific task." },
+        { q: "What is a Pattern?", a: "A pattern is a repeated design or sequence that follows a specific rule." },
+        { q: "Why is decomposition important?", a: "It helps us manage complex tasks by breaking them into smaller, manageable parts." },
+        { q: "What implies 'Debugging'?", a: "Debugging implies finding and correcting errors or 'bugs' in a computer program." },
+        { q: "Give an example of an algorithm in daily life.", a: "A recipe for making tea or instructions to tie shoelaces." },
+        { q: "What is a 'Bug' in computer terms?", a: "A bug is an error, flaw, or fault in a computer program that causes it to produce an incorrect result." },
+        { q: "How does pattern recognition help us?", a: "It helps us predict what will happen next based on what happened before." },
+        { q: "What is Logical Reasoning?", a: "It is the process of using a rational, systematic series of steps based on sound mathematical procedures to arrive at a conclusion." },
+        { q: "What are the four pillars of computational thinking?", a: "Decomposition, Pattern Recognition, Abstraction, and Algorithm Design." },
+        { q: "Is a computer smarter than a human?", a: "No, a computer only follows the instructions (algorithms) given by humans." },
+        { q: "What is a sequence?", a: "A sequence is a particular order in which related events, movements, or things follow each other." },
+        { q: "If I miss a step in an algorithm, what happens?", a: "The output will likely be wrong or the task will fail (like missing salt in food)." },
+        { q: "What is a flowchart?", a: "A diagram that represents an algorithm, showing the steps as boxes of various kinds." },
+        { q: "Does decomposition make problems harder?", a: "No, it makes them easier by making them smaller." },
+        { q: "Can we use logic without computers?", a: "Yes, we use logic everyday to make decisions." },
+        { q: "What is the first step in solving a problem?", a: "Understanding the problem clearly is the first step." },
+        { q: "Why is order important in an algorithm?", a: "Because computers execute instructions line by line. Wrong order means wrong result." },
+        { q: "What is an infinite loop?", a: "A sequence of instructions that repeats endlessly without stopping." },
+        { q: "Give an example of a pattern in nature.", a: "The stripes on a tiger or the petals of a flower." },
+        { q: "What does 'If-Then' mean?", a: "It is a conditional statement. If a condition is true, Then perform an action." },
+        { q: "Is guessing a good way to solve problems?", a: "No, logical reasoning is better than random guessing." },
+        { q: "What tool helps us find bugs?", a: "Our brain and logical testing help us find bugs." },
+        { q: "Can a robot work without code?", a: "No, robots need code (algorithms) to function." },
+        { q: "What is Abstraction?", a: "Focusing on the important information only, ignoring irrelevant detail." },
+        { q: "Why do we use symbols in flowcharts?", a: "To make the steps easy to recognize visually." },
+        { q: "Is 'Brush Teeth -> Eat -> Wake Up' a correct sequence?", a: "No, you must Wake Up first." },
+        { q: "What is a 'variable'?", a: "A container for storing data values (like a box for toys)." },
+        { q: "Can we debug a real life problem?", a: "Yes, finding why a toy isn't working is debugging." },
+        { q: "Who writes algorithms?", a: "Programmers or coders write algorithms." }
+    ];
+
+    // 70 PRACTICE QUESTIONS (Mixed Types: MCQ, TF, Fill, Pattern)
+    const practiceQuestions = [
+        // 1-10: Intro & Basics
+        { type: "mcq", q: "What is the first step of computational thinking?", options: ["Decomposition", "Sleeping", "Running"], ans: 0, reason: "Decomposition breaks the problem down first." },
+        { type: "tf", q: "Computers can think exactly like humans.", ans: false, reason: "Computers only follow instructions given by humans." },
+        { type: "fill", q: "Thinking like a computer scientist is called _____ thinking.", ans: "computational", reason: "It's the core concept of this chapter." },
+        { type: "mcq", q: "Which of these is NOT part of computational thinking?", options: ["Pattern Recognition", "Guessing Wildly", "Algorithm Design"], ans: 1, reason: "Guessing is not logical." },
+        { type: "tf", q: "Planning a party is an example of problem solving.", ans: true, reason: "It involves planning, steps, and logic." },
+        { type: "mcq", q: "The word 'Compute' comes from a word meaning...", options: ["To calculate", "To run", "To eat"], ans: 0, reason: "Compute implies calculation." },
+        { type: "fill", q: "A computer follows instructions called _____.", ans: "code", reason: "Code or programs differ from random thoughts." },
+        { type: "tf", q: "You need a computer to practice computational thinking.", ans: false, reason: "You can do it with pen and paper or in your head!" },
+        { type: "mcq", q: "Who gives instructions to the computer?", options: ["The User/Programmer", "The Monitor", "The Mouse"], ans: 0, reason: "Hardware cannot think." },
+        { type: "fill", q: "____ is the machine that processes data.", ans: "computer", reason: "Basic definition." },
+
+        // 11-20: Patterns
+        { type: "pattern", q: "Complete: 🔴 🔵 🔴 🔵 ...", options: ["🔴", "🔵", "🟢"], ans: 0, reason: "The pattern alternates Red, Blue." },
+        { type: "pattern", q: "Complete: A, B, C, A, B, ...", options: ["A", "C", "D"], ans: 1, reason: "The pattern is A-B-C repeating." },
+        { type: "pattern", q: "Complete: 10, 20, 30, ...", options: ["31", "40", "50"], ans: 1, reason: "Counting by 10s." },
+        { type: "pattern", q: "Complete: 🔼 🔽 🔼 🔽 ...", options: ["🔼", "🔽", "⭕"], ans: 0, reason: "Up, Down, Up, Down..." },
+        { type: "mcq", q: "Why do we look for patterns?", options: ["To predict the future", "To waste time", "To draw pictures"], ans: 0, reason: "Patterns help us know what comes next." },
+        { type: "tf", q: "Traffic lights follow a pattern.", ans: true, reason: "Red, Yellow, Green repeats." },
+        { type: "fill", q: "A repeating design is called a _____.", ans: "pattern", reason: "Definition of pattern." },
+        { type: "pattern", q: "Complete: Sun, Moon, Sun, Moon, ...", options: ["Star", "Sun", "Moon"], ans: 1, reason: "Day (Sun) follows Night (Moon)." },
+        { type: "pattern", q: "Complete: 1, 2, 4, 8, ... (Doubling)", options: ["10", "12", "16"], ans: 2, reason: "Double of 8 is 16." },
+        { type: "mcq", q: "Which is a pattern?", options: ["Red Blue Green Pink Orange", "Red Red Blue Red Red Blue"], ans: 1, reason: "Option 2 repeats a rule." },
+
+        // 21-30: Algorithms
+        { type: "mcq", q: "An algorithm is...", options: ["A step-by-step plan", "A type of dance", "A computer part"], ans: 0, reason: "Step-by-step instructions." },
+        { type: "fill", q: "Step-by-step instructions are called an _____.", ans: "algorithm", reason: "Key term." },
+        { type: "tf", q: "The order of steps in an algorithm does not matter.", ans: false, reason: "Order is crucial (e.g., socks before shoes)." },
+        { type: "mcq", q: "Step 1: Wet brush. Step 2: Apply paste. Step 3: ...?", options: ["Brush teeth", "Go to sleep", "Eat apple"], ans: 0, reason: "Brushing follows applying paste." },
+        { type: "tf", q: "A recipe is an example of an algorithm.", ans: true, reason: "It has steps and an outcome." },
+        { type: "fill", q: "If instructions are wrong, the result is _____.", ans: "wrong", reason: "Garbage in, garbage out." },
+        { type: "mcq", q: "Which is the best algorithm to cross the road?", options: ["Run fast", "Look left, Look right, Cross if clear", "Close eyes and walk"], ans: 1, reason: "Safety logic." },
+        { type: "tf", q: "Robots need algorithms to move.", ans: true, reason: "They cannot move without code." },
+        { type: "mcq", q: "In an algorithm, 'START' comes...", options: ["At the end", "At the beginning", "In the middle"], ans: 1, reason: "Every process starts at the beginning." },
+        { type: "fill", q: "A diagram of an algorithm is called a _____.", ans: "flowchart", reason: "Visual representation." },
+
+        // 31-40: Decomposition
+        { type: "mcq", q: "Decomposition means...", options: ["Rotting food", "Breaking problems into parts", "Making problems bigger"], ans: 1, reason: "Breaking down complex tasks." },
+        { type: "tf", q: "Big problems are easier to solve if we break them down.", ans: true, reason: "Divide and conquer strategy." },
+        { type: "mcq", q: "Decompose: 'Making a Sandwich'. Which is NOT a step?", options: ["Get bread", "Spread butter", "Drive a car"], ans: 2, reason: "Driving is unrelated." },
+        { type: "fill", q: "Breaking a task into smaller pieces is called _____.", ans: "decomposition", reason: "Key term." },
+        { type: "mcq", q: "Decompose: 'Drawing a house'. First step?", options: ["Color the roof", "Draw the outline", "Frame the picture"], ans: 1, reason: "Outline comes first." },
+        { type: "tf", q: "We use decomposition when we pack our school bag.", ans: true, reason: "Books, Pencil box, Lunch - all separate parts." },
+        { type: "mcq", q: "Which is easier?", options: ["Memorize a whole book", "Memorize one chapter at a time"], ans: 1, reason: "Decomposition in learning." },
+        { type: "fill", q: "Smaller parts of a problem are _____ to solve.", ans: "easier", reason: "Simplicity." },
+        { type: "tf", q: "Decomposition is only for computers.", ans: false, reason: "Humans use it daily." },
+        { type: "mcq", q: "To build a Lego castle, you start with...", options: ["The flag on top", "The base/foundation", "The box"], ans: 1, reason: "Structural decomposition." },
+
+        // 41-50: Logical Reasoning
+        { type: "mcq", q: "Logic helps us...", options: ["Make correct decisions", "Draw better", "Run faster"], ans: 0, reason: "Logic is about reasoning." },
+        { type: "tf", q: "IF it is sunny, THEN wear a raincoat.", ans: false, reason: "Logic implies sunglasses or hat, not raincoat." },
+        { type: "fill", q: "The rule used in logic is If-_____.", ans: "then", reason: "Conditional logic." },
+        { type: "mcq", q: "IF you are thirsty, THEN...", options: ["Drink water", "Eat bread", "Sleep"], ans: 0, reason: "Logical needs." },
+        { type: "logic", q: "IF Red=Stop and Green=Go, what is Yellow?", options: ["Wait/Slow", "Run", "Jump"], ans: 0, reason: "Traffic logic." },
+        { type: "tf", q: "Logic is based on facts, not magic.", ans: true, reason: "It is rational." },
+        { type: "mcq", q: "Which statement is logical?", options: ["Fish fly in the sky", "Birds fly in the sky", "Cars fly in the ocean"], ans: 1, reason: "Based on reality." },
+        { type: "fill", q: "_____ reasoning uses clues to find the answer.", ans: "logical", reason: "Deduction." },
+        { type: "logic", q: "A > B and B > C. Who is biggest?", options: ["A", "B", "C"], ans: 0, reason: "Transitive property." },
+        { type: "tf", q: "Computers use logic to decide Yes or No.", ans: true, reason: "Binary logic (0 or 1)." },
+
+        // 51-60: Debugging
+        { type: "mcq", q: "What is a 'Bug'?", options: ["An insect", "An error in a program", "A feature"], ans: 1, reason: "CS term for error." },
+        { type: "fill", q: "Fixing an error is called _____.", ans: "debugging", reason: "Process of removal." },
+        { type: "tf", q: "If your code has a bug, it will work perfectly.", ans: false, reason: "It will fail or error out." },
+        { type: "mcq", q: "Debug this: 'Wake up -> Go to School -> Brush Teeth'", options: ["Add 'Eat'", "Move 'Brush Teeth' to start", "Remove 'School'"], ans: 1, reason: "Sequence error." },
+        { type: "tf", q: "Programmers spend a lot of time debugging.", ans: true, reason: "It's a major part of the job." },
+        { type: "mcq", q: "Your cycle isn't moving. Debug it!", options: ["Chain fell off", "Cycle is blue", "It is sunny"], ans: 0, reason: "Identify the cause." },
+        { type: "fill", q: "A bug causes the program to _____.", ans: "crash", reason: "Or produce wrong output." },
+        { type: "tf", q: "Debugging is like being a detective.", ans: true, reason: "Searching for clues." },
+        { type: "mcq", q: "Is a spelling mistake in an email a bug?", options: ["Yes", "No", "Maybe"], ans: 0, reason: "It's an error in communication." },
+        { type: "fill", q: "We must _____ our code to find bugs.", ans: "test", reason: "Testing reveals bugs." },
+
+        // 61-70: Hands-on / Mixed
+        { type: "mcq", q: "Which shape comes next? ⬛ ⚪ ⬛ ⚪ ...", options: ["⬛", "⚪", "🔺"], ans: 0, reason: "Alternating pattern." },
+        { type: "tf", q: "Sorting books by height is an algorithm.", ans: true, reason: "It's a sorting algorithm." },
+        { type: "logic", q: "Pencil is to Paper as Chalk is to...", options: ["Board", "Floor", "Eraser"], ans: 0, reason: "Writing surface relationship." },
+        { type: "fill", q: "Computers use _____ (0 and 1).", ans: "binary", reason: "Computer language." },
+        { type: "mcq", q: "Find the odd one out.", options: ["Keyboard", "Mouse", "Sandwich"], ans: 2, reason: "Sandwich is food, others are hardware." },
+        { type: "tf", q: "You can solve problems without a computer.", ans: true, reason: "Computational thinking is a mental skill." },
+        { type: "logic", q: "If 2 + 2 = 4, then 2 + 2 + 1 = ?", options: ["5", "4", "6"], ans: 0, reason: "Math logic." },
+        { type: "mcq", q: "Which is a good password?", options: ["12345", "password", "TrIcKjy45!"], ans: 2, reason: "Logic: complexity = security." },
+        { type: "fill", q: "Input -> Process -> _____", ans: "output", reason: "IPO cycle." },
+        { type: "mcq", q: "What helps us solve mazes?", options: ["Logic", "Singing", "Sleeping"], ans: 0, reason: "Spatial reasoning." }
+    ];
+
+    // 10 LONG ANSWER QUESTIONS
+    const longQuestions = [
+        { 
+            id: 1, 
+            q: "Write an algorithm (steps) to pack your school bag for Monday.", 
+            keywords: ["timetable", "books", "pencil", "box", "lunch", "bag", "check"],
+            model: "1. Check Monday's timetable. 2. Collect books for Monday. 3. Put pencil box in bag. 4. Put lunch box in bag. 5. Close bag."
+        },
+        { 
+            id: 2, 
+            q: "Explain 'Decomposition' using the example of cleaning your room.", 
+            keywords: ["break", "small", "parts", "toys", "clothes", "sweeping", "bed"],
+            model: "Decomposition means breaking the task. Steps: 1. Pick up toys. 2. Fold clothes. 3. Make the bed. 4. Sweep the floor."
+        },
+        { 
+            id: 3, 
+            q: "You want to draw a tree. What patterns do you see in a tree?", 
+            keywords: ["branches", "leaves", "repeat", "green", "shape"],
+            model: "Patterns: Branches split into smaller branches (repeating Y shape). Leaves repeat the same shape and green color."
+        },
+        { 
+            id: 4, 
+            q: "A robot is walking into a wall. It is supposed to turn. What is the bug?", 
+            keywords: ["turn", "instruction", "code", "missing", "wrong", "command"],
+            model: "The bug is a missing or wrong instruction. The code says 'Walk Forward' but is missing 'Turn Left' or 'Turn Right'."
+        },
+        { 
+            id: 5, 
+            q: "Use Logical Reasoning: It is raining heavily. You need to go to school. What do you do?", 
+            keywords: ["raincoat", "umbrella", "wet", "bus", "wear"],
+            model: "IF it is raining, THEN I must wear a raincoat or take an umbrella to stay dry while going to school."
+        },
+        { 
+            id: 6, 
+            q: "Describe the pattern of a traffic light. Why is it important?", 
+            keywords: ["red", "yellow", "green", "stop", "go", "safety", "accident"],
+            model: "Pattern: Red -> Yellow -> Green -> Yellow -> Red. It is important for safety so cars don't crash."
+        },
+        { 
+            id: 7, 
+            q: "Write an algorithm to brush your teeth.", 
+            keywords: ["brush", "paste", "water", "teeth", "rinse", "spit"],
+            model: "1. Take brush. 2. Put paste on brush. 3. Brush teeth. 4. Rinse mouth with water. 5. Wash brush."
+        },
+        { 
+            id: 8, 
+            q: "What is the difference between a Computer and a Human in solving problems?", 
+            keywords: ["fast", "tired", "instructions", "feelings", "logic", "mistake"],
+            model: "Computers are faster and don't get tired, but they need instructions. Humans can think creatively and have feelings."
+        },
+        { 
+            id: 9, 
+            q: "You are making a fruit salad. Decompose this task.", 
+            keywords: ["wash", "cut", "bowl", "mix", "fruit", "peel"],
+            model: "1. Wash fruits. 2. Peel fruits (if needed). 3. Cut fruits into pieces. 4. Put in bowl. 5. Mix."
+        },
+        { 
+            id: 10, 
+            q: "Why is 'debugging' important for a computer program?", 
+            keywords: ["error", "mistake", "fix", "work", "correctly", "crash"],
+            model: "Debugging finds errors. If we don't debug, the program will give wrong answers or stop working (crash)."
+        }
+    ];
+
+    // --- GAME STATE ---
+    let currentQIndex = 0;
+    let score = {
+        correct: 0,
+        wrong: 0,
+        total: 0
+    };
+
+    // --- INITIALIZATION ---
+    document.addEventListener('DOMContentLoaded', () => {
+        renderImpQuestions();
+        renderLongQuestions();
+        loadPracticeQuestion();
+    });
+
+    // --- RENDER IMPORTANT QUESTIONS ---
+    function renderImpQuestions() {
+        const container = document.getElementById('imp-q-container');
+        impQuestions.forEach((item, index) => {
+            const card = document.createElement('div');
+            card.className = 'q-card';
+            card.innerHTML = `
+                <div><strong>Q${index + 1}:</strong> ${item.q}</div>
+                <button class="show-ans-btn" onclick="this.nextElementSibling.style.display='block'; this.style.display='none'">Show Answer</button>
+                <div class="imp-q-answer"><strong>Ans:</strong> ${item.a}</div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    // --- SCORE LOGIC ---
+    function updateScoreDisplay() {
+        document.getElementById('score-correct').textContent = score.correct;
+        document.getElementById('score-wrong').textContent = score.wrong;
+        document.getElementById('score-total').textContent = score.total;
+        
+        let perc = score.total === 0 ? 0 : Math.round((score.correct / score.total) * 100);
+        document.getElementById('score-perc').textContent = perc + "%";
+    }
+
+    // --- PRACTICE QUESTION LOGIC ---
+    function loadPracticeQuestion() {
+        if (currentQIndex >= practiceQuestions.length) {
+            document.getElementById('practice-area').innerHTML = `
+                <h3>Practice Complete! 🎉</h3>
+                <p>You answered ${score.correct} out of 70 correctly.</p>
+                <p>Great job practicing Logic!</p>
+            `;
+            return;
+        }
+
+        const q = practiceQuestions[currentQIndex];
+        const qBox = document.getElementById('current-question-box');
+        const optBox = document.getElementById('options-box');
+        const nextBtn = document.getElementById('next-btn');
+        const feedback = document.getElementById('feedback');
+
+        // Reset UI
+        nextBtn.style.display = 'none';
+        feedback.textContent = '';
+        optBox.innerHTML = '';
+        document.getElementById('q-progress').textContent = `Question ${currentQIndex + 1} of 70`;
+
+        // Display Question
+        qBox.innerHTML = q.type === 'fill' ? q.q.replace('_____', '____') : q.q;
+
+        // Display Options
+        if (q.type === 'fill') {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = 'Type answer here';
+            input.style.padding = '10px';
+            input.style.fontSize = '1.1rem';
+            input.style.border = '2px solid #bdc3c7';
+            input.style.borderRadius = '5px';
+            input.style.marginRight = '10px';
+            
+            const btn = document.createElement('button');
+            btn.textContent = 'Check';
+            btn.className = 'option-btn';
+            btn.style.width = 'auto';
+            btn.style.display = 'inline-block';
+            btn.onclick = () => checkFillAnswer(input.value, q.ans, q.reason);
+            
+            optBox.appendChild(input);
+            optBox.appendChild(btn);
+        } 
+        else if (q.type === 'tf') {
+            createOptionBtn("True", true === q.ans, q.reason);
+            createOptionBtn("False", false === q.ans, q.reason);
+        }
+        else {
+            q.options.forEach((opt, idx) => {
+                createOptionBtn(opt, idx === q.ans, q.reason);
+            });
+        }
+    }
+
+    function createOptionBtn(text, isCorrect, reason) {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = text;
+        btn.onclick = () => handleAnswer(btn, isCorrect, reason);
+        document.getElementById('options-box').appendChild(btn);
+    }
+
+    function handleAnswer(btn, isCorrect, reason) {
+        // Disable all buttons
+        const allBtns = document.querySelectorAll('#options-box .option-btn');
+        allBtns.forEach(b => b.disabled = true);
+
+        score.total++;
+        const feedback = document.getElementById('feedback');
+
+        if (isCorrect) {
+            btn.classList.add('correct');
+            feedback.innerHTML = `Excellent ⭐ <br><small>${reason}</small>`;
+            feedback.style.color = 'green';
+            score.correct++;
+        } else {
+            btn.classList.add('wrong');
+            feedback.innerHTML = `Try Again! <br><small>${reason}</small>`;
+            feedback.style.color = 'red';
+            score.wrong++;
+        }
+
+        updateScoreDisplay();
+        document.getElementById('next-btn').style.display = 'inline-block';
+    }
+
+    function checkFillAnswer(userVal, correctVal, reason) {
+        const input = document.querySelector('#options-box input');
+        const btn = document.querySelector('#options-box button');
+        input.disabled = true;
+        btn.disabled = true;
+
+        score.total++;
+        const feedback = document.getElementById('feedback');
+
+        if (userVal.toLowerCase().trim() === correctVal.toLowerCase()) {
+            feedback.innerHTML = `Excellent ⭐ <br><small>${reason}</small>`;
+            feedback.style.color = 'green';
+            score.correct++;
+        } else {
+            feedback.innerHTML = `Wrong. Correct: ${correctVal} <br><small>${reason}</small>`;
+            feedback.style.color = 'red';
+            score.wrong++;
+        }
+        
+        updateScoreDisplay();
+        document.getElementById('next-btn').style.display = 'inline-block';
+    }
+
+    function nextQuestion() {
+        currentQIndex++;
+        loadPracticeQuestion();
+    }
+
+    // --- LONG QUESTION LOGIC ---
+    function renderLongQuestions() {
+        const container = document.getElementById('long-q-container');
+        longQuestions.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'q-card';
+            div.innerHTML = `
+                <div><strong>Q${item.id}:</strong> ${item.q}</div>
+                <textarea id="long-ans-${item.id}" placeholder="Write your answer here..."></textarea>
+                <button class="option-btn" style="width:auto; padding:5px 20px;" onclick="checkLongAnswer(${item.id})">Check Answer</button>
+                <div id="feedback-long-${item.id}" class="long-q-feedback"></div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function checkLongAnswer(id) {
+        const qData = longQuestions.find(q => q.id === id);
+        const userText = document.getElementById(`long-ans-${id}`).value.toLowerCase();
+        const feedbackBox = document.getElementById(`feedback-long-${id}`);
+        
+        if (userText.trim().length < 5) {
+            alert("Please write a proper answer.");
+            return;
+        }
+
+        let hits = 0;
+        qData.keywords.forEach(key => {
+            if (userText.includes(key)) hits++;
+        });
+
+        score.total++;
+        
+        let msg = "";
+        let isCorrect = false;
+
+        // Logic: Need at least 2 keywords match for correct
+        if (hits >= 2) {
+            score.correct++;
+            msg = `<span style="color:green"><strong>Good Answer! ✔️</strong></span><br>You used key concepts.`;
+            isCorrect = true;
+        } else {
+            score.wrong++;
+            msg = `<span style="color:red"><strong>Needs Improvement ❌</strong></span><br>Try to include words like: ${qData.keywords.slice(0,3).join(", ")}.`;
+        }
+
+        msg += `<br><br><strong>Model Answer:</strong><br>${qData.model}`;
+        
+        feedbackBox.innerHTML = msg;
+        feedbackBox.style.display = "block";
+        
+        // Disable button to prevent spamming score
+        event.target.disabled = true;
+        updateScoreDisplay();
+    }
+
+    // --- REVISION TOGGLE ---
+    function toggleRevision() {
+        const content = document.getElementById('rev-content');
+        if (content.style.display === 'block') {
+            content.style.display = 'none';
+        } else {
+            content.style.display = 'block';
+        }
+    }
+
+</script>
+</body>
+</html>

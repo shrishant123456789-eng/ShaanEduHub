@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 4 - Chapter 4: Basic Operating System (GUI) Skills</title>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        /* --------------------------------------------------
+           GLOBAL RESETS & TYPOGRAPHY
+           -------------------------------------------------- */
+        :root {
+            --bg-color: #FFFDE7; /* Soft Light Yellow */
+            --card-blue: #E1F5FE;
+            --card-green: #E8F5E9;
+            --card-pink: #FCE4EC;
+            --card-orange: #FFF3E0;
+            --text-color: #2c3e50;
+            --accent-color: #FF6F00;
+            --success-color: #2E7D32;
+            --error-color: #C62828;
+            --border-radius: 15px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Patrick Hand', cursive, sans-serif;
+            font-weight: 700; /* STRICT RULE: All text BOLD */
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-size: 18px;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3 {
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        button {
+            font-family: inherit;
+            font-weight: 700;
+            cursor: pointer;
+            border: 2px solid #333;
+            box-shadow: 3px 3px 0px #000;
+            transition: transform 0.1s;
+        }
+
+        button:active {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px #000;
+        }
+
+        /* --------------------------------------------------
+           1. HERO SECTION
+           -------------------------------------------------- */
+        #hero {
+            background: linear-gradient(135deg, #FFF9C4 0%, #B3E5FC 100%);
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 3px solid #333;
+        }
+
+        .brand-name {
+            font-size: 1.2rem;
+            color: #555;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .chapter-info {
+            background: #fff;
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            border: 2px solid #333;
+            margin-bottom: 15px;
+        }
+
+        .hero-title {
+            font-size: 2.5rem;
+            color: #d35400;
+            margin-bottom: 20px;
+        }
+
+        .quote {
+            font-size: 1.5rem;
+            color: #27ae60;
+            margin: 20px 0;
+            font-style: italic;
+            background: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px dashed #aaa;
+            display: inline-block;
+        }
+
+        .start-btn {
+            background-color: #FFEB3B;
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            border-radius: 50px;
+            margin-top: 20px;
+            display: inline-block;
+            text-decoration: none;
+            color: black;
+        }
+
+        /* --------------------------------------------------
+           2. LIVE SCORE PANEL
+           -------------------------------------------------- */
+        #score-panel {
+            position: sticky;
+            top: 0;
+            background: #fff;
+            border-bottom: 3px solid #333;
+            z-index: 1000;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .score-item {
+            text-align: center;
+            font-size: 1rem;
+            padding: 5px;
+        }
+
+        .score-val {
+            font-size: 1.4rem;
+            color: #e67e22;
+        }
+
+        /* --------------------------------------------------
+           3. NOTES SECTION
+           -------------------------------------------------- */
+        #notes {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .topic-card {
+            border: 2px solid #333;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .topic-card:nth-child(4n+1) { background-color: var(--card-blue); }
+        .topic-card:nth-child(4n+2) { background-color: var(--card-green); }
+        .topic-card:nth-child(4n+3) { background-color: var(--card-pink); }
+        .topic-card:nth-child(4n+4) { background-color: var(--card-orange); }
+
+        .topic-header {
+            font-size: 1.8rem;
+            text-decoration: underline;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .definition-box {
+            background: rgba(255,255,255,0.6);
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 5px solid #FF9800;
+        }
+
+        .example-box {
+            background: #fff;
+            border: 2px dashed #aaa;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 10px;
+        }
+
+        .example-title {
+            color: #E91E63;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .memory-tip {
+            background: #FFF59D;
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 150px;
+            background: #eee;
+            border: 2px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
+            color: #777;
+            font-style: italic;
+            border-radius: 10px;
+        }
+
+        .quick-check {
+            background: #333;
+            color: #fff;
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        /* --------------------------------------------------
+           4. IMPORTANT QUESTIONS
+           -------------------------------------------------- */
+        #important-questions {
+            padding: 20px;
+            background: #f0f0f0;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .imp-q-card {
+            background: #fff;
+            border: 2px solid #333;
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .imp-q-title {
+            color: #d35400;
+        }
+
+        /* --------------------------------------------------
+           5. PRACTICE QUIZ (70 Qs)
+           -------------------------------------------------- */
+        #practice-quiz {
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .quiz-container {
+            background: #fff;
+            border: 3px solid #333;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 8px 8px 0px #333;
+        }
+
+        .question-text {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .options-grid {
+            display: grid;
+            gap: 10px;
+        }
+
+        .option-btn {
+            background: #fff;
+            padding: 12px;
+            border-radius: 10px;
+            text-align: left;
+            font-size: 1.1rem;
+            transition: background 0.2s;
+        }
+
+        .option-btn:hover { background: #f0f0f0; }
+
+        .feedback-box {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+            border: 2px solid #333;
+        }
+
+        .feedback-correct { background: #C8E6C9; color: #1B5E20; }
+        .feedback-wrong { background: #FFCDD2; color: #B71C1C; }
+
+        .next-btn {
+            background: #2196F3;
+            color: white;
+            padding: 10px 30px;
+            font-size: 1.2rem;
+            border-radius: 30px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        /* --------------------------------------------------
+           6. ADVANCED LONG QUESTIONS
+           -------------------------------------------------- */
+        #long-answer-quiz {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .long-q-card {
+            background: #fff;
+            border: 2px solid #333;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin: 15px 0;
+            border: 2px solid #aaa;
+            border-radius: 10px;
+            resize: none;
+        }
+
+        .check-long-btn {
+            background: #9C27B0;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+        }
+
+        .long-feedback {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 10px;
+            display: none;
+            border: 2px dashed #555;
+        }
+
+        /* --------------------------------------------------
+           7. REVISION SECTION
+           -------------------------------------------------- */
+        #revision {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            display: none;
+        }
+
+        .revision-list {
+            list-style: none;
+        }
+
+        .revision-list li {
+            background: #FFF9C4;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 5px solid #FBC02D;
+        }
+
+        .toggle-rev-btn {
+            display: block;
+            margin: 20px auto;
+            background: #009688;
+            color: white;
+            padding: 10px 30px;
+            border-radius: 30px;
+            font-size: 1.2rem;
+        }
+
+        /* --------------------------------------------------
+           FOOTER
+           -------------------------------------------------- */
+        footer {
+            background: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px;
+        }
+
+        /* HELPER */
+        .hidden { display: none !important; }
+        .input-blank { border: none; border-bottom: 2px solid #333; width: 100px; text-align: center; font-family: inherit; font-weight: bold; background: transparent; }
+    </style>
+</head>
+<body>
+
+    <!-- HERO SECTION -->
+    <section id="hero">
+        <span class="brand-name">ShanEduHub</span>
+        <div class="chapter-info">Class 4 • Computer Science • Chapter 4</div>
+        <h1 class="hero-title">Basic Operating System (GUI) Skills 💻</h1>
+        <div class="quote">
+            "Computers are our smart friends, but we need to learn their language first!" 🚀
+        </div>
+        <br>
+        <a href="#notes" class="start-btn">Start Learning</a>
+    </section>
+
+    <!-- SCORE PANEL -->
+    <div id="score-panel">
+        <div class="score-item">
+            Correct <span id="val-correct" class="score-val" style="color:green;">0</span>
+        </div>
+        <div class="score-item">
+            Wrong <span id="val-wrong" class="score-val" style="color:red;">0</span>
+        </div>
+        <div class="score-item">
+            Total <span id="val-total" class="score-val" style="color:blue;">0</span>
+        </div>
+        <div class="score-item">
+            % <span id="val-percent" class="score-val">0%</span>
+        </div>
+        <div class="score-item">
+            Marks <span id="val-marks" class="score-val">0</span>
+        </div>
+    </div>
+
+    <!-- NOTES SECTION -->
+    <section id="notes">
+        <h2 style="text-align:center; font-size: 2.5rem; margin-bottom:30px;">MY COMPUTER NOTES 📝</h2>
+
+        <!-- Topic 1 -->
+        <div class="topic-card">
+            <div class="topic-header">1. What is an Operating System (OS)?</div>
+            <div class="definition-box">
+                An Operating System is the <b>main software</b> that makes a computer run. It manages all the parts of the computer and lets us talk to it. Without an OS, a computer is just a plastic box!
+            </div>
+            <div class="image-placeholder">[IMAGE: A Traffic Police managing cars at a junction]</div>
+            <div class="example-box">
+                <span class="example-title">🇮🇳 India Daily Life Example:</span>
+                Think of the <b>School Principal</b>. The Principal manages teachers, students, and classes. Similarly, the OS manages the keyboard, mouse, and screen!
+            </div>
+            <div class="memory-tip">
+                💡 <b>Tip:</b> OS = "Operating Soul" of the computer.
+            </div>
+            <div class="quick-check">❓ Is Windows 10 an Operating System? (Yes/No)</div>
+        </div>
+
+        <!-- Topic 2 -->
+        <div class="topic-card">
+            <div class="topic-header">2. Graphical User Interface (GUI)</div>
+            <div class="definition-box">
+                GUI (pronounced "Goo-ee") stands for <b>Graphical User Interface</b>. It means we use <b>Pictures (Graphics)</b> to give commands instead of typing difficult words. We use a mouse to click on these pictures.
+            </div>
+            <div class="image-placeholder">[IMAGE: Comparison of Black Screen (Text) vs Colorful Screen (Icons)]</div>
+            <div class="example-box">
+                <span class="example-title">🇮🇳 India Daily Life Example:</span>
+                Ordering food from a <b>Menu Card with Photos</b> at a restaurant is like GUI. You just point at the photo! (Old computers were like ordering without a menu by memorizing names).
+            </div>
+            <div class="memory-tip">
+                💡 <b>Tip:</b> G for Graphics, G for Good-looking pictures!
+            </div>
+            <div class="quick-check">❓ In GUI, do we type commands or click pictures?</div>
+        </div>
+
+        <!-- Topic 3 -->
+        <div class="topic-card">
+            <div class="topic-header">3. Desktop & Its Components</div>
+            <div class="definition-box">
+                The <b>Desktop</b> is the very first screen you see after the computer starts. It is like your study table where you keep your things.
+                <br><br>
+                <b>Key Parts:</b>
+                <ul>
+                    <li><b>Icons:</b> Small pictures representing files or programs.</li>
+                    <li><b>Taskbar:</b> The long strip at the bottom of the screen.</li>
+                    <li><b>Start Button:</b> The button usually on the bottom-left to open the menu.</li>
+                </ul>
+            </div>
+            <div class="image-placeholder">[IMAGE: Diagram of Desktop showing Icons, Taskbar, and Start Button]</div>
+            <div class="example-box">
+                <span class="example-title">🇮🇳 India Daily Life Example:</span>
+                Your <b>School Bag</b>. The bag itself is the Desktop. The books inside are Icons. The zip is the Taskbar!
+            </div>
+            <div class="memory-tip">
+                💡 <b>Tip:</b> Desk-top = Top of your Desk.
+            </div>
+            <div class="quick-check">❓ Where is the Taskbar located usually?</div>
+        </div>
+
+        <!-- Topic 4 -->
+        <div class="topic-card">
+            <div class="topic-header">4. Window Elements</div>
+            <div class="definition-box">
+                When you open a program, it opens in a rectangular box called a <b>Window</b>.
+                <br><br>
+                <b>Parts of a Window:</b>
+                <ul>
+                    <li><b>Title Bar:</b> Top bar showing the name.</li>
+                    <li><b>Minimize (-):</b> Hides the window to the taskbar.</li>
+                    <li><b>Maximize (□):</b> Makes the window fill the screen.</li>
+                    <li><b>Close (X):</b> Shuts down the program.</li>
+                </ul>
+            </div>
+            <div class="image-placeholder">[IMAGE: A Window labeled with Title Bar, Minimize, Maximize, Close]</div>
+            <div class="example-box">
+                <span class="example-title">🇮🇳 India Daily Life Example:</span>
+                Like opening a <b>Tiffin Box</b>. The lid is the Title Bar. Closing the lid is the Close button!
+            </div>
+            <div class="memory-tip">
+                💡 <b>Tip:</b> Red 'X' means danger/stop/close!
+            </div>
+            <div class="quick-check">❓ Which button hides the window but keeps it running?</div>
+        </div>
+
+        <!-- Topic 5 -->
+        <div class="topic-card">
+            <div class="topic-header">5. How to Open & Close Programs</div>
+            <div class="definition-box">
+                <b>To Open:</b> Move the mouse pointer to an icon and <b>Double-Click</b> (click left button twice fast). Or Click Start -> Select Program.
+                <br>
+                <b>To Close:</b> Click the Red <b>Cross (X)</b> button on the top right corner.
+            </div>
+            <div class="image-placeholder">[IMAGE: Mouse showing Double Click action]</div>
+            <div class="example-box">
+                <span class="example-title">🇮🇳 India Daily Life Example:</span>
+                Like knocking on a door <b>twice</b> (Double Click) to enter a room!
+            </div>
+            <div class="memory-tip">
+                💡 <b>Tip:</b> "Tick-Tick" (Double Click) to open.
+            </div>
+            <div class="quick-check">❓ How many times do we click to open a folder on the desktop?</div>
+        </div>
+
+        <!-- Topic 6 -->
+        <div class="topic-card">
+            <div class="topic-header">6. Desktop Personalization</div>
+            <div class="definition-box">
+                You can change how your computer looks!
+                <br>
+                <b>Wallpaper:</b> The background picture on the desktop.
+                <br>
+                <b>Themes:</b> A set of sounds, colors, and pictures.
+                <br>
+                <i>Steps: Right Click on Desktop -> Personalize.</i>
+            </div>
+            <div class="image-placeholder">[IMAGE: Screen showing Wallpaper selection menu]</div>
+            <div class="example-box">
+                <span class="example-title">🇮🇳 India Daily Life Example:</span>
+                Changing the <b>Cover of your Notebook</b>. The inside pages are the same, but the outside looks different and beautiful!
+            </div>
+            <div class="memory-tip">
+                💡 <b>Tip:</b> Wallpaper on Wall = Wallpaper on Screen.
+            </div>
+            <div class="quick-check">❓ Can you put your own photo as Wallpaper?</div>
+        </div>
+
+        <!-- Topic 7 -->
+        <div class="topic-card">
+            <div class="topic-header">7. Practical Desktop Navigation</div>
+            <div class="definition-box">
+                <b>Moving Icons:</b> Click and Hold (Drag) an icon to move it.
+                <br>
+                <b>Sorting:</b> Right Click -> Sort By -> Name/Size.
+                <br>
+                <b>Refreshing:</b> Right Click -> Refresh (Makes computer feel fresh!).
+            </div>
+            <div class="image-placeholder">[IMAGE: Icons being dragged from left to right]</div>
+            <div class="example-box">
+                <span class="example-title">🇮🇳 India Daily Life Example:</span>
+                Like <b>Arranging toys</b> on a shelf. You drag the teddy bear from left to right to make it look tidy.
+            </div>
+            <div class="memory-tip">
+                💡 <b>Tip:</b> Drag and Drop = Pick and Place.
+            </div>
+            <div class="quick-check">❓ What helps to arrange icons automatically? (Sort/Delete)</div>
+        </div>
+    </section>
+
+    <!-- IMPORTANT QUESTIONS -->
+    <section id="important-questions">
+        <h2 style="text-align:center; margin-bottom: 20px;">⭐ IMPORTANT QUESTIONS (Exam Prep) ⭐</h2>
+        <!-- Generated via JS for cleaner HTML file but instruction says self-contained HTML. I will list them here statically as requested for "Content" -->
+        <div id="imp-q-container">
+            <!-- 30 Questions will be inserted here by JS to keep code clean or I can write HTML.
+                 Per "No placeholder" rule, I will write specific HTML for a few and use JS to render the list to ensure 30 are exact and distinct.
+                 Actually, simpler to hardcode structure in JS to prevent massive file scrolling.
+            -->
+        </div>
+    </section>
+
+    <!-- PRACTICE QUESTIONS -->
+    <section id="practice-quiz">
+        <h2 style="text-align:center; color: #D32F2F;">🚀 PRACTICE CHALLENGE (70 Qs)</h2>
+        <p style="text-align:center; margin-bottom:20px;">Complete all to become a Computer Master!</p>
+        
+        <div class="quiz-container">
+            <div id="quiz-question" class="question-text">Loading Question...</div>
+            <div id="quiz-image" class="image-placeholder hidden"></div>
+            <div id="quiz-options" class="options-grid"></div>
+            
+            <div id="quiz-feedback" class="feedback-box"></div>
+            <button id="quiz-next-btn" class="next-btn">Next Question ➡️</button>
+        </div>
+    </section>
+
+    <!-- LONG QUESTIONS -->
+    <section id="long-answer-quiz">
+        <h2 style="text-align:center; margin: 40px 0 20px 0; color: #7B1FA2;">🧠 ADVANCED THINKING ZONE</h2>
+        <p style="text-align:center;">Type your answer in detail. The computer will check for keywords!</p>
+        <div id="long-q-container">
+            <!-- 10 Long Questions injected here -->
+        </div>
+    </section>
+
+    <!-- REVISION SECTION -->
+    <button class="toggle-rev-btn" onclick="toggleRevision()">📖 Open Revision Notes</button>
+    <section id="revision">
+        <h2>⚡ Quick Revision Points</h2>
+        <ul class="revision-list">
+            <li><b>OS:</b> The manager of the computer (e.g., Windows).</li>
+            <li><b>GUI:</b> Graphical User Interface (Clicking pictures).</li>
+            <li><b>Desktop:</b> First screen you see.</li>
+            <li><b>Icons:</b> Small pictures on desktop.</li>
+            <li><b>Taskbar:</b> Bottom bar showing open apps.</li>
+            <li><b>Start Button:</b> The main menu button.</li>
+            <li><b>Minimize:</b> Hides window to taskbar.</li>
+            <li><b>Maximize:</b> Makes window full screen.</li>
+            <li><b>Close:</b> Exits the program.</li>
+            <li><b>Wallpaper:</b> Background image of desktop.</li>
+        </ul>
+    </section>
+
+    <footer>
+        Designed & Created by SHRISHANT YADAV<br>
+        ShanEduHub
+    </footer>
+
+    <script>
+        // DATASETS
+        
+        // 30 IMPORTANT QUESTIONS
+        const importantQuestions = [
+            {q: "What is the full form of OS?", a: "Operating System."},
+            {q: "What is the full form of GUI?", a: "Graphical User Interface."},
+            {q: "Name the first screen that appears after booting.", a: "Desktop."},
+            {q: "What are the small pictures on the desktop called?", a: "Icons."},
+            {q: "Which bar is usually located at the bottom of the desktop?", a: "Taskbar."},
+            {q: "Which button do we click to shut down the computer?", a: "Start Button."},
+            {q: "Which button is used to make a window fill the entire screen?", a: "Maximize Button."},
+            {q: "What is the background picture of the desktop called?", a: "Wallpaper."},
+            {q: "Which mouse action is used to open a program?", a: "Double-click."},
+            {q: "What does the Minimize button do?", a: "It hides the window to the taskbar."},
+            {q: "Name the bar at the top of a window showing the program name.", a: "Title Bar."},
+            {q: "What is the shortcut to close a window (visual button)?", a: "The Red Cross (X)."},
+            {q: "Can we change the position of the Taskbar?", a: "Yes, we can drag it to any side."},
+            {q: "What is a Screen Saver?", a: "A moving picture that appears when computer is idle."},
+            {q: "What is booting?", a: "The process of starting the computer."},
+            {q: "Example of an Operating System?", a: "Windows 10, Windows 11, Mac OS."},
+            {q: "What is the use of the Scroll bar?", a: "To see hidden parts of a page by moving up/down."},
+            {q: "Where do deleted files go initially?", a: "Recycle Bin."},
+            {q: "What happens when you right-click on the desktop?", a: "A context menu (list of options) appears."},
+            {q: "Which button restores a maximized window to its original size?", a: "Restore Down button."},
+            {q: "What is a Theme?", a: "A package of background, colors, and sounds."},
+            {q: "How do you move an icon?", a: "By Dragging and Dropping it."},
+            {q: "What does the clock on the taskbar show?", a: "Current Time and Date."},
+            {q: "Is MS Paint an Operating System?", a: "No, it is an Application Software."},
+            {q: "What is the 'Start Menu'?", a: "A list of all programs and settings."},
+            {q: "Can we have two files with the same name in the same folder?", a: "No."},
+            {q: "Which click opens the properties menu?", a: "Right-click."},
+            {q: "What is the small arrow moving on the screen called?", a: "Mouse Pointer or Cursor."},
+            {q: "What represents a folder icon?", a: "Usually a yellow rectangular box."},
+            {q: "Why do we refresh the computer?", a: "To update the screen and make it run smoothly."}
+        ];
+
+        // 70 PRACTICE QUESTIONS (Mixed Types: MCQ, TF, Fill Blanks)
+        // Grouped internally to ensure coverage: OS(10), GUI(10), Desktop(15), Window(15), Pers(10), Nav(10)
+        const practiceQuestions = [
+            // OS & GUI Basics
+            { t: "mcq", q: "What acts as a bridge between user and computer hardware?", o: ["Mouse", "Operating System", "Keyboard"], a: "Operating System", exp: "OS connects you to the hardware." },
+            { t: "mcq", q: "Which of these is an Operating System?", o: ["Paint", "Windows 10", "Mario Game"], a: "Windows 10", exp: "Windows 10 is system software." },
+            { t: "tf", q: "True or False: A computer can work without an Operating System.", a: "False", exp: "It needs an OS to start." },
+            { t: "mcq", q: "The full form of GUI is _______.", o: ["Green User Ice", "Graphical User Interface", "Game User Internet"], a: "Graphical User Interface", exp: "It uses Graphics (images)." },
+            { t: "mcq", q: "In GUI, we use _______ to give commands.", o: ["Typing", "Pictures/Icons", "Shouting"], a: "Pictures/Icons", exp: "We click on pictures." },
+            { t: "tf", q: "True or False: CUI (Character User Interface) is easier than GUI.", a: "False", exp: "GUI is easier because we see pictures." },
+            { t: "mcq", q: "Windows is a _______ operating system.", o: ["Popular", "Secret", "Useless"], a: "Popular", exp: "Most school computers use Windows." },
+            { t: "fill", q: "OS stands for ________ System.", o: ["Operating", "Open", "Over"], a: "Operating", exp: "It operates the machine." },
+            { t: "mcq", q: "Who manages the memory of the computer?", o: ["You", "The OS", "The Monitor"], a: "The OS", exp: "OS manages memory and storage." },
+            { t: "thinking", q: "If the OS is the Principal, who are the students?", o: ["Programs", "Wires", "Electricity"], a: "Programs", exp: "Programs follow the rules of the OS." },
+
+            // Desktop & Icons
+            { t: "mcq", q: "The first screen after booting is called...", o: ["Movie", "Desktop", "Table"], a: "Desktop", exp: "It is the main work area." },
+            { t: "mcq", q: "Small pictures on the desktop are called...", o: ["Stickers", "Icons", "Photos"], a: "Icons", exp: "Icons represent apps." },
+            { t: "mcq", q: "The long bar at the bottom is...", o: ["Chocolate Bar", "Taskbar", "Spacebar"], a: "Taskbar", exp: "It shows running tasks." },
+            { t: "pic", q: "Identify the Start Button icon shape usually.", o: ["Circle/Window", "Triangle", "Star"], a: "Circle/Window", exp: "It looks like a window pane." },
+            { t: "mcq", q: "Where do you find the clock?", o: ["Title Bar", "Taskbar (System Tray)", "Middle of screen"], a: "Taskbar (System Tray)", exp: "Bottom right corner usually." },
+            { t: "tf", q: "True or False: You can delete all icons from the desktop.", a: "True", exp: "You can remove or hide them." },
+            { t: "mcq", q: "Which icon is for deleted files?", o: ["Dustbin", "Recycle Bin", "Trash Can"], a: "Recycle Bin", exp: "Windows calls it Recycle Bin." },
+            { t: "mcq", q: " PC / This PC icon shows...", o: ["Internet", "Hard Drives & Files", "Games"], a: "Hard Drives & Files", exp: "It allows access to drives." },
+            { t: "fill", q: "The background image is called ________.", o: ["Poster", "Wallpaper", "Sheet"], a: "Wallpaper", exp: "Like wallpaper on a wall." },
+            { t: "mcq", q: "To open the Start Menu, we click...", o: ["Start Button", "End Button", "Stop Button"], a: "Start Button", exp: "It starts your journey." },
+            { t: "thinking", q: "Why is it called a 'Desktop'?", o: ["It looks like a desk top", "It is on a desk", "It is made of wood"], a: "It looks like a desk top", exp: "You keep files on it like a real desk." },
+            { t: "tf", q: "True or False: The Taskbar must always be at the bottom.", a: "False", exp: "You can move it to sides or top." },
+            { t: "mcq", q: "What indicates a program is running on the Taskbar?", o: ["A glow/highlight", "It disappears", "It turns red"], a: "A glow/highlight", exp: "The icon is highlighted." },
+            { t: "one", q: "Name the button to show the desktop instantly.", o: ["Show Desktop", "Hide All", "Sleep"], a: "Show Desktop", exp: "Usually a tiny strip at far right of taskbar." },
+            { t: "mcq", q: "Are shortcuts icons?", o: ["Yes", "No"], a: "Yes", exp: "They have a small arrow." },
+
+            // Window Elements
+            { t: "mcq", q: "The top bar of a window is...", o: ["Head Bar", "Title Bar", "Name Tag"], a: "Title Bar", exp: "It shows the Title." },
+            { t: "mcq", q: "The button with a minus (-) sign is...", o: ["Subtract", "Minimize", "Close"], a: "Minimize", exp: "It minimizes the window." },
+            { t: "mcq", q: "The button with an X is...", o: ["Wrong", "Close", "Stop"], a: "Close", exp: "It closes the app." },
+            { t: "mcq", q: "To make a window fill the screen, click...", o: ["Maximize", "Bigify", "Zoom"], a: "Maximize", exp: "Usually a square box icon." },
+            { t: "tf", q: "True or False: You can have multiple windows open.", a: "True", exp: "Multitasking is possible." },
+            { t: "mcq", q: "If a window is minimized, where does it go?", o: ["It is deleted", "To the Taskbar", "To Recycle Bin"], a: "To the Taskbar", exp: "It stays running in the background." },
+            { t: "mcq", q: "What does the Restore Down button do?", o: ["Makes window smaller", "Closes window", "Nothing"], a: "Makes window smaller", exp: "Returns to previous size." },
+            { t: "thinking", q: "Why is the Close button Red?", o: ["It's pretty", "To warn you (Stop)", "It's a random color"], a: "To warn you (Stop)", exp: "Red means stop or danger." },
+            { t: "mcq", q: "The menu bar contains...", o: ["Food items", "File, Edit, View", "Games"], a: "File, Edit, View", exp: "Commands for the program." },
+            { t: "mcq", q: "Can you resize a window from the corners?", o: ["Yes", "No"], a: "Yes", exp: "Drag the corners." },
+            { t: "pic", q: "Which symbol means Maximize?", o: ["Square", "Line", "Cross"], a: "Square", exp: "A square represents full screen." },
+            { t: "tf", q: "True or False: Title bar is at the bottom of the window.", a: "False", exp: "It is at the top." },
+            { t: "mcq", q: "To move a window, you drag the...", o: ["Title Bar", "Content", "Buttons"], a: "Title Bar", exp: "Grab the title bar to move." },
+            { t: "fill", q: "Scroll bars help us move the page ________.", o: ["Left/Right/Up/Down", "In/Out", "Nowhere"], a: "Left/Right/Up/Down", exp: "To see hidden content." },
+            { t: "mcq", q: "The active window is the one...", o: ["In front (Blue title)", "At the back (Grey title)", "Closed"], a: "In front (Blue title)", exp: "The one you are working on." },
+
+            // Opening/Closing & Mouse
+            { t: "mcq", q: "To open a file, we usually...", o: ["Single Click", "Double Click", "Triple Click"], a: "Double Click", exp: "Two fast clicks." },
+            { t: "mcq", q: "Right clicking shows a...", o: ["Picture", "Menu/List", "Video"], a: "Menu/List", exp: "Context menu." },
+            { t: "mcq", q: "To select an icon, we...", o: ["Click once", "Click twice", "Drag it"], a: "Click once", exp: "Single click selects." },
+            { t: "tf", q: "True or False: You can open a program from the Start Menu.", a: "True", exp: "Start menu lists all apps." },
+            { t: "mcq", q: "What is 'Booting'?", o: ["Kicking the PC", "Starting the PC", "Closing the PC"], a: "Starting the PC", exp: "Loading the OS." },
+            { t: "mcq", q: "Pressing Alt + F4 usually...", o: ["Saves", "Closes Window", "Prints"], a: "Closes Window", exp: "Keyboard shortcut for close." },
+            { t: "thinking", q: "If you double click too slowly...", o: ["It opens", "Nothing happens/It renames", "PC explodes"], a: "Nothing happens/It renames", exp: "It counts as two single clicks." },
+            { t: "mcq", q: "The arrow on screen is called...", o: ["Pointer", "Stick", "Finger"], a: "Pointer", exp: "Mouse pointer." },
+            { t: "fill", q: "An hourglass/circle icon means the computer is ________.", o: ["Busy", "Free", "Off"], a: "Busy", exp: "It is thinking/loading." },
+            { t: "mcq", q: "Shut Down option is found in...", o: ["Start Menu", "My Computer", "Recycle Bin"], a: "Start Menu", exp: "Power button in Start Menu." },
+
+            // Personalization
+            { t: "mcq", q: "Personalize option appears on...", o: ["Left Click", "Right Click", "Double Click"], a: "Right Click", exp: "On empty desktop area." },
+            { t: "mcq", q: "A Screen Saver starts when...", o: ["We type", "Computer is idle", "We click"], a: "Computer is idle", exp: "To save the screen." },
+            { t: "mcq", q: "Can we change the color of window borders?", o: ["Yes", "No"], a: "Yes", exp: "Through Personalization > Colors." },
+            { t: "tf", q: "True or False: Wallpaper must be a drawing, not a photo.", a: "False", exp: "It can be any image." },
+            { t: "mcq", q: "Themes change...", o: ["Only wallpaper", "Sound, Color, and Wallpaper", "Nothing"], a: "Sound, Color, and Wallpaper", exp: "It's a full package." },
+            { t: "mcq", q: "Lock Screen picture is...", o: ["Same as desktop", "Before login", "After login"], a: "Before login", exp: "Seen when PC is locked." },
+            { t: "fill", q: "To change wallpaper: Right Click -> ________.", o: ["Personalize", "Refresh", "New"], a: "Personalize", exp: "Settings menu." },
+            { t: "thinking", q: "Why do we use Screen Savers?", o: ["To save electricity", "To look cool/Protect monitor", "To play games"], a: "To look cool/Protect monitor", exp: "Prevents screen burn-in (historically)." },
+            { t: "mcq", q: "Resolution changes the...", o: ["Volume", "Clarity/Size of items", "Speed"], a: "Clarity/Size of items", exp: "Display settings." },
+            { t: "mcq", q: "Can you put your name on the Lock Screen?", o: ["Yes", "No"], a: "Yes", exp: "Usually shows user name." },
+
+            // General & Practical
+            { t: "mcq", q: "Dragging an item means...", o: ["Click and Hold moving", "Click and Release", "Typing"], a: "Click and Hold moving", exp: "Move object." },
+            { t: "mcq", q: "To organize icons by name...", o: ["Sort By -> Name", "View -> Big", "Refresh"], a: "Sort By -> Name", exp: "Right click menu." },
+            { t: "mcq", q: "What is a 'Folder'?", o: ["A file", "A container for files", "A virus"], a: "A container for files", exp: "Yellow icon usually." },
+            { t: "mcq", q: "Date and Time settings are in...", o: ["Control Panel/Settings", "Paint", "Word"], a: "Control Panel/Settings", exp: "System settings." },
+            { t: "tf", q: "True or False: Windows 7 is the latest OS.", a: "False", exp: "Windows 11 is newer." },
+            { t: "mcq", q: "Calculator is an...", o: ["OS", "App/Program", "Hardware"], a: "App/Program", exp: "Built-in tool." },
+            { t: "mcq", q: "To select multiple icons, we can draw a box or use...", o: ["Ctrl Key", "Alt Key", "Esc Key"], a: "Ctrl Key", exp: "Hold Ctrl and click." },
+            { t: "thinking", q: "If the taskbar disappears, it might be...", o: ["Deleted", "Auto-hidden", "Stolen"], a: "Auto-hidden", exp: "Settings > Auto-hide taskbar." },
+            { t: "mcq", q: "Which key opens the Start Menu?", o: ["Windows Key", "Shift", "Tab"], a: "Windows Key", exp: "Flag logo key." },
+            { t: "one", q: "What comes after Windows 8?", o: ["Windows 9", "Windows 10", "Windows X"], a: "Windows 10", exp: "Microsoft skipped 9." }
+        ];
+
+        // 10 LONG ANSWER QUESTIONS
+        const longQuestions = [
+            {
+                id: 1,
+                q: "What is an Operating System? Give one example.",
+                keywords: ["manager", "software", "windows", "mac", "linux", "interface", "hardware"],
+                model: "An Operating System (OS) is the main software that manages the computer's hardware and software. It acts as a bridge between the user and the computer. Example: Windows 10."
+            },
+            {
+                id: 2,
+                q: "Explain the term GUI. Why is it easier than the old method?",
+                keywords: ["graphical", "user", "interface", "picture", "icon", "easy", "click", "command"],
+                model: "GUI stands for Graphical User Interface. It uses pictures, icons, and menus instead of typing text commands. It is easier because we just need to click on what we see."
+            },
+            {
+                id: 3,
+                q: "List three main components of the Desktop.",
+                keywords: ["icon", "taskbar", "start", "wallpaper", "background", "button"],
+                model: "The three main components are: 1. Icons (small pictures), 2. Taskbar (bottom strip), 3. Start Button (opens menu)."
+            },
+            {
+                id: 4,
+                q: "What is the difference between Minimize and Close buttons?",
+                keywords: ["hide", "bottom", "taskbar", "shut", "exit", "stop", "running"],
+                model: "Minimize hides the window to the taskbar but keeps the program running. Close shuts down the program completely."
+            },
+            {
+                id: 5,
+                q: "Write the steps to change the Desktop Wallpaper.",
+                keywords: ["right", "click", "personalize", "background", "select", "choose", "picture"],
+                model: "1. Right-click on an empty area of the desktop. 2. Select 'Personalize'. 3. Click on 'Background'. 4. Choose a picture."
+            },
+            {
+                id: 6,
+                q: "What is the function of the Taskbar?",
+                keywords: ["bottom", "open", "program", "switch", "start", "time", "date"],
+                model: "The Taskbar sits at the bottom of the screen. It shows which programs are currently open and allows us to switch between them. It also holds the Start button and Clock."
+            },
+            {
+                id: 7,
+                q: "What are Icons? Give two examples.",
+                keywords: ["small", "picture", "symbol", "file", "folder", "recycle", "pc"],
+                model: "Icons are small pictures on the desktop that represent a file, folder, or program. Examples: Recycle Bin, This PC, Folder."
+            },
+            {
+                id: 8,
+                q: "Why do we need a computer mouse in a GUI?",
+                keywords: ["point", "click", "select", "drag", "move", "cursor"],
+                model: "In a GUI, we need to select and click on pictures. The mouse helps us move the pointer to point, click, drag, and drop items."
+            },
+            {
+                id: 9,
+                q: "What is a Window in a computer? Name two of its parts.",
+                keywords: ["box", "rectangular", "frame", "title", "menu", "close"],
+                model: "A Window is a rectangular box where a program opens. Parts: Title Bar, Minimize button, Close button."
+            },
+            {
+                id: 10,
+                q: "How do you shut down a computer properly?",
+                keywords: ["start", "power", "shut", "down", "button", "click", "menu"],
+                model: "Click on the Start Button, then click the Power icon, and select 'Shut Down'. Do not just turn off the switch!"
+            }
+        ];
+
+        // STATE VARIABLES
+        let currentQIndex = 0;
+        let score = { correct: 0, wrong: 0, total: 0, marks: 0 };
+        let longAnswerAttempted = 0;
+
+        // DOM ELEMENTS
+        const scoreCorrect = document.getElementById('val-correct');
+        const scoreWrong = document.getElementById('val-wrong');
+        const scoreTotal = document.getElementById('val-total');
+        const scorePercent = document.getElementById('val-percent');
+        const scoreMarks = document.getElementById('val-marks');
+
+        const quizQ = document.getElementById('quiz-question');
+        const quizImg = document.getElementById('quiz-image');
+        const quizOpts = document.getElementById('quiz-options');
+        const quizFeed = document.getElementById('quiz-feedback');
+        const quizNext = document.getElementById('quiz-next-btn');
+
+        // INITIALIZATION
+        document.addEventListener('DOMContentLoaded', () => {
+            renderImportantQuestions();
+            renderLongQuestions();
+            loadPracticeQuestion();
+        });
+
+        // -----------------------------------
+        // LOGIC: SCORE UPDATE
+        // -----------------------------------
+        function updateScore(isCorrect, points) {
+            score.total++;
+            if (isCorrect) {
+                score.correct++;
+                score.marks += points;
+            } else {
+                score.wrong++;
+            }
+            
+            scoreCorrect.innerText = score.correct;
+            scoreWrong.innerText = score.wrong;
+            scoreTotal.innerText = score.total;
+            scoreMarks.innerText = score.marks;
+            scorePercent.innerText = Math.round((score.correct / score.total) * 100) + "%";
+        }
+
+        // -----------------------------------
+        // LOGIC: IMPORTANT QUESTIONS RENDER
+        // -----------------------------------
+        function renderImportantQuestions() {
+            const container = document.getElementById('imp-q-container');
+            let html = '';
+            importantQuestions.forEach((item, index) => {
+                html += `
+                    <div class="imp-q-card">
+                        <div class="imp-q-title"><b>Q${index + 1}: ${item.q}</b></div>
+                        <div>👉 ${item.a}</div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // -----------------------------------
+        // LOGIC: PRACTICE QUIZ
+        // -----------------------------------
+        function loadPracticeQuestion() {
+            if(currentQIndex >= practiceQuestions.length) {
+                quizQ.innerHTML = "🎉 Practice Complete! You are a Genius! 🎉";
+                quizOpts.innerHTML = "";
+                quizFeed.style.display = 'none';
+                quizNext.style.display = 'none';
+                return;
+            }
+
+            const q = practiceQuestions[currentQIndex];
+            quizQ.innerText = `Q${currentQIndex + 1}. ${q.q}`;
+            
+            // Image handling
+            if (q.t === 'pic') {
+                quizImg.classList.remove('hidden');
+                quizImg.innerText = "[🖼️ Image of " + q.a + "]";
+            } else {
+                quizImg.classList.add('hidden');
+            }
+
+            // Options generation
+            quizOpts.innerHTML = '';
+            quizFeed.style.display = 'none';
+            quizNext.style.display = 'none';
+
+            q.o.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => checkPracticeAnswer(opt, q.a, q.exp, btn);
+                quizOpts.appendChild(btn);
+            });
+        }
+
+        function checkPracticeAnswer(selected, correct, explanation, btnElement) {
+            // Disable all buttons
+            const buttons = quizOpts.querySelectorAll('button');
+            buttons.forEach(b => b.disabled = true);
+
+            const isCorrect = selected === correct;
+            
+            if (isCorrect) {
+                btnElement.style.background = '#C8E6C9';
+                quizFeed.innerHTML = `<b>Excellent ⭐</b><br>${explanation}`;
+                quizFeed.className = 'feedback-box feedback-correct';
+                updateScore(true, 1); // 1 Mark for MCQ
+            } else {
+                btnElement.style.background = '#FFCDD2';
+                // Highlight correct
+                buttons.forEach(b => {
+                    if(b.innerText === correct) b.style.background = '#C8E6C9';
+                });
+                quizFeed.innerHTML = `<b>Try Again</b><br>Correct Answer: ${correct}<br><i>${explanation}</i>`;
+                quizFeed.className = 'feedback-box feedback-wrong';
+                updateScore(false, 0);
+            }
+
+            quizFeed.style.display = 'block';
+            quizNext.style.display = 'inline-block';
+        }
+
+        quizNext.onclick = () => {
+            currentQIndex++;
+            loadPracticeQuestion();
+        }
+
+        // -----------------------------------
+        // LOGIC: LONG ANSWER EVALUATION
+        // -----------------------------------
+        function renderLongQuestions() {
+            const container = document.getElementById('long-q-container');
+            longQuestions.forEach((q) => {
+                const div = document.createElement('div');
+                div.className = 'long-q-card';
+                div.innerHTML = `
+                    <h3>Q${q.id}. ${q.q}</h3>
+                    <textarea id="ans-text-${q.id}" placeholder="Type your answer here..."></textarea>
+                    <button class="check-long-btn" onclick="evaluateLongAnswer(${q.id})">Check Answer</button>
+                    <div id="ans-feed-${q.id}" class="long-feedback"></div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function evaluateLongAnswer(id) {
+            const qData = longQuestions.find(q => q.id === id);
+            const userText = document.getElementById(`ans-text-${id}`).value.toLowerCase().trim();
+            const feedbackBox = document.getElementById(`ans-feed-${id}`);
+            
+            if (userText.length < 5) {
+                alert("Please type a full answer!");
+                return;
+            }
+
+            // Keyword Matching Logic
+            let matchedKeywords = 0;
+            const missingKeywords = [];
+            
+            qData.keywords.forEach(key => {
+                if (userText.includes(key)) {
+                    matchedKeywords++;
+                } else {
+                    missingKeywords.push(key);
+                }
+            });
+
+            // Evaluation
+            const totalKeys = qData.keywords.length;
+            const percentage = matchedKeywords / totalKeys;
+            let resultHtml = "";
+            let points = 0;
+
+            if (percentage > 0.5) {
+                resultHtml = `<span style="color:green; font-weight:bold;">Excellent Attempt! ✅</span>`;
+                points = 5;
+                updateScore(true, 5);
+            } else if (percentage > 0.2) {
+                resultHtml = `<span style="color:orange; font-weight:bold;">Good start, but missing points. ⚠️</span>`;
+                points = 2;
+                updateScore(true, 2); // Partial marks
+            } else {
+                resultHtml = `<span style="color:red; font-weight:bold;">Needs Improvement. ❌</span>`;
+                updateScore(false, 0);
+            }
+
+            resultHtml += `<br><br><b>Model Answer:</b> ${qData.model}`;
+            if (missingKeywords.length > 0) {
+                resultHtml += `<br><br><b>Key concepts missing:</b> ${missingKeywords.join(", ")}`;
+            }
+
+            feedbackBox.innerHTML = resultHtml;
+            feedbackBox.style.display = 'block';
+            
+            // Disable button to prevent score spamming
+            event.target.disabled = true;
+            event.target.innerText = "Checked";
+        }
+
+        // -----------------------------------
+        // LOGIC: REVISION TOGGLE
+        // -----------------------------------
+        function toggleRevision() {
+            const rev = document.getElementById('revision');
+            if (rev.style.display === 'block') {
+                rev.style.display = 'none';
+            } else {
+                rev.style.display = 'block';
+                rev.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>लेखन कौशल (बेसिक से एडवांस)</title>
+    <!-- Importing a handwriting font that supports Devanagari -->
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --paper-color: #fff9e6;
+            --line-color: #a4b0be;
+            --ink-color: #2f3542;
+            --red-ink: #ff4757;
+            --green-ink: #2ed573;
+            --blue-ink: #3742fa;
+            --highlight: #ffeaa7;
+            --card-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Kalam', 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+            background-color: #f1f2f6;
+            color: var(--ink-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            font-weight: 700; /* Mandatory Bold */
+            font-size: 18px;
+        }
+
+        /* Lined Paper Effect */
+        .paper-bg {
+            background-color: var(--paper-color);
+            background-image: linear-gradient(var(--line-color) 1px, transparent 1px);
+            background-size: 100% 2rem;
+            border: 2px solid #d1ccc0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            background: var(--blue-ink);
+            color: white;
+            padding: 20px;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            text-shadow: 2px 2px 0px #000;
+        }
+
+        h2, h3 {
+            color: var(--blue-ink);
+            border-bottom: 3px dashed var(--line-color);
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }
+
+        /* Live Score Panel */
+        #score-panel {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--ink-color);
+            color: #fff;
+            padding: 10px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            border: 2px solid #fff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .score-item span {
+            display: block;
+            font-size: 1.2rem;
+            color: var(--highlight);
+        }
+
+        /* Golden Rule Box */
+        .golden-rule {
+            background: var(--highlight);
+            border: 3px solid var(--ink-color);
+            padding: 15px;
+            text-align: center;
+            border-radius: 15px;
+            margin: 20px 0;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .process-arrow {
+            color: var(--red-ink);
+            font-size: 1.5rem;
+        }
+
+        /* Section Styling */
+        .topic-section {
+            display: none; /* JS will toggle */
+            animation: fadeIn 0.5s;
+        }
+
+        .topic-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Navigation Buttons */
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .nav-btn {
+            background: white;
+            border: 3px solid var(--blue-ink);
+            padding: 10px;
+            border-radius: 10px;
+            font-family: inherit;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--blue-ink);
+        }
+
+        .nav-btn.active {
+            background: var(--blue-ink);
+            color: white;
+            transform: translateY(2px);
+        }
+
+        /* Practice Question Styles */
+        .question-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            border: 3px solid var(--ink-color);
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .options-grid {
+            display: grid;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .option-btn {
+            background: #f1f2f6;
+            border: 2px solid #ccc;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .option-btn:hover {
+            background: #dfe4ea;
+        }
+
+        .feedback-msg {
+            margin-top: 15px;
+            font-size: 1.2rem;
+            display: none;
+        }
+
+        .correct-bg { background: #dff9fb !important; border-color: var(--green-ink) !important; color: var(--green-ink); }
+        .wrong-bg { background: #ff7979 !important; border-color: var(--red-ink) !important; color: white; }
+
+        /* Writing Areas */
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 15px;
+            font-family: inherit;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border: 3px solid var(--line-color);
+            border-radius: 10px;
+            background: #fff;
+            background-image: linear-gradient(#eee 1px, transparent 1px);
+            background-size: 100% 2rem;
+            line-height: 2rem;
+            resize: vertical;
+        }
+
+        /* Example Boxes */
+        .example-box {
+            background: #dff9fb;
+            border-left: 5px solid var(--blue-ink);
+            padding: 10px 15px;
+            margin: 10px 0;
+            font-size: 1rem;
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 150px;
+            background: #eee;
+            border: 2px dashed #999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+            color: #777;
+            border-radius: 10px;
+        }
+
+        /* Letter Box */
+        .letter-format {
+            border: 2px solid var(--ink-color);
+            padding: 20px;
+            background: white;
+            position: relative;
+            margin: 20px 0;
+        }
+
+        .action-btn {
+            background: var(--green-ink);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 4px 0 #218c74;
+            display: inline-block;
+        }
+
+        .action-btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        /* Badges */
+        #badge-area {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            background: #ffeaa7;
+            border-radius: 15px;
+            display: none;
+        }
+
+        .badge-icon {
+            font-size: 3rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: var(--ink-color);
+            color: white;
+            margin-top: 50px;
+            font-size: 0.8rem;
+        }
+
+        .hidden { display: none; }
+
+        /* Specific feature styles */
+        .stroke-guide {
+            font-size: 4rem;
+            letter-spacing: 20px;
+            color: #ccc;
+            position: relative;
+        }
+        .stroke-overlay {
+            color: var(--blue-ink);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 0%;
+            overflow: hidden;
+            white-space: nowrap;
+            transition: width 1s;
+        }
+        
+        table.email-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        table.email-table th, table.email-table td {
+            border: 2px solid var(--ink-color);
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Header -->
+    <header>
+        <h1>कक्षा 4: हिंदी</h1>
+        <h2>पाठ 10: लेखन कौशल (बेसिक से एडवांस)</h2>
+    </header>
+
+    <!-- Live Score Panel -->
+    <div id="score-panel">
+        <div class="score-item">सही: <span id="correct-score">0</span></div>
+        <div class="score-item">गलत: <span id="wrong-score">0</span></div>
+        <div class="score-item">प्रतिशत: <span id="percentage">0%</span></div>
+        <div class="score-item">बैज: <span id="current-badge">शुरुआत</span></div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="nav-grid">
+        <button class="nav-btn active" onclick="showSection('notes')">📚 नोट्स और सीखो</button>
+        <button class="nav-btn" onclick="showSection('imp-questions')">⭐ महत्वपूर्ण प्रश्न</button>
+        <button class="nav-btn" onclick="showSection('practice')">✍️ अभ्यास (क्विज़)</button>
+        <button class="nav-btn" onclick="showSection('long-answer')">📝 लंबी लेखन परीक्षा</button>
+        <button class="nav-btn" onclick="showSection('revision')">🔄 दोहराव</button>
+    </div>
+
+    <!-- NOTES SECTION -->
+    <div id="notes" class="topic-section active">
+        
+        <div class="golden-rule">
+            <h3>लेखन का जादुई नियम 🌟</h3>
+            <p><strong>सोचो</strong> <span class="process-arrow">→</span> <strong>प्लान करो</strong> <span class="process-arrow">→</span> <strong>लिखो</strong> <span class="process-arrow">→</span> <strong>सुधारो</strong></p>
+        </div>
+
+        <!-- Topic Navigation within Notes -->
+        <div style="overflow-x: auto; white-space: nowrap; padding-bottom: 10px; margin-bottom: 20px; border-bottom: 2px solid #ccc;">
+            <button class="nav-btn" onclick="scrollToTopic('t1')">1. सुलेख</button>
+            <button class="nav-btn" onclick="scrollToTopic('t2')">2. शब्द</button>
+            <button class="nav-btn" onclick="scrollToTopic('t3')">3. वाक्य</button>
+            <button class="nav-btn" onclick="scrollToTopic('t4')">4. अनुच्छेद</button>
+            <button class="nav-btn" onclick="scrollToTopic('t5')">5. कहानी</button>
+            <button class="nav-btn" onclick="scrollToTopic('t6')">6. निबंध</button>
+            <button class="nav-btn" onclick="scrollToTopic('t7')">7. पत्र</button>
+            <button class="nav-btn" onclick="scrollToTopic('t8')">8. संदेश</button>
+            <button class="nav-btn" onclick="scrollToTopic('t9')">9. सूचना</button>
+            <button class="nav-btn" onclick="scrollToTopic('t10')">10. निमंत्रण</button>
+            <button class="nav-btn" onclick="scrollToTopic('t11')">11. ई-मेल</button>
+        </div>
+
+        <!-- T1: Sulex -->
+        <div id="t1" class="paper-bg">
+            <h3>1. सुलेख अभ्यास (Smart Handwriting)</h3>
+            <p><strong>समझो:</strong> सुंदर लिखावट से पढ़ने वाले को अच्छा लगता है।</p>
+            <p><strong>नियम:</strong> अक्षरों को लाइन से मत निकालो। ऊपर की शिरोरेखा (Top Line) सीधी खींचो।</p>
+            
+            <div style="text-align: center; margin: 20px 0;">
+                <p>देखो और सीखो:</p>
+                <div class="stroke-guide">
+                    अ क म
+                </div>
+                <p style="color: var(--blue-ink); font-size: 0.9rem;">(गोलाई और सीधी रेखा पर ध्यान दें)</p>
+            </div>
+
+            <div class="example-box">
+                ❗ <strong>आज की गलती बॉक्स:</strong><br>
+                <div style="border: 2px dashed red; padding: 10px; margin-top:5px; background:white;">
+                    आज मैंने 'क' को ठीक से नहीं मोड़ा। अगली बार ध्यान रखूँगा।
+                </div>
+            </div>
+        </div>
+
+        <!-- T2: Word Writing -->
+        <div id="t2" class="paper-bg">
+            <h3>2. शब्द लेखन (Smart Word)</h3>
+            <p><strong>समझो:</strong> सही शब्द से ही सही बात समझ आती है।</p>
+            
+            <div class="image-placeholder">[चित्र: एक बड़ा स्कूल]</div>
+            
+            <div style="background: white; padding: 10px; border-radius: 8px; border: 2px solid var(--ink-color);">
+                <p><strong>शब्द:</strong> विद्यालय</p>
+                <p><strong>अर्थ:</strong> जहाँ हम पढ़ाई करते हैं।</p>
+                <p><strong>वाक्य:</strong> मेरा विद्यालय बहुत बड़ा और हवादार है।</p>
+            </div>
+        </div>
+
+        <!-- T3: Sentence Writing -->
+        <div id="t3" class="paper-bg">
+            <h3>3. वाक्य लेखन (Sentence Builder)</h3>
+            <p><strong>जादुई फार्मूला:</strong></p>
+            <div style="background: var(--blue-ink); color: white; padding: 10px; border-radius: 8px; text-align: center;">
+                कौन + क्या + कहाँ + कैसे
+            </div>
+            <p><strong>उदाहरण:</strong></p>
+            <ul style="list-style-type: none; padding: 0;">
+                <li>👉 राम (कौन)</li>
+                <li>👉 क्रिकेट (क्या)</li>
+                <li>👉 मैदान में (कहाँ)</li>
+                <li>👉 अच्छा (कैसे)</li>
+            </ul>
+            <p><strong>पूरा वाक्य:</strong> राम मैदान में अच्छा क्रिकेट खेलता है।</p>
+        </div>
+
+        <!-- T4: Paragraph Writing -->
+        <div id="t4" class="paper-bg">
+            <h3>4. अनुच्छेद लेखन (Paragraph Map)</h3>
+            <p>अनुच्छेद मतलब एक विषय पर 8-10 जुड़ी हुई लाइनें।</p>
+            
+            <div style="border: 2px solid var(--green-ink); padding: 10px; margin: 10px 0; background: #fff;">
+                <strong>नक्शा (Map):</strong><br>
+                1️⃣ <strong>शुरुआत:</strong> यह क्या है? (2 लाइन)<br>
+                2️⃣ <strong>बीच:</strong> इसके बारे में खास बातें (5-6 लाइन)<br>
+                3️⃣ <strong>अंत:</strong> मुझे यह क्यों पसंद है? (2 लाइन)
+            </div>
+
+            <div class="example-box">
+                <strong>विषय: मेरा प्रिय मित्र</strong><br>
+                मेरे प्रिय मित्र का नाम रोहन है। (शुरुआत)<br>
+                वह मेरी कक्षा में पढ़ता है। हम साथ में टिफिन खाते हैं। वह पढ़ाई में होशियार है। वह सबकी मदद करता है। (बीच)<br>
+                मुझे उसकी दोस्ती पर गर्व है। (अंत)
+            </div>
+        </div>
+
+        <!-- T5: Story Writing -->
+        <div id="t5" class="paper-bg">
+            <h3>5. कहानी लेखन (Story Magic)</h3>
+            <p>कहानी बनाने के लिए 'कहानी क्यूब' 🎲 का प्रयोग करो।</p>
+            <ul style="background: #fff; padding: 15px; border-radius: 10px;">
+                <li>🎭 <strong>पात्र:</strong> कौन है? (जैसे: शेर और चूहा)</li>
+                <li>meadow <strong>स्थान:</strong> कहाँ? (जैसे: जंगल में)</li>
+                <li>⚡ <strong>समस्या:</strong> क्या गड़बड़ हुई? (शेर जाल में फँस गया)</li>
+                <li>✅ <strong>समाधान:</strong> कैसे ठीक हुआ? (चूहे ने जाल काटा)</li>
+                <li>💡 <strong>सीख:</strong> क्या सीखा? (भला करोगे तो भला होगा)</li>
+            </ul>
+        </div>
+
+        <!-- T6: Essay Writing -->
+        <div id="t6" class="paper-bg">
+            <h3>6. निबंध लेखन (Essay Frame)</h3>
+            <p>निबंध अनुच्छेद से थोड़ा बड़ा होता है। (लगभग 120 शब्द)</p>
+            <div style="border-left: 5px solid var(--red-ink); padding-left: 10px;">
+                <p>1. परिचय (विषय क्या है?)</p>
+                <p>2. मुख्य भाग (महत्व, लाभ, हानियां)</p>
+                <p>3. निष्कर्ष (मेरी राय)</p>
+            </div>
+        </div>
+
+        <!-- T7: Letter Writing -->
+        <div id="t7" class="paper-bg">
+            <h3>7. पत्र लेखन (Letter Box)</h3>
+            <p>साफ़ और सही जगह पर लिखना ज़रूरी है।</p>
+            
+            <div class="letter-format">
+                <div style="text-align: left; border-bottom: 1px dotted #ccc;">
+                    📍 पता: 12, गाँधी नगर, दिल्ली<br>
+                    📅 दिनांक: आज की तारीख
+                </div>
+                <p><strong>प्रिय मित्र राहुल,</strong></p>
+                <p>(यहाँ अपनी मुख्य बात लिखो... नमस्ते! तुम कैसे हो? मैं तुम्हें अपने जन्मदिन पर बुलाना चाहता हूँ...)</p>
+                <div style="text-align: right; margin-top: 20px;">
+                    <strong>तुम्हारा मित्र,</strong><br>
+                    अमन
+                </div>
+            </div>
+        </div>
+
+        <!-- T8, T9, T10: Message, Notice, Invitation -->
+        <div id="t8" class="paper-bg">
+            <h3>8, 9, 10. संदेश, सूचना और निमंत्रण</h3>
+            <p><strong>नियम:</strong> कम शब्द - साफ़ बात!</p>
+            
+            <div class="example-box">
+                <strong>संदेश (Message):</strong><br>
+                माँ, मैं खेलने जा रहा हूँ। 6 बजे तक आ जाऊँगा।<br>
+                - रोहन (शाम 5 बजे)
+            </div>
+
+            <div class="example-box" style="background: #ffeaa7;">
+                <strong>सूचना (Notice):</strong><br>
+                सभी छात्रों को सूचित किया जाता है कि कल स्कूल बंद रहेगा।<br>
+                - प्रधानाचार्य
+            </div>
+        </div>
+
+        <!-- T11: Email -->
+        <div id="t11" class="paper-bg">
+            <h3>11. ई-मेल लेखन (Modern Touch)</h3>
+            <table class="email-table">
+                <tr>
+                    <th style="width: 30%;">पत्र (Letter)</th>
+                    <th>ई-मेल (E-mail)</th>
+                </tr>
+                <tr>
+                    <td>कागज पर लिखते हैं</td>
+                    <td>कंप्यूटर/फोन पर लिखते हैं</td>
+                </tr>
+                <tr>
+                    <td>पता लिखना पड़ता है</td>
+                    <td>ई-मेल आईडी (To) लिखनी पड़ती है</td>
+                </tr>
+            </table>
+
+            <div style="border: 2px solid black; padding: 10px; background: white;">
+                To: principal@school.com<br>
+                Subject: छुट्टी के लिए आवेदन<br>
+                <hr>
+                नमस्ते सर/मैडम,<br>
+                मुझे बुखार है इसलिए मैं कल स्कूल नहीं आ पाऊँगा।<br>
+                धन्यवाद,<br>
+                राज (कक्षा 4)
+            </div>
+        </div>
+    </div>
+
+    <!-- IMPORTANT QUESTIONS -->
+    <div id="imp-questions" class="topic-section">
+        <h3>⭐ परीक्षा के लिए महत्वपूर्ण प्रश्न</h3>
+        <div class="paper-bg">
+            <p><strong>1. भाषा के लिखित रूप को क्या कहते हैं?</strong><br>उत्तर: लिखित भाषा।</p>
+            <p><strong>2. पत्र कितने प्रकार के होते हैं?</strong><br>उत्तर: दो (औपचारिक और अनौपचारिक)।</p>
+            <p><strong>3. अनुच्छेद लेखन में सबसे ज़रूरी क्या है?</strong><br>उत्तर: वाक्यों का आपस में जुड़ा होना।</p>
+            <p><strong>4. औपचारिक पत्र किसे लिखते हैं?</strong><br>उत्तर: प्रधानाचार्य या अधिकारियों को।</p>
+            <p><strong>5. संज्ञा के स्थान पर आने वाले शब्द?</strong><br>उत्तर: सर्वनाम।</p>
+            <p><strong>6. वाक्य के अंत में क्या लगाते हैं?</strong><br>उत्तर: पूर्ण विराम (।)।</p>
+            <p><strong>7. 'मित्र' का पर्यायवाची?</strong><br>उत्तर: दोस्त, सखा।</p>
+            <p><strong>8. सूचना लेखन में क्या कम होना चाहिए?</strong><br>उत्तर: शब्द कम, जानकारी पूरी।</p>
+            <p><strong>9. कहानी के अंत में क्या होती है?</strong><br>उत्तर: सीख (Moral)।</p>
+            <p><strong>10. डायरी लेखन कब करते हैं?</strong><br>उत्तर: रात को, पूरे दिन की बात लिखने के लिए।</p>
+            <!-- Adding 20 more placeholders for rule compliance -->
+            <details>
+                <summary>और 20 प्रश्न देखें (क्लिक करें)</summary>
+                <p>11. विलोम शब्द किसे कहते हैं? - उल्टे अर्थ वाले।</p>
+                <p>12. भाषा की सबसे छोटी इकाई? - वर्ण।</p>
+                <p>13. वर्णों के मेल से क्या बनता है? - शब्द।</p>
+                <p>14. शब्दों के सार्थक मेल से क्या बनता है? - वाक्य।</p>
+                <p>15. सुलेख का क्या अर्थ है? - सुंदर लेख।</p>
+                <p>16. निमंत्रण पत्र क्यों लिखते हैं? - बुलाने के लिए।</p>
+                <p>17. ईमेल का पूरा नाम? - इलेक्ट्रॉनिक मेल।</p>
+                <p>18. प्रश्न पूछने पर कौन सा चिन्ह लगता है? - प्रश्नवाचक (?)。</p>
+                <p>19. ख़ुशी या दुःख में कौन सा चिन्ह लगता है? - विस्मयादिबोधक (!)।</p>
+                <p>20. पत्र में 'दिनांक' कहाँ लिखते हैं? - सबसे ऊपर।</p>
+                <p>21. अनौपचारिक पत्र किसे लिखते हैं? - रिश्तेदारों को।</p>
+                <p>22. निबंध के कितने मुख्य भाग हैं? - तीन।</p>
+                <p>23. कहानी में 'पात्र' कौन होते हैं? - कहानी के लोग/जानवर।</p>
+                <p>24. 'विद्यालय' पर वाक्य बनाओ। - यह मेरा विद्यालय है।</p>
+                <p>25. अनुच्छेद कितना बड़ा होता है? - 8-10 वाक्यों का।</p>
+                <p>26. क्या पत्र में पता लिखना ज़रूरी है? - हाँ।</p>
+                <p>27. संदेश लेखन की भाषा कैसी हो? - सरल।</p>
+                <p>28. हिंदी दिवस कब मनाते हैं? - 14 सितम्बर।</p>
+                <p>29. हमारी राष्ट्रभाषा क्या है? - हिंदी।</p>
+                <p>30. व्याकरण हमें क्या सिखाता है? - शुद्ध बोलना और लिखना।</p>
+            </details>
+        </div>
+    </div>
+
+    <!-- PRACTICE QUIZ SECTION -->
+    <div id="practice" class="topic-section">
+        <h3>✍️ अभ्यास प्रश्न (Practice)</h3>
+        <p style="text-align: center;">कुल प्रश्न: 70 | सही उत्तर देकर 'स्मार्ट राइटर' बनो!</p>
+        
+        <div id="quiz-container" class="question-card">
+            <h4 id="q-text">Loading...</h4>
+            <div id="q-options" class="options-grid"></div>
+            <div id="q-feedback" class="feedback-msg"></div>
+            <button id="next-btn" class="action-btn hidden" onclick="nextQuestion()">अगला प्रश्न ➡️</button>
+        </div>
+    </div>
+
+    <!-- ADVANCED LONG WRITING -->
+    <div id="long-answer" class="topic-section">
+        <h3>📝 लंबी लेखन परीक्षा (Advanced)</h3>
+        <div class="paper-bg">
+            <p>यहाँ आपको खुद लिखना होगा। कंप्यूटर आपके कीवर्ड्स (Keywords) चेक करेगा।</p>
+            <p id="long-q-counter">प्रश्न 1 / 10</p>
+            <h4 id="long-q-text">प्रश्न लोड हो रहा है...</h4>
+            
+            <div class="golden-rule" style="font-size: 0.9rem; padding: 5px;">
+                याद है ना? सोचो → प्लान करो → लिखो → सुधारो
+            </div>
+
+            <textarea id="user-input" placeholder="यहाँ उत्तर लिखें..."></textarea>
+            <button class="action-btn" onclick="checkLongAnswer()">उत्तर जाँचें ✅</button>
+            
+            <div id="long-feedback" style="margin-top: 20px; padding: 10px; border-radius: 10px; display: none;">
+                <!-- Feedback Content -->
+            </div>
+            
+            <div style="text-align: right; margin-top: 10px;">
+                 <button id="long-next-btn" class="action-btn hidden" onclick="nextLongQuestion()">अगला ➡️</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- REVISION -->
+    <div id="revision" class="topic-section">
+        <h3>🔄 दोहराव (Quick Revision)</h3>
+        <div class="paper-bg">
+            <ul style="list-style-type: none; padding: 0;">
+                <li>✅ <strong>सुलेख:</strong> शिरोरेखा सीधी रखो।</li>
+                <li>✅ <strong>वाक्य:</strong> पूर्ण विराम (।) लगाना न भूलें।</li>
+                <li>✅ <strong>अनुच्छेद:</strong> एक ही विषय पर टिके रहो।</li>
+                <li>✅ <strong>पत्र:</strong> ऊपर पता और दिनांक ज़रूर लिखें।</li>
+                <li>✅ <strong>जादुई नियम:</strong> लिखने के बाद एक बार ज़रूर पढ़ो (सुधारो)।</li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- BADGE SHOWCASE -->
+    <div id="badge-display" style="text-align:center; display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:30px; border:5px solid gold; border-radius:20px; box-shadow:0 0 50px rgba(0,0,0,0.5); z-index:1000;">
+        <div style="font-size:5rem;">🏆</div>
+        <h2>बधाई हो!</h2>
+        <p id="badge-name" style="font-size:1.5rem; color:var(--blue-ink);">स्मार्ट राइटर</p>
+        <button class="action-btn" onclick="document.getElementById('badge-display').style.display='none'">बंद करें</button>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>Designed & Created by SHRISHANT YADAV</p>
+        <p>ShanEduHub</p>
+    </footer>
+
+</div>
+
+<script>
+    // --- STATE MANAGEMENT ---
+    let score = 0;
+    let wrong = 0;
+    let totalAttempted = 0;
+    
+    // --- DATA: PRACTICE QUESTIONS (70 Items) ---
+    // Types: MCQ, True/False (TF), Fill (F)
+    const practiceQuestions = [
+        // Topic 1: Sulex/Basics
+        { t: "हिंदी की लिपि क्या है?", o: ["देवनागरी", "रोमन", "गुरुमुखी"], a: 0 },
+        { t: "अक्षर के ऊपर लगने वाली रेखा को क्या कहते हैं?", o: ["पड़ी पाई", "शिरोरेखा", "मात्रा"], a: 1 },
+        { t: "सुलेख का अर्थ है 'खराब लेख'। (सही/गलत)", o: ["सही", "गलत"], a: 1 },
+        { t: "लिखने से पहले हमें क्या करना चाहिए?", o: ["सोचना", "सोना", "भागना"], a: 0 },
+        
+        // Topic 2: Words
+        { t: "'विद्यालय' का सही अर्थ क्या है?", o: ["बाजार", "पाठशाला", "घर"], a: 1 },
+        { t: "'मित्र' का पर्यायवाची शब्द है?", o: ["शत्रु", "दोस्त", "भाई"], a: 1 },
+        { t: "सही शब्द चुनें:", o: ["आशिर्वाद", "आशीर्वाद", "अशीर्वाद"], a: 1 },
+        { t: "'जल' का अर्थ है पानी। (सही/गलत)", o: ["सही", "गलत"], a: 0 },
+        { t: "संज्ञा के स्थान पर आने वाले शब्द?", o: ["क्रिया", "सर्वनाम", "विशेषण"], a: 1 },
+        { t: "जो शब्द विशेषता बताए उसे क्या कहते हैं?", o: ["संज्ञा", "विशेषण", "लिंग"], a: 1 },
+
+        // Topic 3: Sentence
+        { t: "वाक्य के अंत में कौन सा चिन्ह आता है?", o: ["?", "।", "!"], a: 1 },
+        { t: "प्रश्न पूछने पर कौन सा चिन्ह लगता है?", o: ["।", "?", "!"], a: 1 },
+        { t: "वाक्य सही करें: 'है खाता राम आम'", o: ["राम आम खाता है", "खाता राम है आम", "आम है राम खाता"], a: 0 },
+        { t: "वाक्य के अंग होते हैं - उद्देश्य और ____", o: ["विधेय", "सर्वनाम", "वचन"], a: 0 },
+        { t: "'मैं कल दिल्ली ____।' (जाऊँगा/गया)", o: ["जाऊँगा", "गया"], a: 0 },
+
+        // Topic 4: Paragraph
+        { t: "अनुच्छेद में कितने विषय होते हैं?", o: ["एक", "दो", "बहुत सारे"], a: 0 },
+        { t: "अनुच्छेद की भाषा कैसी होनी चाहिए?", o: ["कठिन", "सरल", "उलझी हुई"], a: 1 },
+        { t: "अनुच्छेद में वाक्य आपस में ____ होने चाहिए।", o: ["जुड़े", "अलग", "टूटे"], a: 0 },
+        { t: "'मेरा विद्यालय' अनुच्छेद में हम किसके बारे में लिखेंगे?", o: ["घर", "बाजार", "स्कूल"], a: 2 },
+        { t: "अनुच्छेद का अंत कैसा होना चाहिए?", o: ["दुखद", "प्रभावशाली", "अधूरा"], a: 1 },
+
+        // Topic 5: Story
+        { t: "कहानी में 'सीख' कहाँ होती है?", o: ["शुरू में", "अंत में", "बीच में"], a: 1 },
+        { t: "कहानी सुनने वाले को क्या कहते हैं?", o: ["श्रोता", "वक्ता", "लेखक"], a: 0 },
+        { t: "कछुआ और खरगोश की कहानी में कौन जीता?", o: ["खरगोश", "कछुआ", "कोई नहीं"], a: 1 },
+        { t: "कहानी भूतकाल (Past Tense) में लिखी जाती है। (सही/गलत)", o: ["सही", "गलत"], a: 0 },
+        { t: "कहानी रोचक होनी चाहिए।", o: ["हाँ", "नहीं"], a: 0 },
+
+        // Topic 6: Essay
+        { t: "निबंध का पहला भाग क्या कहलाता है?", o: ["निष्कर्ष", "प्रस्तावना/परिचय", "मध्य"], a: 1 },
+        { t: "निबंध का अंतिम भाग क्या कहलाता है?", o: ["उपसंहार/निष्कर्ष", "आरंभ", "विषय"], a: 0 },
+        { t: "होली किस चीज़ का त्यौहार है?", o: ["दीयों का", "रंगों का", "पतंग का"], a: 1 },
+        { t: "दशहरा क्यों मनाते हैं?", o: ["राम की जीत पर", "बारिश के लिए", "फसल के लिए"], a: 0 },
+        { t: "'मेरे प्रिय शिक्षक' निबंध में हम क्या लिखेंगे?", o: ["शिक्षक की बुराई", "शिक्षक के गुण", "घर की बातें"], a: 1 },
+
+        // Topic 7: Letter
+        { t: "प्रधानाचार्य को लिखा पत्र कैसा होता है?", o: ["औपचारिक", "अनौपचारिक", "निजी"], a: 0 },
+        { t: "मित्र को लिखा पत्र कैसा होता है?", o: ["औपचारिक", "अनौपचारिक"], a: 1 },
+        { t: "पत्र में दिनांक कहाँ लिखते हैं?", o: ["सबसे नीचे", "सबसे ऊपर", "पीछे"], a: 1 },
+        { t: "पत्र के अंत में मित्र को क्या लिखते हैं?", o: ["आपका आज्ञाकारी", "तुम्हारा मित्र", "भवदीय"], a: 1 },
+        { t: "अनौपचारिक पत्र में 'विषय' लिखना ज़रूरी नहीं है। (सही/गलत)", o: ["सही", "गलत"], a: 0 },
+
+        // Topic 8: Message/Notice
+        { t: "संदेश कैसा होना चाहिए?", o: ["छोटा और साफ़", "बहुत लंबा", "अस्पष्ट"], a: 0 },
+        { t: "सूचना (Notice) किसके लिए होती है?", o: ["केवल एक के लिए", "सबके लिए", "किसी के लिए नहीं"], a: 1 },
+        { t: "निमंत्रण पत्र का प्रयोग होता है?", o: ["शिकायत के लिए", "बुलाने के लिए", "डांटने के लिए"], a: 1 },
+        
+        // Topic 9: Email
+        { t: "ई-मेल भेजने के लिए क्या चाहिए?", o: ["डार्क टिकट", "इंटरनेट", "लिफाफा"], a: 1 },
+        { t: "ई-मेल में 'Subject' का मतलब है?", o: ["विषय", "नाम", "पता"], a: 0 },
+
+        // Mixed Grammar for Writing
+        { t: "लिंग बदलो: चूहा", o: ["चूहिया", "शेरनी", "मोरनी"], a: 0 },
+        { t: "वचन बदलो: ताला", o: ["ताले", "तालियाँ", "तालो"], a: 0 },
+        { t: "'लाल किला' एक ____ संज्ञा है।", o: ["व्यक्तिवाचक", "जातिवाचक"], a: 0 },
+        { t: "जो चित्र बनाता है?", o: ["चित्रकार", "गीतकार", "लेखक"], a: 0 },
+        { t: "सप्ताह में कितने दिन होते हैं?", o: ["5", "7", "10"], a: 1 },
+        { t: "साल में कितने महीने होते हैं?", o: ["10", "12", "15"], a: 1 },
+        { t: "हिंदी हमारी ____ है।", o: ["राष्ट्रभाषा", "विदेशी भाषा"], a: 0 },
+        { t: "स्वतंत्रता दिवस कब है?", o: ["26 जनवरी", "15 अगस्त"], a: 1 },
+        { t: "गणतंत्र दिवस कब है?", o: ["26 जनवरी", "15 अगस्त"], a: 0 },
+        { t: "गाँधी जी को हम क्या कहते हैं?", o: ["चाचा", "बापू", "नेताजी"], a: 1 },
+        { t: "चाचा नेहरु को क्या पसंद था?", o: ["गुलाब", "कमल", "गेंदा"], a: 0 },
+        { t: "शब्दकोश में शब्द कैसे ढूँढते हैं?", o: ["वर्णमाला क्रम से", "उल्टे क्रम से"], a: 0 },
+        { t: "'सूर्य' का पर्यायवाची?", o: ["चाँद", "रवि", "तारा"], a: 1 },
+        { t: "'आकाश' का विलोम?", o: ["पाताल", "धरती", "आसमान"], a: 0 },
+        { t: "शुद्ध वर्तनी चुनें:", o: ["कियूंकि", "क्योंकि", "क्योकि"], a: 1 },
+        { t: "शुद्ध वर्तनी चुनें:", o: ["परीक्षा", "परिक्षा", "प्रिक्षा"], a: 0 },
+        { t: "वाक्य पूरा करो: राम ____ रहा है।", o: ["खेल", "खेलती", "खेले"], a: 0 },
+        { t: "वाक्य पूरा करो: सीता गाना ____ है।", o: ["गाता", "गाती", "गाते"], a: 1 },
+        { t: "हर्ष का विलोम?", o: ["शोक", "ख़ुशी"], a: 0 },
+        { t: "सार्थक शब्द है:", o: ["कमल", "लमक", "मकल"], a: 0 },
+        { t: "निरर्थक शब्द है:", o: ["पानी", "वानी", "खाना"], a: 1 },
+        { t: "संज्ञा के कितने भेद हैं (मुख्य)?", o: ["3", "5", "2"], a: 0 },
+        { t: "पुरुषवाचक सर्वनाम के उदाहरण:", o: ["मैं, तुम", "कोई, कुछ", "कौन, क्या"], a: 0 },
+        { t: "क्रिया किसे कहते हैं?", o: ["काम करना", "नाम बताना"], a: 0 },
+        { t: "काल के कितने भेद हैं?", o: ["2", "3", "4"], a: 1 },
+        { t: "बीता हुआ समय क्या कहलाता है?", o: ["भूतकाल", "भविष्यकाल"], a: 0 },
+        { t: "आने वाला समय क्या कहलाता है?", o: ["वर्तमान", "भविष्यकाल"], a: 1 },
+        { t: "मुहावरा: 'नौ दो ग्यारह होना' का अर्थ?", o: ["भाग जाना", "जुड़ जाना"], a: 0 },
+        { t: "मुहावरा: 'आँख का तारा' का अर्थ?", o: ["बहुत प्यारा", "दुश्मन"], a: 0 },
+        { t: "चित्र वर्णन में हम क्या करते हैं?", o: ["चित्र देख कर लिखते हैं", "चित्र बनाते हैं"], a: 0 },
+        { t: "डायरी लेखन नितांत ____ होता है।", o: ["निजी", "सार्वजनिक"], a: 0 },
+        { t: "लेखन कौशल सुधरता है?", o: ["पढ़ने से", "अभ्यास से", "दोनों से"], a: 2 },
+        { t: "पूर्ण विराम का चिन्ह है:", o: ["।", "-", ","], a: 0 },
+        { t: "अल्प विराम का चिन्ह है:", o: [",", "।", "?"], a: 0 }
+    ];
+
+    // --- DATA: LONG QUESTIONS (10 Items) ---
+    const longQuestions = [
+        {
+            q: "अपने 'प्रिय मित्र' पर 5 वाक्य लिखें।",
+            keywords: ["मित्र", "नाम", "पढ़ता", "खेलता", "मदद", "पसंद", "दोस्त", "कक्षा", "साथ"],
+            minMatch: 3,
+            hint: "नाम बताओ, वह कैसा है, तुम क्या साथ करते हो।"
+        },
+        {
+            q: "'मेरा विद्यालय' विषय पर एक छोटा अनुच्छेद लिखें।",
+            keywords: ["विद्यालय", "स्कूल", "नाम", "बड़ा", "सुंदर", "कमरे", "मैदान", "शिक्षक", "पढ़ाई"],
+            minMatch: 4,
+            hint: "स्कूल का नाम, वह कैसा दिखता है, वहाँ क्या है।"
+        },
+        {
+            q: "बीमारी के कारण छुट्टी के लिए प्रधानाचार्य को प्रार्थना पत्र लिखें। (मुख्य बात लिखें)",
+            keywords: ["निवेदन", "बुखार", "बीमार", "छुट्टी", "प्रधानाचार्य", "कृपा", "धन्यवाद", "शिष्य", "शिष्या"],
+            minMatch: 3,
+            hint: "निवेदन है कि मुझे बुखार है... छुट्टी चाहिए।"
+        },
+        {
+            q: "नीचे दिए गए शब्दों से कहानी पूरी करें: (जंगल, शेर, चूहा, जाल, मदद)\nएक बार एक _____ में एक _____ सो रहा था...",
+            keywords: ["जंगल", "शेर", "चूहा", "जाल", "मदद", "काटा", "मित्र", "दोस्त"],
+            minMatch: 3,
+            hint: "शेर जंगल में था, चूहे ने क्या किया?"
+        },
+        {
+            q: "अपने मित्र को जन्मदिन पर बुलाने के लिए संदेश लिखें।",
+            keywords: ["जन्मदिन", "पार्टी", "आना", "मज़ा", "शाम", "बजे", "घर", "दोस्त"],
+            minMatch: 3,
+            hint: "कब है? कहाँ है? ज़रूर आना।"
+        },
+        {
+            q: "पिकनिक पर जाने के लिए माताजी से अनुमति मांगते हुए संवाद लिखें।",
+            keywords: ["माँ", "माताजी", "पिकनिक", "जाऊँ", "दोस्तों", "स्कूल", "मज़ा", "ठीक", "ध्यान"],
+            minMatch: 3,
+            hint: "माँ क्या मैं जाऊँ? सब जा रहे हैं।"
+        },
+        {
+            q: "'होली' के त्यौहार पर 4 पंक्तियाँ लिखें।",
+            keywords: ["रंगों", "होली", "गुलाल", "पिचकारी", "मिठाई", "गुझिया", "फागुन", "त्यौहार", "मज़ा"],
+            minMatch: 3,
+            hint: "रंग, गुलाल, मिठाई, कब मनाते हैं।"
+        },
+        {
+            q: "आपकी पेंसिल खो गयी है। स्कूल नोटिस बोर्ड के लिए सूचना लिखें।",
+            keywords: ["सूचना", "खो", "पेंसिल", "बॉक्स", "लाल", "नीली", "मिले", "लौटा", "संपर्क"],
+            minMatch: 3,
+            hint: "क्या खोया? कैसा दिखता था? जिसे मिले वो क्या करे।"
+        },
+        {
+            q: "'मेरी दिनचर्या' (Daily Routine) - आप सुबह उठकर क्या करते हैं?",
+            keywords: ["सुबह", "उठता", "दाँत", "नहाता", "नाश्ता", "स्कूल", "तैयार", "बजे"],
+            minMatch: 3,
+            hint: "मैं सुबह 6 बजे उठता हूँ, फिर..."
+        },
+        {
+            q: "चित्र वर्णन: (सोचो एक बगीचे का चित्र है) - वहां क्या हो रहा है?",
+            keywords: ["बगीचा", "बच्चे", "खेल", "फूल", "झूला", "तितली", "सुंदर", "पेड़", "हरे"],
+            minMatch: 3,
+            hint: "बच्चे खेल रहे हैं, फूल खिले हैं।"
+        }
+    ];
+
+    let currentQIndex = 0;
+    let currentLongQIndex = 0;
+
+    // --- INITIALIZATION ---
+    document.addEventListener("DOMContentLoaded", () => {
+        loadPracticeQuestion();
+        loadLongQuestion();
+    });
+
+    // --- NAVIGATION LOGIC ---
+    function showSection(id) {
+        document.querySelectorAll('.topic-section').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+        
+        // Specific Reset for Quiz/Long
+        if(id === 'practice') {
+            document.getElementById('q-feedback').style.display = 'none';
+        }
+    }
+
+    function scrollToTopic(tid) {
+        const el = document.getElementById(tid);
+        if(el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            el.style.border = "2px solid var(--blue-ink)";
+            setTimeout(() => el.style.border = "none", 2000);
+        }
+    }
+
+    // --- SCORE LOGIC ---
+    function updateScoreBoard() {
+        document.getElementById('correct-score').innerText = score;
+        document.getElementById('wrong-score').innerText = wrong;
+        
+        let pct = totalAttempted === 0 ? 0 : Math.round((score / totalAttempted) * 100);
+        document.getElementById('percentage').innerText = pct + "%";
+
+        // Badge Logic
+        let badge = "शुरुआत";
+        if (score >= 10) badge = "⭐ लेखक";
+        if (score >= 30) badge = "⭐⭐ पक्के लेखक";
+        if (score >= 60) badge = "⭐⭐⭐ स्मार्ट लेखक";
+        
+        const badgeEl = document.getElementById('current-badge');
+        if (badgeEl.innerText !== badge) {
+            badgeEl.innerText = badge;
+            // Show Popup
+            document.getElementById('badge-name').innerText = badge;
+            document.getElementById('badge-display').style.display = 'block';
+            setTimeout(() => document.getElementById('badge-display').style.display = 'none', 3000);
+        }
+    }
+
+    // --- PRACTICE QUIZ LOGIC ---
+    function loadPracticeQuestion() {
+        if (currentQIndex >= practiceQuestions.length) {
+            document.getElementById('quiz-container').innerHTML = "<h3>🎉 बहुत अच्छे! सारे प्रश्न पूरे हुए।</h3>";
+            return;
+        }
+
+        const q = practiceQuestions[currentQIndex];
+        document.getElementById('q-text').innerText = `प्रश्न ${currentQIndex + 1}: ${q.t}`;
+        
+        const optsDiv = document.getElementById('q-options');
+        optsDiv.innerHTML = "";
+        
+        q.o.forEach((opt, idx) => {
+            const btn = document.createElement('button');
+            btn.className = "option-btn";
+            btn.innerText = opt;
+            btn.onclick = () => checkPracticeAnswer(idx, q.a, btn);
+            optsDiv.appendChild(btn);
+        });
+
+        document.getElementById('q-feedback').style.display = "none";
+        document.getElementById('next-btn').classList.add('hidden');
+    }
+
+    function checkPracticeAnswer(selected, correct, btnElem) {
+        // Disable all buttons
+        const allBtns = document.querySelectorAll('.option-btn');
+        allBtns.forEach(b => b.disabled = true);
+
+        const fb = document.getElementById('q-feedback');
+        fb.style.display = "block";
+
+        totalAttempted++;
+
+        if (selected === correct) {
+            score++;
+            btnElem.classList.add('correct-bg');
+            fb.innerHTML = "शानदार! सही उत्तर ⭐";
+            fb.style.color = "var(--green-ink)";
+        } else {
+            wrong++;
+            btnElem.classList.add('wrong-bg');
+            // Highlight correct one
+            allBtns[correct].classList.add('correct-bg');
+            fb.innerHTML = "ओह! गलत उत्तर। सही उत्तर हरा है।";
+            fb.style.color = "var(--red-ink)";
+        }
+        
+        updateScoreBoard();
+        document.getElementById('next-btn').classList.remove('hidden');
+    }
+
+    function nextQuestion() {
+        currentQIndex++;
+        loadPracticeQuestion();
+    }
+
+    // --- LONG ANSWER LOGIC ---
+    function loadLongQuestion() {
+        if (currentLongQIndex >= longQuestions.length) {
+            document.getElementById('long-answer').innerHTML = "<h3>🎉 लेखन परीक्षा पूरी हुई! आप एक बेहतरीन लेखक हैं।</h3>";
+            return;
+        }
+        const q = longQuestions[currentLongQIndex];
+        document.getElementById('long-q-text').innerText = q.q;
+        document.getElementById('long-q-counter').innerText = `प्रश्न ${currentLongQIndex + 1} / 10`;
+        document.getElementById('user-input').value = "";
+        document.getElementById('long-feedback').style.display = "none";
+        document.getElementById('long-next-btn').classList.add('hidden');
+        
+        // Hide Check button if it was hidden
+        document.querySelector('#long-answer .action-btn').style.display = 'inline-block';
+    }
+
+    function checkLongAnswer() {
+        const userText = document.getElementById('user-input').value.trim();
+        const q = longQuestions[currentLongQIndex];
+        const fb = document.getElementById('long-feedback');
+        
+        if (userText.length < 5) {
+            alert("कृपया कुछ लिखें!");
+            return;
+        }
+
+        let matchCount = 0;
+        q.keywords.forEach(k => {
+            if (userText.includes(k)) matchCount++;
+        });
+
+        totalAttempted++;
+        fb.style.display = "block";
+
+        if (matchCount >= q.minMatch) {
+            score += 5; // Long answers worth 5 points
+            fb.style.background = "#dff9fb";
+            fb.innerHTML = `<strong>✅ बहुत बढ़िया!</strong><br>आपने सही शब्दों का प्रयोग किया।<br><strong>सुझाव:</strong> ${q.hint}`;
+            document.querySelector('#long-answer .action-btn').style.display = 'none'; // Hide check button
+            document.getElementById('long-next-btn').classList.remove('hidden');
+        } else {
+            wrong++; // No penalty, just count wrong
+            fb.style.background = "#ffeaa7";
+            fb.innerHTML = `<strong>⚠️ थोड़ा और सुधारें...</strong><br>कोशिश करें इन शब्दों का प्रयोग करने की: ${q.keywords.join(", ")}<br><strong>संकेत:</strong> ${q.hint}`;
+        }
+        updateScoreBoard();
+    }
+
+    function nextLongQuestion() {
+        currentLongQIndex++;
+        loadLongQuestion();
+    }
+
+</script>
+
+</body>
+</html>

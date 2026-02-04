@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 8: Circles</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        /* GLOBAL RESET & VARIABLES */
+        :root {
+            --pastel-pink: #f8bbd0;
+            --pastel-blue: #bbdefb;
+            --pastel-green: #c8e6c9;
+            --pastel-yellow: #fff9c4;
+            --pastel-purple: #e1bee7;
+            --white: #ffffff;
+            --text-color: #424242;
+            --btn-hover: #ffcc80;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Patrick Hand', cursive;
+            background-color: #fafafa;
+            color: var(--text-color);
+            font-weight: bold;
+            font-size: 19px;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* TYPOGRAPHY */
+        h1, h2, h3 {
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        h1 { font-size: 2.5rem; color: #880e4f; }
+        h2 { font-size: 1.8rem; color: #1565c0; margin-top: 20px; }
+        h3 { font-size: 1.4rem; color: #2e7d32; }
+        p { margin-bottom: 15px; }
+
+        /* BUTTONS */
+        .btn {
+            display: inline-block;
+            background: var(--pastel-yellow);
+            color: #f57f17;
+            padding: 15px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 1.5rem;
+            border: 3px solid #fdd835;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            text-align: center;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            background: var(--btn-hover);
+        }
+
+        .btn:active { transform: scale(0.95); }
+
+        /* HEADER / HERO */
+        .hero {
+            background: linear-gradient(180deg, var(--pastel-pink), var(--white));
+            padding: 60px 20px;
+            text-align: center;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .brand {
+            font-size: 1.2rem;
+            color: #ad1457;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .quote {
+            font-size: 1.6rem;
+            color: #c2185b;
+            margin: 20px 0;
+            font-style: italic;
+        }
+
+        .emoji-hero {
+            font-size: 4rem;
+            display: block;
+            margin: 10px 0;
+            animation: spin 6s infinite linear;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* STICKY SCORE PANEL */
+        #score-panel {
+            position: sticky;
+            top: 10px;
+            z-index: 1000;
+            background: var(--white);
+            background-color: #fffff0;
+            border: 3px solid #f48fb1;
+            border-radius: 15px;
+            margin: 0 10px 20px 10px;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            font-size: 1.1rem;
+        }
+
+        .score-item { text-align: center; }
+        .score-val { font-size: 1.4rem; color: #d32f2f; }
+        .score-val.green { color: #2e7d32; }
+        .score-val.blue { color: #1565c0; }
+
+        /* SECTIONS GENERAL */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .section-title {
+            text-align: center;
+            background: var(--pastel-blue);
+            padding: 15px;
+            border-radius: 20px;
+            margin: 40px 0 20px 0;
+            color: #0d47a1;
+            border: 2px dashed #42a5f5;
+        }
+
+        /* NOTES CARDS */
+        .note-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            border-left: 8px solid var(--pastel-pink);
+            transition: transform 0.2s;
+        }
+
+        .note-card:hover { transform: translateY(-3px); }
+        .note-card:nth-child(even) { border-left-color: var(--pastel-green); }
+
+        .example-box {
+            background: var(--pastel-yellow);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            border: 1px solid #fff59d;
+        }
+
+        .tip-box {
+            background: var(--pastel-purple);
+            color: #4a148c;
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 150px;
+            background: #eceff1;
+            border: 2px dashed #b0bec5;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #78909c;
+            margin: 15px 0;
+            text-align: center;
+            padding: 10px;
+            font-size: 0.9rem;
+            position: relative;
+        }
+        
+        /* CSS Circle Diagram */
+        .circle-diagram {
+            width: 100px;
+            height: 100px;
+            border: 3px solid #555;
+            border-radius: 50%;
+            position: relative;
+            margin: 0 auto;
+        }
+        .center-point {
+            width: 6px;
+            height: 6px;
+            background: red;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .radius-line {
+            width: 50%;
+            height: 2px;
+            background: blue;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: left;
+        }
+
+        /* WORD PROBLEM CARDS */
+        .word-prob-card {
+            background: #fff;
+            border: 3px solid #ffcc80;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        .reveal-btn {
+            background: #ffe0b2;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-family: inherit;
+            font-weight: bold;
+            color: #e65100;
+        }
+        .solution-box {
+            display: none;
+            margin-top: 15px;
+            background: #fff3e0;
+            padding: 15px;
+            border-radius: 10px;
+            color: #bf360c;
+            border-left: 5px solid #ff9800;
+        }
+
+        /* QUIZ SECTION */
+        #quiz-container {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .question-text {
+            font-size: 1.5rem;
+            color: #37474f;
+            margin-bottom: 25px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .option-btn {
+            background: var(--pastel-blue);
+            border: 2px solid #90caf9;
+            padding: 15px;
+            border-radius: 15px;
+            font-family: inherit;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            color: #1565c0;
+        }
+
+        .option-btn:hover { background: #bbdefb; }
+
+        .feedback-msg {
+            margin-top: 20px;
+            font-size: 1.3rem;
+            padding: 10px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .feedback-correct { background: #c8e6c9; color: #2e7d32; }
+        .feedback-wrong { background: #ffcdd2; color: #c62828; }
+
+        .next-btn {
+            margin-top: 20px;
+            background: #ffca28;
+            color: #3e2723;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: none;
+            font-family: inherit;
+            font-weight: bold;
+        }
+
+        /* REVISION */
+        .revision-list { list-style: none; }
+        .revision-list li {
+            background: var(--white);
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            border-bottom: 3px solid #e0e0e0;
+        }
+        .revision-list li::before { content: '⭕'; margin-right: 15px; font-size: 1.2rem; }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            background: #eceff1;
+            color: #78909c;
+            margin-top: 50px;
+            font-size: 1rem;
+        }
+
+        @media (min-width: 600px) {
+            .options-grid { grid-template-columns: 1fr 1fr; }
+            h1 { font-size: 3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. HEADER -->
+    <header class="hero">
+        <span class="brand">ShanEduHub</span>
+        <h1>Chapter 8<br>Circles</h1>
+        <div class="emoji-hero">🎡</div>
+        <p class="quote">"Life is a circle. The end of one journey is the beginning of the next."</p>
+        <p style="color: #880e4f; font-size: 1.2rem;">Class 4 • Mathematics • Advanced</p>
+        <br>
+        <a href="#notes-section" class="btn">Start Learning 🚀</a>
+    </header>
+
+    <!-- 2. SCORE PANEL -->
+    <div id="score-panel">
+        <div class="score-item">
+            <div>Correct</div>
+            <div id="score-correct" class="score-val green">0</div>
+        </div>
+        <div class="score-item">
+            <div>Wrong</div>
+            <div id="score-wrong" class="score-val">0</div>
+        </div>
+        <div class="score-item">
+            <div>Total</div>
+            <div id="score-total" class="score-val blue">0</div>
+        </div>
+        <div class="score-item">
+            <div>%</div>
+            <div id="score-percent" class="score-val">0%</div>
+        </div>
+    </div>
+
+    <!-- 3. NOTES SECTION -->
+    <div id="notes-section" class="container">
+        <h2 class="section-title">📝 Detailed Study Notes</h2>
+
+        <!-- Topic 1: What is a Circle? -->
+        <div class="note-card">
+            <h3>1. What is a Circle?</h3>
+            <p>A circle is a simple closed curve. It is NOT a polygon because it has no straight sides.</p>
+            <p>Every point on the circle is at the <strong>same distance</strong> from a fixed point inside it called the <strong>Center</strong>.</p>
+            <div class="image-placeholder">
+                <div class="circle-diagram">
+                    <div class="center-point"></div>
+                </div>
+                Center (Red Dot)
+            </div>
+        </div>
+
+        <!-- Topic 2: Parts of a Circle -->
+        <div class="note-card">
+            <h3>2. Parts of a Circle</h3>
+            <ul>
+                <li><strong>Center (O):</strong> The fixed point in the middle.</li>
+                <li><strong>Circumference:</strong> The boundary or the length of the circle border.</li>
+                <li><strong>Radius (r):</strong> A straight line from the Center to ANY point on the boundary. Plural is <em>Radii</em>.</li>
+                <li><strong>Chord:</strong> A straight line joining ANY two points on the circle.</li>
+                <li><strong>Diameter (d):</strong> A Chord that passes through the Center. It is the LONGEST chord.</li>
+            </ul>
+        </div>
+
+        <!-- Topic 3: The Magic Formula -->
+        <div class="note-card">
+            <h3>3. The Magic Formula (Radius & Diameter)</h3>
+            <p>The Diameter is basically two Radii put together in a straight line.</p>
+            <div class="example-box">
+                <p><strong>Diameter = 2 × Radius</strong></p>
+                <p><strong>Radius = Diameter ÷ 2</strong></p>
+            </div>
+            <p><em>Example:</em> If Radius is 5cm, Diameter is 10cm.</p>
+        </div>
+
+        <!-- Topic 4: Drawing a Circle -->
+        <div class="note-card">
+            <h3>4. Drawing a Circle</h3>
+            <p>We use a tool called a <strong>Compass</strong>.</p>
+            <ol>
+                <li>Fix a sharp pencil in the compass.</li>
+                <li>Measure the radius on a ruler (stretch the compass arms).</li>
+                <li>Place the metal tip on paper (This becomes the Center).</li>
+                <li>Rotate the pencil arm around to draw the circle.</li>
+            </ol>
+            <div class="tip-box">
+                <span>💡</span>
+                <span><strong>Tip:</strong> Don't move the metal tip while drawing, or your circle will be wobbly!</span>
+            </div>
+        </div>
+
+        <!-- Topic 5: Advanced Terms -->
+        <div class="note-card">
+            <h3>5. Advanced Terms</h3>
+            <ul>
+                <li><strong>Arc:</strong> Any part of the circumference.</li>
+                <li><strong>Semicircle:</strong> Exactly half of a circle (divided by diameter).</li>
+                <li><strong>Interior:</strong> The space inside the boundary.</li>
+                <li><strong>Exterior:</strong> The space outside the boundary.</li>
+            </ul>
+        </div>
+
+        <!-- Topic 6: Concentric Circles -->
+        <div class="note-card">
+            <h3>6. Concentric Circles</h3>
+            <p>Circles that have the <strong>SAME Center</strong> but <strong>DIFFERENT Radii</strong>.</p>
+            <div class="image-placeholder">
+                Target Board / Archery Board pattern.
+                (Small circle inside a big circle).
+            </div>
+            <p>Examples: Ripples in water, Target board.</p>
+        </div>
+    </div>
+
+    <!-- 4. BIG WORD PROBLEMS (10 Qs) -->
+    <div class="container">
+        <h2 class="section-title">🧠 Advanced Word Problems (Thinking Time)</h2>
+        
+        <div class="word-prob-card">
+            <h3>Problem 1: The Bicycle Wheel</h3>
+            <p>The spokes of a bicycle wheel connect the center axle to the rim. If a spoke is 30 cm long, what is the Diameter of the wheel? (Assuming spokes go from center to edge)</p>
+            <button class="reveal-btn" onclick="this.nextElementSibling.style.display='block'">Show Solution</button>
+            <div class="solution-box">
+                <p><strong>Ans: 60 cm.</strong></p>
+                <p>The spoke acts as the Radius (Center to Edge).<br>Diameter = 2 × Radius.<br>Diameter = 2 × 30 = 60 cm.</p>
+            </div>
+        </div>
+
+        <div class="word-prob-card">
+            <h3>Problem 2: The Pizza Cut</h3>
+            <p>Rahul cuts a circular pizza into two equal halves by cutting straight through the center. What is this line of cut called geometrically?</p>
+            <button class="reveal-btn" onclick="this.nextElementSibling.style.display='block'">Show Solution</button>
+            <div class="solution-box">
+                <p><strong>Ans: Diameter.</strong></p>
+                <p>A straight line passing through the center connecting two points on the boundary is the Diameter.</p>
+            </div>
+        </div>
+
+        <div class="word-prob-card">
+            <h3>Problem 3: The Garden Fence</h3>
+            <p>A circular garden has a diameter of 10 meters. The gardener wants to put a fence along the RADIUS only (from center to edge) to divide flowers. How long is the fence?</p>
+            <button class="reveal-btn" onclick="this.nextElementSibling.style.display='block'">Show Solution</button>
+            <div class="solution-box">
+                <p><strong>Ans: 5 meters.</strong></p>
+                <p>Radius = Diameter ÷ 2.<br>Radius = 10 ÷ 2 = 5 meters.</p>
+            </div>
+        </div>
+
+        <div class="word-prob-card">
+            <h3>Problem 4: Concentric Tracks</h3>
+            <p>Two running tracks are circular. They share the same center point. The inner track has a radius of 50m. The outer track has a radius of 60m. Are these Concentric Circles?</p>
+            <button class="reveal-btn" onclick="this.nextElementSibling.style.display='block'">Show Solution</button>
+            <div class="solution-box">
+                <p><strong>Ans: Yes.</strong></p>
+                <p>Circles with the same center but different radii are called Concentric Circles.</p>
+            </div>
+        </div>
+
+        <div class="word-prob-card">
+            <h3>Problem 5: The Longest Stick</h3>
+            <p>You have a circular swimming pool with a radius of 4 meters. What is the longest straight stick you can float on the water without it touching the edges (or just touching)?</p>
+            <button class="reveal-btn" onclick="this.nextElementSibling.style.display='block'">Show Solution</button>
+            <div class="solution-box">
+                <p><strong>Ans: 8 meters.</strong></p>
+                <p>The longest straight line inside a circle is the Diameter.<br>D = 2 × 4 = 8 meters.</p>
+            </div>
+        </div>
+
+        <div class="word-prob-card">
+            <h3>Problem 6: Clock Hands</h3>
+            <p>Imagine the second hand of a clock is the radius. If the tip of the second hand touches the edge of the clock face, and the hand is 7 cm long, how wide is the clock face?</p>
+            <button class="reveal-btn" onclick="this.nextElementSibling.style.display='block'">Show Solution</button>
+            <div class="solution-box">
+                <p><strong>Ans: 14 cm wide.</strong></p>
+                <p>The "width" of a circle is its Diameter.<br>Radius = 7 cm.<br>Diameter = 14 cm.</p>
+            </div>
+        </div>
+
+        <div class="word-prob-card">
+            <h3>Problem 7: The Bangle Test</h3>
+            <p>Riya wants to draw a circle but lost her compass. She uses a bangle. Can she easily find the exact center point just by tracing? Why or why not?</p>
+            <button class="reveal-btn" onclick="this.nextElementSibling.style.display='block'">Show Solution</button>
+            <div class="solution-box">
+                <p><strong>Ans: No, not easily.</strong></p>
+                <p>Tracing a bangle gives the boundary (Circumference), but it doesn't mark the Center. A compass leaves a pinhole at the center.</p>
+            </div>
+        </div>
+
+        <div class="word-prob-card">
+            <h3>Problem 8: Chord vs Diameter</h3>
+            <p>Draw a circle. Draw a line connecting two points on the boundary NOT passing through the center. Draw another passing THROUGH the center. Which one is longer?</p>
+            <button class="reveal-btn" onclick="this.nextElementSibling.style.display='block'">Show Solution</button>
+            <div class="solution-box">
+                <p><strong>Ans: The one passing through the center (Diameter).</strong></p>
+                <p>The Diameter is the longest chord of the circle.</p>
+            </div>
+        </div>
+
+        <div class="word-prob-card">
+            <h3>Problem 9: The Goat Tether</h3>
+            <p>A goat is tied to a pole with a rope of length 3 meters. If the goat walks keeping the rope tight, what shape does it trace? What is the radius?</p>
+            <button class="reveal-btn" onclick="this.nextElementSibling.style.display='block'">Show Solution</button>
+            <div class="solution-box">
+                <p><strong>Ans: Circle. Radius is 3m.</strong></p>
+                <p>The pole is the center. The rope is the radius. The path is the circumference.</p>
+            </div>
+        </div>
+
+        <div class="word-prob-card">
+            <h3>Problem 10: Radius Math</h3>
+            <p>Circle A has a radius of 10cm. Circle B has a diameter of 10cm. Which circle is bigger?</p>
+            <button class="reveal-btn" onclick="this.nextElementSibling.style.display='block'">Show Solution</button>
+            <div class="solution-box">
+                <p><strong>Ans: Circle A is bigger.</strong></p>
+                <p>Circle A: Radius = 10cm.<br>Circle B: Diameter = 10cm -> Radius = 5cm.<br>10cm > 5cm.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. INTERACTIVE QUIZ (70 Qs) -->
+    <div class="container">
+        <h2 class="section-title">🎮 Circles Quiz (70 Questions)</h2>
+        <div id="quiz-container">
+            <h3 id="question-counter" style="color: #78909c; margin-bottom: 10px;">Question 1/70</h3>
+            <div id="question-text" class="question-text">Loading...</div>
+            <div id="options-container" class="options-grid"></div>
+            <div id="feedback" class="feedback-msg"></div>
+            <button id="next-btn" class="next-btn" onclick="nextQuestion()">Next Question ➡️</button>
+        </div>
+    </div>
+
+    <!-- 6. REVISION -->
+    <div class="container">
+        <h2 class="section-title">⚡ Quick Revision</h2>
+        <button class="btn" onclick="document.getElementById('rev-list').style.display = 'block'" style="width:100%; margin-bottom:20px;">Show Revision Points</button>
+        <ul id="rev-list" class="revision-list" style="display:none;">
+            <li><strong>Center:</strong> The middle point.</li>
+            <li><strong>Radius:</strong> Center to Edge.</li>
+            <li><strong>Diameter:</strong> Edge to Edge through Center.</li>
+            <li><strong>Chord:</strong> Edge to Edge (anywhere).</li>
+            <li><strong>Diameter = 2 × Radius.</strong></li>
+            <li><strong>Radius = Diameter ÷ 2.</strong></li>
+            <li><strong>Concentric Circles:</strong> Same center, different sizes.</li>
+            <li><strong>Circumference:</strong> The boundary line.</li>
+        </ul>
+    </div>
+
+    <!-- 7. FOOTER -->
+    <footer>
+        Designed & Created by SHRISHANT YADAV<br>
+        2026 – ShanEduHub
+    </footer>
+
+    <script>
+        // --- DATA: 70 QUESTIONS ---
+        const questions = [
+            // BASIC DEFINITIONS (1-15)
+            { q: "A simple closed curve with no corners is a?", options: ["Square", "Triangle", "Circle", "Rectangle"], ans: 2, why: "Definition of circle." },
+            { q: "The fixed point in the middle of a circle is called?", options: ["Vertex", "Center", "Edge", "Corner"], ans: 1, why: "Center is the midpoint." },
+            { q: "The distance from the center to the boundary is?", options: ["Chord", "Diameter", "Radius", "Arc"], ans: 2, why: "Radius." },
+            { q: "A line segment passing through the center connecting two points?", options: ["Radius", "Diameter", "Arc", "Point"], ans: 1, why: "Diameter." },
+            { q: "The boundary length of a circle is called?", options: ["Area", "Circumference", "Volume", "Side"], ans: 1, why: "Circumference." },
+            { q: "Is a circle a polygon?", options: ["Yes", "No"], ans: 1, why: "No straight sides." },
+            { q: "Instrument used to draw a circle?", options: ["Ruler", "Compass", "Protractor", "Divider"], ans: 1, why: "Compass." },
+            { q: "How many centers does a circle have?", options: ["1", "2", "Infinite", "0"], ans: 0, why: "Only one fixed center." },
+            { q: "A line segment connecting any two points on a circle?", options: ["Radius", "Chord", "Center", "Ray"], ans: 1, why: "Chord." },
+            { q: "The longest chord of a circle is?", options: ["Radius", "Diameter", "Arc", "None"], ans: 1, why: "Diameter." },
+            { q: "Part of a circumference is called?", options: ["Arc", "Line", "Dot", "Point"], ans: 0, why: "Arc." },
+            { q: "Half of a circle is called?", options: ["Semicircle", "Hemisphere", "Quarter", "Arc"], ans: 0, why: "Semicircle." },
+            { q: "The space inside the boundary is?", options: ["Exterior", "Interior", "Boundary", "None"], ans: 1, why: "Interior." },
+            { q: "All radii of a circle are?", options: ["Equal", "Unequal", "Different", "Parallel"], ans: 0, why: "Same length." },
+            { q: "Points on the boundary are equidistant from?", options: ["Center", "Edge", "Outside", "Radius"], ans: 0, why: "From the center." },
+
+            // CALCULATIONS: D = 2R (16-40)
+            { q: "If Radius = 5cm, Diameter = ?", options: ["10cm", "2.5cm", "5cm", "20cm"], ans: 0, why: "5 x 2 = 10." },
+            { q: "If Radius = 3cm, Diameter = ?", options: ["9cm", "6cm", "1.5cm", "3cm"], ans: 1, why: "3 x 2 = 6." },
+            { q: "If Diameter = 10cm, Radius = ?", options: ["20cm", "5cm", "10cm", "2.5cm"], ans: 1, why: "10 ÷ 2 = 5." },
+            { q: "If Diameter = 18cm, Radius = ?", options: ["9cm", "36cm", "18cm", "8cm"], ans: 0, why: "18 ÷ 2 = 9." },
+            { q: "If Radius = 10m, Diameter = ?", options: ["20m", "5m", "100m", "10m"], ans: 0, why: "Double the radius." },
+            { q: "If Diameter = 40cm, Radius = ?", options: ["80cm", "20cm", "40cm", "10cm"], ans: 1, why: "Half the diameter." },
+            { q: "If Radius = 1cm, Diameter = ?", options: ["2cm", "1cm", "0.5cm", "10cm"], ans: 0, why: "Double it." },
+            { q: "If Diameter = 100cm, Radius = ?", options: ["50cm", "200cm", "10cm", "25cm"], ans: 0, why: "Half of 100." },
+            { q: "Which is longer? R=4cm or D=7cm?", options: ["R=4cm", "D=7cm"], ans: 0, why: "R=4 means D=8. 8 > 7." },
+            { q: "Which is longer? D=10cm or R=6cm?", options: ["D=10cm", "R=6cm"], ans: 1, why: "R=6 means D=12. 12 > 10." },
+            { q: "If Radius is doubled, Diameter becomes?", options: ["Doubled", "Halved", "Same", "Tripled"], ans: 0, why: "Direct relation." },
+            { q: "R = 7cm. D = ?", options: ["14cm", "3.5cm", "21cm", "7cm"], ans: 0, why: "7 x 2 = 14." },
+            { q: "D = 50mm. R = ?", options: ["100mm", "25mm", "10mm", "5mm"], ans: 1, why: "Half of 50." },
+            { q: "Sum of two radii (straight line) is?", options: ["Chord", "Diameter", "Arc", "Center"], ans: 1, why: "R + R = D." },
+            { q: "R = 0.5cm. D = ?", options: ["1cm", "0.25cm", "2cm", "1.5cm"], ans: 0, why: "0.5 + 0.5 = 1." },
+            { q: "D = 1m. R = ?", options: ["50cm", "2m", "10cm", "100cm"], ans: 0, why: "50cm is half a meter." },
+            { q: "Is Radius always half of Diameter?", options: ["Yes", "No"], ans: 0, why: "Universal rule." },
+            { q: "R = 12cm. D = ?", options: ["6cm", "24cm", "12cm", "18cm"], ans: 1, why: "12 x 2." },
+            { q: "D = 22cm. R = ?", options: ["11cm", "44cm", "10cm", "20cm"], ans: 0, why: "Half of 22." },
+            { q: "Radius of a circle is 8cm. Longest chord is?", options: ["8cm", "4cm", "16cm", "12cm"], ans: 2, why: "Diameter is longest chord (16cm)." },
+
+            // PROPERTIES & LOGIC (41-55)
+            { q: "Circles with same center but different radii?", options: ["Concentric", "Eccentric", "Overlapping", "Touching"], ans: 0, why: "Concentric." },
+            { q: "Can a chord be longer than the diameter?", options: ["Yes", "No"], ans: 1, why: "Diameter is the max length." },
+            { q: "Is every Diameter a Chord?", options: ["Yes", "No"], ans: 0, why: "Yes, a special chord." },
+            { q: "Is every Chord a Diameter?", options: ["Yes", "No"], ans: 1, why: "No, most don't cross the center." },
+            { q: "How many radii can a circle have?", options: ["1", "2", "Infinite", "4"], ans: 2, why: "Countless." },
+            { q: "How many diameters can a circle have?", options: ["1", "2", "Infinite", "10"], ans: 2, why: "Countless." },
+            { q: "Two circles with same radius are?", options: ["Congruent/Equal", "Concentric", "Different", "Small"], ans: 0, why: "Same size." },
+            { q: "The metal tip of the compass is placed on?", options: ["Center", "Circumference", "Outside", "Radius"], ans: 0, why: "To fix the center." },
+            { q: "A circle has how many sides?", options: ["0", "1", "Infinite", "2"], ans: 0, why: "Curved boundary." },
+            { q: "To draw a circle of diameter 10cm, we open compass to?", options: ["10cm", "5cm", "20cm", "2.5cm"], ans: 1, why: "Set to Radius (5cm)." },
+            { q: "Which divides a circle into two equal halves?", options: ["Chord", "Radius", "Diameter", "Arc"], ans: 2, why: "Diameter." },
+            { q: "Interior + Boundary + Exterior = ?", options: ["Plane", "Circle", "Triangle", "Cube"], ans: 0, why: "The whole surface." },
+            { q: "A target board is an example of?", options: ["Concentric Circles", "Triangles", "Squares", "Lines"], ans: 0, why: "Circles inside circles." },
+            { q: "If two circles touch at one point, do they share a center?", options: ["No", "Yes"], ans: 0, why: "Centers are different." },
+            { q: "Does the center lie on the circle?", options: ["Yes", "No"], ans: 1, why: "It is IN the circle, not ON the boundary." },
+
+            // TRUE/FALSE & APPLICATIONS (56-70)
+            { q: "True/False: All chords pass through center.", options: ["True", "False"], ans: 1, why: "Only diameters do." },
+            { q: "True/False: Diameter is 2 x Radius.", options: ["True", "False"], ans: 0, why: "Formula." },
+            { q: "True/False: A circle has vertices.", options: ["True", "False"], ans: 1, why: "No corners." },
+            { q: "Shape of a coin?", options: ["Square", "Circle", "Triangle", "Cube"], ans: 1, why: "Circular." },
+            { q: "Shape of a bangle?", options: ["Circle", "Sphere", "Cone"], ans: 0, why: "Circle (Ring)." },
+            { q: "Distance around a circular field?", options: ["Area", "Volume", "Circumference"], ans: 2, why: "Boundary length." },
+            { q: "A wheel spoke represents?", options: ["Radius", "Circumference", "Center"], ans: 0, why: "Center to edge." },
+            { q: "The hands of a clock meet at the?", options: ["Center", "Edge", "Top", "Bottom"], ans: 0, why: "Center." },
+            { q: "Can we draw a circle with radius 0?", options: ["Yes", "No"], ans: 1, why: "That is a point." },
+            { q: "If diameter is 4, radius is 8. T/F?", options: ["True", "False"], ans: 1, why: "Radius is half (2)." },
+            { q: "Concentric circles never intersect. T/F?", options: ["True", "False"], ans: 0, why: "One is inside other." },
+            { q: "Length of boundary of semicircle?", options: ["Half Circumference + Diameter", "Half Circumference"], ans: 0, why: "Includes the straight cut." },
+            { q: "We can find center by folding a paper circle twice. T/F?", options: ["True", "False"], ans: 0, why: "Intersection of folds is center." },
+            { q: "A quarter of a circle is called?", options: ["Quadrant", "Segment", "Arc", "Piece"], ans: 0, why: "Quadrant." },
+            { q: "Final Q: Are circles useful in real life?", options: ["Yes! Wheels, Gears...", "No"], ans: 0, why: "Everywhere!" }
+        ];
+
+        // --- APP STATE ---
+        let currentQIndex = 0;
+        let score = 0;
+        let wrong = 0;
+
+        // --- DOM ELEMENTS ---
+        const qText = document.getElementById('question-text');
+        const optionsDiv = document.getElementById('options-container');
+        const feedbackDiv = document.getElementById('feedback');
+        const nextBtn = document.getElementById('next-btn');
+        const counter = document.getElementById('question-counter');
+        const scoreCorrect = document.getElementById('score-correct');
+        const scoreWrong = document.getElementById('score-wrong');
+        const scoreTotal = document.getElementById('score-total');
+        const scorePercent = document.getElementById('score-percent');
+
+        // --- FUNCTIONS ---
+        function initGame() {
+            updateStats();
+            loadQuestion();
+        }
+
+        function updateStats() {
+            const total = score + wrong;
+            scoreCorrect.innerText = score;
+            scoreWrong.innerText = wrong;
+            scoreTotal.innerText = total;
+            const pct = total === 0 ? 0 : Math.round((score / total) * 100);
+            scorePercent.innerText = pct + "%";
+        }
+
+        function loadQuestion() {
+            const q = questions[currentQIndex];
+            
+            // UI Reset
+            qText.innerText = q.q;
+            counter.innerText = `Question ${currentQIndex + 1} / ${questions.length}`;
+            feedbackDiv.style.display = 'none';
+            feedbackDiv.className = 'feedback-msg';
+            nextBtn.style.display = 'none';
+            optionsDiv.innerHTML = '';
+
+            // Generate Options
+            q.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(index, btn);
+                optionsDiv.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedIndex, btnElement) {
+            // Disable all buttons
+            const allBtns = document.querySelectorAll('.option-btn');
+            allBtns.forEach(b => b.disabled = true);
+
+            const q = questions[currentQIndex];
+            const isCorrect = selectedIndex === q.ans;
+
+            if (isCorrect) {
+                score++;
+                btnElement.style.background = '#c8e6c9';
+                btnElement.style.borderColor = '#2e7d32';
+                feedbackDiv.innerText = "Excellent ⭐ " + q.why;
+                feedbackDiv.classList.add('feedback-correct');
+            } else {
+                wrong++;
+                btnElement.style.background = '#ffcdd2';
+                btnElement.style.borderColor = '#c62828';
+                // Highlight correct
+                allBtns[q.ans].style.background = '#c8e6c9';
+                feedbackDiv.innerText = "Try Again! Correct: " + q.options[q.ans] + ". \n" + q.why;
+                feedbackDiv.classList.add('feedback-wrong');
+            }
+
+            feedbackDiv.style.display = 'block';
+            nextBtn.style.display = 'inline-block';
+            updateStats();
+        }
+
+        function nextQuestion() {
+            currentQIndex++;
+            if (currentQIndex < questions.length) {
+                loadQuestion();
+            } else {
+                // End Game
+                qText.innerText = "🎉 Chapter Complete! 🎉";
+                optionsDiv.innerHTML = `<p style='font-size:1.5rem'>Final Score: ${score}/${questions.length}</p>`;
+                feedbackDiv.style.display = 'none';
+                nextBtn.style.display = 'none';
+            }
+        }
+
+        // --- START ---
+        document.addEventListener('DOMContentLoaded', initGame);
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Class 4 EVS - Chapter 3: Animals</title>
+    <style>
+        :root {
+            --paper-color: #fffdf0;
+            --line-color: #a4b0be;
+            --margin-line: #ff7675;
+            --ink-color: #2d3436;
+            --highlight: #fdcb6e;
+            --success: #00b894;
+            --error: #d63031;
+            --btn-bg: #0984e3;
+            --btn-txt: #ffffff;
+            --panel-bg: #dfe6e9;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-weight: bold; /* STRICT REQUIREMENT */
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #555;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', sans-serif; /* Fallback stack for handwriting style */
+            color: var(--ink-color);
+            overflow-x: hidden;
+        }
+
+        /* Notebook Container */
+        #app-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--paper-color);
+            min-height: 100vh;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            /* Lined Paper Effect */
+            background-image: linear-gradient(var(--line-color) 1px, transparent 1px);
+            background-size: 100% 1.5rem;
+            padding-bottom: 60px;
+        }
+
+        /* Red Margin Line */
+        #app-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 1.5rem;
+            width: 2px;
+            background-color: var(--margin-line);
+            z-index: 0;
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+            padding: 1rem 1rem 1rem 2.5rem; /* Left padding accounts for red margin */
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 20px;
+            background: #ffeaa7;
+            border-bottom: 3px dashed var(--ink-color);
+            margin-bottom: 20px;
+            border-radius: 0 0 15px 15px;
+        }
+
+        h1 { margin: 0; font-size: 1.8rem; color: #d35400; }
+        h2 { margin: 5px 0; font-size: 1.2rem; color: #2d3436; }
+
+        /* Unified Live Score Panel */
+        #score-panel {
+            position: sticky;
+            top: 0;
+            background: var(--ink-color);
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 100;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            border-bottom: 3px solid var(--highlight);
+        }
+
+        .score-item span {
+            display: block;
+            text-align: center;
+            font-size: 1.1rem;
+            color: var(--highlight);
+        }
+
+        /* Section Styling */
+        section {
+            margin-bottom: 40px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.6);
+            border: 2px solid var(--ink-color);
+            border-radius: 10px;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.1);
+        }
+
+        h3.section-title {
+            background: var(--highlight);
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            border: 2px solid var(--ink-color);
+            margin-top: 0;
+            transform: rotate(-1deg);
+        }
+
+        /* Notes Specifics */
+        .topic-card {
+            margin-bottom: 25px;
+            border-bottom: 2px dashed #b2bec3;
+            padding-bottom: 15px;
+        }
+
+        .topic-title { color: #6c5ce7; font-size: 1.3rem; text-decoration: underline; }
+        .sub-point { margin-left: 15px; color: #2d3436; }
+        .indian-example { color: #d63031; background: #ffcccc; padding: 2px 5px; border-radius: 4px; display: inline-block; margin-top: 5px; }
+        .memory-tip { color: #00b894; font-style: italic; margin-top: 5px; }
+        
+        .img-placeholder {
+            width: 100%;
+            height: 150px;
+            background: #dfe6e9;
+            border: 3px dashed #636e72;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #636e72;
+            margin: 10px 0;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        /* Questions General */
+        .q-box {
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 2px solid #000;
+        }
+
+        /* Interactive Practice */
+        #practice-area {
+            text-align: center;
+        }
+
+        .option-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            background: #fff;
+            border: 2px solid var(--ink-color);
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+
+        .option-btn:hover { background: #f1f2f6; }
+        .option-btn.selected { background: #74b9ff; color: white; }
+        
+        .feedback { 
+            margin-top: 15px; 
+            padding: 10px; 
+            border-radius: 5px; 
+            display: none; 
+        }
+        .feedback.correct { background: #55efc4; border: 2px solid #00b894; }
+        .feedback.wrong { background: #fab1a0; border: 2px solid #d63031; }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border: 2px solid var(--ink-color);
+            border-radius: 5px;
+            font-family: inherit;
+            font-weight: bold;
+        }
+
+        /* Long Answer */
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border: 2px solid var(--ink-color);
+            border-radius: 5px;
+            font-family: inherit;
+            font-weight: bold;
+            margin: 10px 0;
+            resize: vertical;
+        }
+
+        .eval-result {
+            background: #f8f9fa;
+            border: 1px solid #000;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            text-align: left;
+            display: none;
+        }
+
+        /* Buttons */
+        .action-btn {
+            background: var(--btn-bg);
+            color: var(--btn-txt);
+            border: 2px solid #000;
+            padding: 10px 25px;
+            font-size: 1.1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 2px 2px 0px #000;
+        }
+        
+        .action-btn:active { transform: translateY(2px); box-shadow: 0 0 0; }
+
+        /* Footer */
+        footer {
+            background: #2d3436;
+            color: #dfe6e9;
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            font-size: 0.9rem;
+        }
+
+        /* Helper Classes */
+        .hidden { display: none; }
+        .highlight-text { background-color: yellow; padding: 0 3px; }
+
+        /* Revision */
+        .revision-point {
+            padding: 5px 0;
+            border-bottom: 1px dotted #000;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app-container">
+    
+    <!-- HEADER -->
+    <header>
+        <h1>CLASS 4 - EVS</h1>
+        <h2>CHAPTER 3: ANIMALS - DIVERSITY & ADAPTATIONS</h2>
+        <div style="font-size: 0.8rem; margin-top: 5px;">ShanEduHub Interactive Notebook</div>
+    </header>
+
+    <!-- LIVE SCORE PANEL -->
+    <div id="score-panel">
+        <div class="score-item">Correct<span id="score-correct">0</span></div>
+        <div class="score-item">Wrong<span id="score-wrong">0</span></div>
+        <div class="score-item">Total<span id="score-total">0</span></div>
+        <div class="score-item">Marks<span id="score-marks">0</span></div>
+    </div>
+
+    <div class="content-wrapper">
+
+        <!-- SECTION 1: NOTES -->
+        <section id="notes-section">
+            <h3 class="section-title">📝 Chapter Notes</h3>
+            <div id="notes-content">
+                <!-- Content injected via JS -->
+            </div>
+        </section>
+
+        <!-- SECTION 2: IMPORTANT QUESTIONS -->
+        <section id="imp-questions-section">
+            <h3 class="section-title">⭐ Important Questions (Read Only)</h3>
+            <div id="imp-qa-container">
+                <!-- Content injected via JS -->
+            </div>
+        </section>
+
+        <!-- SECTION 3: PRACTICE QUESTIONS (70) -->
+        <section id="practice-section">
+            <h3 class="section-title">🎮 Practice Time (70 Qs)</h3>
+            <div id="practice-area" class="q-box">
+                <div id="pq-counter" style="text-align: right; color: #636e72;">Question 1/70</div>
+                <div id="pq-question" style="font-size: 1.2rem; margin: 15px 0;">Question text here...</div>
+                <div id="pq-options"></div>
+                <div id="pq-feedback" class="feedback"></div>
+                <button id="pq-next-btn" class="action-btn hidden" onclick="nextPracticeQuestion()">Next Question ➡</button>
+            </div>
+        </section>
+
+        <!-- SECTION 4: ADVANCED LONG QUESTIONS -->
+        <section id="long-questions-section">
+            <h3 class="section-title">🧠 Advanced Thinking Zone</h3>
+            <div id="lq-container">
+                <!-- Content injected via JS -->
+            </div>
+        </section>
+
+        <!-- SECTION 5: REVISION -->
+        <section id="revision-section">
+            <h3 class="section-title">⚡ Quick Revision</h3>
+            <button class="action-btn" onclick="document.getElementById('rev-list').classList.toggle('hidden')">Show/Hide Summary</button>
+            <div id="rev-list" class="hidden" style="margin-top: 15px;">
+                <!-- Content injected via JS -->
+            </div>
+        </section>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        Designed & Created by SHRISHANT YADAV<br>
+        ShanEduHub
+    </footer>
+
+</div>
+
+<script>
+/* =========================================
+   DATA STORE
+   ========================================= */
+
+// TOPIC DATA
+const topics = [
+    {
+        title: "1. Classification of Animals",
+        content: `
+            <div class="sub-point"><b>a) Based on Food:</b></div>
+            <ul>
+                <li><b>Herbivores:</b> Eat only plants (Grass, leaves).</li>
+                <li><b>Carnivores:</b> Eat flesh of other animals.</li>
+                <li><b>Omnivores:</b> Eat both plants and flesh.</li>
+            </ul>
+            <div class="indian-example">🇮🇳 India: Cow (Herbivore), Tiger (Carnivore), Crow (Omnivore).</div>
+            <div class="img-placeholder">IMAGE: Picture showing a Cow, Lion, and Bear eating.</div>
+            
+            <div class="sub-point" style="margin-top:10px;"><b>b) Based on Relationship:</b></div>
+            <ul>
+                <li><b>Wild Animals:</b> Live in forests/nature freely.</li>
+                <li><b>Domestic Animals:</b> Kept by humans for work or food.</li>
+                <li><b>Pet Animals:</b> Kept inside home for love.</li>
+            </ul>
+            <div class="memory-tip">💡 Tip: 'Wild' starts with W (Woods/Forest).</div>
+        `
+    },
+    {
+        title: "2. Body Parts & Functions",
+        content: `
+            <ul>
+                <li><b>Tails:</b> Cows use tails to fly away insects. Monkeys use tails to hang on trees. Kangaroos use tails for balance.</li>
+                <li><b>Trunk:</b> Elephants use trunks to smell, eat, and drink water.</li>
+                <li><b>Ears:</b> Big ears (Elephant) help to cool down. Small holes (Birds) are hidden ears.</li>
+            </ul>
+            <div class="indian-example">🇮🇳 Look at a street dog wagging its tail when happy!</div>
+            <div class="img-placeholder">IMAGE: Elephant Trunk and Monkey Tail usage.</div>
+        `
+    },
+    {
+        title: "3. Animal Homes",
+        content: `
+            <p>Animals need homes to protect themselves from heat, cold, rain, and enemies.</p>
+            <ul>
+                <li><b>Natural Homes:</b> Lion (Den), Rabbit (Burrow), Monkey (Trees), Birds (Nests).</li>
+                <li><b>Man-made Homes:</b> Horse (Stable), Dog (Kennel), Cow (Shed), Hen (Coop).</li>
+            </ul>
+            <div class="memory-tip">💡 Tip: Coop for Chicken, Kennel for Canine (Dog).</div>
+            <div class="img-placeholder">IMAGE: A cozy bird nest and a horse stable.</div>
+        `
+    },
+    {
+        title: "4. Adaptations (Survival Skills)",
+        content: `
+            <p>Adaptation means changing the body to survive in the environment.</p>
+            <div class="sub-point"><b>a) Aquatic (Water):</b> Fish have fins to swim and gills to breathe.</div>
+            <div class="sub-point"><b>b) Desert (Hot/Dry):</b> Camel has a hump (stores fat) and broad feet (to walk on sand).</div>
+            <div class="sub-point"><b>c) Polar (Cold):</b> Polar Bears have thick fur and fat to keep warm.</div>
+            <div class="img-placeholder">IMAGE: Camel in desert and Fish in water.</div>
+        `
+    },
+    {
+        title: "5. Food Chain & Food Web",
+        content: `
+            <p>Who eats whom? This flow of energy is a Food Chain.</p>
+            <p><b>Order:</b> Producer (Plant) ➡ Primary Consumer (Deer) ➡ Secondary Consumer (Tiger).</p>
+            <p><b>Food Web:</b> Many food chains connected together.</p>
+            <div class="indian-example">🇮🇳 Grass ➡ Grasshopper ➡ Frog ➡ Snake ➡ Eagle.</div>
+            <div class="img-placeholder">IMAGE: Diagram of a simple food chain.</div>
+        `
+    },
+    {
+        title: "6. Endangered Animals",
+        content: `
+            <p>Animals that are very few in number and might vanish forever.</p>
+            <ul>
+                <li><b>Causes:</b> Hunting (poaching), cutting forests (habitat loss).</li>
+                <li><b>Examples:</b> Tiger, Panda, Great Indian Bustard.</li>
+            </ul>
+            <div class="indian-example">🇮🇳 'Project Tiger' was started to save Indian Tigers.</div>
+            <div class="img-placeholder">IMAGE: Sad Tiger poster saying 'Save Me'.</div>
+        `
+    },
+    {
+        title: "7. Human Responsibility",
+        content: `
+            <ul>
+                <li>Do not tease animals in zoos.</li>
+                <li>Do not destroy their forest homes.</li>
+                <li>Adopt pets, don't buy.</li>
+                <li>Put water bowls for birds in summer.</li>
+            </ul>
+            <div class="memory-tip">❤️ Be Kind to Every Kind.</div>
+        `
+    }
+];
+
+// IMPORTANT QUESTIONS (30)
+const impQuestions = [
+    { q: "What is a habitat?", a: "The natural home of an animal where it lives, eats, and grows is called its habitat." },
+    { q: "Define herbivores.", a: "Animals that eat only plants, grass, and leaves are called herbivores. E.g., Cow." },
+    { q: "Why do Camels have humps?", a: "Camels store fat in their humps, which gives them energy when there is no food." },
+    { q: "What is an endangered animal?", a: "An animal that is in danger of disappearing from the earth forever is called endangered." },
+    { q: "What is a food chain?", a: "A chain that shows how living things get food and energy from one another." },
+    { q: "How do fish breathe?", a: "Fish breathe through special organs called Gills." },
+    { q: "Why do birds build nests?", a: "Birds build nests to lay eggs and protect their babies from enemies and weather." },
+    { q: "What are terrestrial animals?", a: "Animals that live on land are called terrestrial animals. E.g., Dog, Lion." },
+    { q: "What are arboreal animals?", a: "Animals that spend most of their time on trees are called arboreal. E.g., Monkey." },
+    { q: "What are aerial animals?", a: "Animals that can fly and spend time in the air. E.g., Birds, Bats." },
+    { q: "What is camouflage?", a: "The ability of an animal to match its body color with surroundings to hide. E.g., Chameleon." },
+    { q: "Name a mammal that lays eggs.", a: "Platypus or Echidna." },
+    { q: "What is migration?", a: "The movement of birds/animals from one place to another for food or weather changes." },
+    { q: "Why do polar bears have white fur?", a: "To mix with the white snow (camouflage) and hide from prey." },
+    { q: "What do scavengers eat?", a: "Scavengers eat the flesh of dead animals. E.g., Vulture, Hyena." },
+    { q: "What is the difference between a shed and a stable?", a: "A shed is for cows, a stable is for horses." },
+    { q: "How do snakes move without legs?", a: "Snakes use their scales and strong muscles to slide or crawl on the ground." },
+    { q: "What is the main source of energy in a food chain?", a: "The Sun is the main source of energy." },
+    { q: "What are decomposers?", a: "Organisms like fungi/bacteria that rot dead plants/animals and mix them in soil." },
+    { q: "Why do elephants have large ears?", a: "To flap them and keep their body cool in hot weather." },
+    { q: "What are nocturnal animals?", a: "Animals that are active during the night. E.g., Owl, Bat." },
+    { q: "What is poaching?", a: "Illegal killing of animals for their skin, teeth, or bones is called poaching." },
+    { q: "Why is the Great Indian Bustard famous?", a: "It is a rare bird found in India and is critically endangered." },
+    { q: "What is an amphibian?", a: "Animals that can live both on land and in water. E.g., Frog." },
+    { q: "How do frogs breathe?", a: "Frogs breathe through lungs on land and through moist skin in water." },
+    { q: "What does a Panda eat?", a: "Pandas mostly eat Bamboo shoots." },
+    { q: "Why do birds have hollow bones?", a: "Hollow bones make their body light, helping them to fly easily." },
+    { q: "What is a predator?", a: "An animal that hunts and kills other animals for food. E.g., Lion." },
+    { q: "What is prey?", a: "The animal that is hunted and eaten by a predator. E.g., Deer." },
+    { q: "Why should we not cut trees?", a: "Trees are homes to many animals. Cutting them makes animals homeless." }
+];
+
+// PRACTICE QUESTIONS (70)
+// Format: type: 'mcq'|'tf'|'fill', q: string, options: [], a: correct_val, reason: string
+const practiceQuestions = [];
+// Helper to generate questions to reach 70 count easily
+const qBank = [
+    { t: 'mcq', q: 'Which of these is a herbivore?', o: ['Lion', 'Cow', 'Wolf'], a: 'Cow', r: 'Cows eat grass, Lions/Wolves eat meat.' },
+    { t: 'mcq', q: 'Where does a Lion live?', o: ['Shed', 'Den', 'Burrow'], a: 'Den', r: 'Lions live in Dens, Cows in Sheds.' },
+    { t: 'tf', q: 'A Tiger is a domestic animal.', a: 'False', r: 'Tiger is a wild animal.' },
+    { t: 'fill', q: 'Fish breathe through their ______.', a: 'gills', r: 'Gills help fish take oxygen from water.' },
+    { t: 'mcq', q: 'Which animal has a hump?', o: ['Horse', 'Camel', 'Dog'], a: 'Camel', r: 'Camels store fat in humps.' },
+    { t: 'mcq', q: 'A frog is an ______.', o: ['Amphibian', 'Reptile', 'Bird'], a: 'Amphibian', r: 'Frogs live on land and water.' },
+    { t: 'tf', q: 'Vultures eat dead animals.', a: 'True', r: 'They are scavengers.' },
+    { t: 'mcq', q: 'The home of a horse is called ______.', o: ['Stable', 'Shed', 'Nest'], a: 'Stable', r: 'Horses live in stables.' },
+    { t: 'mcq', q: 'Which animal is an omnivore?', o: ['Bear', 'Deer', 'Tiger'], a: 'Bear', r: 'Bears eat both berries (plants) and fish (meat).' },
+    { t: 'fill', q: 'Birds use their ______ to fly.', a: 'wings', r: 'Wings help birds fly.' },
+    { t: 'mcq', q: 'Which of these is an endangered animal?', o: ['Tiger', 'Dog', 'Cat'], a: 'Tiger', r: 'Tiger numbers are reducing.' },
+    { t: 'tf', q: 'Plants are producers in a food chain.', a: 'True', r: 'Plants make their own food.' },
+    { t: 'mcq', q: 'Rabbits live in a ______.', o: ['Den', 'Burrow', 'Coop'], a: 'Burrow', r: 'Rabbits dig burrows.' },
+    { t: 'mcq', q: 'Which animal uses its tail to hang on trees?', o: ['Cow', 'Monkey', 'Dog'], a: 'Monkey', r: 'Monkey tails are like an extra hand.' },
+    { t: 'fill', q: 'A baby dog is called a ______.', a: 'puppy', r: 'Young one of a dog.' },
+    { t: 'tf', q: 'Owls sleep at night.', a: 'False', r: 'Owls are nocturnal (awake at night).' },
+    { t: 'mcq', q: 'Polar bears have thick ______.', o: ['Scales', 'Feathers', 'Fur'], a: 'Fur', r: 'Fur keeps them warm.' },
+    { t: 'mcq', q: 'Snakes move using ______.', o: ['Legs', 'Wings', 'Scales'], a: 'Scales', r: 'They slide using scales and muscles.' },
+    { t: 'fill', q: 'A cow lives in a ______.', a: 'shed', r: 'Sheds are man-made homes for cows.' },
+    { t: 'mcq', q: 'Which bird cannot fly?', o: ['Crow', 'Penguin', 'Parrot'], a: 'Penguin', r: 'Penguins are flightless birds.' },
+    { t: 'tf', q: 'A food chain always starts with a plant.', a: 'True', r: 'Producers start the chain.' },
+    { t: 'mcq', q: 'Camels are called the ship of the ______.', o: ['Ocean', 'Desert', 'Sky'], a: 'Desert', r: 'They travel easily on sand.' },
+    { t: 'mcq', q: 'Which animal has a trunk?', o: ['Elephant', 'Giraffe', 'Rhino'], a: 'Elephant', r: 'Only elephants have trunks.' },
+    { t: 'fill', q: 'Bees live in a ______.', a: 'hive', r: 'A group of bees make a hive.' },
+    { t: 'tf', q: 'Humans are mammals.', a: 'True', r: 'Humans give birth to babies and feed milk.' },
+    { t: 'mcq', q: 'Which animal has stripes?', o: ['Zebra', 'Horse', 'Bear'], a: 'Zebra', r: 'Zebras have black and white stripes.' },
+    { t: 'mcq', q: 'A spider spins a ______.', o: ['Nest', 'Web', 'Cave'], a: 'Web', r: 'Spiders make webs to catch insects.' },
+    { t: 'fill', q: 'The king of the jungle is the ______.', a: 'lion', r: 'Lion is top predator.' },
+    { t: 'tf', q: 'Fish have lungs.', a: 'False', r: 'Fish have gills.' },
+    { t: 'mcq', q: 'Which is the largest land animal?', o: ['Elephant', 'Lion', 'Giraffe'], a: 'Elephant', r: 'African Elephants are largest.' },
+    { t: 'mcq', q: 'Which animal sleeps standing up?', o: ['Horse', 'Dog', 'Cat'], a: 'Horse', r: 'Horses can lock their legs to sleep.' },
+    { t: 'fill', q: 'A group of lions is called a ______.', a: 'pride', r: 'It is a collective noun.' },
+    { t: 'tf', q: 'Insects have 6 legs.', a: 'True', r: 'All insects have 6 legs.' },
+    { t: 'mcq', q: 'Chameleons can change their ______.', o: ['Shape', 'Color', 'Size'], a: 'Color', r: 'Camouflage adaptation.' },
+    { t: 'mcq', q: 'Which is a scavenger?', o: ['Eagle', 'Hyena', 'Deer'], a: 'Hyena', r: 'Hyenas eat leftovers.' },
+    { t: 'fill', q: 'A hen lives in a ______.', a: 'coop', r: 'Coop is a shelter for poultry.' },
+    { t: 'mcq', q: 'Which animal gives us wool?', o: ['Sheep', 'Cow', 'Dog'], a: 'Sheep', r: 'Wool comes from sheep fleece.' },
+    { t: 'tf', q: 'Crocodiles can live on land and water.', a: 'True', r: 'They are reptiles but aquatic.' },
+    { t: 'mcq', q: 'The national animal of India is ______.', o: ['Lion', 'Tiger', 'Elephant'], a: 'Tiger', r: 'Royal Bengal Tiger.' },
+    { t: 'mcq', q: 'Which animal has a long neck?', o: ['Giraffe', 'Zebra', 'Pig'], a: 'Giraffe', r: 'To reach high tree leaves.' },
+    { t: 'fill', q: 'Ants live in an ______.', a: 'anthill', r: 'Colony of ants.' },
+    { t: 'mcq', q: 'Bats are ______.', o: ['Birds', 'Mammals', 'Insects'], a: 'Mammals', r: 'Bats have fur and feed milk.' },
+    { t: 'tf', q: 'Sharks are mammals.', a: 'False', r: 'Sharks are fish.' },
+    { t: 'mcq', q: 'A baby cat is called a ______.', o: ['Puppy', 'Kitten', 'Cub'], a: 'Kitten', r: 'Young one of cat.' },
+    { t: 'mcq', q: 'Which animal has a pouch?', o: ['Kangaroo', 'Bear', 'Dog'], a: 'Kangaroo', r: 'To carry their baby (joey).' },
+    { t: 'fill', q: 'Birds have ______ instead of teeth.', a: 'beaks', r: 'Beaks are used for eating.' },
+    { t: 'mcq', q: 'Earthworms live in ______.', o: ['Soil', 'Water', 'Trees'], a: 'Soil', r: 'They help farmers.' },
+    { t: 'tf', q: 'Dolphins breathe air.', a: 'True', r: 'Dolphins are mammals and need air.' },
+    { t: 'mcq', q: 'Which animal is very slow?', o: ['Snail', 'Rabbit', 'Cheetah'], a: 'Snail', r: 'Snails move very slowly.' },
+    { t: 'mcq', q: 'Which animal has tusks?', o: ['Elephant', 'Lion', 'Bear'], a: 'Elephant', r: 'Tusks are long teeth.' },
+    { t: 'fill', q: 'A butterfly comes from a ______.', a: 'caterpillar', r: 'Life cycle stage.' },
+    { t: 'mcq', q: 'Which animal collects honey?', o: ['Bee', 'Fly', 'Ant'], a: 'Bee', r: 'Honeybees make honey.' },
+    { t: 'tf', q: 'Spiders are insects.', a: 'False', r: 'Spiders have 8 legs (Arachnids).' },
+    { t: 'mcq', q: 'Pandas love to eat ______.', o: ['Bamboo', 'Meat', 'Fish'], a: 'Bamboo', r: '99% of their diet.' },
+    { t: 'mcq', q: 'A dog lives in a ______.', o: ['Kennel', 'Stable', 'Shed'], a: 'Kennel', r: 'House for dog.' },
+    { t: 'fill', q: 'A baby lion is called a ______.', a: 'cub', r: 'Young one of big cats.' },
+    { t: 'mcq', q: 'Which animal quills?', o: ['Porcupine', 'Rabbit', 'Rat'], a: 'Porcupine', r: 'Quills are sharp spines.' },
+    { t: 'tf', q: 'Tortoises have hard shells.', a: 'True', r: 'Shell protects them.' },
+    { t: 'mcq', q: 'Which bird dances in rain?', o: ['Peacock', 'Crow', 'Owl'], a: 'Peacock', r: 'Male peacocks display feathers.' },
+    { t: 'mcq', q: 'Which animal hangs upside down?', o: ['Bat', 'Bird', 'Cat'], a: 'Bat', r: 'Bats sleep upside down.' },
+    { t: 'fill', q: 'A silkworm gives us ______.', a: 'silk', r: 'Fabric material.' },
+    { t: 'mcq', q: 'The fastest land animal is ______.', o: ['Cheetah', 'Lion', 'Horse'], a: 'Cheetah', r: 'Runs very fast.' },
+    { t: 'tf', q: 'Goats are carnivores.', a: 'False', r: 'Goats eat grass (herbivores).' },
+    { t: 'mcq', q: 'Which animal carries a house on its back?', o: ['Snail', 'Snake', 'Fish'], a: 'Snail', r: 'The shell is the house.' },
+    { t: 'mcq', q: 'Which bird mimics human voice?', o: ['Parrot', 'Eagle', 'Sparrow'], a: 'Parrot', r: 'Parrots can copy sounds.' },
+    { t: 'fill', q: 'The sun is a ______.', a: 'star', r: 'It gives energy.' },
+    { t: 'mcq', q: 'Animals that hunt are called ______.', o: ['Predators', 'Prey', 'Pets'], a: 'Predators', r: 'They hunt prey.' },
+    { t: 'tf', q: 'Blue Whale is the largest animal.', a: 'True', r: 'Largest on Earth.' },
+    { t: 'mcq', q: 'Octopus has ______ arms.', o: ['8', '6', '10'], a: '8', r: 'Octo means eight.' },
+    { t: 'mcq', q: 'Starfish lives in ______.', o: ['Sea', 'River', 'Pond'], a: 'Sea', r: 'Saltwater animal.' }
+];
+
+// Load questions into main array
+qBank.forEach((item, index) => {
+    practiceQuestions.push({
+        id: index + 1,
+        type: item.t,
+        question: item.q,
+        options: item.o || [],
+        answer: item.a,
+        reason: item.r
+    });
+});
+
+// ADVANCED LONG QUESTIONS (10)
+const longQuestions = [
+    {
+        id: 1,
+        q: "Explain why polar bears cannot survive in a desert.",
+        keywords: ["fur", "fat", "hot", "cold", "heat", "warm"],
+        model: "Polar bears have thick fur and body fat to keep them warm in cold places. In a desert, it is too hot. Their thick fur would make them feel extremely hot, and they might die from heat.",
+        points: 5
+    },
+    {
+        id: 2,
+        q: "What would happen if all deer (herbivores) disappear from the forest?",
+        keywords: ["food", "hungry", "lion", "tiger", "carnivore", "die", "eat"],
+        model: "If deer disappear, carnivores like lions and tigers will not get food. They might start dying of hunger or come into villages to eat domestic animals.",
+        points: 5
+    },
+    {
+        id: 3,
+        q: "Why do aquatic animals have fins and gills?",
+        keywords: ["swim", "breathe", "water", "oxygen", "move", "balance"],
+        model: "Fins help them to swim and balance in water. Gills help them to breathe by taking oxygen dissolved in water.",
+        points: 5
+    },
+    {
+        id: 4,
+        q: "Differentiate between wild and domestic animals with examples.",
+        keywords: ["forest", "home", "farm", "nature", "work", "pet"],
+        model: "Wild animals live freely in nature/forests (e.g., Lion, Bear). Domestic animals are kept by humans for work or food (e.g., Cow, Dog).",
+        points: 5
+    },
+    {
+        id: 5,
+        q: "How does a camel survive without water for many days?",
+        keywords: ["hump", "fat", "store", "water", "energy"],
+        model: "A camel has a hump that stores fat. When there is no food or water, the camel uses this fat to get energy and survive.",
+        points: 5
+    },
+    {
+        id: 6,
+        q: "Why are Tigers becoming endangered?",
+        keywords: ["hunting", "poaching", "skin", "forest", "cut", "habitat"],
+        model: "Tigers are hunted (poached) for their skin and bones. Also, humans are cutting down forests, so tigers are losing their homes.",
+        points: 5
+    },
+    {
+        id: 7,
+        q: "Describe a food chain involving a grasshopper.",
+        keywords: ["grass", "frog", "snake", "eagle", "eats", "producer"],
+        model: "Grass (Producer) ➡ Grasshopper (eats grass) ➡ Frog (eats grasshopper) ➡ Snake (eats frog) ➡ Eagle (eats snake).",
+        points: 5
+    },
+    {
+        id: 8,
+        q: "Why do monkeys have long tails?",
+        keywords: ["branch", "hang", "balance", "tree", "climb"],
+        model: "Monkeys live on trees (arboreal). Their long tails act like a fifth hand to hold branches, hang, and balance while jumping.",
+        points: 5
+    },
+    {
+        id: 9,
+        q: "Why should we not use plastic bags?",
+        keywords: ["eat", "cow", "choke", "stomach", "die", "garbage"],
+        model: "Animals like cows often eat plastic bags found in garbage. The plastic gets stuck in their stomach or throat, and they can die.",
+        points: 5
+    },
+    {
+        id: 10,
+        q: "What is the difference between a scavenger and a decomposer?",
+        keywords: ["dead", "flesh", "rot", "soil", "fungi", "bacteria", "vulture"],
+        model: "Scavengers (Vulture) eat the flesh of dead animals. Decomposers (Fungi) rot the remains and mix them into the soil.",
+        points: 5
+    }
+];
+
+// REVISION POINTS
+const revisionPoints = [
+    "Herbivores eat plants, Carnivores eat meat, Omnivores eat both.",
+    "Wild animals live in nature; Domestic animals live with humans.",
+    "Habitat is the natural home of an animal.",
+    "Adaptations help animals survive (e.g., Hump in Camel, Fur in Polar Bear).",
+    "Food Chain shows flow of energy: Producer ➡ Consumer.",
+    "Endangered animals are disappearing (e.g., Tiger).",
+    "We must protect animals and their habitats."
+];
+
+/* =========================================
+   GAME STATE
+   ========================================= */
+
+let state = {
+    practiceIndex: 0,
+    correct: 0,
+    wrong: 0,
+    totalAttempted: 0,
+    marks: 0
+};
+
+// DOM Elements
+const scoreCorrectEl = document.getElementById('score-correct');
+const scoreWrongEl = document.getElementById('score-wrong');
+const scoreTotalEl = document.getElementById('score-total');
+const scoreMarksEl = document.getElementById('score-marks');
+
+/* =========================================
+   LOGIC FUNCTIONS
+   ========================================= */
+
+function init() {
+    renderNotes();
+    renderImpQuestions();
+    loadPracticeQuestion();
+    renderLongQuestions();
+    renderRevision();
+}
+
+function updateScore(isCorrect, points = 1) {
+    state.totalAttempted++;
+    if(isCorrect) {
+        state.correct++;
+        state.marks += points;
+    } else {
+        state.wrong++;
+    }
+    
+    scoreCorrectEl.innerText = state.correct;
+    scoreWrongEl.innerText = state.wrong;
+    scoreTotalEl.innerText = state.totalAttempted;
+    scoreMarksEl.innerText = state.marks;
+}
+
+// 1. NOTES RENDER
+function renderNotes() {
+    const container = document.getElementById('notes-content');
+    topics.forEach(t => {
+        container.innerHTML += `
+            <div class="topic-card">
+                <div class="topic-title">${t.title}</div>
+                <div style="margin-top:10px;">${t.content}</div>
+            </div>
+        `;
+    });
+}
+
+// 2. IMP QUESTIONS RENDER
+function renderImpQuestions() {
+    const container = document.getElementById('imp-qa-container');
+    impQuestions.forEach((item, i) => {
+        container.innerHTML += `
+            <div class="q-box">
+                <div style="color:#d63031;">Q${i+1}: ${item.q}</div>
+                <div style="margin-top:5px; color:#2d3436;"><b>Ans:</b> ${item.a}</div>
+            </div>
+        `;
+    });
+}
+
+// 3. PRACTICE ENGINE
+function loadPracticeQuestion() {
+    const q = practiceQuestions[state.practiceIndex];
+    if(!q) {
+        document.getElementById('practice-area').innerHTML = "<h3>🎉 All Practice Questions Completed!</h3>";
+        return;
+    }
+
+    // Reset UI
+    document.getElementById('pq-counter').innerText = `Question ${state.practiceIndex + 1}/${practiceQuestions.length}`;
+    document.getElementById('pq-question').innerText = q.question;
+    const optDiv = document.getElementById('pq-options');
+    optDiv.innerHTML = '';
+    document.getElementById('pq-feedback').style.display = 'none';
+    document.getElementById('pq-next-btn').classList.add('hidden');
+
+    // Render Options based on type
+    if(q.type === 'mcq') {
+        q.options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => checkPracticeAnswer(opt, q.answer, q.reason, btn);
+            optDiv.appendChild(btn);
+        });
+    } else if (q.type === 'tf') {
+        ['True', 'False'].forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => checkPracticeAnswer(opt, q.answer, q.reason, btn);
+            optDiv.appendChild(btn);
+        });
+    } else if (q.type === 'fill') {
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.placeholder = "Type your answer...";
+        input.id = 'fill-input';
+        
+        const subBtn = document.createElement('button');
+        subBtn.className = 'action-btn';
+        subBtn.innerText = "Check";
+        subBtn.onclick = () => {
+            const val = document.getElementById('fill-input').value.trim();
+            checkPracticeAnswer(val, q.answer, q.reason, null);
+        };
+
+        optDiv.appendChild(input);
+        optDiv.appendChild(document.createElement('br'));
+        optDiv.appendChild(subBtn);
+    }
+}
+
+function checkPracticeAnswer(userVal, correctVal, reason, btnEl) {
+    // Disable inputs
+    const opts = document.getElementById('pq-options').querySelectorAll('button');
+    opts.forEach(b => b.disabled = true);
+    
+    let isCorrect = false;
+    if(userVal.toLowerCase() === correctVal.toLowerCase()) isCorrect = true;
+
+    // UI Feedback
+    if(btnEl && isCorrect) btnEl.style.background = '#55efc4';
+    if(btnEl && !isCorrect) btnEl.style.background = '#fab1a0';
+
+    const fb = document.getElementById('pq-feedback');
+    fb.style.display = 'block';
+    fb.className = isCorrect ? 'feedback correct' : 'feedback wrong';
+    fb.innerHTML = isCorrect 
+        ? `<b>Excellent! ⭐</b><br>${reason}` 
+        : `<b>Try Again!</b><br>Correct Answer: ${correctVal}<br>${reason}`;
+
+    updateScore(isCorrect);
+    document.getElementById('pq-next-btn').classList.remove('hidden');
+}
+
+function nextPracticeQuestion() {
+    state.practiceIndex++;
+    loadPracticeQuestion();
+}
+
+// 4. LONG ANSWER ENGINE
+function renderLongQuestions() {
+    const container = document.getElementById('lq-container');
+    longQuestions.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'q-box';
+        div.innerHTML = `
+            <div style="margin-bottom:10px;"><b>Q${index+1}: ${item.q}</b> (5 Marks)</div>
+            <textarea id="lq-text-${item.id}" placeholder="Write your answer here..."></textarea>
+            <button class="action-btn" onclick="checkLongAnswer(${item.id})">Check Answer</button>
+            <div id="lq-res-${item.id}" class="eval-result"></div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+function checkLongAnswer(id) {
+    const qData = longQuestions.find(q => q.id === id);
+    const userText = document.getElementById(`lq-text-${id}`).value.toLowerCase();
+    const resBox = document.getElementById(`lq-res-${id}`);
+    
+    // Logic: Check for keywords
+    let matchCount = 0;
+    qData.keywords.forEach(k => {
+        if(userText.includes(k)) matchCount++;
+    });
+
+    const isPass = matchCount >= 2; // Loose check for Class 4
+    
+    // Construct feedback
+    let feedbackHTML = "";
+    if(isPass) {
+        updateScore(true, 5);
+        feedbackHTML = `<span style="color:#00b894"><b>Correct! Well Explained.</b></span>`;
+    } else {
+        updateScore(false, 0);
+        feedbackHTML = `<span style="color:#d63031"><b>Needs Improvement.</b></span><br>`;
+        feedbackHTML += `<u>Missing Keywords:</u> ${qData.keywords.join(", ")}<br>`;
+    }
+    
+    feedbackHTML += `<br><small><b>Model Answer:</b> ${qData.model}</small>`;
+    
+    resBox.innerHTML = feedbackHTML;
+    resBox.style.display = 'block';
+}
+
+// 5. REVISION RENDER
+function renderRevision() {
+    const list = document.getElementById('rev-list');
+    revisionPoints.forEach(pt => {
+        list.innerHTML += `<div class="revision-point">📌 ${pt}</div>`;
+    });
+}
+
+// Start App
+document.addEventListener('DOMContentLoaded', init);
+
+</script>
+</body>
+</html>

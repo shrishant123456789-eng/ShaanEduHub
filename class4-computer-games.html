@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 4 Computer Science - Complete Learning Games</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Caveat', cursive;
+            font-weight: 700;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #e3f2fd 0%, #fff3e0 100%);
+            min-height: 100vh;
+            padding: 10px;
+        }
+        
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #42a5f5 0%, #66bb6a 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 18px;
+        }
+        
+        .score-panel {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        
+        .score-item {
+            text-align: center;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+        
+        .score-label {
+            font-size: 16px;
+            color: #666;
+        }
+        
+        .score-value {
+            font-size: 24px;
+            color: #333;
+            margin-top: 5px;
+        }
+        
+        .game-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .game-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        
+        .game-card h3 {
+            font-size: 22px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .game-card p {
+            font-size: 16px;
+            color: #666;
+        }
+        
+        .game-screen {
+            display: none;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .game-screen.active {
+            display: block;
+        }
+        
+        .task-container {
+            margin-top: 20px;
+        }
+        
+        .task-question {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .option-btn {
+            background: #f5f5f5;
+            border: 2px solid #ddd;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+        }
+        
+        .option-btn:hover {
+            background: #e3f2fd;
+            border-color: #42a5f5;
+        }
+        
+        .option-btn.correct {
+            background: #c8e6c9;
+            border-color: #66bb6a;
+        }
+        
+        .option-btn.wrong {
+            background: #ffcdd2;
+            border-color: #ef5350;
+        }
+        
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 18px;
+            display: none;
+        }
+        
+        .feedback.show {
+            display: block;
+        }
+        
+        .feedback.correct {
+            background: #c8e6c9;
+            color: #2e7d32;
+        }
+        
+        .feedback.wrong {
+            background: #ffcdd2;
+            color: #c62828;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #42a5f5;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1e88e5;
+        }
+        
+        .btn-secondary {
+            background: #66bb6a;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #4caf50;
+        }
+        
+        .btn-back {
+            background: #ff9800;
+            color: white;
+        }
+        
+        .btn-back:hover {
+            background: #f57c00;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #f5f5f5;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #42a5f5 0%, #66bb6a 100%);
+            transition: width 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+        }
+        
+        .drag-drop-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .draggable-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 10px;
+            min-height: 80px;
+        }
+        
+        .draggable {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: move;
+            border: 2px solid #ddd;
+            font-size: 16px;
+        }
+        
+        .drop-zone {
+            min-height: 60px;
+            background: #fff3e0;
+            border: 2px dashed #ff9800;
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .drop-zone.active {
+            background: #ffe0b2;
+            border-color: #f57c00;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+        
+        .image-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .image-option img {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            color: #333;
+            font-size: 18px;
+        }
+        
+        .task-number {
+            background: #42a5f5;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        @media (min-width: 768px) {
+            .game-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .score-panel {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Class 4 Computer Science</h1>
+            <p>Complete Learning Games System</p>
+        </header>
+
+        <div class="score-panel" id="scorePanel">
+            <div class="score-item">
+                <div class="score-label">Correct</div>
+                <div class="score-value" id="correctScore">0</div>
+            </div>
+            <div class="score-item">
+                <div class="score-label">Wrong</div>
+                <div class="score-value" id="wrongScore">0</div>
+            </div>
+            <div class="score-item">
+                <div class="score-label">Attempted</div>
+                <div class="score-value" id="attemptedScore">0</div>
+            </div>
+            <div class="score-item">
+                <div class="score-label">Accuracy</div>
+                <div class="score-value" id="accuracyScore">0%</div>
+            </div>
+            <div class="score-item">
+                <div class="score-label">Points</div>
+                <div class="score-value" id="pointsScore">0</div>
+            </div>
+        </div>
+
+        <div id="gameList" class="game-grid">
+            <div class="game-card" data-game="1">
+                <h3>1. Computer World Explorer</h3>
+                <p>Explore the basics of computers and their uses</p>
+            </div>
+            <div class="game-card" data-game="2">
+                <h3>2. Hardware Detective</h3>
+                <p>Identify and learn about computer hardware parts</p>
+            </div>
+            <div class="game-card" data-game="3">
+                <h3>3. Memory Master Challenge</h3>
+                <p>Understand computer memory and storage</p>
+            </div>
+            <div class="game-card" data-game="4">
+                <h3>4. Desktop Commander</h3>
+                <p>Master the computer desktop and windows</p>
+            </div>
+            <div class="game-card" data-game="5">
+                <h3>5. File Organizer Pro</h3>
+                <p>Learn file management and organization</p>
+            </div>
+            <div class="game-card" data-game="6">
+                <h3>6. Word Wizard</h3>
+                <p>Master word processing skills</p>
+            </div>
+            <div class="game-card" data-game="7">
+                <h3>7. Paint Studio Quest</h3>
+                <p>Create digital art and learn painting tools</p>
+            </div>
+            <div class="game-card" data-game="8">
+                <h3>8. Slide Builder</h3>
+                <p>Create amazing presentations</p>
+            </div>
+            <div class="game-card" data-game="9">
+                <h3>9. Internet Safety Hero</h3>
+                <p>Learn to stay safe online</p>
+            </div>
+            <div class="game-card" data-game="10">
+                <h3>10. Typing Ninja</h3>
+                <p>Master keyboard skills and typing</p>
+            </div>
+            <div class="game-card" data-game="11">
+                <h3>11. Mouse Control Lab</h3>
+                <p>Perfect your mouse control skills</p>
+            </div>
+            <div class="game-card" data-game="12">
+                <h3>12. Logic Ladder</h3>
+                <p>Develop logical thinking skills</p>
+            </div>
+            <div class="game-card" data-game="13">
+                <h3>13. Algorithm Builder</h3>
+                <p>Learn to create step-by-step instructions</p>
+            </div>
+            <div class="game-card" data-game="14">
+                <h3>14. Digital Artist Project</h3>
+                <p>Complete digital art projects</p>
+            </div>
+            <div class="game-card" data-game="15">
+                <h3>15. Presentation Judge</h3>
+                <p>Evaluate and improve presentations</p>
+            </div>
+            <div class="game-card" data-game="16">
+                <h3>16. Cyber Ethics Quiz Arena</h3>
+                <p>Learn digital citizenship and ethics</p>
+            </div>
+            <div class="game-card" data-game="17">
+                <h3>17. Computer Quiz Marathon</h3>
+                <p>Test all your computer knowledge</p>
+            </div>
+            <div class="game-card" data-game="18">
+                <h3>18. Error Finder Pro</h3>
+                <p>Find and fix computer errors</p>
+            </div>
+            <div class="game-card" data-game="19">
+                <h3>19. Digital Life Simulator</h3>
+                <p>Experience real-world computer scenarios</p>
+            </div>
+            <div class="game-card" data-game="20">
+                <h3>20. Master Assessment Challenge</h3>
+                <p>Final comprehensive assessment</p>
+            </div>
+        </div>
+
+        <div id="gameScreen" class="game-screen">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill">0/25</div>
+            </div>
+            <div class="task-container" id="taskContainer"></div>
+            <div class="nav-buttons">
+                <button class="btn btn-back" id="backBtn">Back to Games</button>
+                <button class="btn btn-secondary hidden" id="nextBtn">Next Task</button>
+            </div>
+        </div>
+
+        <footer>
+            Designed and Created by श्री शांति यादव
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const gameData = {
+                1: [
+                    {q: "What is a computer?", type: "mcq", options: ["A machine that processes data", "A toy for playing games", "A book for reading", "A television"], correct: 0, explanation: "A computer is a machine that processes data and gives us useful information. It follows our instructions to do many tasks."},
+                    {q: "Which of these is NOT a use of computers?", type: "mcq", options: ["Playing games", "Doing homework", "Eating food", "Drawing pictures"], correct: 2, explanation: "Computers cannot eat food because they are machines. They help us with games, homework, and drawing."},
+                    {q: "Computers can help us learn new things.", type: "tf", correct: true, explanation: "Computers are great learning tools. We can read stories, watch educational videos, and practice math on computers."},
+                    {q: "A computer works without electricity.", type: "tf", correct: false, explanation: "Computers need electricity to work. Without power, they cannot function at all."},
+                    {q: "Which device is a computer?", type: "mcq", options: ["Laptop", "Pencil", "Notebook", "Eraser"], correct: 0, explanation: "A laptop is a portable computer. Pencils, notebooks, and erasers are school supplies, not computers."},
+                    {q: "Computers can store information for us.", type: "tf", correct: true, explanation: "One of the most important jobs of computers is to store information like photos, documents, and videos for us."},
+                    {q: "Which is the brain of a computer?", type: "mcq", options: ["Monitor", "CPU", "Keyboard", "Mouse"], correct: 1, explanation: "The CPU (Central Processing Unit) is the brain of the computer. It does all the thinking and processing."},
+                    {q: "We use computers only for playing games.", type: "tf", correct: false, explanation: "Computers have many uses beyond games. We use them for learning, drawing, writing, watching videos, and much more."},
+                    {q: "What do we call the screen of a computer?", type: "mcq", options: ["Keyboard", "Monitor", "Mouse", "Speaker"], correct: 1, explanation: "The monitor is the screen where we see everything on the computer. It shows us pictures, text, and videos."},
+                    {q: "Computers can help doctors treat patients.", type: "tf", correct: true, explanation: "Doctors use computers to keep patient records, see x-rays, and research medical information to provide better treatment."},
+                    {q: "Which is used to type on a computer?", type: "mcq", options: ["Mouse", "Keyboard", "Monitor", "Speaker"], correct: 1, explanation: "The keyboard is used for typing letters, numbers, and symbols on a computer. It has many keys arranged in rows."},
+                    {q: "All computers look exactly the same.", type: "tf", correct: false, explanation: "Computers come in many shapes and sizes. There are desktops, laptops, tablets, and smartphones, all with different designs."},
+                    {q: "What does ICT stand for?", type: "mcq", options: ["Information and Communication Technology", "International Computer Training", "Internet Connection Technology", "Input Computer Terminal"], correct: 0, explanation: "ICT stands for Information and Communication Technology. It includes computers and how we use them to share information."},
+                    {q: "Computers were invented hundreds of years ago.", type: "tf", correct: false, explanation: "Modern computers were invented only about 70-80 years ago. They are a relatively recent invention in human history."},
+                    {q: "Which of these is an input device?", type: "mcq", options: ["Monitor", "Speaker", "Keyboard", "Printer"], correct: 2, explanation: "Input devices send information to the computer. The keyboard is an input device. Monitor, speaker, and printer are output devices."},
+                    {q: "Computers can work faster than humans in calculations.", type: "tf", correct: true, explanation: "Computers can do millions of calculations in just one second, which is much faster than any human can do."},
+                    {q: "What is software?", type: "mcq", options: ["The physical parts of computer", "Programs that run on computer", "The computer screen", "The computer keyboard"], correct: 1, explanation: "Software refers to programs and instructions that tell the computer what to do. Games, apps, and operating systems are all software."},
+                    {q: "Computers need instructions from humans to work.", type: "tf", correct: true, explanation: "Computers follow instructions given by humans through programs. Without our instructions, they cannot do anything on their own."},
+                    {q: "Which is NOT a type of computer?", type: "mcq", options: ["Desktop", "Laptop", "Tablet", "Bicycle"], correct: 3, explanation: "A bicycle is a vehicle for transportation, not a computer. Desktop, laptop, and tablet are all types of computers."},
+                    {q: "Computers are used in banks to manage money.", type: "tf", correct: true, explanation: "Banks use computers to keep track of accounts, process transactions, and manage customer information safely."},
+                    {q: "What is the Internet?", type: "mcq", options: ["A fishing net", "A network connecting computers worldwide", "A computer game", "A type of computer"], correct: 1, explanation: "The Internet is a huge network that connects millions of computers around the world, letting them share information."},
+                    {q: "Computers can only work with numbers, not letters.", type: "tf", correct: false, explanation: "Computers can work with both numbers and letters. We can type text, do math, draw pictures, and much more."},
+                    {q: "In which field are computers NOT commonly used?", type: "mcq", options: ["Education", "Medicine", "Space exploration", "Stone age hunting"], correct: 3, explanation: "Stone age hunting happened thousands of years ago, before computers existed. Computers are used in education, medicine, and space exploration."},
+                    {q: "Computers have made communication faster and easier.", type: "tf", correct: true, explanation: "With computers and the internet, we can send messages instantly to people anywhere in the world through email and chat."},
+                    {q: "Which statement best describes modern computers?", type: "mcq", options: ["They are slow and unreliable", "They can only do one task", "They are fast, versatile, and helpful", "They work without electricity"], correct: 2, explanation: "Modern computers are fast, can do many tasks, and help us in countless ways. They have become essential tools in our daily lives."}
+                ],
+                2: [
+                    {q: "What is hardware?", type: "mcq", options: ["Physical parts of computer", "Computer programs", "Internet connection", "Computer games"], correct: 0, explanation: "Hardware refers to all the physical parts of a computer that we can touch, like the monitor, keyboard, and mouse."},
+                    {q: "The CPU is known as the brain of the computer.", type: "tf", correct: true, explanation: "The CPU (Central Processing Unit) processes all instructions and is called the brain because it controls everything the computer does."},
+                    {q: "Which is an output device?", type: "mcq", options: ["Keyboard", "Mouse", "Monitor", "Microphone"], correct: 2, explanation: "The monitor is an output device because it shows us information from the computer. Keyboard and mouse are input devices."},
+                    {q: "RAM is a type of permanent storage.", type: "tf", correct: false, explanation: "RAM (Random Access Memory) is temporary memory. It stores data only when the computer is on and loses everything when turned off."},
+                    {q: "What does a mouse help us do?", type: "mcq", options: ["Type letters", "Point and click on screen", "Print documents", "Play sounds"], correct: 1, explanation: "The mouse helps us move the cursor on screen and click on things. It makes navigating the computer easy."},
+                    {q: "A printer is an input device.", type: "tf", correct: false, explanation: "A printer is an output device because it gives us output in the form of printed paper. It receives data from the computer."},
+                    {q: "Which part stores data permanently?", type: "mcq", options: ["RAM", "Hard disk", "CPU", "Monitor"], correct: 1, explanation: "The hard disk stores data permanently, even when the computer is turned off. It keeps all our files, photos, and programs safe."},
+                    {q: "Speakers are used to hear sounds from the computer.", type: "tf", correct: true, explanation: "Speakers are output devices that convert computer signals into sound so we can hear music, videos, and other audio."},
+                    {q: "What is the full form of CPU?", type: "mcq", options: ["Central Processing Unit", "Computer Personal Unit", "Central Program Utility", "Common Processing Unit"], correct: 0, explanation: "CPU stands for Central Processing Unit. It is the main chip that processes all the instructions in a computer."},
+                    {q: "A scanner is used to put pictures into the computer.", type: "tf", correct: true, explanation: "A scanner is an input device that captures images of documents or photos and sends them into the computer as digital files."},
+                    {q: "Which device is used for typing?", type: "mcq", options: ["Mouse", "Keyboard", "Printer", "Speaker"], correct: 1, explanation: "The keyboard is the main typing device with keys for letters, numbers, and special characters."},
+                    {q: "The motherboard connects all computer parts together.", type: "tf", correct: true, explanation: "The motherboard is like a big circuit board that connects all parts of the computer together so they can communicate with each other."},
+                    {q: "What does ROM stand for?", type: "mcq", options: ["Random Only Memory", "Read Only Memory", "Ready Output Module", "Real Operating Memory"], correct: 1, explanation: "ROM stands for Read Only Memory. It contains permanent instructions that help the computer start up when we turn it on."},
+                    {q: "A webcam is used to take videos and pictures.", type: "tf", correct: true, explanation: "A webcam is a camera attached to the computer that captures video and pictures, often used for video calls and photos."},
+                    {q: "Which is NOT a part of a computer?", type: "mcq", options: ["Monitor", "CPU", "Pencil", "Keyboard"], correct: 2, explanation: "A pencil is a writing tool, not a computer part. Monitor, CPU, and keyboard are all essential computer components."},
+                    {q: "Headphones are output devices.", type: "tf", correct: true, explanation: "Headphones are output devices that deliver sound directly to our ears. They work like personal speakers."},
+                    {q: "What is the main function of RAM?", type: "mcq", options: ["Store data permanently", "Process instructions", "Provide temporary memory", "Display images"], correct: 2, explanation: "RAM provides temporary memory for programs that are currently running. It helps the computer work faster by keeping active data ready."},
+                    {q: "A joystick is used for playing computer games.", type: "tf", correct: true, explanation: "A joystick is an input device used to control games, especially flying and racing games, by moving and clicking buttons."},
+                    {q: "Which device helps us see output?", type: "mcq", options: ["Keyboard", "Mouse", "Monitor", "Microphone"], correct: 2, explanation: "The monitor displays all visual output from the computer, showing us text, images, videos, and everything we need to see."},
+                    {q: "USB stands for Universal Serial Bus.", type: "tf", correct: true, explanation: "USB (Universal Serial Bus) is a common connection type that lets us attach devices like flash drives, keyboards, and mice to the computer."},
+                    {q: "Which component is called the heart of the computer?", type: "mcq", options: ["Monitor", "Motherboard", "Mouse", "Keyboard"], correct: 1, explanation: "The motherboard is called the heart of the computer because it connects and coordinates all the different parts together."},
+                    {q: "A trackpad works like a mouse.", type: "tf", correct: true, explanation: "A trackpad is a touch-sensitive surface found on laptops that does the same job as a mouse, controlling the cursor with finger movements."},
+                    {q: "What type of device is a microphone?", type: "mcq", options: ["Output device", "Input device", "Storage device", "Processing device"], correct: 1, explanation: "A microphone is an input device because it takes sound from outside and sends it into the computer for recording or communication."},
+                    {q: "The power supply gives electricity to the computer.", type: "tf", correct: true, explanation: "The power supply unit converts electricity from the wall socket into the right type of power that computer components need to work."},
+                    {q: "Which hardware component would you upgrade to make your computer faster at running programs?", type: "mcq", options: ["Monitor", "Keyboard", "RAM", "Speaker"], correct: 2, explanation: "Adding more RAM helps the computer run programs faster because it can keep more data ready in temporary memory, reducing waiting time."}
+                ],
+                3: [
+                    {q: "What is computer memory?", type: "mcq", options: ["Place where data is stored", "A type of software", "Internet connection", "Computer screen"], correct: 0, explanation: "Computer memory is where the computer stores data and instructions. It's like the computer's ability to remember things."},
+                    {q: "ROM can be changed by the user easily.", type: "tf", correct: false, explanation: "ROM (Read Only Memory) is permanent memory that contains fixed instructions. Users cannot change it easily because it's meant to be permanent."},
+                    {q: "Which memory is faster?", type: "mcq", options: ["Hard disk", "RAM", "CD", "USB drive"], correct: 1, explanation: "RAM is much faster than hard disks or other storage because the computer can access data in RAM almost instantly."},
+                    {q: "A hard disk is a type of permanent storage.", type: "tf", correct: true, explanation: "Hard disks store data permanently, keeping files safe even when the computer is turned off. They have large storage capacity."},
+                    {q: "What happens to RAM when we turn off the computer?", type: "mcq", options: ["It saves everything", "It loses all data", "It becomes ROM", "It increases in size"], correct: 1, explanation: "RAM is volatile memory, meaning it loses all data when power is turned off. That's why we need to save work to the hard disk."},
+                    {q: "1 GB is bigger than 1 MB.", type: "tf", correct: true, explanation: "1 GB (Gigabyte) equals 1024 MB (Megabytes). GB is a larger unit of storage measurement than MB."},
+                    {q: "Which is NOT a storage device?", type: "mcq", options: ["Hard disk", "RAM", "Monitor", "USB drive"], correct: 2, explanation: "A monitor is an output device that displays information, not a storage device. Hard disk, RAM, and USB drives all store data."},
+                    {q: "Memory cards can be used in cameras and phones.", type: "tf", correct: true, explanation: "Memory cards are portable storage devices that can store photos, videos, and files in cameras, phones, and other devices."},
+                    {q: "What is cache memory?", type: "mcq", options: ["Very slow memory", "Very fast small memory", "Permanent storage", "Type of hard disk"], correct: 1, explanation: "Cache memory is extremely fast but small memory that stores frequently used data to help the CPU work faster."},
+                    {q: "More RAM makes the computer work faster.", type: "tf", correct: true, explanation: "More RAM allows the computer to run more programs at once and work faster because it has more temporary workspace."},
+                    {q: "Which unit is the smallest?", type: "mcq", options: ["Byte", "Kilobyte", "Megabyte", "Gigabyte"], correct: 0, explanation: "A Byte is the smallest unit. It takes 1024 Bytes to make a Kilobyte, 1024 KB to make a MB, and 1024 MB to make a GB."},
+                    {q: "SSD stands for Solid State Drive.", type: "tf", correct: true, explanation: "SSD (Solid State Drive) is a type of storage that is faster and more reliable than traditional hard disks because it has no moving parts."},
+                    {q: "How many bits are in a byte?", type: "mcq", options: ["4", "8", "16", "32"], correct: 1, explanation: "There are 8 bits in one byte. A bit is the smallest unit of computer data, and bytes are made up of 8 bits."},
+                    {q: "Virtual memory uses hard disk space as extra RAM.", type: "tf", correct: true, explanation: "When RAM is full, the computer uses a part of the hard disk as virtual memory to temporarily store data, though it's slower than real RAM."},
+                    {q: "What does the computer use to measure memory?", type: "mcq", options: ["Meters", "Liters", "Bytes", "Kilograms"], correct: 2, explanation: "Computers measure memory and storage in Bytes and their larger units like Kilobytes, Megabytes, and Gigabytes."},
+                    {q: "Flash drives are also called pen drives.", type: "tf", correct: true, explanation: "Flash drives, also known as pen drives or USB drives, are portable storage devices that plug into USB ports to transfer and store files."},
+                    {q: "Which has more storage capacity?", type: "mcq", options: ["Floppy disk", "CD", "DVD", "Hard disk"], correct: 3, explanation: "Hard disks have the most storage capacity among these options, storing hundreds or thousands of gigabytes of data."},
+                    {q: "Cloud storage means saving files on the internet.", type: "tf", correct: true, explanation: "Cloud storage saves files on remote servers accessed through the internet, letting us access our files from any device anywhere."},
+                    {q: "What type of memory does the CPU use directly?", type: "mcq", options: ["Hard disk", "RAM", "USB drive", "CD"], correct: 1, explanation: "The CPU works directly with RAM because it's fast enough to keep up with the CPU's processing speed. Hard disks are too slow for direct CPU use."},
+                    {q: "All storage devices have the same speed.", type: "tf", correct: false, explanation: "Storage devices have different speeds. SSDs are fastest, then hard disks, then optical discs (CDs/DVDs). Speed depends on the technology used."},
+                    {q: "Which is a characteristic of ROM?", type: "mcq", options: ["Loses data when power is off", "Can be easily changed", "Contains startup instructions", "Used for temporary storage"], correct: 2, explanation: "ROM contains permanent startup instructions that help the computer boot up. It doesn't lose data when power is off and can't be easily changed."},
+                    {q: "Optical drives read CDs and DVDs using lasers.", type: "tf", correct: true, explanation: "Optical drives use laser beams to read and write data on CDs and DVDs. The laser detects tiny marks on the disc surface."},
+                    {q: "How much is 1 Terabyte?", type: "mcq", options: ["1000 MB", "1000 GB", "1024 GB", "1024 KB"], correct: 2, explanation: "1 Terabyte equals 1024 Gigabytes. It's a very large amount of storage, enough for thousands of photos and hundreds of videos."},
+                    {q: "Volatile memory loses data when power is turned off.", type: "tf", correct: true, explanation: "Volatile memory like RAM loses all its contents when the computer is turned off, which is why we must save important work to permanent storage."},
+                    {q: "Which scenario requires the most RAM?", type: "mcq", options: ["Typing a short letter", "Playing a simple game", "Editing high-quality videos", "Browsing one website"], correct: 2, explanation: "Editing high-quality videos requires the most RAM because video files are very large and the editing software needs lots of memory to work smoothly."}
+                ],
+                4: [
+                    {q: "What is a desktop?", type: "mcq", options: ["A type of table", "The main screen of computer", "A computer program", "A storage device"], correct: 1, explanation: "The desktop is the main screen we see when we start the computer. It shows icons, folders, and the taskbar."},
+                    {q: "Icons are small pictures on the desktop.", type: "tf", correct: true, explanation: "Icons are small pictures that represent programs, files, or folders. We can click on them to open what they represent."},
+                    {q: "What is the Start button used for?", type: "mcq", options: ["To turn off monitor", "To open programs and settings", "To delete files", "To connect to internet"], correct: 1, explanation: "The Start button (usually at bottom left) opens a menu where we can access programs, settings, and other computer features."},
+                    {q: "We can have only one window open at a time.", type: "tf", correct: false, explanation: "We can have multiple windows open at the same time. The computer can run many programs together, and we can switch between them."},
+                    {q: "What is the taskbar?", type: "mcq", options: ["A bar for tasks at work", "A bar at bottom showing open programs", "A chocolate bar", "A tool for drawing"], correct: 1, explanation: "The taskbar is usually at the bottom of the screen. It shows the Start button, open programs, and system icons like clock and volume."},
+                    {q: "Double-clicking opens files and programs.", type: "tf", correct: true, explanation: "Double-clicking (clicking twice quickly) is the common way to open files, folders, and programs on the desktop."},
+                    {q: "What does minimizing a window do?", type: "mcq", options: ["Deletes the program", "Hides it in taskbar", "Makes it smaller forever", "Closes the program"], correct: 1, explanation: "Minimizing hides a window in the taskbar without closing it. The program keeps running, and we can restore it by clicking its taskbar button."},
+                    {q: "The Recycle Bin permanently deletes files immediately.", type: "tf", correct: false, explanation: "The Recycle Bin temporarily stores deleted files. We can restore them if needed. Files are permanently deleted only when we empty the Recycle Bin."},
+                    {q: "What is the wallpaper?", type: "mcq", options: ["Paper on walls", "Background picture of desktop", "A type of printer paper", "A drawing program"], correct: 1, explanation: "Wallpaper is the background picture or color on the desktop. We can change it to any picture we like."},
+                    {q: "Right-clicking shows a menu with options.", type: "tf", correct: true, explanation: "Right-clicking (clicking the right mouse button) opens a context menu showing different options related to what we clicked on."},
+                    {q: "Which button closes a window?", type: "mcq", options: ["Minimize button", "Maximize button", "Close button (X)", "Start button"], correct: 2, explanation: "The Close button, usually marked with an X at the top-right corner, closes the window and exits the program."},
+                    {q: "We can arrange icons on the desktop in different ways.", type: "tf", correct: true, explanation: "We can arrange icons by name, size, date, or type. We can also move them anywhere we want on the desktop."},
+                    {q: "What does maximizing a window do?", type: "mcq", options: ["Closes it", "Makes it fill the screen", "Deletes it", "Minimizes it"], correct: 1, explanation: "Maximizing makes a window fill the entire screen, giving us more space to work in that program."},
+                    {q: "Shortcuts are copies of the original files.", type: "tf", correct: false, explanation: "Shortcuts are not copies. They are just quick links to the original file or program, helping us open them faster without making duplicates."},
+                    {q: "What is a folder?", type: "mcq", options: ["A paper holder", "A container for files", "A type of icon", "A computer program"], correct: 1, explanation: "A folder is a container that holds files and other folders. It helps us organize our work, like putting papers in real folders."},
+                    {q: "We can rename icons by right-clicking and choosing rename.", type: "tf", correct: true, explanation: "Right-clicking on an icon and selecting 'Rename' lets us change its name to something more meaningful or easier to remember."},
+                    {q: "What shows date and time on desktop?", type: "mcq", options: ["Start menu", "System tray", "Recycle Bin", "Desktop wallpaper"], correct: 1, explanation: "The system tray, usually at the bottom-right corner of the taskbar, shows the date, time, and other system icons like volume and network."},
+                    {q: "Dragging moves icons to different positions.", type: "tf", correct: true, explanation: "We can drag icons by holding the left mouse button and moving the mouse. This moves the icon to wherever we want on the desktop."},
+                    {q: "Which key combination shows the desktop?", type: "mcq", options: ["Alt + Tab", "Windows + D", "Ctrl + C", "Shift + Delete"], correct: 1, explanation: "Pressing Windows key + D minimizes all windows and shows the desktop. Pressing it again restores all windows."},
+                    {q: "Files in the Recycle Bin use up no space.", type: "tf", correct: false, explanation: "Files in the Recycle Bin still take up space on the hard disk until we empty it. That's why we should empty it periodically."},
+                    {q: "What is the notification area?", type: "mcq", options: ["Area for sticky notes", "Part of taskbar with system icons", "A folder for notifications", "The desktop background"], correct: 1, explanation: "The notification area is part of the taskbar (usually right side) showing system icons and notifications about updates, battery, network, etc."},
+                    {q: "We can create new folders on the desktop.", type: "tf", correct: true, explanation: "We can create new folders on the desktop by right-clicking, choosing 'New', then 'Folder'. This helps organize our files better."},
+                    {q: "What does Alt + Tab do?", type: "mcq", options: ["Closes all windows", "Switches between open windows", "Opens Start menu", "Deletes files"], correct: 1, explanation: "Alt + Tab lets us quickly switch between open windows and programs. It shows small previews of all open windows to choose from."},
+                    {q: "Screen resolution affects how clear the display looks.", type: "tf", correct: true, explanation: "Screen resolution is the number of pixels on the screen. Higher resolution makes everything look clearer and sharper, but items appear smaller."},
+                    {q: "Which action permanently deletes a file without sending it to Recycle Bin?", type: "mcq", options: ["Pressing Delete key", "Right-click and delete", "Shift + Delete", "Dragging to Recycle Bin"], correct: 2, explanation: "Pressing Shift + Delete permanently deletes files without sending them to Recycle Bin. This should be used carefully as files cannot be recovered easily."}
+                ],
+                5: [
+                    {q: "What is a file?", type: "mcq", options: ["A nail file", "A collection of data stored with a name", "A folder", "A program"], correct: 1, explanation: "A file is a collection of data stored on the computer with a specific name. It could be a document, picture, video, or program."},
+                    {q: "All files have extensions like .txt or .jpg.", type: "tf", correct: true, explanation: "File extensions (like .txt, .jpg, .doc) tell the computer what type of file it is and which program should open it."},
+                    {q: "What does .txt extension mean?", type: "mcq", options: ["Text file", "Picture file", "Video file", "Music file"], correct: 0, explanation: "The .txt extension indicates a text file containing plain text without any special formatting. Notepad can open these files."},
+                    {q: "Folders cannot contain other folders.", type: "tf", correct: false, explanation: "Folders can contain other folders, creating a tree-like structure. This helps organize files in a hierarchical way, like drawers within drawers."},
+                    {q: "What is the purpose of organizing files?", type: "mcq", options: ["To waste time", "To find them easily later", "To delete them", "To hide them"], correct: 1, explanation: "Organizing files into folders with meaningful names helps us find what we need quickly instead of searching through hundreds of files."},
+                    {q: "We can copy files from one folder to another.", type: "tf", correct: true, explanation: "Copying creates a duplicate of the file in a new location while keeping the original. This is done using Ctrl+C (copy) and Ctrl+V (paste)."},
+                    {q: "What happens when we cut a file?", type: "mcq", options: ["File is deleted", "File is copied", "File is prepared to move", "File is renamed"], correct: 2, explanation: "Cutting (Ctrl+X) prepares a file to be moved. When we paste it somewhere else, it moves from the old location to the new one."},
+                    {q: "File names can contain any characters we want.", type: "tf", correct: false, explanation: "File names cannot contain certain special characters like / \\ : * ? \" < > | because these have special meanings in the computer system."},
+                    {q: "What does 'path' mean in file organization?", type: "mcq", options: ["A walking path", "The location of a file", "A type of folder", "A file extension"], correct: 1, explanation: "The path shows the location of a file, listing all folders from the drive (like C:) to the exact location where the file is stored."},
+                    {q: "Deleting a folder deletes all files inside it too.", type: "tf", correct: true, explanation: "When we delete a folder, all files and subfolders inside it are also deleted. So we must be careful before deleting folders."},
+                    {q: "Which is a good way to name files?", type: "mcq", options: ["asdfgh", "MyHomework2024", "zzz", "111"], correct: 1, explanation: "Good file names are descriptive and meaningful, like 'MyHomework2024'. This helps us identify the file's content without opening it."},
+                    {q: "File size is measured in bytes.", type: "tf", correct: true, explanation: "File size tells us how much space a file takes on the storage device. It's measured in bytes, kilobytes, megabytes, or gigabytes."},
+                    {q: "What is the root directory?", type: "mcq", options: ["A tree root", "The main directory of a drive", "A folder for roots", "A type of file"], correct: 1, explanation: "The root directory is the main starting point of a drive (like C:). All other folders and files branch out from this main directory."},
+                    {q: "We can search for files using the search box.", type: "tf", correct: true, explanation: "The search box helps find files quickly by typing their name or part of it. The computer searches all locations and shows matching files."},
+                    {q: "What does Ctrl + C do?", type: "mcq", options: ["Cuts file", "Copies file", "Deletes file", "Opens file"], correct: 1, explanation: "Ctrl + C copies selected files or text to the clipboard, a temporary storage area. We can then paste it elsewhere using Ctrl + V."},
+                    {q: "Files with .exe extension are executable programs.", type: "tf", correct: true, explanation: "The .exe extension means executable file. These are programs that can run and perform tasks when we double-click them."},
+                    {q: "What is file compression?", type: "mcq", options: ["Making files flat", "Reducing file size", "Deleting files", "Copying files"], correct: 1, explanation: "File compression reduces file size to save storage space and make files faster to send. ZIP is a common compression format."},
+                    {q: "Moving a file is different from copying it.", type: "tf", correct: true, explanation: "Moving removes the file from its original location and places it in the new location. Copying leaves the original and creates a duplicate."},
+                    {q: "What does 'read-only' mean?", type: "mcq", options: ["File can only be opened", "File can be modified", "File cannot be opened", "File is deleted"], correct: 0, explanation: "Read-only means we can open and view the file but cannot make changes to it. This protects important files from accidental modification."},
+                    {q: "Renaming a file changes its content.", type: "tf", correct: false, explanation: "Renaming only changes the file's name, not its content. The data inside the file remains exactly the same."},
+                    {q: "Which extension indicates a Word document?", type: "mcq", options: [".txt", ".doc or .docx", ".jpg", ".mp3"], correct: 1, explanation: "Microsoft Word documents have .doc (older) or .docx (newer) extensions. These files can contain formatted text, images, and tables."},
+                    {q: "Hidden files are permanently deleted files.", type: "tf", correct: false, explanation: "Hidden files are just invisible in normal view but still exist on the computer. We can change settings to show hidden files."},
+                    {q: "What is a file attribute?", type: "mcq", options: ["File's good qualities", "File properties like read-only or hidden", "File extension", "File name"], correct: 1, explanation: "File attributes are properties like read-only, hidden, or archive that control how files can be used and whether they're visible."},
+                    {q: "We can sort files by name, size, or date.", type: "tf", correct: true, explanation: "File Explorer lets us sort files in different ways: alphabetically by name, by size, by date modified, or by type. This helps find files faster."},
+                    {q: "What happens when two files have the same name in one folder?", type: "mcq", options: ["Both are kept", "Computer replaces the old one", "Computer creates a copy", "Computer renames one automatically"], correct: 1, explanation: "When copying/moving a file to a folder where a file with the same name exists, the computer asks if we want to replace, keep both (by renaming), or skip."}
+                ],
+                6: [
+                    {q: "What is MS Word used for?", type: "mcq", options: ["Playing games", "Creating documents", "Browsing internet", "Drawing pictures"], correct: 1, explanation: "MS Word is a word processor used for creating text documents like letters, reports, and stories with formatting like bold, colors, and fonts."},
+                    {q: "Bold makes text darker and thicker.", type: "tf", correct: true, explanation: "The Bold feature (Ctrl+B) makes selected text appear darker and thicker, helping important words stand out in documents."},
+                    {q: "Which button makes text italic?", type: "mcq", options: ["B", "I", "U", "A"], correct: 1, explanation: "The I button (or Ctrl+I) makes text italic, which means the letters are slanted to the right. This is often used for emphasis."},
+                    {q: "We can change font color in Word.", type: "tf", correct: true, explanation: "Word lets us change text color to any color we want. This makes documents more colorful and helps highlight important information."},
+                    {q: "What does the underline feature do?", type: "mcq", options: ["Draws a line over text", "Draws a line under text", "Deletes text", "Makes text bold"], correct: 1, explanation: "The Underline feature (Ctrl+U) draws a line under selected text. It's useful for highlighting headings or important words."},
+                    {q: "Font size is measured in points.", type: "tf", correct: true, explanation: "Font size is measured in points (pt). Larger numbers mean bigger text. Common sizes are 12 pt for body text and 16-24 pt for headings."},
+                    {q: "What is alignment?", type: "mcq", options: ["Making text straight", "Position of text on page", "Text color", "Text size"], correct: 1, explanation: "Alignment determines how text is positioned: left-aligned, right-aligned, centered, or justified (spread across the full width)."},
+                    {q: "Ctrl + S saves the document.", type: "tf", correct: true, explanation: "Ctrl + S is the keyboard shortcut to save a document. We should save our work regularly to avoid losing it if something goes wrong."},
+                    {q: "What does Ctrl + Z do?", type: "mcq", options: ["Saves document", "Undoes last action", "Prints document", "Closes Word"], correct: 1, explanation: "Ctrl + Z undoes the last action we performed. If we make a mistake, we can press Ctrl + Z to reverse it and try again."},
+                    {q: "We can insert pictures in Word documents.", type: "tf", correct: true, explanation: "Word allows us to insert pictures, shapes, and other graphics into documents. This makes documents more interesting and visually appealing."},
+                    {q: "Which menu helps check spelling?", type: "mcq", options: ["File", "Home", "Review", "Insert"], correct: 2, explanation: "The Review menu contains spelling and grammar checking tools. These tools help find and fix mistakes in our writing."},
+                    {q: "Page margins are the blank spaces around text.", type: "tf", correct: true, explanation: "Margins are the blank spaces at the top, bottom, left, and right of a page. They frame the text and make documents look neat."},
+                    {q: "What is a bullet point?", type: "mcq", options: ["A gun bullet", "A dot before list items", "A type of font", "A page number"], correct: 1, explanation: "Bullet points are symbols (usually dots) placed before items in a list. They organize information and make lists easy to read."},
+                    {q: "We can print documents from Word.", type: "tf", correct: true, explanation: "Word has a print function (Ctrl+P) that sends documents to a printer. We can preview how it will look before printing."},
+                    {q: "What does Find and Replace do?", type: "mcq", options: ["Finds lost files", "Searches and changes text", "Finds pictures", "Replaces the computer"], correct: 1, explanation: "Find and Replace (Ctrl+H) searches for specific words or phrases and can replace them with different text throughout the document."},
+                    {q: "Headers appear at the top of every page.", type: "tf", correct: true, explanation: "Headers are text or images that appear at the top of every page in a document. They often contain titles, page numbers, or dates."},
+                    {q: "Which tab contains text formatting options?", type: "mcq", options: ["File", "Home", "Layout", "View"], correct: 1, explanation: "The Home tab contains most text formatting options like font, size, color, bold, italic, underline, and alignment."},
+                    {q: "Line spacing controls space between lines of text.", type: "tf", correct: true, explanation: "Line spacing adjusts the vertical space between lines. Single spacing is compact, while 1.5 or double spacing spreads lines apart for easier reading."},
+                    {q: "What is a footer?", type: "mcq", options: ["Bottom of shoe", "Text at bottom of page", "A type of font", "A spelling mistake"], correct: 1, explanation: "A footer is text or information that appears at the bottom of every page. It might include page numbers, dates, or author names."},
+                    {q: "We can create tables in Word.", type: "tf", correct: true, explanation: "Word lets us create tables with rows and columns to organize data neatly. Tables are perfect for schedules, lists, and comparisons."},
+                    {q: "What does text wrapping do with images?", type: "mcq", options: ["Wraps gift images", "Controls how text flows around images", "Deletes images", "Changes image colors"], correct: 1, explanation: "Text wrapping determines how text flows around inserted images. Options include square, tight, through, and in line with text."},
+                    {q: "Word count shows how many words are in the document.", type: "tf", correct: true, explanation: "The Word Count feature (found in Review tab) counts all words in the document. This is useful for assignments with word limits."},
+                    {q: "Which feature creates automatic page numbers?", type: "mcq", options: ["Bullets", "Page Number", "Font Size", "Alignment"], correct: 1, explanation: "The Page Number feature (in Insert tab) automatically adds page numbers to headers or footers, updating them as we add or remove pages."},
+                    {q: "We can change text to uppercase or lowercase easily.", type: "tf", correct: true, explanation: "The Change Case feature (in Home tab) converts text between uppercase, lowercase, and other styles without retyping everything."},
+                    {q: "What should you do before closing a document with unsaved changes?", type: "mcq", options: ["Close immediately", "Save the document", "Delete the document", "Turn off computer"], correct: 1, explanation: "Always save the document before closing if you want to keep your changes. Otherwise, all work since the last save will be lost."}
+                ],
+                7: [
+                    {q: "What is MS Paint used for?", type: "mcq", options: ["Writing documents", "Creating digital drawings", "Browsing internet", "Playing music"], correct: 1, explanation: "MS Paint is a drawing program where we can create pictures, color images, and make simple designs using various tools and colors."},
+                    {q: "The pencil tool draws thin lines.", type: "tf", correct: true, explanation: "The pencil tool creates thin, freehand lines. It's perfect for sketching and drawing detailed parts of pictures."},
+                    {q: "Which tool fills areas with color?", type: "mcq", options: ["Pencil", "Brush", "Fill bucket", "Eraser"], correct: 2, explanation: "The fill bucket (paint bucket) fills entire areas with color in one click. It's quick for coloring large sections of drawings."},
+                    {q: "The eraser tool removes parts of the drawing.", type: "tf", correct: true, explanation: "The eraser removes color and drawings, leaving white space. We can adjust eraser size to remove large areas or make small corrections."},
+                    {q: "What does the brush tool do?", type: "mcq", options: ["Deletes pictures", "Paints with different textures", "Saves pictures", "Prints pictures"], correct: 1, explanation: "The brush tool paints with various textures and thicknesses. Different brush types create different artistic effects in our drawings."},
+                    {q: "We can select and move parts of our drawing.", type: "tf", correct: true, explanation: "The selection tool lets us select rectangular or irregular areas of our drawing and move, copy, or delete them to rearrange our picture."},
+                    {q: "Which tool creates straight lines?", type: "mcq", options: ["Pencil", "Line tool", "Brush", "Eraser"], correct: 1, explanation: "The line tool draws perfectly straight lines between two points. This is useful for geometric shapes and neat borders."},
+                    {q: "Paint has only black and white colors.", type: "tf", correct: false, explanation: "Paint has a full color palette with many colors. We can also create custom colors by mixing red, green, and blue values."},
+                    {q: "What does the text tool add to pictures?", type: "mcq", options: ["Colors", "Written words", "Shapes", "Lines"], correct: 1, explanation: "The text tool lets us add written words to our pictures. We can choose the font, size, and color of the text."},
+                    {q: "We can draw circles and rectangles in Paint.", type: "tf", correct: true, explanation: "Paint has shape tools for circles, rectangles, triangles, and other geometric shapes. These can be filled with color or just outlined."},
+                    {q: "What happens when we press Ctrl + Z in Paint?", type: "mcq", options: ["Saves picture", "Undoes last action", "Opens new picture", "Prints picture"], correct: 1, explanation: "Ctrl + Z undoes the last action in Paint, just like in other programs. This helps fix mistakes without starting over."},
+                    {q: "The zoom tool changes the size of our saved picture.", type: "tf", correct: false, explanation: "Zoom only changes how closely we view the picture on screen for detailed work. It doesn't change the actual size of the saved image."},
+                    {q: "Which tool creates perfect circles?", type: "mcq", options: ["Pencil", "Brush", "Oval tool with Shift key", "Eraser"], correct: 2, explanation: "The oval tool creates ovals, but holding Shift while using it creates perfect circles. This trick works for making squares with the rectangle tool too."},
+                    {q: "We can flip or rotate pictures in Paint.", type: "tf", correct: true, explanation: "Paint can flip pictures horizontally or vertically, and rotate them 90° or 180°. This is useful for adjusting picture orientation."},
+                    {q: "What file format does Paint usually save as?", type: "mcq", options: [".txt", ".doc", ".png or .jpg", ".mp3"], correct: 2, explanation: "Paint commonly saves as .png or .jpg (JPEG) image files. PNG is better for sharp graphics, while JPG is good for photos."},
+                    {q: "Background color appears when we use the eraser.", type: "tf", correct: true, explanation: "When we use the eraser, it replaces the erased area with the current background color. Usually this is white, but we can change it."},
+                    {q: "Which tool makes copy of selected area?", type: "mcq", options: ["Pencil", "Copy command", "Eraser", "Brush"], correct: 1, explanation: "After selecting an area, the Copy command (Ctrl+C) creates a duplicate that we can paste (Ctrl+V) elsewhere in the picture."},
+                    {q: "The spray can tool creates a scattered paint effect.", type: "tf", correct: true, explanation: "The spray can (airbrush) creates a soft, scattered spray of color like a real spray paint can. It's great for artistic shading effects."},
+                    {q: "What does crop do to an image?", type: "mcq", options: ["Makes it colorful", "Cuts out unwanted parts", "Adds text", "Prints it"], correct: 1, explanation: "Cropping removes unwanted parts around the edges of an image, keeping only the selected area. This helps focus on the important part."},
+                    {q: "We can resize the entire canvas in Paint.", type: "tf", correct: true, explanation: "The Resize option lets us make the whole canvas (drawing area) bigger or smaller. We can specify exact pixel dimensions or percentage."},
+                    {q: "Which provides more precise control?", type: "mcq", options: ["Pencil", "Brush", "Fill bucket", "Spray can"], correct: 0, explanation: "The pencil provides the most precise control because it draws thin, exact lines. This makes it best for detailed work and fine lines."},
+                    {q: "Paint supports layers like advanced programs.", type: "tf", correct: false, explanation: "Paint is a simple program without layer support. All drawing is done on one layer. Advanced programs like Photoshop have multiple layers."},
+                    {q: "What does the eyedropper tool do?", type: "mcq", options: ["Drops paint", "Picks colors from image", "Deletes colors", "Adds eyes to drawings"], correct: 1, explanation: "The eyedropper (color picker) selects a color from anywhere in your image, making it the current drawing color. Very useful for matching colors."},
+                    {q: "We can set a transparent background for shapes.", type: "tf", correct: true, explanation: "When drawing shapes, we can choose to fill them with color, outline only, or have a transparent background that doesn't cover what's underneath."},
+                    {q: "Which combination creates the most professional-looking drawing in Paint?", type: "mcq", options: ["Using only pencil tool", "Using shapes, careful coloring, and text together", "Randomly clicking everywhere", "Only using eraser"], correct: 1, explanation: "Combining shapes for precise forms, careful fill bucket coloring, and appropriate text creates professional results. Planning and using multiple tools together works best."}
+                ],
+                8: [
+                    {q: "What is a presentation?", type: "mcq", options: ["A gift", "A slideshow to share information", "A type of document", "A drawing program"], correct: 1, explanation: "A presentation is a series of slides used to share information visually with an audience. PowerPoint is commonly used to create presentations."},
+                    {q: "Each page in a presentation is called a slide.", type: "tf", correct: true, explanation: "A presentation is made up of slides, like pages in a book. Each slide shows different information or ideas to the audience."},
+                    {q: "What should a title slide contain?", type: "mcq", options: ["Just pictures", "Title and author name", "Only colors", "Nothing"], correct: 1, explanation: "The title slide is the first slide and should contain the presentation title, your name, and maybe the date or subject."},
+                    {q: "Too much text on a slide makes it hard to read.", type: "tf", correct: true, explanation: "Slides should have brief points, not paragraphs. Too much text makes slides crowded and hard for the audience to read quickly."},
+                    {q: "Which makes presentations more interesting?", type: "mcq", options: ["Adding pictures and colors", "Using only black text", "Leaving slides empty", "Using very small text"], correct: 0, explanation: "Pictures, colors, and graphics make presentations visually interesting and help explain ideas better than text alone."},
+                    {q: "All slides should have the same background color.", type: "tf", correct: false, explanation: "While consistency is good, we can vary colors between sections or use the same theme with slight variations to keep the presentation interesting."},
+                    {q: "What is a slide transition?", type: "mcq", options: ["Moving between slides", "Effect when changing slides", "Deleting slides", "Adding text"], correct: 1, explanation: "A transition is the visual effect when moving from one slide to another, like fade, slide in, or dissolve. This makes presentations smoother."},
+                    {q: "Bullet points help organize information on slides.", type: "tf", correct: true, explanation: "Bullet points break information into easy-to-read chunks. They help organize ideas clearly so the audience can follow along."},
+                    {q: "What are animations in presentations?", type: "mcq", options: ["Cartoons", "Effects making objects move on slide", "Pictures", "Colors"], correct: 1, explanation: "Animations are effects that make text, pictures, or other objects appear or move on a slide in interesting ways, one at a time or together."},
+                    {q: "We can add videos to presentations.", type: "tf", correct: true, explanation: "Modern presentation software lets us insert videos directly into slides. This makes presentations more engaging and informative."},
+                    {q: "What is the purpose of speaker notes?", type: "mcq", options: ["To write on slides", "Personal notes only presenter sees", "To make slides bigger", "To delete slides"], correct: 1, explanation: "Speaker notes are hidden notes visible only to the presenter, containing extra information or reminders about what to say for each slide."},
+                    {q: "Font size should be large enough for everyone to read.", type: "tf", correct: true, explanation: "Presentation text should be at least 24-28 points so people in the back of the room can read it. Too small text defeats the purpose."},
+                    {q: "How many main points should each slide have?", type: "mcq", options: ["As many as possible", "3 to 5 points", "Just 1 point", "At least 20 points"], correct: 1, explanation: "Each slide should have 3-5 main points maximum. This keeps slides clear and focused without overwhelming the audience."},
+                    {q: "Contrasting colors make text easier to read.", type: "tf", correct: true, explanation: "Dark text on light background or light text on dark background provides good contrast. Similar colors make text hard to read."},
+                    {q: "What is slideshow view?", type: "mcq", options: ["Viewing slides while editing", "Full-screen presentation mode", "Printing slides", "Deleting slides"], correct: 1, explanation: "Slideshow view displays the presentation full-screen, one slide at a time, as the audience would see it during the actual presentation."},
+                    {q: "Pictures should be related to the slide content.", type: "tf", correct: true, explanation: "Pictures should support and illustrate the slide's message. Random unrelated pictures confuse the audience and distract from the main points."},
+                    {q: "What makes a good presentation design?", type: "mcq", options: ["Many different fonts and colors", "Consistent style and simple layout", "No pictures", "Tiny text"], correct: 1, explanation: "Good presentations have consistent colors, fonts, and layout throughout. Simplicity and consistency make presentations look professional."},
+                    {q: "We can print presentations with multiple slides per page.", type: "tf", correct: true, explanation: "Handout printing lets us print 2, 3, 4, or more slides per page. This saves paper and gives the audience reference copies."},
+                    {q: "What is a slide layout?", type: "mcq", options: ["Slide color", "Pre-designed arrangement of elements", "Slide size", "Slide number"], correct: 1, explanation: "Layouts are pre-designed templates showing where to place titles, text, and pictures on a slide. They help create professional-looking slides quickly."},
+                    {q: "Too many animations can be distracting.", type: "tf", correct: true, explanation: "While animations can enhance presentations, using too many or fancy animations becomes annoying and distracts from the message."},
+                    {q: "Which font is best for presentations?", type: "mcq", options: ["Cursive fancy fonts", "Clear sans-serif fonts like Arial", "Very decorative fonts", "Handwriting fonts"], correct: 1, explanation: "Simple, clear fonts like Arial, Calibri, or Helvetica are best for presentations. They're easy to read even from a distance."},
+                    {q: "Charts and graphs help visualize data.", type: "tf", correct: true, explanation: "Charts and graphs show data visually, making numbers and comparisons easier to understand than long lists of statistics."},
+                    {q: "What should be the presentation opening?", type: "mcq", options: ["Start with conclusion", 
+uses logical comparison.", type: "tf", correct: true, explanation: "Sorting requires logical comparison: is item A bigger or smaller than item B? We repeat this comparison logically until all items are in order."},
+                    {q: "Which logical connector means 'both must be true'?", type: "mcq", options: ["OR", "AND", "NOT", "MAYBE"], correct: 1, explanation: "AND means both conditions must be true. Example: 'You can watch TV if homework is done AND room is clean' - both must be true."},
+                    {q: "Breaking big problems into smaller steps makes them easier to solve.", type: "tf", correct: true, explanation: "This is called decomposition. Breaking complex problems into smaller, manageable steps makes them easier to understand and solve logically."},
+                    {q: "What is the best way to improve logical thinking skills?", type: "mcq", options: ["Never practice", "Practice with puzzles and problems regularly", "Only memorize answers", "Avoid thinking"], correct: 1, explanation: "Logical thinking improves with practice. Solving puzzles, pattern problems, and logical games regularly strengthens reasoning skills over time."}
+                ],
+                13: [
+                    {q: "What is an algorithm in simple terms?", type: "mcq", options: ["A type of math", "Step-by-step instructions", "A computer part", "A programming language"], correct: 1, explanation: "An algorithm is like a recipe - a list of steps to follow in order to complete a task or solve a problem. Clear algorithms make computers work correctly."},
+                    {q: "Algorithms must be written in a specific order.", type: "tf", correct: true, explanation: "The order of steps in an algorithm matters. If you put on shoes before socks, it won't work! Each step must come in the right sequence."},
+                    {q: "Which is an algorithm for brushing teeth?", type: "mcq", options: ["Get brush, apply paste, brush teeth, rinse", "Rinse, get brush, apply paste", "Just brush randomly", "Apply paste to mouth directly"], correct: 0, explanation: "A proper algorithm has logical steps in order: get toothbrush, apply toothpaste, brush teeth thoroughly, then rinse mouth. Each step follows logically."},
+                    {q: "Good algorithms should be clear and easy to follow.", type: "tf", correct: true, explanation: "Clear algorithms have specific, unambiguous steps that anyone can follow to get the same result. Vague instructions lead to confusion and errors."},
+                    {q: "What is the first step in creating an algorithm?", type: "mcq", options: ["Start writing code", "Understand the problem clearly", "Buy a computer", "Guess the answer"], correct: 1, explanation: "Before creating an algorithm, you must understand exactly what problem you're solving. Clear understanding leads to better step-by-step solutions."},
+                    {q: "Algorithms are only used in computers.", type: "tf", correct: false, explanation: "Algorithms are everywhere! Recipes, getting ready for school, playing games - anything with steps in order is an algorithm, not just computer programs."},
+                    {q: "What makes an algorithm efficient?", type: "mcq", options: ["Using the most steps possible", "Completing the task with fewest necessary steps", "Taking the longest time", "Being very confusing"], correct: 1, explanation: "Efficient algorithms solve problems correctly using the fewest steps and least time. They don't waste effort on unnecessary actions."},
+                    {q: "Pseudocode is written in normal language, not programming language.", type: "tf", correct: true, explanation: "Pseudocode uses everyday words to write algorithms before coding. It helps plan logic without worrying about programming syntax: 'IF hungry THEN eat.'"},
+                    {q: "Which shows correct algorithm structure?", type: "mcq", options: ["Random steps in any order", "Start, clear steps in order, end", "Only an end", "Only a start"], correct: 1, explanation: "Good algorithms have: a clear start, steps in logical order that accomplish the goal, and a defined end point when the task is complete."},
+                    {q: "Every algorithm needs an input and produces an output.", type: "tf", correct: true, explanation: "Algorithms take input (what you start with), process it through steps, and produce output (the result). Example: recipe takes ingredients (input) and produces a cake (output)."},
+                    {q: "What is iteration in algorithms?", type: "mcq", options: ["Making mistakes", "Repeating steps", "Deleting steps", "Random actions"], correct: 1, explanation: "Iteration means repeating certain steps. Example: 'Count from 1 to 10' repeats the counting step. Loops in programming use iteration."},
+                    {q: "Algorithms should handle different situations or inputs.", type: "tf", correct: true, explanation: "Good algorithms work for various inputs. A sorting algorithm should work for any list, not just one specific example. This is called generalization."},
+                    {q: "What is a decision point in an algorithm?", type: "mcq", options: ["Where you give up", "Where you choose between options based on conditions", "The beginning", "The end"], correct: 1, explanation: "Decision points use conditions: IF this is true, do this, ELSE do that. Example: IF raining, take umbrella, ELSE leave umbrella home."},
+                    {q: "Testing algorithms is unnecessary if they look correct.", type: "tf", correct: false, explanation: "Always test algorithms with different inputs to find errors. What looks right might have problems you didn't notice. Testing finds and fixes bugs."},
+                    {q: "Which everyday activity uses a clear algorithm?", type: "mcq", options: ["Daydreaming randomly", "Following a recipe to bake cookies", "Thinking about nothing", "Sleeping"], correct: 1, explanation: "Recipes are perfect algorithms: they have clear steps in order, ingredients (input), and produce a dish (output). Following recipes teaches algorithmic thinking."},
+                    {q: "Variables in algorithms store information temporarily.", type: "tf", correct: true, explanation: "Variables are like labeled boxes that hold information the algorithm needs. Example: 'count = 0' stores the number of items counted so far."},
+                    {q: "What should you do if an algorithm doesn't work?", type: "mcq", options: ["Give up immediately", "Debug by checking each step carefully", "Delete everything", "Ignore the problem"], correct: 1, explanation: "Debugging means finding where the algorithm goes wrong. Check each step, test with different inputs, and fix errors. Persistence solves problems!"},
+                    {q: "Flowcharts use shapes to represent algorithm steps.", type: "tf", correct: true, explanation: "Flowcharts use rectangles for steps, diamonds for decisions, and arrows for flow direction. They visualize algorithms making them easier to understand."},
+                    {q: "What is the purpose of comments in algorithms?", type: "mcq", options: ["To confuse people", "To explain what steps do", "To make it longer", "To delete code"], correct: 1, explanation: "Comments explain why steps exist and what they do. They help others (and future you!) understand the algorithm's logic without guessing."},
+                    {q: "Algorithms can have multiple possible solutions to the same problem.", type: "tf", correct: true, explanation: "Many problems can be solved different ways. Some algorithms might be faster, some simpler. Different approaches can all reach the correct answer."},
+                    {q: "What is a sequence in algorithms?", type: "mcq", options: ["Random actions", "Steps performed in specific order", "Only the first step", "Only the last step"], correct: 1, explanation: "Sequence means doing steps in a specific order, one after another. Each step completes before the next begins, like following recipe instructions."},
+                    {q: "Pattern recognition helps create better algorithms.", type: "tf", correct: true, explanation: "Recognizing patterns in problems helps create efficient algorithms. Similar problems often need similar solutions, so learning patterns saves time."},
+                    {q: "What makes an algorithm incorrect?", type: "mcq", options: ["It's too short", "It doesn't solve the problem or gives wrong results", "It's written on paper", "It uses simple words"], correct: 1, explanation: "An algorithm is incorrect if it doesn't solve the problem correctly or gives wrong results. Correct algorithms always produce the right output for valid inputs."},
+                    {q: "Optimization means making algorithms work better and faster.", type: "tf", correct: true, explanation: "Optimization improves algorithms by reducing steps, using less memory, or completing tasks faster while still getting correct results."},
+                    {q: "What is the most important skill for creating good algorithms?", type: "mcq", options: ["Guessing randomly", "Breaking problems into clear logical steps", "Writing very fast", "Using difficult words"], correct: 1, explanation: "The key to good algorithms is logical thinking: breaking problems into clear, ordered steps that anyone can follow to solve the problem successfully."}
+                ],
+                14: [
+                    {q: "What software is best for creating digital art?", type: "mcq", options: ["MS Word", "MS Paint or similar drawing programs", "Calculator", "Notepad"], correct: 1, explanation: "Paint programs and drawing software provide tools like brushes, colors, and shapes specifically designed for creating digital artwork and graphics."},
+                    {q: "Planning your artwork before starting helps create better results.", type: "tf", correct: true, explanation: "Planning includes deciding what to draw, what colors to use, and how to arrange elements. A sketch or plan helps create organized, purposeful artwork."},
+                    {q: "Which element is important in visual design?", type: "mcq", options: ["Random placement", "Balance and composition", "Using only one color", "Leaving everything blank"], correct: 1, explanation: "Balance and composition mean arranging elements pleasingly. Good design considers how colors, shapes, and space work together to create appealing artwork."},
+                    {q: "Digital art can be easily edited and changed.", type: "tf", correct: true, explanation: "One advantage of digital art is that we can easily undo mistakes, change colors, resize elements, and experiment without wasting materials."},
+                    {q: "What is color theory?", type: "mcq", options: ["A scientific theory", "Understanding how colors work together", "A computer program", "A painting technique only"], correct: 1, explanation: "Color theory teaches which colors look good together. Primary colors, complementary colors, and color harmony help create visually pleasing artwork."},
+                    {q: "Using too many colors in one artwork can look messy.", type: "tf", correct: true, explanation: "While variety is good, using too many colors without a plan creates confusion. Good artwork often uses a limited, coordinated color palette."},
+                    {q: "What are layers in digital art software?", type: "mcq", options: ["Physical paper layers", "Separate transparent sheets you can work on independently", "Types of paint", "Drawing tools"], correct: 1, explanation: "Layers work like transparent sheets stacked on each other. You can draw on each layer separately, move them, hide them, or change them without affecting others."},
+                    {q: "Resolution determines how clear a digital image looks.", type: "tf", correct: true, explanation: "Higher resolution means more pixels (tiny dots) making up the image, resulting in clearer, sharper pictures. Low resolution looks blurry or pixelated when enlarged."},
+                    {q: "What is the rule of thirds in composition?", type: "mcq", options: ["Divide into three colors", "Divide frame into thirds for better placement", "Use three tools only", "Draw three objects"], correct: 1, explanation: "The rule of thirds divides the image into a 3x3 grid. Placing important elements along these lines or intersections creates more interesting, balanced compositions."},
+                    {q: "Saving work frequently prevents losing progress.", type: "tf", correct: true, explanation: "Digital artwork should be saved regularly (every few minutes). If the program crashes or computer shuts down, saved work is protected from loss."},
+                    {q: "Which file format best preserves quality for digital art?", type: "mcq", options: [".txt", ".png or .psd", ".mp3", ".doc"], correct: 1, explanation: "PNG preserves quality without compression loss. PSD (Photoshop) or similar formats save layers and edits. JPG compresses and loses some quality."},
+                    {q: "Contrast helps important elements stand out.", type: "tf", correct: true, explanation: "Contrast means using differences (light vs dark, big vs small) to make important parts of artwork more noticeable and create visual interest."},
+                    {q: "What is negative space in art?", type: "mcq", options: ["Bad artwork", "Empty space around main objects", "Dark colors only", "Mistakes in drawing"], correct: 1, explanation: "Negative space is the empty area around and between subjects. Good use of negative space makes artwork clearer and more balanced."},
+                    {q: "Digital artists should consider where their art will be displayed.", type: "tf", correct: true, explanation: "Art for screens uses RGB colors and lower resolution. Art for printing needs CMYK colors and high resolution. Consider the final use when creating."},
+                    {q: "What is symmetry in design?", type: "mcq", options: ["Random shapes", "Balanced mirror image or equal distribution", "Using only circles", "Bright colors"], correct: 1, explanation: "Symmetry means elements are balanced, either as mirror images or evenly distributed. Symmetrical designs feel orderly; asymmetrical designs feel dynamic."},
+                    {q: "Getting feedback from others improves artwork.", type: "tf", correct: true, explanation: "Others notice things we miss. Constructive feedback from teachers, friends, or family helps identify strengths and areas to improve."},
+                    {q: "What should a digital art project include?", type: "mcq", options: ["Only colors", "Clear concept, good composition, appropriate colors, and technical execution", "Just one shape", "Random elements"], correct: 1, explanation: "Complete projects need: a clear idea, well-planned composition, harmonious colors, proper technique, and execution that communicates the intended message."},
+                    {q: "Experimenting with different tools and techniques improves skills.", type: "tf", correct: true, explanation: "Trying different brushes, colors, styles, and techniques helps discover what works best. Practice and experimentation develop artistic skills."},
+                    {q: "What is a design brief?", type: "mcq", options: ["A short design", "Written description of project requirements", "A quick sketch", "A type of software"], correct: 1, explanation: "A design brief outlines what the project should achieve: purpose, audience, style, colors, and requirements. It guides the creation process."},
+                    {q: "Copying exactly what you see in a photo is the highest form of art.", type: "tf", correct: false, explanation: "While realism requires skill, art also values creativity, interpretation, and original expression. Adding your unique style and ideas makes artwork truly yours."},
+                    {q: "What helps create depth in 2D digital art?", type: "mcq", options: ["Using only one color", "Overlapping objects, size differences, and shading", "Making everything the same size", "Removing all details"], correct: 1, explanation: "Creating depth illusion uses: overlapping (closer objects cover distant ones), size variation (distant objects smaller), and shading (creates 3D appearance)."},
+                    {q: "Digital art projects should be evaluated based on effort and creativity.", type: "tf", correct: true, explanation: "Good projects show effort, creativity, technical skill, and successfully communicate ideas. The process and learning matter as much as the final product."},
+                    {q: "What makes a portfolio piece effective?", type: "mcq", options: ["Being very small", "Showcasing best skills and creativity clearly", "Having many errors", "Being incomplete"], correct: 1, explanation: "Portfolio pieces should represent your best work, demonstrate various skills, show creativity, and be technically well-executed. Quality over quantity matters."},
+                    {q: "Understanding basic art principles applies to digital art too.", type: "tf", correct: true, explanation: "Traditional art principles (balance, color theory, composition, perspective) apply equally to digital art. The medium changes, but fundamental principles remain important."},
+                    {q: "What is the most important factor in creating successful digital art projects?", type: "mcq", options: ["Expensive software", "Clear planning, creativity, and practicing fundamental skills", "Working very fast", "Using every tool available"], correct: 1, explanation: "Success comes from planning what you'll create, applying creativity, understanding art principles, and practicing. Good artists develop through consistent effort, not just tools."}
+                ],
+                15: [
+                    {q: "What makes a presentation visually appealing?", type: "mcq", options: ["Lots of text", "Balanced use of images, colors, and white space", "No images", "Random fonts"], correct: 1, explanation: "Appealing presentations balance text and images, use coordinated colors, include white space for breathing room, and maintain consistent design throughout."},
+                    {q: "Each slide should focus on one main idea.", type: "tf", correct: true, explanation: "Slides work best when focused on a single main point. This helps the audience understand and remember the message without confusion."},
+                    {q: "What font size is best for presentation titles?", type: "mcq", options: ["8-10 points", "12-14 points", "28-36 points or larger", "4-6 points"], correct: 2, explanation: "Title text should be 28-36 points or larger so everyone can read it easily. Body text should be at least 18-24 points for readability."},
+                    {q: "Using many different fonts makes presentations look professional.", type: "tf", correct: false, explanation: "Using too many fonts looks messy and unprofessional. Stick to 2-3 complementary fonts maximum: one for titles, one for body text, maybe one for emphasis."},
+                    {q: "What is the 6x6 rule for slides?", type: "mcq", options: ["6 slides with 6 colors", "Maximum 6 words per line and 6 lines per slide", "6 pictures on 6 slides", "Presenting for 6 hours"], correct: 1, explanation: "The 6x6 rule suggests no more than 6 words per line and 6 lines per slide. This prevents overcrowding and keeps content digestible."},
+                    {q: "Images should support and enhance the slide message.", type: "tf", correct: true, explanation: "Every image should have a purpose - illustrating a point, showing data, or reinforcing the message. Random decorative images distract from content."},
+                    {q: "What makes bullet points effective?", type: "mcq", options: ["Full sentences", "Complete paragraphs", "Brief key phrases", "Single words only"], correct: 2, explanation: "Bullet points should be concise phrases highlighting key ideas, not complete sentences or paragraphs. They prompt discussion, not replace it."},
+                    {q: "Consistent design throughout the presentation looks more professional.", type: "tf", correct: true, explanation: "Using the same colors, fonts, and layout style throughout creates cohesion. Consistency makes presentations look polished and helps audience focus on content."},
+                    {q: "What is wrong with using low-quality images?", type: "mcq", options: ["Nothing", "They look blurry and unprofessional", "They're better", "They save space"], correct: 1, explanation: "Low-resolution or pixelated images look unprofessional and are hard to see. Always use clear, high-quality images appropriate for your screen size."},
+                    {q: "Transitions between slides should be simple and consistent.", type: "tf", correct: true, explanation: "Simple, consistent transitions (like fade or slide) keep focus on content. Excessive or varied fancy transitions become distracting and look unprofessional."},
+                    {q: "What makes color choices effective?", type: "mcq", options: ["Using every color available", "Choosing high-contrast, coordinated colors", "Only using gray", "Changing colors on every slide"], correct: 1, explanation: "Effective color use includes: high contrast for readability (dark on light or vice versa), 3-5 coordinated colors, and consistency throughout."},
+                    {q: "Charts and graphs should be simple and clearly labeled.", type: "tf", correct: true, explanation: "Data visualizations must be clear with labeled axes, legends, and titles. Complex charts confuse audiences; simple, clear graphs communicate effectively."},
+                    {q: "What is the purpose of a conclusion slide?", type: "mcq", options: ["To add more slides", "To summarize key points and provide closure", "To show random images", "To introduce new topics"], correct: 1, explanation: "Conclusion slides summarize main points, reinforce the message, and provide satisfying closure. They often include calls to action or key takeaways."},
+                    {q: "Reading slides word-for-word to the audience is effective presenting.", type: "tf", correct: false, explanation: "Never just read slides aloud. Slides show key points; presenters elaborate with additional information, examples, and explanations. Engage, don't recite."},
+                    {q: "What makes presentation flow smooth?", type: "mcq", options: ["Random order", "Logical organization with clear transitions", "Skipping around topics", "No organization"], correct: 1, explanation: "Smooth flow comes from logical organization: introduction, main points in order, and conclusion. Transition phrases connect ideas and guide the audience."},
+                    {q: "Animations should be used sparingly and purposefully.", type: "tf", correct: true, explanation: "Animations work best when they serve a purpose: revealing information progressively or emphasizing points. Too many animations annoy audiences and waste time."},
+                    {q: "What is white space in design?", type: "mcq", options: ["Space that must be white colored", "Empty space around elements", "Wasted space", "Blank slides"], correct: 1, explanation: "White space (or negative space) is empty area around text and images. It prevents crowding, improves readability, and makes designs look clean and professional."},
+                    {q: "Spelling and grammar errors hurt presentation credibility.", type: "tf", correct: true, explanation: "Errors make presentations look careless and unprofessional, undermining the message. Always proofread carefully or have someone else review before presenting."},
+                    {q: "What should opening slides accomplish?", type: "mcq", options: ["Show all information immediately", "Grab attention and introduce the topic clearly", "Confuse the audience", "Include no information"], correct: 1, explanation: "Opening slides should capture attention, introduce the topic clearly, establish credibility, and preview what the presentation will cover."},
+                    {q: "Audience consideration improves presentation effectiveness.", type: "tf", correct: true, explanation: "Effective presentations consider audience knowledge, interests, and needs. Content, language, and examples should be appropriate for who's watching."},
+                    {q: "What makes presentation content credible?", type: "mcq", options: ["Making up facts", "Citing reliable sources and accurate information", "Using opinions only", "No research needed"], correct: 1, explanation: "Credibility requires accurate information from reliable sources, proper citations, current data, and honest presentation of facts without exaggeration."},
+                    {q: "Practice improves presentation delivery.", type: "tf", correct: true, explanation: "Practicing helps with timing, smooth delivery, confidence, and catching errors. Run through presentations several times before the actual delivery."},
+                    {q: "What is the biggest presentation design mistake?", type: "mcq", options: ["Using too little text", "Overcrowding slides with too much information", "Including images", "Using color"], correct: 1, explanation: "The most common mistake is cramming too much text and information onto slides. This overwhelms audiences and defeats the purpose of visual aids."},
+                    {q: "Feedback helps improve future presentations.", type: "tf", correct: true, explanation: "Constructive feedback identifies strengths and areas for improvement. Learning from each presentation makes you a better communicator over time."},
+                    {q: "What is the ultimate goal of a presentation?", type: "mcq", options: ["To show off software skills", "To effectively communicate ideas to the audience", "To use all features available", "To make it as long as possible"], correct: 1, explanation: "Presentations exist to communicate ideas clearly and effectively to an audience. Every design choice should support this goal of clear communication."}
+                ],
+                16: [
+                    {q: "What is digital citizenship?", type: "mcq", options: ["Being a citizen online", "Responsible behavior in digital world", "Having a computer", "Internet speed"], correct: 1, explanation: "Digital citizenship means using technology responsibly, ethically, and safely. It includes being respectful, protecting privacy, and following online laws and rules."},
+                    {q: "It's okay to use someone else's work without giving credit.", type: "tf", correct: false, explanation: "Using others' work without credit is plagiarism and stealing intellectual property. Always give credit to sources and create your own original work."},
+                    {q: "What is netiquette?", type: "mcq", options: ["Internet speed", "Polite behavior online", "A website", "A computer program"], correct: 1, explanation: "Netiquette means Internet etiquette - being polite, respectful, and considerate online just as you would be in person. Good manners matter online too."},
+                    {q: "Posting mean comments online is harmless because it's not face-to-face.", type: "tf", correct: false, explanation: "Cyberbullying causes real harm to real people. Words hurt whether online or in person. Always communicate respectfully and kindly online."},
+                    {q: "What should you do if you see inappropriate content?", type: "mcq", options: ["Share it with friends", "Tell a trusted adult immediately", "Keep looking", "Download it"], correct: 1, explanation: "Report inappropriate content to a trusted adult right away. Don't share it, as that spreads harmful content. Adults can take proper action."},
+                    {q: "Respecting others' privacy online is important.", type: "tf", correct: true, explanation: "Don't share others' personal information, photos, or private messages without permission. Respect privacy online just as you would want yours respected."},
+                    {q: "What is copyright?", type: "mcq", options: ["Right to copy anything", "Legal protection for creators' work", "A copy machine", "Writing correctly"], correct: 1, explanation: "Copyright protects creators' original work (writing, music, art, videos). Using copyrighted material without permission is illegal unless it's fair use."},
+                    {q: "Everything on the Internet is free to use however we want.", type: "tf", correct: false, explanation: "Most online content is protected by copyright. Just because something is online doesn't mean it's free to use. Check licenses and ask permission."},
+                    {q: "What is a digital footprint?", type: "mcq", options: ["Foot pictures online", "Permanent trail of your online activity", "A computer virus", "Website traffic"], correct: 1, explanation: "Your digital footprint is all information about you online. Posts, comments, and shared content stay online potentially forever, affecting your reputation."},
+                    {q: "Deleting a post removes it completely from the Internet.", type: "tf", correct: false, explanation: "Once posted, content can be screenshot, shared, or archived. Even deleted posts may remain accessible. Think carefully before posting anything."},
+                    {q: "What is fair use?", type: "mcq", options: ["Everything is fair", "Limited use of copyrighted material for education or commentary", "Using anything freely", "A type of software"], correct: 1, explanation: "Fair use allows limited use of copyrighted material for purposes like education, criticism, or news. It has specific rules and doesn't permit unlimited copying."},
+                    {q: "Sharing passwords with friends shows trust and is perfectly safe.", type: "tf", correct: false, explanation: "Never share passwords, even with friends. This compromises security. Friends might accidentally share them, or friendships might change. Keep passwords private."},
+                    {q: "What is responsible sharing online?", type: "mcq", options: ["Sharing everything", "Thinking before posting and considering consequences", "Never sharing anything", "Sharing private information"], correct: 1, explanation: "Responsible sharing means thinking about how posts affect you and others, respecting privacy, verifying information accuracy, and considering long-term impacts."},
+                    {q: "Fake news and misinformation should be fact-checked before sharing.", type: "tf", correct: true, explanation: "Not everything online is true. Verify information from reliable sources before believing or sharing it. Spreading false information causes harm."},
+                    {q: "What does 'Think before you post' mean?", type: "mcq", options: ["Don't think at all", "Consider if it's true, helpful, inspiring, necessary, and kind", "Post immediately", "Think afterward"], correct: 1, explanation: "Before posting, ask: Is it True? Helpful? Inspiring? Necessary? Kind? (THINK). If not, don't post. Once online, content can't be fully taken back."},
+                    {q: "Reporting cyberbullying makes you a tattletale.", type: "tf", correct: false, explanation: "Reporting cyberbullying is brave and responsible. It protects victims and stops harmful behavior. Speaking up shows character, not weakness."},
+                    {q: "What is intellectual property?", type: "mcq", options: ["Property for smart people", "Creations of the mind with legal rights", "Physical property", "Computer hardware"], correct: 1, explanation: "Intellectual property includes creations like inventions, writing, music, and art. Creators have legal rights to their work, protecting against unauthorized use."},
+                    {q: "Screen time should be balanced with other activities.", type: "tf", correct: true, explanation: "Too much screen time affects health, sleep, and social skills. Balance technology use with physical activity, face-to-face interaction, and offline hobbies."},
+                    {q: "What is an ethical dilemma online?", type: "mcq", options: ["A computer problem", "Situation where right and wrong aren't clear", "A type of virus", "Internet speed issue"], correct: 1, explanation: "Ethical dilemmas are situations where the right choice isn't obvious. For example: Is it okay to download a movie if you can't afford it? Consider impacts and values."},
+                    {q: "Being anonymous online means you can act however you want.", type: "tf", correct: false, explanation: "Even when anonymous, ethical behavior matters. Your actions affect real people. Good character means doing what's right even when no one knows it's you."},
+                    {q: "What is the golden rule online?", type: "mcq", options: ["Make money online", "Treat others as you want to be treated", "Post as much as possible", "Never use computers"], correct: 1, explanation: "The golden rule applies online: treat others with the same respect, kindness, and consideration you'd want. Good values work everywhere, including digital spaces."},
+                    {q: "Creative Commons licenses allow some free use of content.", type: "tf", correct: true, explanation: "Creative Commons lets creators share work with specific permissions: some allow any use, others require attribution, and some limit commercial use. Check license terms."},
+                    {q: "What shows good digital ethics?", type: "mcq", options: ["Stealing others' work", "Respecting privacy, giving credit, and being truthful", "Cyberbullying", "Sharing passwords"], correct: 1, explanation: "Good digital ethics includes: respecting others' privacy and property, giving credit for others' work, being honest, standing up against bullying, and using technology responsibly."},
+                    {q: "Your online reputation can affect real-life opportunities.", type: "tf", correct: true, explanation: "Schools and employers often check online presence. Inappropriate posts, photos, or behavior can cost opportunities. Building a positive digital footprint benefits your future."},
+                    {q: "What is the most important principle of cyber ethics?", type: "mcq", options: ["Use technology as much as possible", "Treat technology and people with respect and responsibility", "Follow no rules online", "Share everything you find"], correct: 1, explanation: "The foundation of cyber ethics is using technology responsibly and treating others with respect. Technology is powerful; using it ethically benefits everyone and builds a better digital world."}
+                ],
+                17: [
+                    {q: "Which is an output device?", type: "mcq", options: ["Keyboard", "Mouse", "Printer", "Scanner"], correct: 2, explanation: "A printer is an output device because it receives information from the computer and produces physical output on paper."},
+                    {q: "The CPU is the brain of the computer.", type: "tf", correct: true, explanation: "The CPU (Central Processing Unit) processes all instructions and controls all operations, making it the brain of the computer system."},
+                    {q: "What is the full form of RAM?", type: "mcq", options: ["Read Access Memory", "Random Access Memory", "Rapid Action Memory", "Remote Access Memory"], correct: 1, explanation: "RAM stands for Random Access Memory - temporary memory the computer uses to store data for programs currently running."},
+                    {q: "Software refers to the physical parts of a computer.", type: "tf", correct: false, explanation: "Software refers to programs and instructions. The physical parts are called hardware. Software tells hardware what to do."},
+                    {q: "Which key combination copies text?", type: "mcq", options: ["Ctrl + X", "Ctrl + V", "Ctrl + C", "Ctrl + Z"], correct: 2, explanation: "Ctrl + C copies selected text or items to the clipboard without removing them from their original location."},
+                    {q: "Double-clicking opens files and programs.", type: "tf", correct: true, explanation: "Double-clicking (two quick clicks) is the standard way to open files, folders, and programs on most computer systems."},
+                    {q: "What does WWW stand for?", type: "mcq", options: ["World Wide Web", "World Wide Wonder", "Wireless Web World", "Wide World Web"], correct: 0, explanation: "WWW stands for World Wide Web - the system of interlinked web pages accessible through the Internet using browsers."},
+                    {q: "1 GB is smaller than 1 MB.", type: "tf", correct: false, explanation: "1 GB (Gigabyte) equals 1024 MB (Megabytes). GB is a much larger unit of measurement than MB."},
+                    {q: "Which is a web browser?", type: "mcq", options: ["MS Word", "Google Chrome", "Paint", "Calculator"], correct: 1, explanation: "Google Chrome is a web browser used to access and view websites on the Internet. Other examples include Firefox, Safari, and Edge."},
+                    {q: "Email stands for electronic mail.", type: "tf", correct: true, explanation: "Email (electronic mail) is a method of sending messages and files between people using computers and the Internet."},
+                    {q: "What is the purpose of an operating system?", type: "mcq", options: ["Play games", "Manage computer hardware and software", "Browse internet only", "Print documents"], correct: 1, explanation: "The operating system (like Windows) manages all hardware and software, providing the interface between user and computer."},
+                    {q: "Antivirus software protects against harmful programs.", type: "tf", correct: true, explanation: "Antivirus software detects, prevents, and removes viruses and other malicious software that could harm the computer or steal information."},
+                    {q: "Which device is used for video calls?", type: "mcq", options: ["Printer", "Webcam", "Hard disk", "Power supply"], correct: 1, explanation: "A webcam captures video and is used for video calls, recording videos, and taking pictures on the computer."},
+                    {q: "The Recycle Bin permanently deletes files immediately.", type: "tf", correct: false, explanation: "The Recycle Bin temporarily stores deleted files. They can be restored if needed. Files are permanently deleted only when Recycle Bin is emptied."},
+                    {q: "What does CPU stand for?", type: "mcq", options: ["Central Processing Unit", "Computer Personal Unit", "Central Program Utility", "Computer Processing Utility"], correct: 0, explanation: "CPU stands for Central Processing Unit - the main processor that executes instructions from programs and controls computer operations."},
+                    {q: "Ctrl + S saves a document.", type: "tf", correct: true, explanation: "Ctrl + S is the universal keyboard shortcut for saving documents in most programs. Save frequently to protect work from being lost."},
+                    {q: "Which file extension indicates a text document?", type: "mcq", options: [".mp3", ".jpg", ".txt", ".exe"], correct: 2, explanation: "The .txt extension indicates a plain text file containing unformatted text that can be opened with Notepad or other text editors."},
+                    {q: "Uploading means sending files from computer to internet.", type: "tf", correct: true, explanation: "Uploading transfers files from your computer to the Internet (like a website or cloud storage). Downloading does the opposite."},
+                    {q: "What is a URL?", type: "mcq", options: ["Universal Resource Locator", "Uniform Resource Locator", "Unique Resource Link", "Universal Reference Link"], correct: 1, explanation: "URL (Uniform Resource Locator) is the address of a web page on the Internet, like www.example.com."},
+                    {q: "Spam refers to unwanted junk emails.", type: "tf", correct: true, explanation: "Spam is unsolicited, unwanted email, often advertising or scams. Spam filters help block these messages from reaching your inbox."},
+                    {q: "Which stores data permanently?", type: "mcq", options: ["RAM", "Cache", "Hard disk", "Register"], correct: 2, explanation: "Hard disks provide permanent storage, keeping data safe even when the computer is turned off, unlike RAM which is temporary."},
+                    {q: "Icons are small pictures representing programs or files.", type: "tf", correct: true, explanation: "Icons are graphical symbols that represent programs, files, folders, or functions. Clicking icons opens what they represent."},
+                    {q: "What does PDF stand for?", type: "mcq", options: ["Portable Document Format", "Personal Data File", "Print Document Format", "Public Display File"], correct: 0, explanation: "PDF (Portable Document Format) is a file format that preserves document formatting across different computers and operating systems."},
+                    {q: "Bluetooth is used for wireless short-range communication.", type: "tf", correct: true, explanation: "Bluetooth technology enables wireless communication between devices over short distances, like connecting headphones, keyboards, or phones to computers."},
+                    {q: "Which demonstrates best computer knowledge?", type: "mcq", options: ["Knowing only games", "Understanding hardware, software, internet safety, and practical skills", "Using only one program", "Never asking questions"], correct: 1, explanation: "Complete computer knowledge includes understanding hardware components, software applications, internet safety, file management, and practical skills for solving various tasks."}
+                ],
+                18: [
+                    {q: "What is wrong with this file name: My*Document.txt?", type: "mcq", options: ["Nothing", "Contains invalid character *", "Too short", "Wrong extension"], correct: 1, explanation: "File names cannot contain special characters like * / \\ : ? \" < > | because they have special system meanings. Use letters, numbers, hyphens, and underscores."},
+                    {q: "Finding errors in programs is called debugging.", type: "tf", correct: true, explanation: "Debugging is the process of finding and fixing errors (bugs) in programs or procedures. It requires careful logical thinking and testing."},
+                    {q: "What's the error: Starting computer without turning on monitor?", type: "mcq", options: ["No error", "Can't see what computer is doing", "Computer won't start", "Monitor will break"], correct: 1, explanation: "The computer will work, but you won't see anything on screen. The monitor displays output, so it must be on to see what's happening."},
+                    {q: "Clicking 'Delete' instead of 'Save' is a common user error.", type: "tf", correct: true, explanation: "User errors happen when we click wrong buttons or choose wrong options. Always read carefully before clicking to avoid mistakes like deleting instead of saving."},
+                    {q: "What causes this error: 'File not found'?", type: "mcq", options: ["File was deleted or moved", "Monitor is off", "Keyboard broken", "Internet down"], correct: 0, explanation: "File not found errors occur when the computer can't locate the file at the expected location. The file may have been deleted, moved, or renamed."},
+                    {q: "All errors in computers are hardware problems.", type: "tf", correct: false, explanation: "Errors can be hardware (broken parts), software (bugs in programs), or user errors (mistakes people make). Many errors are actually user or software issues."},
+                    {q: "What's wrong: Typing in Word but text doesn't appear?", type: "mcq", options: ["Word is broken", "Might be typing in wrong window or Num Lock issue", "Computer is off", "No error"], correct: 1, explanation: "If typing doesn't work, check if the right window is active, Num Lock isn't interfering, or the text isn't white on white background. Check simple things first."},
+                    {q: "Restarting the computer can fix many software problems.", type: "tf", correct: true, explanation: "Restarting clears temporary memory, reloads programs, and fixes many minor software glitches. It's often the first troubleshooting step."},
+                    {q: "Error in algorithm: Get dressed, then take shower. What's wrong?", type: "mcq", options: ["Nothing wrong", "Steps are in wrong order", "Missing steps", "Too many steps"], correct: 1, explanation: "The logical order should be: take shower first, then get dressed. Doing steps in wrong sequence won't achieve the desired result."},
+                    {q: "Forgetting to save work before closing is a common mistake.", type: "tf", correct: true, explanation: "Always save work before closing programs. Unsaved changes will be lost. Most programs warn you, but it's better to save regularly throughout work."},
+                    {q: "What error: Computer won't start, power light is off?", type: "mcq", options: ["Software problem", "Not plugged in or power issue", "Virus", "Too many files"], correct: 1, explanation: "If the power light doesn't come on, check if the computer is plugged in, power strip is on, and outlet works. Start with basic checks."},
+                    {q: "Spelling errors in search queries can prevent finding information.", type: "tf", correct: true, explanation: "Misspelled search terms often give wrong results or no results. Check spelling carefully, or use search engine suggestions to find correct spelling."},
+                    {q: "Error in logic: All birds fly. Penguin is a bird. So penguins fly?", type: "mcq", options: ["Logic is correct", "First statement is false - not all birds fly", "Second statement wrong", "Conclusion is right"], correct: 1, explanation: "The error is in the first statement. Not all birds fly (penguins, ostriches don't). False premises lead to wrong conclusions even with correct logic."},
+                    {q: "Clicking too fast can cause double-execution errors.", type: "tf", correct: true, explanation: "Clicking buttons repeatedly or too fast can make actions happen multiple times (like submitting forms twice). Click once and wait for response."},
+                    {q: "What's the error: Forgetting password?", type: "mcq", options: ["Hardware error", "User error - should use password manager or reset", "Software bug", "Virus problem"], correct: 1, explanation: "Forgetting passwords is a user error. Solutions include using password managers, writing passwords securely, or using password reset options. Create memorable but strong passwords."},
+                    {q: "Error messages should be read carefully as they often explain the problem.", type: "tf", correct: true, explanation: "Error messages usually describe what went wrong and sometimes suggest solutions. Read them fully instead of just clicking 'OK' immediately."},
+                    {q: "What causes: Printer not printing?", type: "mcq", options: ["Always broken printer", "Could be: not turned on, no paper, no ink, not connected, or wrong printer selected", "Always software error", "Always needs replacement"], correct: 1, explanation: "Printer problems have many possible causes. Check: is it on and connected, does it have paper and ink, is it the selected printer? Systematic checking finds the problem."},
+                    {q: "Testing programs with different inputs helps find errors.", type: "tf", correct: true, explanation: "Testing with various inputs (normal, extreme, invalid) reveals errors that only appear in specific situations. Thorough testing improves quality."},
+                    {q: "Error in presentation: All text is size 8 font. What's wrong?", type: "mcq", options: ["Nothing", "Text too small to read from distance", "Text too large", "Wrong color"], correct: 1, explanation: "Size 8 font is too small for presentations. Audience can't read it from far away. Use at least 18-24 points for body text, larger for titles."},
+                    {q: "Syntax errors in programming mean code is written incorrectly.", type: "tf", correct: true, explanation: "Syntax errors are like grammar mistakes in programming. Code must follow exact language rules. Missing semicolons, wrong spelling, or incorrect structure cause syntax errors."},
+                    {q: "What's wrong: Saving Word document as .jpg?", type: "mcq", options: ["Nothing wrong", "Wrong file type - .jpg is for images, not documents", "Good idea", "Makes it better"], correct: 1, explanation: "File extensions must match content type. .jpg is for images, .doc/.docx for Word documents. Using wrong extension causes programs to not open files correctly."},
+                    {q: "Logic errors are harder to find than syntax errors.", type: "tf", correct: true, explanation: "Syntax errors are caught by the computer. Logic errors make programs run but give wrong results. Finding logic errors requires careful thinking about what should happen."},
+                    {q: "Error prevention technique: What should you do before deleting important files?", type: "mcq", options: ["Delete immediately", "Make a backup copy first", "Never delete anything", "Delete randomly"], correct: 1, explanation: "Before deleting important files, create backups. If you make a mistake, you can restore from backup. Prevention is better than trying to recover lost files."},
+                    {q: "Reading instructions completely before starting prevents many errors.", type: "tf", correct: true, explanation: "Many errors happen because people don't read full instructions. Reading everything first helps understand the complete task and avoid mistakes from missing steps."},
+                    {q: "What is the best approach to solving computer errors?", type: "mcq", options: ["Panic and give up", "Systematically check possible causes, test solutions, ask for help if needed", "Buy new computer", "Ignore errors"], correct: 1, explanation: "Good error solving: understand what's wrong, check common causes systematically, try solutions one at a time, document what works, and ask knowledgeable people for help when stuck."}
+                ],
+                19: [
+                    {q: "Scenario: You receive email from unknown sender asking for password. What do you do?", type: "mcq", options: ["Give password", "Delete email and tell adult", "Reply with questions", "Click all links"], correct: 1, explanation: "Never give passwords to anyone via email. Legitimate companies never ask for passwords by email. Delete suspicious emails and report to trusted adults."},
+                    {q: "In real life, we should check if websites are secure before entering personal information.", type: "tf", correct: true, explanation: "Look for https:// and padlock symbol in browser address bar. Secure connections protect your information from being stolen during transmission."},
+                    {q: "Scenario: Your computer is running very slowly. First step?", type: "mcq", options: ["Buy new computer", "Check if too many programs are running, restart computer", "Hit the computer", "Ignore it"], correct: 1, explanation: "Slow computers often have too many programs running. Close unnecessary programs, clear temp files, restart computer. Try simple solutions before assuming hardware problems."},
+                    {q: "Backing up important files prevents data loss.", type: "tf", correct: true, explanation: "Regular backups to external drives, USB, or cloud storage protect against computer crashes, accidents, or hardware failures. Backup important work regularly."},
+                    {q: "Scenario: Friend asks you to share homework file. Best method?", type: "mcq", options: ["Email, cloud sharing, or USB drive", "Don't share at all", "Share password instead", "Mail physical copy"], correct: 0, explanation: "Email, cloud services (Google Drive, OneDrive), or USB drives are good ways to share files. Choose the method that works best for both people."},
+                    {q: "Creating folders helps organize files for school subjects.", type: "tf", correct: true, explanation: "Organizing files into folders (Math, Science, English, etc.) makes finding homework and projects easy. Good organization saves time and reduces stress."},
+                    {q: "Scenario: You see classmate being cyberbullied. What should you do?", type: "mcq", options: ["Join in", "Ignore it", "Tell trusted adult and support the victim", "Share the posts"], correct: 2, explanation: "Report cyberbullying to adults who can help. Support the victim by being kind. Don't participate or share harmful content. Standing up shows good character."},
+                    {q: "Screen time should be balanced with physical activities and face-to-face interaction.", type: "tf", correct: true, explanation: "Too much screen time affects health, sleep, and social skills. Balance computer use with sports, outdoor play, reading, and spending time with family and friends."},
+                    {q: "Scenario: You need to research animals for project. How do you start?", type: "mcq", options: ["Use random websites", "Use reliable sources like educational sites, check multiple sources", "Copy first thing found", "Don't research"], correct: 1, explanation: "Use reliable sources (.edu, .gov, known educational sites). Check information across multiple sources. Take notes in your own words. Cite sources used."},
+                    {q: "Not everything found on the Internet is true or accurate.", type: "tf", correct: true, explanation: "Anyone can post anything online. Check if information comes from reliable sources, is recent, and can be verified elsewhere. Think critically about what you read."},
+                    {q: "Scenario: Computer won't connect to Internet. Troubleshooting steps?", type: "mcq", options: ["Buy new computer", "Check if WiFi is on, restart router, check if others can connect", "Give up", "Call computer broken"], correct: 1, explanation: "Check WiFi is enabled, router is on and working, cables are connected. Restart router and computer. Ask if others have internet. Systematic troubleshooting finds problems."},
+                    {q: "Taking breaks from computer screens reduces eye strain.", type: "tf", correct: true, explanation: "Follow 20-20-20 rule: every 20 minutes, look at something 20 feet away for 20 seconds. This reduces eye strain and helps maintain eye health."},
+                    {q: "Scenario: You accidentally delete important project file. What now?", type: "mcq", options: ["Give up", "Check Recycle Bin first, then check backups", "Start completely over", "Blame computer"], correct: 1, explanation: "Check Recycle Bin - deleted files go there first. Restore if found. Check if you have backups. Ask teacher for extension if needed. Learn to backup regularly."},
+                    {q: "Strong passwords use a mix of letters, numbers, and symbols.", type: "tf", correct: true, explanation: "Strong passwords combine uppercase, lowercase, numbers, and symbols. Avoid obvious choices like birthdays or names. Different passwords for different accounts increases security."},
+                    {q: "Scenario: Creating presentation about favorite book. Best approach?", type: "mcq", options: ["Copy all text from internet", "Plan key points, create own slides with images, practice presenting", "Don't prepare", "Just read the book aloud"], correct: 1, explanation: "Plan main points to cover, create clear slides with key phrases and relevant images, practice delivery. Original work and preparation create effective presentations."},
+                    {q: "Citing sources in projects shows academic honesty.", type: "tf", correct: true, explanation: "Citing sources gives credit to original authors, avoids plagiarism, and lets readers verify information. It's essential for academic integrity."},
+                    {q: "Scenario: Installing new game, it asks for admin password. Should you?", type: "mcq", options: ["Enter any password", "Ask parent/guardian first, verify game is safe", "Never install anything", "Give all passwords"], correct: 1, explanation: "Ask parents before installing programs. Some downloads contain viruses. Admin access can change important settings. Parents help ensure software is safe and appropriate."},
+                    {q: "Keyboard shortcuts make common tasks faster.", type: "tf", correct: true, explanation: "Learning shortcuts like Ctrl+C (copy), Ctrl+V (paste), Ctrl+S (save) makes work faster and more efficient. They're worth memorizing for frequently-used actions."},
+                    {q: "Scenario: Group project using shared online document. Best practice?", type: "mcq", options: ["Everyone edit randomly", "Assign sections, communicate clearly, check each other's work", "Only one person works", "Fight over who does what"], correct: 1, explanation: "Divide work fairly, communicate about progress, respect others' contributions, review together. Good teamwork and clear communication lead to successful group projects."},
+                    {q: "Saving work frequently prevents losing progress if something goes wrong.", type: "tf", correct: true, explanation: "Save every few minutes (Ctrl+S). If computer crashes or power goes out, recent saves protect work. Make it a habit to save frequently."},
+                    {q: "Scenario: Choosing images for school presentation. What to consider?", type: "mcq", options: ["Use any image found", "Check if images are appropriate, relevant, and legally usable", "Don't use images", "Only use copyrighted images"], correct: 1, explanation: "Images should be relevant, appropriate for school, and either your own, copyright-free, or properly credited. Check usage rights and avoid inappropriate content."},
+                    {q: "Digital footprints can affect future opportunities like college and jobs.", type: "tf", correct: true, explanation: "What you post now stays online and can be found later. Colleges and employers check social media. Build a positive digital reputation by posting responsibly."},
+                    {q: "Scenario: Learning new software for class. Best approach?", type: "mcq", options: ["Click random buttons", "Use tutorials, practice with simple projects, ask questions when stuck", "Give up if difficult", "Never try new software"], correct: 1, explanation: "Use help tutorials, start with basics, practice with simple projects, ask teachers or peers for help. Learning new software opens opportunities and builds skills."},
+                    {q: "Good digital habits developed now benefit you throughout life.", type: "tf", correct: true, explanation: "Skills like organization, security awareness, ethical behavior, and effective communication transfer to all future technology use. Start good habits early."},
+                    {q: "What is the most important principle for navigating digital life successfully?", type: "mcq", options: ["Use technology as little as possible", "Think critically, act responsibly, keep learning, and maintain balance", "Follow no rules", "Only focus on entertainment"], correct: 1, explanation: "Success in digital life requires: thinking before acting, using technology responsibly, continuously learning new skills, maintaining balance with offline life, and treating others with respect online."}
+                ],
+                20: [
+                    {q: "Which component processes all computer instructions?", type: "mcq", options: ["Monitor", "CPU", "Keyboard", "Speaker"], correct: 1, explanation: "The CPU (Central Processing Unit) is the brain of the computer that processes all instructions from programs and controls all computer operations."},
+                    {q: "RAM is a type of permanent storage that keeps data after shutdown.", type: "tf", correct: false, explanation: "RAM is temporary volatile memory that loses all data when power is turned off. Hard disks provide permanent storage that persists after shutdown."},
+                    {q: "What is the correct order for creating a document?", type: "mcq", options: ["Print, type, save", "Open program, type content, save, then print if needed", "Save, type, open", "Type, close, forget to save"], correct: 1, explanation: "Proper workflow: open word processor, type your content, save regularly, and print if needed. Always save before closing to preserve your work."},
+                    {q: "File extensions help computers know which program should open a file.", type: "tf", correct: true, explanation: "Extensions like .doc, .jpg, .mp3 tell the operating system which program to use. The computer associates file types with appropriate applications."},
+                    {q: "Best practice for passwords is to:", type: "mcq", options: ["Use your name", "Use complex mix of characters and keep them secret", "Share with friends", "Use 123456"], correct: 1, explanation: "Strong passwords combine uppercase, lowercase, numbers, and symbols. Keep them secret, use different passwords for different accounts, and never share them."},
+                    {q: "Double-clicking the mouse button typically opens files and programs.", type: "tf", correct: true, explanation: "Double-clicking (two quick successive clicks) is the standard way to open files, folders, and launch programs in most operating systems."},
+                    {q: "Which is a responsible action when using the Internet?", type: "mcq", options: ["Sharing personal information publicly", "Verifying information before sharing and respecting others' privacy", "Cyberbullying", "Downloading everything found"], correct: 1, explanation: "Responsible Internet use includes verifying information accuracy, respecting privacy, being kind, protecting personal information, and thinking before posting."},
+                    {q: "Copying someone's creative work without permission or credit is ethical.", type: "tf", correct: false, explanation: "Copying others' work without credit is plagiarism and violates copyright. Always create original work or properly cite sources. Respect intellectual property rights."},
+                    {q: "What makes a presentation effective?", type: "mcq", options: ["Lots of text on each slide", "Clear message, good visuals, appropriate font size, organized content", "Random information", "No planning"], correct: 1, explanation: "Effective presentations have clear focus, supporting visuals, readable fonts, logical organization, and engaging delivery. Planning and practice make presentations successful."},
+                    {q: "Algorithms are step-by-step instructions that must be in logical order.", type: "tf", correct: true, explanation: "Algorithms are sequential instructions where each step logically follows the previous one. Order matters - steps out of sequence won't achieve the desired result."},
+                    {q: "When troubleshooting computer problems, you should:", type: "mcq", options: ["Immediately buy new computer", "Check simple things first, restart if needed, research error messages", "Hit the computer", "Delete everything"], correct: 1, explanation: "Good troubleshooting: check obvious issues (connections, power), restart, read error messages, research solutions, try fixes systematically, ask for help if needed."},
+                    {q: "Organizing files into folders makes them easier to find and manage.", type: "tf", correct: true, explanation: "Folder organization creates logical structure for files. Group related items together (by subject, project, type) to find things quickly and keep work organized."},
+                    {q: "What is phishing?", type: "mcq", options: ["A fishing technique", "Fraudulent attempt to steal information through fake emails or websites", "A computer game", "A type of hardware"], correct: 1, explanation: "Phishing uses fake emails or websites pretending to be legitimate to trick people into revealing passwords, credit cards, or personal information. Never click suspicious links."},
+                    {q: "Good digital citizenship includes being respectful online and offline.", type: "tf", correct: true, explanation: "Digital citizenship means being responsible, ethical, and respectful in digital environments. The same values apply online as in face-to-face interactions."},
+                    {q: "Which demonstrates proper file management?", type: "mcq", options: ["Saving everything to desktop with random names", "Organized folders, descriptive filenames, regular backups", "Never deleting anything", "Saving files anywhere"], correct: 1, explanation: "Good file management: create logical folder structure, use descriptive names, save in appropriate locations, delete unneeded files, backup important work regularly."},
+                    {q: "Antivirus software is unnecessary if you're careful online.", type: "tf", correct: false, explanation: "Even careful users need antivirus protection. Malware can come from legitimate sites, email attachments, or downloads. Antivirus provides essential protection layer."},
+                    {q: "What makes source information reliable?", type: "mcq", options: ["Any website", "Educational institutions, government sites, expert authors, verifiable facts", "Social media posts", "Anonymous sources"], correct: 1, explanation: "Reliable sources include educational institutions (.edu), government (.gov), recognized experts, peer-reviewed work. Cross-reference information across multiple trusted sources."},
+                    {q: "Keyboard shortcuts like Ctrl+C, Ctrl+V improve efficiency.", type: "tf", correct: true, explanation: "Shortcuts perform common tasks faster than using menus. Learning frequently-used shortcuts (copy, paste, save, undo) significantly improves productivity."},
+                    {q: "When creating digital art or documents, you should:", type: "mcq", options: ["Never save until finished", "Save regularly, use meaningful names, organize files properly", "Save once at the end", "Don't worry about saving"], correct: 1, explanation: "Save every few minutes to prevent data loss. Use descriptive filenames indicating content and date. Organize saved files in appropriate folders for easy retrieval."},
+                    {q: "Everything posted online can potentially be seen by anyone and may remain forever.", type: "tf", correct: true, explanation: "Online content can be shared, screenshot, and archived indefinitely. Even deleted content may still exist. Always think carefully before posting anything."},
+                    {q: "Which shows logical problem-solving?", type: "mcq", options: ["Guessing randomly", "Understanding problem, breaking into steps, testing solutions, learning from results", "Giving up quickly", "Trying same failed solution repeatedly"], correct: 1, explanation: "Logical problem-solving: understand the problem, break it into manageable parts, develop and test solutions, evaluate results, learn from mistakes, adjust approach as needed."},
+                    {q: "Cyberbullying is as harmful as face-to-face bullying.", type: "tf", correct: true, explanation: "Cyberbullying causes real emotional harm to real people. Words hurt regardless of medium. Always treat others with kindness and respect online. Report bullying to adults."},
+                    {q: "What is the purpose of backing up data?", type: "mcq", options: ["Takes up space", "Protects against data loss from accidents, failures, or errors", "Wastes time", "No real purpose"], correct: 1, explanation: "Backups protect important data from loss due to hardware failure, accidental deletion, viruses, or other problems. Regular backups are essential data protection."},
+                    {q: "Learning to use technology effectively is an important 21st-century skill.", type: "tf", correct: true, explanation: "Technology skills are essential in modern education and careers. Learning to use computers effectively, safely, and creatively prepares students for future success."},
+                    {q: "What represents comprehensive computer literacy?", type: "mcq", options: ["Only knowing games", "Understanding hardware, software, internet safety, problem-solving, ethical use, and practical applications", "Memorizing without understanding", "Avoiding technology"], correct: 1, explanation: "True computer literacy combines technical knowledge, practical skills, safety awareness, ethical behavior, critical thinking, and ability to learn new technologies. It's comprehensive understanding, not just memorization."}
+                ]
+            };
+
+            let currentGame = 0;
+            let currentTask = 0;
+            let score = {
+                correct: 0,
+                wrong: 0,
+                attempted: 0,
+                points: 0
+            };
+
+            let answeredTasks = new Set();
+
+            function updateScore() {
+                document.getElementById('correctScore').textContent = score.correct;
+                document.getElementById('wrongScore').textContent = score.wrong;
+                document.getElementById('attemptedScore').textContent = score.attempted;
+                const accuracy = score.attempted > 0 ? Math.round((score.correct / score.attempted) * 100) : 0;
+                document.getElementById('accuracyScore').textContent = accuracy + '%';
+                document.getElementById('pointsScore').textContent = score.points;
+            }
+
+            function startGame(gameNumber) {
+                currentGame = gameNumber;
+                currentTask = 0;
+                answeredTasks.clear();
+                document.getElementById('gameList').style.display = 'none';
+                document.getElementById('gameScreen').classList.add('active');
+                loadTask();
+            }
+
+            function loadTask() {
+                const tasks = gameData[currentGame];
+                const task = tasks[currentTask];
+                const taskKey = `${currentGame}-${currentTask}`;
+                const isAnswered = answeredTasks.has(taskKey);
+
+                document.getElementById('progressFill').textContent = `${currentTask + 1}/25`;
+                document.getElementById('progressFill').style.width = ((currentTask + 1) / 25 * 100) + '%';
+
+                let html = `<div class="task-number">Task ${currentTask + 1} of 25</div>`;
+                html += `<div class="task-question">${task.q}</div>`;
+
+                if (task.type === 'mcq') {
+                    html += '<div class="options-container">';
+                    task.options.forEach((opt, idx) => {
+                        html += `<button class="option-btn" data-idx="${idx}" ${isAnswered ? 'disabled' : ''}>${opt}</button>`;
+                    });
+                    html += '</div>';
+                } else if (task.type === 'tf') {
+                    html += '<div class="options-container">';
+                    html += `<button class="option-btn" data-answer="true" ${isAnswered ? 'disabled' : ''}>True</button>`;
+                    html += `<button class="option-btn" data-answer="false" ${isAnswered ? 'disabled' : ''}>False</button>`;
+                    html += '</div>';
+                }
+
+                html += '<div class="feedback" id="feedback"></div>';
+
+                document.getElementById('taskContainer').innerHTML = html;
+
+                const optionBtns = document.querySelectorAll('.option-btn');
+                optionBtns.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        if (!answeredTasks.has(taskKey)) {
+                            checkAnswer(this, task, taskKey);
+                        }
+                    });
+                });
+
+                document.getElementById('nextBtn').classList.remove('hidden');
+            }
+
+            function checkAnswer(btn, task, taskKey) {
+                let isCorrect = false;
+
+                if (task.type === 'mcq') {
+                    const selectedIdx = parseInt(btn.dataset.idx);
+                    isCorrect = selectedIdx === task.correct;
+                    
+                    document.querySelectorAll('.option-btn').forEach(b => {
+                        b.disabled = true;
+                        const idx = parseInt(b.dataset.idx);
+                        if (idx === task.correct) {
+                            b.classList.add('correct');
+                        }
+                    });
+                    
+                    if (!isCorrect) {
+                        btn.classList.add('wrong');
+                    }
+                } else if (task.type === 'tf') {
+                    const selectedAnswer = btn.dataset.answer === 'true';
+                    isCorrect = selectedAnswer === task.correct;
+                    
+                    document.querySelectorAll('.option-btn').forEach(b => {
+                        b.disabled = true;
+                        const answer = b.dataset.answer === 'true';
+                        if (answer === task.correct) {
+                            b.classList.add('correct');
+                        }
+                    });
+                    
+                    if (!isCorrect) {
+                        btn.classList.add('wrong');
+                    }
+                }
+
+                answeredTasks.add(taskKey);
+                score.attempted++;
+                
+                if (isCorrect) {
+                    score.correct++;
+                    score.points += 10;
+                } else {
+                    score.wrong++;
+                }
+
+                updateScore();
+
+                const feedback = document.getElementById('feedback');
+                feedback.classList.add('show');
+                if (isCorrect) {
+                    feedback.classList.add('correct');
+                    feedback.classList.remove('wrong');
+                    feedback.innerHTML = `<strong>✓ Correct!</strong><br>${task.explanation}`;
+                } else {
+                    feedback.classList.add('wrong');
+                    feedback.classList.remove('correct');
+                    feedback.innerHTML = `<strong>✗ Incorrect!</strong><br>${task.explanation}`;
+                }
+            }
+
+            document.getElementById('backBtn').addEventListener('click', function() {
+                document.getElementById('gameScreen').classList.remove('active');
+                document.getElementById('gameList').style.display = 'grid';
+            });
+
+            document.getElementById('nextBtn').addEventListener('click', function() {
+                if (currentTask < 24) {
+                    currentTask++;
+                    loadTask();
+                } else {
+                    alert('You have completed all tasks in this game! Choose another game or review your progress.');
+                    document.getElementById('gameScreen').classList.remove('active');
+                    document.getElementById('gameList').style.display = 'grid';
+                }
+            });
+
+            document.querySelectorAll('.game-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const gameNum = parseInt(this.dataset.game);
+                    startGame(gameNum);
+                });
+            });
+
+            updateScore();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 4 English - Chapter 8: Reading Skills</title>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            --font-main: 'Patrick Hand', cursive;
+            --c-blue: #d4f1f4;
+            --c-green: #e2f0cb;
+            --c-yellow: #fdfd96;
+            --c-orange: #ffdfba;
+            --c-white: #ffffff;
+            --c-text: #2d3436;
+            --c-accent: #ff6b6b;
+            --c-success: #00b894;
+            --c-error: #d63031;
+            --border-dual: 4px solid;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: #f9f9f9;
+            color: var(--c-text);
+            font-weight: bold; /* STRICT RULE: ALL TEXT BOLD */
+            font-size: 18px;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- LAYOUT UTILS --- */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        button {
+            font-family: var(--font-main);
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border: none;
+            outline: none;
+            transition: transform 0.1s;
+        }
+        button:active { transform: scale(0.95); }
+
+        /* --- 1. HERO SECTION --- */
+        .hero {
+            background: linear-gradient(135deg, var(--c-yellow), var(--c-orange), var(--c-white));
+            padding: 60px 20px;
+            text-align: center;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .hero h1 { font-size: 2.5rem; margin-bottom: 10px; color: #4a4a4a; }
+        .hero h3 { color: #666; margin-bottom: 15px; }
+        .quote { font-style: italic; color: #555; margin-bottom: 20px; font-size: 1.2rem; }
+        .brand { font-size: 0.9rem; letter-spacing: 1px; color: #888; text-transform: uppercase; }
+        .hero-emoji { font-size: 3rem; display: block; margin: 10px 0; }
+        .start-btn {
+            background-color: var(--c-accent);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            box-shadow: 0 4px 0 #c0392b;
+        }
+
+        /* --- 2. LIVE SCORE PANEL --- */
+        .score-panel {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background-color: #fffff0; /* Very light yellow */
+            border-bottom: 4px solid var(--c-success);
+            border-top: 4px solid #0984e3; /* Blue */
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            font-size: 1rem;
+        }
+        .score-item { display: flex; flex-direction: column; align-items: center; margin: 0 5px; }
+        .score-val { font-size: 1.2rem; color: #333; }
+        .score-label { font-size: 0.8rem; color: #666; }
+
+        /* --- 3. NOTES SECTION --- */
+        .section-title {
+            text-align: center;
+            margin: 40px 0 20px;
+            font-size: 2rem;
+            color: #333;
+            text-decoration: underline wavy var(--c-accent);
+        }
+
+        .notes-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .note-card {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+            border: 2px solid rgba(0,0,0,0.05);
+        }
+        .note-card:hover { transform: translateY(-5px); }
+
+        /* Card Rotation Colors */
+        .card-blue { background-color: var(--c-blue); }
+        .card-green { background-color: var(--c-green); }
+        .card-yellow { background-color: var(--c-yellow); }
+        .card-orange { background-color: var(--c-orange); }
+
+        .note-img-placeholder {
+            width: 100%;
+            height: 120px;
+            background: rgba(255,255,255,0.5);
+            border: 2px dashed #999;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #777;
+            margin: 15px 0;
+            font-size: 0.9rem;
+        }
+
+        .note-tip { background: #fff; padding: 10px; border-radius: 10px; margin-top: 10px; font-size: 0.95rem; }
+        .quick-check { margin-top: 15px; border-top: 2px dashed rgba(0,0,0,0.1); padding-top: 10px; }
+        .qc-ans { display: none; color: var(--c-success); margin-top: 5px; }
+
+        /* --- 4. IMPORTANT QUESTIONS --- */
+        .imp-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+        }
+        .imp-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 5px solid;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            position: relative;
+            cursor: pointer;
+        }
+        .imp-card:nth-child(4n+1) { border-left-color: var(--c-accent); }
+        .imp-card:nth-child(4n+2) { border-left-color: var(--c-success); }
+        .imp-card:nth-child(4n+3) { border-left-color: #0984e3; }
+        .imp-card:nth-child(4n+4) { border-left-color: #fdcb6e; }
+
+        .imp-ans { display: none; margin-top: 10px; color: #2d3436; background: #f0f0f0; padding: 8px; border-radius: 5px; }
+
+        /* --- 5. PRACTICE QUESTIONS --- */
+        .practice-container {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            min-height: 300px;
+        }
+        .pq-header { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 0.9rem; color: #888; }
+        .question-text { font-size: 1.4rem; margin-bottom: 20px; }
+        
+        .options-grid { display: grid; gap: 10px; }
+        .option-btn {
+            background: #f1f2f6;
+            padding: 15px;
+            text-align: left;
+            border-radius: 10px;
+            border: 2px solid transparent;
+        }
+        .option-btn:hover { background: #dfe4ea; }
+        .option-btn.correct { background: var(--c-green); border-color: var(--c-success); }
+        .option-btn.wrong { background: #ff7675; border-color: var(--c-error); color: white; }
+
+        .feedback-box { margin-top: 20px; padding: 15px; border-radius: 10px; display: none; }
+        .feedback-correct { background: var(--c-green); color: #006400; }
+        .feedback-wrong { background: var(--c-orange); color: #b33939; }
+
+        /* --- 6. LONG ANSWERS --- */
+        .long-q-card {
+            background: white;
+            border: 2px solid var(--c-blue);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+        .long-input {
+            width: 100%;
+            height: 100px;
+            margin-top: 10px;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-family: var(--font-main);
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+        .check-long-btn {
+            background: var(--c-success);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            margin-top: 10px;
+        }
+        .long-feedback { display: none; margin-top: 15px; background: #f8f9fa; padding: 10px; border-radius: 8px; }
+
+        /* --- 8. REVISION SHEET --- */
+        .revision-sheet {
+            background: var(--c-yellow);
+            padding: 20px;
+            border-radius: 20px;
+            display: none;
+            margin-bottom: 30px;
+            border: 3px dashed #f1c40f;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            padding: 30px;
+            background: #2d3436;
+            color: white;
+            margin-top: 50px;
+            font-size: 0.9rem;
+        }
+
+        /* Helpers */
+        .hidden { display: none; }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    </style>
+</head>
+<body>
+
+    <header class="hero">
+        <div class="brand">ShanEduHub Presents</div>
+        <h1>Chapter 8: Reading Skills & Comprehension</h1>
+        <h3>Class 4 – English</h3>
+        <span class="hero-emoji">📖</span>
+        <p class="quote">“The more that you read, the more things you will know!”</p>
+        <button class="start-btn" id="startBtn">Start Learning</button>
+    </header>
+
+    <div class="score-panel">
+        <div class="score-item">
+            <span class="score-val" id="scoreCorrect" style="color:var(--c-success)">0</span>
+            <span class="score-label">Correct</span>
+        </div>
+        <div class="score-item">
+            <span class="score-val" id="scoreWrong" style="color:var(--c-error)">0</span>
+            <span class="score-label">Wrong</span>
+        </div>
+        <div class="score-item">
+            <span class="score-val" id="scorePercent">0%</span>
+            <span class="score-label">Accuracy</span>
+        </div>
+        <div class="score-item">
+            <span class="score-val"><span id="scoreMarks">0</span></span>
+            <span class="score-label">Marks</span>
+        </div>
+        <div class="score-item">
+            <span class="score-val" id="longProgress">0/10</span>
+            <span class="score-label">Long Qs</span>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <section id="notesSection">
+            <h2 class="section-title">My Reading Notes 📝</h2>
+            <div class="notes-grid" id="notesContainer">
+                </div>
+        </section>
+
+        <div style="text-align:center; margin: 30px 0;">
+            <button class="start-btn" style="background:#0984e3; font-size:1rem;" id="revToggle">⚡ Revise Fast Rules</button>
+        </div>
+        <div class="revision-sheet" id="revSheet">
+            <h3>⚡ Quick Revision Rules</h3>
+            <ul>
+                <li><strong>Accuracy:</strong> Reading words correctly without mistakes.</li>
+                <li><strong>Fluency:</strong> Reading smoothly like a river flow.</li>
+                <li><strong>Silent Reading:</strong> Reading in your mind (Libraries).</li>
+                <li><strong>Reading Aloud:</strong> Using voice and expression (Plays).</li>
+                <li><strong>Paragraph:</strong> A group of sentences about ONE topic.</li>
+                <li><strong>Comprehension:</strong> Understanding the WHO, WHAT, WHERE, WHEN.</li>
+            </ul>
+        </div>
+
+        <section>
+            <h2 class="section-title">Important Questions (Exam) 🌟</h2>
+            <p style="text-align:center; margin-bottom:15px;">Tap card to see answer!</p>
+            <div class="imp-grid" id="impContainer">
+                </div>
+        </section>
+
+        <section>
+            <h2 class="section-title">Practice Zone (70 Qs) 🎯</h2>
+            <div class="practice-container" id="practiceContainer">
+                <div class="pq-header">
+                    <span id="qNum">Question 1/70</span>
+                    <span id="qDifficulty">Basic</span>
+                </div>
+                <div id="qArea"></div>
+                <div class="feedback-box" id="feedbackArea"></div>
+                <button class="start-btn" id="nextBtn" style="display:none; margin-top:15px; background:#2d3436;">Next Question ➡</button>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="section-title">Advanced Long Answer / Reading Comprehension Practice (With Evaluation) 🧠</h2>
+            <p style="text-align:center; margin-bottom:20px;">Read carefully and type your answer. (5 Marks each)</p>
+            <div id="longContainer">
+                </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>Designed & Created by SHRISHANT YADAV</p>
+        <p>2026 – ShanEduHub</p>
+    </footer>
+
+    <script>
+        // --- DATA SOURCE ---
+
+        // 1. NOTES DATA
+        const notesData = [
+            {
+                title: "1. Reading Accuracy & Fluency",
+                content: "Reading accuracy means reading the words correctly without mistakes. Fluency means reading smoothly at a good speed, not too slow and not too fast.",
+                example: "Fluent: 'The dog ran fast.' | Not Fluent: 'The... d-o-g... ran... f-fast.'",
+                tip: "Use your finger to follow words if you get lost!",
+                check: "Does fluency mean reading as fast as a rocket?",
+                checkAns: "No! It means reading smoothly so people understand.",
+                color: "card-blue"
+            },
+            {
+                title: "2. Silent Reading",
+                content: "This is reading in your mind without making any sound. Your lips should not move. We use this in libraries or when studying alone.",
+                example: "Reading a storybook in bed before sleeping.",
+                tip: "Imagine the voice inside your head is reading to you.",
+                check: "Can we do silent reading in a noisy class?",
+                checkAns: "Yes, because it happens inside your mind!",
+                color: "card-green"
+            },
+            {
+                title: "3. Reading Aloud",
+                content: "Reading loudly so others can hear. You must use 'Expression' (voice changing for happy, sad, angry parts).",
+                example: "The teacher reading a story to the class.",
+                tip: "Stop at full stops (.) and pause at commas (,).",
+                check: "Should we shout when reading aloud?",
+                checkAns: "No, just be loud enough to be heard clearly.",
+                color: "card-yellow"
+            },
+            {
+                title: "4. Understanding Paragraphs",
+                content: "A paragraph is a group of sentences about ONE main idea. It starts on a new line.",
+                example: "Paragraph 1: About my cat. Paragraph 2: About my dog.",
+                tip: "Look for the first sentence; it usually tells the main idea.",
+                check: "Can a paragraph talk about 10 different topics?",
+                checkAns: "No, it focuses on one main topic.",
+                color: "card-orange"
+            },
+            {
+                title: "5. Story Reading",
+                content: "Stories have Characters (people/animals), Setting (place), and Plot (what happens - Beginning, Middle, End).",
+                example: "The Thirsty Crow: Crow (Character), Garden (Setting), Drinking water (Plot).",
+                tip: "Ask yourself: Who is the hero?",
+                check: "Is a 'Forest' a character or a setting?",
+                checkAns: "It is a Setting (place).",
+                color: "card-blue"
+            },
+            {
+                title: "6. Poem Reading",
+                content: "Poems have rhythm and often rhyme (sound the same at the end). We read them with a musical beat.",
+                example: "Twinkle, twinkle, little star... (Star rhymes with Are).",
+                tip: "Clap your hands to find the beat of the poem.",
+                check: "Do all poems have to rhyme?",
+                checkAns: "Most do, but not all. Rhythm is more important.",
+                color: "card-green"
+            },
+            {
+                title: "7. Comprehension Skills",
+                content: "This means 'Understanding'. We answer questions like Who, What, Where, When, Why after reading.",
+                example: "Text: 'Ram eats an apple.' Q: What does Ram eat? A: An apple.",
+                tip: "Read the questions FIRST, then read the passage.",
+                check: "If you read but don't understand, is it comprehension?",
+                checkAns: "No, comprehension means understanding.",
+                color: "card-yellow"
+            },
+            {
+                title: "8. Picture Comprehension",
+                content: "Looking at a picture and answering questions or writing sentences about it.",
+                example: "Image: Kids playing football. Sentence: The boys are kicking the ball.",
+                tip: "Look at the background details, not just the main people.",
+                check: "Can we guess the time of day from a picture?",
+                checkAns: "Yes! Look for the sun or moon.",
+                color: "card-orange"
+            }
+        ];
+
+        // 2. IMPORTANT QUESTIONS (30)
+        const impQs = [
+            { q: "What is 'Reading Accuracy'?", a: "Reading words correctly without mistakes.", exp: "No wrong pronunciation." },
+            { q: "Where should we use Silent Reading?", a: "In a library or while studying alone.", exp: "To not disturb others." },
+            { q: "What is a 'Setting' in a story?", a: "The place where the story happens.", exp: "E.g., Forest, School." },
+            { q: "What punctuation mark means 'Stop'?", a: "Full Stop (.)", exp: "Take a long pause." },
+            { q: "What punctuation mark means 'Pause'?", a: "Comma (,)", exp: "Take a short breath." },
+            { q: "Rhyming word for 'Cat'?", a: "Bat, Mat, Hat, Sat.", exp: "Ends with 'at' sound." },
+            { q: "What is the main idea of a paragraph?", a: "What the paragraph is mostly about.", exp: "Usually the first sentence." },
+            { q: "Who are 'Characters'?", a: "The people or animals in a story.", exp: "The actors of the story." },
+            { q: "What does 'Comprehension' mean?", a: "To understand what you read.", exp: "Not just looking at words." },
+            { q: "How should you read a happy dialogue?", a: "With a cheerful and excited voice.", exp: "Expression matters." },
+            { q: "What is the opposite of 'Loud'?", a: "Soft or Quiet.", exp: "Volume control." },
+            { q: "Identify the setting: 'The sand was hot.'", a: "Beach or Desert.", exp: "Sand is found there." },
+            { q: "What comes at the end of a question?", a: "Question Mark (?)", exp: "Shows asking." },
+            { q: "Why do we read aloud?", a: "To share stories or practice fluency.", exp: "For others to hear." },
+            { q: "What is 'Fluency'?", a: "Reading smoothly like a river.", exp: "Not choppy." },
+            { q: "True/False: Poems always have paragraphs.", a: "False. Poems have Stanzas.", exp: "Different structure." },
+            { q: "Inference: 'She took an umbrella.' Weather?", a: "It is raining or very sunny.", exp: "Umbrella protects us." },
+            { q: "Inference: 'He yawned and rubbed eyes.' Feeling?", a: "Sleepy or Tired.", exp: "Body language." },
+            { q: "What is a 'Title'?", a: "The name of the story or poem.", exp: "At the top." },
+            { q: "Find the action: 'The dog barks.'", a: "Barks.", exp: "That is the verb." },
+            { q: "Rhyme for 'Moon'?", a: "Spoon, Soon, Noon.", exp: "Ends with 'oon'." },
+            { q: "What is 'Skimming'?", a: "Reading quickly to get the main idea.", exp: "Fast reading." },
+            { q: "What is 'Scanning'?", a: "Looking for a specific word or answer.", exp: "Like a search engine." },
+            { q: "Who writes a poem?", a: "A Poet.", exp: "Author of poem." },
+            { q: "Who writes a story?", a: "An Author / Writer.", exp: "Creator of story." },
+            { q: "Inference: 'Smoke came from the window.'", a: "There is a fire.", exp: "Smoke = Fire." },
+            { q: "Should you move lips in silent reading?", a: "No.", exp: "Keep lips closed." },
+            { q: "How to read 'Help!'?", a: "Loudly with shock/fear.", exp: "Exclamation mark." },
+            { q: "What is a 'Moral'?", a: "The lesson learnt from a story.", exp: "Good vs Bad." },
+            { q: "Context Clue: 'The soup was scorching.' Meaning?", a: "Very hot.", exp: "Soup is usually hot." }
+        ];
+
+        // 3. PRACTICE QUESTIONS (70)
+        // Helper to generate passage based questions
+        // Passages: 
+        // P1: The Garden (Ravi, flowers, bees)
+        // P2: My Pet Bruno (Dog, ball, park)
+        // P3: Diwali (Lamps, sweets, new clothes)
+        const practiceQs = [
+            // --- BASIC (Definitions & Rules) 1-15 ---
+            { t: 'mcq', q: "Silent reading is best done in a:", o: ["Disco", "Library", "Market"], a: "Library", why: "Libraries are quiet places." },
+            { t: 'mcq', q: "To read with expression means to:", o: ["Read fast", "Change voice for feelings", "Read silently"], a: "Change voice for feelings", why: "Expression shows emotion." },
+            { t: 'tf', q: "We should pause at a comma (,).", a: "True", why: "Comma means a short pause." },
+            { t: 'tf', q: "A paragraph can be about 5 different topics.", a: "False", why: "One paragraph = One main idea." },
+            { t: 'fill', q: "A person who writes a poem is called a ___.", a: "poet", why: "Poet writes poems." },
+            { t: 'mcq', q: "Which word rhymes with 'Light'?", o: ["Late", "Bright", "Boat"], a: "Bright", why: "Ends with 'ight'." },
+            { t: 'text', q: "What mark goes at the end of 'Where are you'?", a: "?", why: "It is a question." },
+            { t: 'mcq', q: "Inference: 'Tom put on his helmet.' He is going to:", o: ["Sleep", "Ride a bike", "Swim"], a: "Ride a bike", why: "Helmets are for riding." },
+            { t: 'fill', q: "Stories have a Beginning, Middle, and ___.", a: "end", why: "Every story finishes." },
+            { t: 'tf', q: "You should use your finger to follow words if stuck.", a: "True", why: "It helps accuracy." },
+            { t: 'mcq', q: "What is 'Scanning'?", o: ["Looking for specific info", "Sleeping", "Writing"], a: "Looking for specific info", why: "Like searching for a name." },
+            { t: 'text', q: "One word for 'Reading without sound':", a: "Silent", why: "Silent reading." },
+            { t: 'tf', q: "If you read fast but wrong, you are a good reader.", a: "False", why: "Accuracy matters more than speed." },
+            { t: 'mcq', q: "What tells us the name of the book?", o: ["Title", "Page number", "End"], a: "Title", why: "Usually on the cover." },
+            { t: 'fill', q: "A group of lines in a poem is called a ___.", a: "stanza", why: "Poems use stanzas, stories use paragraphs." },
+
+            // --- MEDIUM (Passage 1: Ravi's Garden) 16-30 ---
+            // Passage context: "Ravi loves his garden. He grows red roses and yellow sunflowers. Bees come to visit the flowers. Ravi waters the plants every evening."
+            { t: 'mcq', q: "[Passage: Ravi's Garden] What does Ravi love?", o: ["His car", "His garden", "His school"], a: "His garden", why: "Text says: Ravi loves his garden." },
+            { t: 'fill', q: "[Passage: Ravi's Garden] The roses are ___ in color.", a: "red", why: "Text says: red roses." },
+            { t: 'text', q: "[Passage: Ravi's Garden] Which insect visits the flowers?", a: "Bees", why: "Text says: Bees come to visit." },
+            { t: 'tf', q: "[Passage: Ravi's Garden] Ravi waters plants in the morning.", a: "False", why: "Text says: every evening." },
+            { t: 'mcq', q: "[Passage: Ravi's Garden] What implies Ravi cares for plants?", o: ["He ignores them", "He waters them", "He cuts them"], a: "He waters them", why: "Watering shows care." },
+            { t: 'text', q: "[Passage: Ravi's Garden] Name the yellow flower.", a: "Sunflower", why: "Text says: yellow sunflowers." },
+            { t: 'mcq', q: "[Passage: Ravi's Garden] Why do bees come?", o: ["To sleep", "To visit flowers", "To bite Ravi"], a: "To visit flowers", why: "Bees like nectar." },
+            { t: 'tf', q: "[Passage: Ravi's Garden] Ravi grows lilies.", a: "False", why: "Only roses and sunflowers mentioned." },
+            { t: 'fill', q: "[Passage: Ravi's Garden] There are ___ types of flowers mentioned.", a: "two", why: "Roses + Sunflowers = 2." },
+            { t: 'text', q: "[Passage: Ravi's Garden] Synonym for 'Like' from text:", a: "Love", why: "Ravi loves his garden." },
+            { t: 'mcq', q: "[Passage: Ravi's Garden] Who is the main character?", o: ["Ravi", "The Bees", "The Hose"], a: "Ravi", why: "It is his garden." },
+            { t: 'fill', q: "[Passage: Ravi's Garden] The setting is a ___.", a: "garden", why: "Where it happens." },
+            { t: 'tf', q: "[Passage: Ravi's Garden] This is a scary story.", a: "False", why: "It is peaceful." },
+            { t: 'mcq', q: "[Passage: Ravi's Garden] 'Evening' is a time of:", o: ["Day", "Year", "Place"], a: "Day", why: "Morning, Noon, Evening." },
+            { t: 'text', q: "[Passage: Ravi's Garden] Past tense of 'Grow'?", a: "Grew", why: "Grammar check." },
+
+            // --- MEDIUM (Passage 2: The School Bus) 31-45 ---
+            // Passage: "The big yellow bus arrives at 7 AM. The driver, Mr. Singh, honks the horn. Children run to catch the bus. They sit and talk happily."
+            { t: 'mcq', q: "[Passage: School Bus] What color is the bus?", o: ["Red", "Blue", "Yellow"], a: "Yellow", why: "Text: big yellow bus." },
+            { t: 'text', q: "[Passage: School Bus] What time does it arrive? (e.g. 5 PM)", a: "7 AM", why: "Text: at 7 AM." },
+            { t: 'fill', q: "[Passage: School Bus] The driver's name is Mr. ___.", a: "Singh", why: "Text: Mr. Singh." },
+            { t: 'mcq', q: "[Passage: School Bus] What does Mr. Singh do?", o: ["Dances", "Honks the horn", "Sleeps"], a: "Honks the horn", why: "Signal for kids." },
+            { t: 'tf', q: "[Passage: School Bus] The children are sad.", a: "False", why: "Text: talk happily." },
+            { t: 'text', q: "[Passage: School Bus] Action word: Children ___ to catch bus.", a: "Run", why: "They run." },
+            { t: 'mcq', q: "[Passage: School Bus] Why do they run?", o: ["To exercise", "To catch the bus", "To flee"], a: "To catch the bus", why: "Don't want to miss it." },
+            { t: 'fill', q: "[Passage: School Bus] 'Happily' describes how they ___.", a: "talk", why: "Sit and talk happily." },
+            { t: 'tf', q: "[Passage: School Bus] The bus is small.", a: "False", why: "Text: big yellow bus." },
+            { t: 'mcq', q: "[Passage: School Bus] Where are they likely going?", o: ["School", "Zoo", "Space"], a: "School", why: "It's a School Bus." },
+            { t: 'text', q: "[Passage: School Bus] Opposite of 'Arrives'?", a: "Departs", why: "Or leaves." },
+            { t: 'fill', q: "[Passage: School Bus] 7 AM is in the ___.", a: "morning", why: "AM = Morning." },
+            { t: 'mcq', q: "[Passage: School Bus] Sound word in text:", o: ["Big", "Yellow", "Honk"], a: "Honk", why: "Sound of horn." },
+            { t: 'tf', q: "[Passage: School Bus] Mr. Singh is a passenger.", a: "False", why: "He is the driver." },
+            { t: 'text', q: "[Passage: School Bus] Plural of 'Child' in text:", a: "Children", why: "Grammar check." },
+
+            // --- ADVANCED (Passage 3: The Lost Key) 46-60 ---
+            // Passage: "Mina could not find her house key. She checked her bag, her pocket, and under the mat. It was nowhere! She felt worried. Suddenly, she saw something shiny in the grass. It was her key! She jumped with joy."
+            { t: 'mcq', q: "[Passage: Lost Key] What did Mina lose?", o: ["Phone", "Key", "Wallet"], a: "Key", why: "House key." },
+            { t: 'text', q: "[Passage: Lost Key] Where did she check first? (Bag/Pocket/Mat)", a: "Bag", why: "Order: Bag, Pocket, Mat." },
+            { t: 'fill', q: "[Passage: Lost Key] She felt ___ when she couldn't find it.", a: "worried", why: "Emotion word." },
+            { t: 'mcq', q: "[Passage: Lost Key] Where was the key?", o: ["In the lock", "In the grass", "In the car"], a: "In the grass", why: "Saw something shiny in grass." },
+            { t: 'tf', q: "[Passage: Lost Key] The key was dull and black.", a: "False", why: "Text: something shiny." },
+            { t: 'text', q: "[Passage: Lost Key] Why did she jump?", a: "Joy", why: "Jumped with joy." },
+            { t: 'mcq', q: "[Passage: Lost Key] 'Nowhere' means:", o: ["Everywhere", "Not in any place", "Here"], a: "Not in any place", why: "Vocabulary." },
+            { t: 'fill', q: "[Passage: Lost Key] Mina checked ___ places mentioned in text.", a: "three", why: "Bag, Pocket, Mat." },
+            { t: 'mcq', q: "[Passage: Lost Key] Inference: Why was she worried?", o: ["She was hungry", "She couldn't enter house", "It was raining"], a: "She couldn't enter house", why: "No key = Locked out." },
+            { t: 'text', q: "[Passage: Lost Key] Adjective for key in text:", a: "Shiny", why: "Something shiny." },
+            { t: 'tf', q: "[Passage: Lost Key] Mina is the main character.", a: "True", why: "Story follows her." },
+            { t: 'mcq', q: "[Passage: Lost Key] Meaning of 'Suddenly':", o: ["Slowly", "Quickly/Unexpectedly", "Never"], a: "Quickly/Unexpectedly", why: "Happened fast." },
+            { t: 'fill', q: "[Passage: Lost Key] Opposite of 'Lost' is ___.", a: "found", why: "Lost and found." },
+            { t: 'text', q: "[Passage: Lost Key] Did she find it eventually?", a: "Yes", why: "She jumped with joy." },
+            { t: 'mcq', q: "[Passage: Lost Key] Best Title?", o: ["The Bad Day", "The Lost Key", "Mina's Bag"], a: "The Lost Key", why: "Central problem." },
+
+            // --- PICTURE / VISUAL (Placeholder Text) 61-70 ---
+            { t: 'mcq', q: "[IMG: Boy holding umbrella in rain] Weather is:", o: ["Sunny", "Rainy", "Snowy"], a: "Rainy", why: "Umbrella + Rain." },
+            { t: 'text', q: "[IMG: Girl blowing out candles on cake] Occasion?", a: "Birthday", why: "Cake + Candles." },
+            { t: 'fill', q: "[IMG: Traffic light Red] The cars must ___.", a: "stop", why: "Red means stop." },
+            { t: 'mcq', q: "[IMG: Cat sleeping on rug] The cat is:", o: ["Running", "Sleeping", "Eating"], a: "Sleeping", why: "Eyes closed." },
+            { t: 'tf', q: "[IMG: Clock showing 12:00 PM with Sun] It is midnight.", a: "False", why: "Sun implies Noon." },
+            { t: 'text', q: "[IMG: Kids building sandcastle] Location?", a: "Beach", why: "Sand + Sea." },
+            { t: 'mcq', q: "[IMG: Doctor with stethoscope] Person's job?", o: ["Teacher", "Doctor", "Pilot"], a: "Doctor", why: "Medical tool." },
+            { t: 'fill', q: "[IMG: Tree with orange leaves falling] Season is ___.", a: "autumn", why: "Falling leaves." },
+            { t: 'tf', q: "[IMG: Empty plate with crumbs] The food was eaten.", a: "True", why: "Plate is empty." },
+            { t: 'mcq', q: "[IMG: Dog barking at a stranger] The dog is acting:", o: ["Friendly", "Protective", "Sleepy"], a: "Protective", why: "Barking at stranger." }
+        ];
+
+        // 4. LONG ANSWER DATA (10)
+        const longQs = [
+            { id: 1, q: "Read: 'It was Diwali. Rohan wore new clothes. He ate sweets and lit lamps.'<br>Why was Rohan happy? Write 2 reasons based on the text.", keywords: ["diwali", "new clothes", "sweets", "festival", "lamps"], model: "Rohan was happy because it was Diwali, he wore new clothes, and ate sweets." },
+            { id: 2, q: "Read: 'The library was very quiet. Tina wanted to ask for a book, but she didn't want to make noise.'<br>What should Tina do? How should she speak?", keywords: ["whisper", "softly", "quietly", "silent", "low voice"], model: "Tina should whisper or speak very softly to the librarian." },
+            { id: 3, q: "Read: 'The sky turned dark grey. Strong winds started blowing. Birds flew back to their nests.'<br>Predict what will happen next. Why do you think so?", keywords: ["rain", "storm", "thunderstorm", "dark", "wind"], model: "It is going to rain or storm because the sky is dark and birds are hiding." },
+            { id: 4, q: "Look at the title: 'The Boy Who Cried Wolf'.<br>What do you think this story is about? What is the moral?", keywords: ["lie", "liar", "truth", "wolf", "believe"], model: "It is about a boy who lies. The moral is: If you lie, people won't believe you even when you speak the truth." },
+            { id: 5, q: "Read: 'Sam has a bat. He needs a partner to play.'<br>What game does Sam want to play? What equipment is missing?", keywords: ["cricket", "ball", "wickets"], model: "Sam wants to play cricket. He is missing a ball and wickets." },
+            { id: 6, q: "Explain the difference between 'Skimming' and 'Scanning' with an example from daily life.", keywords: ["quick", "idea", "specific", "search", "detail"], model: "Skimming is reading fast for the main idea (newspaper headlines). Scanning is looking for specific info (finding a number in a phone book)." },
+            { id: 7, q: "Read: 'Alice fell down the rabbit hole. She saw a talking rabbit.'<br>Is this a real story or a fantasy? Give one reason.", keywords: ["fantasy", "fiction", "imaginary", "talking rabbit", "real"], model: "It is a fantasy because rabbits cannot talk in real life." },
+            { id: 8, q: "Poem: 'The sun goes down, the stars come out.'<br>What time of day is it? How is the atmosphere changing?", keywords: ["night", "evening", "dark", "sunset"], model: "It is evening or night time. It is getting dark." },
+            { id: 9, q: "Read: 'Mother put the ice cream in the cupboard.'<br>What is wrong with this sentence? What will happen?", keywords: ["melt", "freezer", "fridge", "wrong place"], model: "Ice cream should be in the freezer. If put in a cupboard, it will melt." },
+            { id: 10, q: "Imagine you are in a market. Write 3 sentences about what you see and hear using sensory words (loud, colorful, smell).", keywords: ["loud", "noise", "smell", "see", "hear", "buy"], model: "I see colorful fruits. I hear loud sellers shouting. I smell fresh vegetables." }
+        ];
+
+        // --- STATE MANAGEMENT ---
+        let score = { correct: 0, wrong: 0, marks: 0 };
+        let currentPQIndex = 0;
+        let longQsAttempted = 0;
+
+        // --- DOM ELEMENTS ---
+        const startBtn = document.getElementById('startBtn');
+        const notesContainer = document.getElementById('notesContainer');
+        const impContainer = document.getElementById('impContainer');
+        const practiceContainer = document.getElementById('qArea');
+        const longContainer = document.getElementById('longContainer');
+        const feedbackArea = document.getElementById('feedbackArea');
+        const nextBtn = document.getElementById('nextBtn');
+        const revToggle = document.getElementById('revToggle');
+        const revSheet = document.getElementById('revSheet');
+
+        // --- INITIALIZATION ---
+        window.onload = function() {
+            renderNotes();
+            renderImpQs();
+            renderPracticeQ();
+            renderLongQs();
+        };
+
+        startBtn.addEventListener('click', () => {
+            document.getElementById('notesSection').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        revToggle.addEventListener('click', () => {
+            if(revSheet.style.display === 'block') {
+                revSheet.style.display = 'none';
+            } else {
+                revSheet.style.display = 'block';
+                revSheet.classList.add('fade-in');
+            }
+        });
+
+        // --- SCORE UPDATE FUNCTION ---
+        function updateScorePanel(isCorrect, isLong = false, marks = 0) {
+            if (!isLong) {
+                if(isCorrect) {
+                    score.correct++;
+                    score.marks += 1; // 1 Mark for short Qs
+                } else {
+                    score.wrong++;
+                }
+            } else {
+                // Long Answer Logic
+                score.correct++; // Count as correct attempted
+                score.marks += marks;
+            }
+
+            const total = score.correct + score.wrong;
+            const percentage = total === 0 ? 0 : Math.round((score.correct / total) * 100);
+
+            document.getElementById('scoreCorrect').innerText = score.correct;
+            document.getElementById('scoreWrong').innerText = score.wrong;
+            document.getElementById('scorePercent').innerText = percentage + "%";
+            document.getElementById('scoreMarks').innerText = score.marks;
+            document.getElementById('longProgress').innerText = longQsAttempted + "/10";
+        }
+
+        // --- RENDER NOTES ---
+        function renderNotes() {
+            notesData.forEach(note => {
+                const card = document.createElement('div');
+                card.className = `note-card ${note.color}`;
+                card.innerHTML = `
+                    <h3>${note.title}</h3>
+                    <p>${note.content}</p>
+                    <div class="note-img-placeholder">[IMAGE: ${note.title} Visual]</div>
+                    <p><strong>Example:</strong> ${note.example}</p>
+                    <div class="note-tip">💡 <strong>Tip:</strong> ${note.tip}</div>
+                    <div class="quick-check">
+                        <strong>❓ Check:</strong> ${note.check}
+                        <button style="margin-top:5px; font-size:0.8rem; display:block;" onclick="this.nextElementSibling.style.display='block'">Show Answer</button>
+                        <div class="qc-ans">${note.checkAns}</div>
+                    </div>
+                `;
+                notesContainer.appendChild(card);
+            });
+        }
+
+        // --- RENDER IMP QUESTIONS ---
+        function renderImpQs() {
+            impQs.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'imp-card';
+                card.onclick = function() {
+                    const ans = this.querySelector('.imp-ans');
+                    ans.style.display = ans.style.display === 'block' ? 'none' : 'block';
+                };
+                card.innerHTML = `
+                    <div><strong>Q${index + 1}:</strong> ${item.q}</div>
+                    <div class="imp-ans">
+                        <strong>Ans:</strong> ${item.a}<br>
+                        <small><em>(${item.exp})</em></small>
+                    </div>
+                `;
+                impContainer.appendChild(card);
+            });
+        }
+
+        // --- PRACTICE QUESTIONS LOGIC ---
+        function renderPracticeQ() {
+            if (currentPQIndex >= practiceQs.length) {
+                practiceContainer.innerHTML = "<h3>🎉 You have completed all Practice Questions! Great Job!</h3>";
+                nextBtn.style.display = 'none';
+                feedbackArea.style.display = 'none';
+                return;
+            }
+
+            const q = practiceQs[currentPQIndex];
+            document.getElementById('qNum').innerText = `Question ${currentPQIndex + 1}/${practiceQs.length}`;
+            
+            // Difficulty Label
+            let diff = "Basic";
+            if(currentPQIndex > 15) diff = "Medium (Passage)";
+            if(currentPQIndex > 45) diff = "Advanced";
+            document.getElementById('qDifficulty').innerText = diff;
+
+            feedbackArea.style.display = 'none';
+            nextBtn.style.display = 'none';
+
+            let html = `<div class="question-text fade-in">${q.q}</div><div class="options-grid">`;
+
+            if (q.t === 'mcq') {
+                q.o.forEach(opt => {
+                    html += `<button class="option-btn" onclick="checkPQ(this, '${opt.replace(/'/g, "\\'")}')">${opt}</button>`;
+                });
+            } else if (q.t === 'tf') {
+                html += `<button class="option-btn" onclick="checkPQ(this, 'True')">True</button>`;
+                html += `<button class="option-btn" onclick="checkPQ(this, 'False')">False</button>`;
+            } else {
+                html += `<input type="text" id="textAns" placeholder="Type answer..." style="padding:10px; font-size:1.2rem; border:2px solid #ccc; width:100%;">
+                         <button class="start-btn" style="margin-top:10px; font-size:1rem;" onclick="checkPQText()">Submit</button>`;
+            }
+            html += `</div>`;
+            practiceContainer.innerHTML = html;
+        }
+
+        function checkPQ(btn, ans) {
+            const q = practiceQs[currentPQIndex];
+            const allBtns = document.querySelectorAll('.option-btn');
+            allBtns.forEach(b => b.disabled = true);
+
+            if (ans === q.a) {
+                btn.classList.add('correct');
+                showFeedback(true, q.why);
+                updateScorePanel(true);
+            } else {
+                btn.classList.add('wrong');
+                showFeedback(false, q.why, q.a);
+                updateScorePanel(false);
+            }
+        }
+
+        function checkPQText() {
+            const userAns = document.getElementById('textAns').value.trim();
+            const q = practiceQs[currentPQIndex];
+            const btn = document.querySelector('#qArea button');
+            btn.disabled = true;
+
+            if (userAns.toLowerCase() === q.a.toLowerCase()) {
+                showFeedback(true, q.why);
+                updateScorePanel(true);
+            } else {
+                showFeedback(false, q.why, q.a);
+                updateScorePanel(false);
+            }
+        }
+
+        function showFeedback(isCorrect, explanation, correctAns = "") {
+            feedbackArea.style.display = 'block';
+            if (isCorrect) {
+                feedbackArea.className = 'feedback-box feedback-correct';
+                feedbackArea.innerHTML = `<strong>Excellent ⭐</strong><br>${explanation}`;
+            } else {
+                feedbackArea.className = 'feedback-box feedback-wrong';
+                feedbackArea.innerHTML = `<strong>Try Again!</strong><br>Correct Answer: <strong>${correctAns}</strong><br>Reason: ${explanation}`;
+            }
+            nextBtn.style.display = 'inline-block';
+        }
+
+        nextBtn.addEventListener('click', () => {
+            currentPQIndex++;
+            renderPracticeQ();
+        });
+
+        // --- LONG QUESTIONS LOGIC ---
+        function renderLongQs() {
+            longQs.forEach(q => {
+                const card = document.createElement('div');
+                card.className = 'long-q-card';
+                card.innerHTML = `
+                    <div style="font-size:1.1rem; margin-bottom:10px;"><strong>Q${q.id}:</strong> ${q.q}</div>
+                    <textarea class="long-input" id="longAns${q.id}" placeholder="Type your answer here..."></textarea>
+                    <button class="check-long-btn" onclick="checkLong(${q.id})">Check Answer</button>
+                    <div class="long-feedback" id="longFb${q.id}"></div>
+                `;
+                longContainer.appendChild(card);
+            });
+        }
+
+        function checkLong(id) {
+            const qData = longQs.find(q => q.id === id);
+            const userAns = document.getElementById(`longAns${id}`).value.toLowerCase();
+            const feedbackDiv = document.getElementById(`longFb${id}`);
+            const btn = event.target;
+
+            if(userAns.length < 5) {
+                alert("Please write a longer answer!");
+                return;
+            }
+
+            // Keyword matching logic
+            let matchCount = 0;
+            qData.keywords.forEach(key => {
+                if(userAns.includes(key.toLowerCase())) matchCount++;
+            });
+
+            btn.disabled = true;
+            feedbackDiv.style.display = 'block';
+            longQsAttempted++;
+
+            let marks = 0;
+            if (matchCount >= 2) marks = 5;
+            else if (matchCount === 1) marks = 3;
+            else marks = 1;
+
+            let status = marks === 5 ? "Excellent! ✅" : "Good Attempt ⚠";
+            
+            feedbackDiv.innerHTML = `
+                <strong>${status}</strong> (Marks: ${marks}/5)<br>
+                Your answer should include concepts like: ${qData.keywords.join(", ")}.<br><br>
+                <strong>Model Answer:</strong> ${qData.model}
+            `;
+
+            updateScorePanel(true, true, marks);
+        }
+
+    </script>
+</body>
+</html>
