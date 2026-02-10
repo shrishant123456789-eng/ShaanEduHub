@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 5 - Ch 10: Cloud Computing & Digital Services</title>
+    <style>
+        :root {
+            --bg-paper: #fdfbf7;
+            --line-color: #a2d5f2;
+            --text-color: #2c3e50;
+            --primary: #4a90e2;
+            --success: #27ae60;
+            --danger: #c0392b;
+            --warning: #f39c12;
+            --card-bg: #ffffff;
+            --font-stack: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-stack);
+            background-color: var(--bg-paper);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            background-image: linear-gradient(var(--line-color) 1px, transparent 1px);
+            background-size: 100% 1.5rem; /* Notebook lines */
+            font-weight: bold;
+        }
+
+        /* UTILITIES */
+        .hidden { display: none !important; }
+        .center { text-align: center; }
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: 2px solid #000;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-family: var(--font-stack);
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.2);
+            transition: transform 0.1s;
+            margin: 5px;
+        }
+        .btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0px rgba(0,0,0,0.2); }
+        .btn-check { background: var(--success); }
+        .btn-next { background: var(--warning); color: black; }
+
+        /* HEADER */
+        header {
+            background: #ffeaa7;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 3px solid #000;
+        }
+        h1 { margin: 0; font-size: 1.5rem; text-transform: uppercase; letter-spacing: 1px; }
+        h2 { font-size: 1.1rem; margin-top: 5px; color: #555; }
+
+        /* SCORE PANEL */
+        #score-panel {
+            position: sticky;
+            top: 0;
+            background: #2d3436;
+            color: #fff;
+            padding: 8px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            font-size: 0.9rem;
+            z-index: 1000;
+            border-bottom: 2px solid #000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .score-item span { color: #fab1a0; }
+
+        /* SECTIONS */
+        section {
+            padding: 15px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .section-title {
+            background: #000;
+            color: #fff;
+            padding: 5px 15px;
+            display: inline-block;
+            transform: rotate(-1deg);
+            margin: 20px 0 10px 0;
+            border-radius: 3px;
+        }
+
+        /* NOTES CARDS */
+        .note-card {
+            background: #fff;
+            border: 2px solid #000;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+        }
+        .note-card h3 { margin-top: 0; color: var(--primary); text-decoration: underline; }
+        .example-box { background: #e0f7fa; padding: 10px; border-radius: 5px; margin: 10px 0; border: 1px dashed #00bcd4; }
+        .memory-tip { background: #fff9c4; padding: 10px; border-radius: 5px; border: 1px solid #fbc02d; }
+        .img-placeholder {
+            width: 100%;
+            height: 150px;
+            background: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #aaa;
+            color: #777;
+            margin: 10px 0;
+        }
+
+        /* IMPORTANT QUESTIONS */
+        .imp-q-item {
+            background: #ffebee;
+            border-left: 5px solid var(--danger);
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        /* PRACTICE QUESTIONS */
+        #practice-container {
+            background: #fff;
+            padding: 20px;
+            border: 3px solid #000;
+            border-radius: 15px;
+            min-height: 300px;
+        }
+        .option-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 12px;
+            margin: 8px 0;
+            background: #f0f0f0;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: var(--font-stack);
+            font-weight: bold;
+        }
+        .option-btn:hover { background: #e0e0e0; }
+        .option-btn.correct { background: #d4edda; border-color: #28a745; }
+        .option-btn.wrong { background: #f8d7da; border-color: #dc3545; }
+        .feedback { margin-top: 15px; padding: 10px; border-radius: 5px; }
+        .feedback.success { background: #d4edda; color: #155724; }
+        .feedback.error { background: #f8d7da; color: #721c24; }
+
+        /* LONG QUESTIONS */
+        .long-q-card {
+            background: #f3e5f5;
+            border: 2px solid #8e24aa;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #aaa;
+            border-radius: 5px;
+            font-family: var(--font-stack);
+            font-size: 1rem;
+        }
+        .keyword-feedback { font-size: 0.9rem; color: #555; margin-top: 10px; }
+        .missing-points { color: var(--danger); }
+
+        /* REVISION */
+        #revision-content ul { list-style-type: square; }
+        #revision-content li { margin-bottom: 8px; }
+
+        /* FOOTER */
+        footer {
+            background: #2d3436;
+            color: #dfe6e9;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Class 5 Computer</h1>
+        <h2>Ch 10: Cloud Computing & Digital Services</h2>
+    </header>
+
+    <div id="score-panel">
+        <div class="score-item">Correct: <span id="score-correct">0</span></div>
+        <div class="score-item">Wrong: <span id="score-wrong">0</span></div>
+        <div class="score-item">Total: <span id="score-total">0</span></div>
+        <div class="score-item">Score: <span id="score-marks">0</span></div>
+    </div>
+
+    <!-- NOTES SECTION -->
+    <section id="notes-section">
+        <h2 class="section-title">📘 Study Notes</h2>
+
+        <!-- Topic 1 -->
+        <div class="note-card">
+            <h3>1. Cloud Computing Concept</h3>
+            <div class="img-placeholder">[Image: A cloud connecting phone, laptop, and tablet]</div>
+            <p><strong>Definition:</strong> Cloud computing means storing and accessing data (files, photos, games) over the internet instead of your computer's hard drive.</p>
+            <p><strong>Explanation:</strong> Imagine a "digital bag" that follows you everywhere. You don't carry the bag; it floats in the internet "cloud".</p>
+            <div class="example-box">🇮🇳 <strong>Example:</strong> Watching cartoons on YouTube. The video is not on your phone; it is streamed from the YouTube cloud.</div>
+            <div class="memory-tip">☁️ Cloud = Internet Storage (Not the sky!)</div>
+            <p><em>Quick Check: Is the cloud inside your CPU? (No)</em></p>
+        </div>
+
+        <!-- Topic 2 -->
+        <div class="note-card">
+            <h3>2. Online Storage</h3>
+            <div class="img-placeholder">[Image: Icons of Google Drive and OneDrive]</div>
+            <p><strong>Definition:</strong> Services that let you save files on the internet.</p>
+            <p><strong>Common Examples:</strong>
+                <br>- <strong>Google Drive:</strong> Gives 15GB free space. Linked to Gmail.
+                <br>- <strong>Microsoft OneDrive:</strong> Linked to Windows and Outlook.
+            </p>
+            <div class="example-box">🇮🇳 <strong>Example:</strong> Saving your holiday photos on Google Photos so they don't get lost if you lose your phone.</div>
+            <div class="memory-tip">📦 Think of it as a "Digital Locker".</div>
+        </div>
+
+        <!-- Topic 3 -->
+        <div class="note-card">
+            <h3>3. Advantages of Cloud</h3>
+            <div class="img-placeholder">[Image: Accessibility icon, Cost saver icon]</div>
+            <p><strong>1. Cost Saving:</strong> No need to buy expensive hard disks.</p>
+            <p><strong>2. Accessibility:</strong> Open files from any computer or mobile.</p>
+            <p><strong>3. Backup:</strong> Data is safe even if your device breaks.</p>
+            <div class="example-box">🇮🇳 <strong>Example:</strong> A student doing homework on a school computer and finishing it at home without a pen drive.</div>
+            <div class="memory-tip">💪 Safe, Cheap, Everywhere.</div>
+        </div>
+
+        <!-- Topic 4 -->
+        <div class="note-card">
+            <h3>4. Online Collaboration</h3>
+            <div class="img-placeholder">[Image: Multiple cursors on one document]</div>
+            <p><strong>Definition:</strong> Many people working on the same file at the same time from different places.</p>
+            <p><strong>Explanation:</strong> Using tools like Google Docs, you and your friend can type in the same story together.</p>
+            <div class="example-box">🇮🇳 <strong>Example:</strong> Students making a group project presentation while sitting in their own homes.</div>
+            <div class="memory-tip">🤝 Teamwork over Internet.</div>
+        </div>
+
+        <!-- Topic 5 -->
+        <div class="note-card">
+            <h3>5. Digital Payments (UPI)</h3>
+            <div class="img-placeholder">[Image: QR Code and UPI Logo]</div>
+            <p><strong>Definition:</strong> Paying money directly from a bank account using a mobile app, without cash.</p>
+            <p><strong>Key Terms:</strong> UPI (Unified Payments Interface), QR Code (Quick Response), PIN.</p>
+            <div class="example-box">🇮🇳 <strong>Example:</strong> Buying vegetables and paying by scanning a Paytm or PhonePe QR code.</div>
+            <div class="memory-tip">💳 Cashless India. Never share your PIN! 🔒</div>
+        </div>
+
+        <!-- Topic 6 -->
+        <div class="note-card">
+            <h3>6. Digital India Initiative</h3>
+            <div class="img-placeholder">[Image: Digital India Logo]</div>
+            <p><strong>Definition:</strong> A program by the Government of India to make government services available electronically.</p>
+            <p><strong>Goal:</strong> To empower citizens with technology.</p>
+            <div class="example-box">🇮🇳 <strong>Example:</strong> Using DigiLocker to show your driving license on your phone instead of carrying the card.</div>
+            <div class="memory-tip">🇮🇳 Power to the People via Tech.</div>
+        </div>
+    </section>
+
+    <!-- IMPORTANT QUESTIONS SECTION -->
+    <section id="important-questions">
+        <h2 class="section-title">❓ Important Questions (Read Only)</h2>
+        <div id="imp-q-list">
+            <!-- Populated by JS -->
+        </div>
+    </section>
+
+    <!-- PRACTICE QUESTIONS SECTION -->
+    <section id="practice-section">
+        <h2 class="section-title">🎯 Practice Zone</h2>
+        <div id="practice-container">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                <span>Question <span id="current-q-num">1</span>/70</span>
+                <span>Type: <span id="q-type-label">MCQ</span></span>
+            </div>
+            <div id="question-text" style="font-size: 1.1rem; margin-bottom: 15px;"></div>
+            <div id="img-container" style="display:none; text-align:center; margin-bottom:15px;" class="img-placeholder"></div>
+            <div id="options-container"></div>
+            <div id="feedback-area" class="feedback hidden"></div>
+            <button id="next-btn" class="btn btn-next hidden" onclick="nextQuestion()">Next Question ➡️</button>
+        </div>
+    </section>
+
+    <!-- ADVANCED LONG QUESTIONS -->
+    <section id="long-answer-section">
+        <h2 class="section-title">🧠 Advanced Challenges</h2>
+        <p>Type your answer and click check. Keywords are checked!</p>
+        <div id="long-q-container">
+            <!-- Populated by JS -->
+        </div>
+    </section>
+
+    <!-- REVISION SECTION -->
+    <section id="revision-section">
+        <h2 class="section-title">🔁 Quick Revision</h2>
+        <button class="btn" onclick="toggleRevision()">Show/Hide Summary</button>
+        <div id="revision-content" class="hidden" style="background: #fff; padding: 15px; border-radius: 10px; margin-top: 10px; border: 2px solid #000;">
+            <ul>
+                <li><strong>Cloud Computing:</strong> Internet-based storage and services.</li>
+                <li><strong>Storage:</strong> Google Drive, OneDrive (Save files online).</li>
+                <li><strong>Advantages:</strong> Access anywhere, cost-effective, data backup.</li>
+                <li><strong>Collaboration:</strong> Working together online (Google Docs).</li>
+                <li><strong>Digital Payment:</strong> Cashless transactions (UPI, QR Codes).</li>
+                <li><strong>Digital India:</strong> Government services online (DigiLocker).</li>
+                <li><strong>Safety:</strong> Never share OTP or PIN.</li>
+            </ul>
+        </div>
+    </section>
+
+    <footer>
+        <p>Designed & Created by SHRISHANT YADAV</p>
+        <p>ShanEduHub</p>
+    </footer>
+
+    <script>
+        // --- DATA ---
+        
+        const impQuestions = [
+            { q: "What is Cloud Computing?", a: "It is the delivery of computing services like storage and databases over the internet." },
+            { q: "Name two popular cloud storage services.", a: "Google Drive and Microsoft OneDrive." },
+            { q: "What is the full form of UPI?", a: "Unified Payments Interface." },
+            { q: "Which initiative aims to transform India into a digitally empowered society?", a: "Digital India." },
+            { q: "What is a QR Code?", a: "Quick Response Code, a two-dimensional barcode used for digital payments." },
+            { q: "Is the data stored in the cloud safe from physical damage to your computer?", a: "Yes, because it is stored on remote servers." },
+            { q: "What is Google Docs used for?", a: "It is used for online document creation and real-time collaboration." },
+            { q: "What is DigiLocker?", a: "A government app to store digital versions of official documents." },
+            { q: "Why should we not share our UPI PIN?", a: "Sharing the PIN allows others to steal money from our bank account." },
+            { q: "Does cloud computing require the internet?", a: "Yes, a stable internet connection is required." },
+            { q: "What is 'real-time collaboration'?", a: "Working together on a document at the exact same moment." },
+            { q: "Name an advantage of cloud computing regarding cost.", a: "It reduces the cost of buying physical hardware like hard drives." },
+            { q: "What is BHIM?", a: "A digital payment app developed by NPCI (Bharat Interface for Money)." },
+            { q: "Can you access cloud files from a different country?", a: "Yes, as long as you have internet access." },
+            { q: "What is an OTP?", a: "One Time Password, used for security verification." },
+            { q: "Who owns OneDrive?", a: "Microsoft." },
+            { q: "What is e-Hospital?", a: "An online registration system for government hospitals in India." },
+            { q: "Is a pen drive an example of cloud storage?", a: "No, a pen drive is local/physical storage." },
+            { q: "What symbol represents cloud computing?", a: "A cloud icon." },
+            { q: "Do you need a Google account for Google Drive?", a: "Yes." },
+            { q: "What is the main benefit of digital payments?", a: "Convenience and not needing to carry cash." },
+            { q: "Can we store videos on the cloud?", a: "Yes, videos, photos, and documents can be stored." },
+            { q: "What is 'syncing'?", a: "Updating files across all devices automatically." },
+            { q: "Is Digital India a private company initiative?", a: "No, it is a Government of India initiative." },
+            { q: "What is UMANG?", a: "An app to access multiple government services." },
+            { q: "Can multiple people edit a Google Sheet at once?", a: "Yes." },
+            { q: "What happens if you forget your cloud password?", a: "You may lose access unless you recover it using email/phone." },
+            { q: "Is cloud storage infinite?", a: "No, there are limits (e.g., 15GB free on Google), but you can buy more." },
+            { q: "What is a 'server' in cloud computing?", a: "A powerful computer that stores and manages data on the internet." },
+            { q: "What does 'downloading' mean?", a: "Copying data from the cloud to your local device." }
+        ];
+
+        const practiceData = [
+            // MIXED TYPES: MCQ, T/F, Fill Blanks, One Word.
+            // 70 Questions.
+            // MCQs distributed A, B, C, D.
+            
+            // Topic 1: Cloud Concept
+            { id: 1, type: "MCQ", q: "Where is data stored in Cloud Computing?", options: ["Hard Disk", "Internet Servers", "Pen Drive", "CD Rom"], ans: "Internet Servers", exp: "Cloud means storing on internet servers." },
+            { id: 2, type: "TF", q: "Cloud computing works without the internet.", options: ["True", "False"], ans: "False", exp: "Cloud requires internet connectivity." },
+            { id: 3, type: "Fill", q: "Cloud computing is like a digital ______.", options: ["Locker", "Car", "Tree", "Shoe"], ans: "Locker", exp: "It stores things safely like a locker." },
+            { id: 4, type: "MCQ", q: "Which of these is NOT a cloud service?", options: ["Google Drive", "OneDrive", "Your Pen Drive", "Dropbox"], ans: "Your Pen Drive", exp: "A pen drive is physical storage." },
+            { id: 5, type: "OneWord", q: "What symbol is used for internet storage?", options: ["Sun", "Cloud", "Star", "Moon"], ans: "Cloud", exp: "The Cloud icon represents it." },
+            
+            // Topic 2: Online Storage
+            { id: 6, type: "MCQ", q: "Who provides Google Drive?", options: ["Microsoft", "Google", "Apple", "Amazon"], ans: "Google", exp: "It is a Google service." },
+            { id: 7, type: "MCQ", q: "How much free space does Google Drive offer?", options: ["2 GB", "5 GB", "10 GB", "15 GB"], ans: "15 GB", exp: "Google gives 15GB free." },
+            { id: 8, type: "MCQ", q: "OneDrive is a product of which company?", options: ["Microsoft", "IBM", "Intel", "Dell"], ans: "Microsoft", exp: "OneDrive is by Microsoft." },
+            { id: 9, type: "TF", q: "You can save photos on Google Photos.", options: ["True", "False"], ans: "True", exp: "Google Photos is a cloud storage for images." },
+            { id: 10, type: "MCQ", q: "Which requires a Gmail account?", options: ["iCloud", "Google Drive", "OneDrive", "Dropbox"], ans: "Google Drive", exp: "Gmail is the key to Google services." },
+            
+            // Topic 3: Advantages
+            { id: 11, type: "MCQ", q: "What is a major advantage of the cloud?", options: ["Expensive", "Hard to use", "Access Anywhere", "Heavy"], ans: "Access Anywhere", exp: "You can reach your files from any device." },
+            { id: 12, type: "Fill", q: "Cloud storage acts as a ______ for your data.", options: ["Backup", "Virus", "Burden", "Lock"], ans: "Backup", exp: "It keeps a copy safe." },
+            { id: 13, type: "MCQ", q: "Does cloud storage save physical space?", options: ["No", "Yes", "Maybe", "Only on Mondays"], ans: "Yes", exp: "You don't need physical drives." },
+            { id: 14, type: "TF", q: "If you lose your phone, you lose your cloud data.", options: ["True", "False"], ans: "False", exp: "Data is on the server, not the phone." },
+            { id: 15, type: "MCQ", q: "Cloud computing is ______ effective.", options: ["Cost", "Taste", "Color", "Sound"], ans: "Cost", exp: "It saves money on hardware." },
+            
+            // Topic 4: Collaboration
+            { id: 16, type: "MCQ", q: "Which tool allows typing together?", options: ["Paint", "Calculator", "Google Docs", "Notepad"], ans: "Google Docs", exp: "Docs allows real-time collaboration." },
+            { id: 17, type: "OneWord", q: "Working together on a file is called?", options: ["Fighting", "Sleeping", "Collaboration", "Driving"], ans: "Collaboration", exp: "Collaboration means working together." },
+            { id: 18, type: "TF", q: "You need internet to collaborate on Google Docs.", options: ["True", "False"], ans: "True", exp: "Real-time updates need internet." },
+            { id: 19, type: "MCQ", q: "Can two people edit a slide at the same time?", options: ["Yes", "No", "Only on Sundays", "Never"], ans: "Yes", exp: "Concurrent editing is possible." },
+            { id: 20, type: "MCQ", q: "Which is a collaboration tool?", options: ["Google Sheets", "MS Paint", "Solitaire", "Windows Media Player"], ans: "Google Sheets", exp: "Sheets is online and collaborative." },
+
+            // Topic 5: Digital Payments
+            { id: 21, type: "MCQ", q: "What does UPI stand for?", options: ["United Pay India", "Unified Payments Interface", "Unique Pay ID", "Ultra Pay Internet"], ans: "Unified Payments Interface", exp: "Standard full form." },
+            { id: 22, type: "MCQ", q: "What do you scan to pay?", options: ["Bar Code", "QR Code", "Pin Code", "Zip Code"], ans: "QR Code", exp: "Quick Response (QR) code." },
+            { id: 23, type: "TF", q: "You should share your UPI PIN with strangers.", options: ["True", "False"], ans: "False", exp: "NEVER share your PIN." },
+            { id: 24, type: "MCQ", q: "Which app is used for payments?", options: ["YouTube", "PhonePe", "Candy Crush", "Camera"], ans: "PhonePe", exp: "PhonePe is a payment app." },
+            { id: 25, type: "Fill", q: "Digital payments are ______ transactions.", options: ["Cashless", "Paper", "Heavy", "Slow"], ans: "Cashless", exp: "No physical cash is used." },
+            { id: 26, type: "OneWord", q: "Secret number needed for transaction?", options: ["OTP", "PIN", "Name", "Date"], ans: "PIN", exp: "Personal Identification Number." },
+            { id: 27, type: "MCQ", q: "Is BHIM an Indian app?", options: ["No", "Yes", "Maybe", "Don't Know"], ans: "Yes", exp: "Developed by NPCI, India." },
+            { id: 28, type: "TF", q: "Digital payments are available 24/7.", options: ["True", "False"], ans: "True", exp: "You can pay anytime." },
+            { id: 29, type: "MCQ", q: "To receive money, do you need to enter your PIN?", options: ["Yes", "No", "Sometimes", "Always"], ans: "No", exp: "PIN is only for SENDING money." },
+            { id: 30, type: "MCQ", q: "What is safer?", options: ["Carrying lots of cash", "Using UPI with a PIN", "Leaving wallet open", "Writing PIN on card"], ans: "Using UPI with a PIN", exp: "Digital with security is safer." },
+
+            // Topic 6: Digital India
+            { id: 31, type: "MCQ", q: "Digital India is a ______ initiative.", options: ["Private", "Government", "School", "Foreign"], ans: "Government", exp: "Launched by Govt of India." },
+            { id: 32, type: "MCQ", q: "DigiLocker is used to store?", options: ["Clothes", "Food", "Documents", "Toys"], ans: "Documents", exp: "Digital documents." },
+            { id: 33, type: "TF", q: "E-Hospital allows online appointments.", options: ["True", "False"], ans: "True", exp: "It connects patients to hospitals." },
+            { id: 34, type: "MCQ", q: "The goal of Digital India is to ______ citizens.", options: ["Scare", "Empower", "Confuse", "Sleep"], ans: "Empower", exp: "Empowerment through technology." },
+            { id: 35, type: "Fill", q: "UMANG app provides ______ services.", options: ["Government", "Gaming", "Cooking", "Dancing"], ans: "Government", exp: "Unified Mobile Application for New-age Governance." },
+
+            // Advanced Mixed / Reasoning
+            { id: 36, type: "MCQ", q: "If internet stops, can you open a Google Doc?", options: ["Yes, always", "No, unless offline mode is set", "Yes, magically", "None"], ans: "No, unless offline mode is set", exp: "Cloud usually needs internet." },
+            { id: 37, type: "MCQ", q: "Which is the odd one out?", options: ["Google Drive", "OneDrive", "Dropbox", "MS Paint"], ans: "MS Paint", exp: "MS Paint is local software, others are cloud." },
+            { id: 38, type: "MCQ", q: "A QR code looks like:", options: ["Lines only", "A square of black dots", "A circle", "A triangle"], ans: "A square of black dots", exp: "It is a square matrix barcode." },
+            { id: 39, type: "TF", q: "You can use cloud computing on a smartphone.", options: ["True", "False"], ans: "True", exp: "Mobile apps access the cloud." },
+            { id: 40, type: "MCQ", q: "Best password practice:", options: ["123456", "Your Name", "Strong and Secret", "Birthday"], ans: "Strong and Secret", exp: "Prevents hacking." },
+            
+            // More Practice (Targeting 70)
+            { id: 41, type: "MCQ", q: "Who launched Digital India?", options: ["PM of India", "President of USA", "Queen of UK", "CEO of Google"], ans: "PM of India", exp: "Prime Minister launched it." },
+            { id: 42, type: "Fill", q: "Google Slides is used for ______.", options: ["Presentations", "Calculations", "Painting", "Singing"], ans: "Presentations", exp: "Like PowerPoint." },
+            { id: 43, type: "MCQ", q: "Can you collaborate via email?", options: ["Yes, but it's slow", "No", "Impossible", "Email is not digital"], ans: "Yes, but it's slow", exp: "Real-time docs are faster." },
+            { id: 44, type: "OneWord", q: "Electronic mail is called?", options: ["Email", "Gmail", "Post", "Letter"], ans: "Email", exp: "E-mail." },
+            { id: 45, type: "MCQ", q: "1GB is approximately ______ MB.", options: ["100", "500", "1024", "2000"], ans: "1024", exp: "Technical fact." },
+            { id: 46, type: "MCQ", q: "Which is a danger of online payment?", options: ["Speed", "Phishing/Fraud", "Convenience", "Rewards"], ans: "Phishing/Fraud", exp: "Scams are a risk." },
+            { id: 47, type: "TF", q: "You should click on unknown links for money.", options: ["True", "False"], ans: "False", exp: "It is a scam." },
+            { id: 48, type: "MCQ", q: "Cloud servers are located in:", options: ["The Sky", "Data Centers", "Your House", "The Moon"], ans: "Data Centers", exp: "Physical buildings with servers." },
+            { id: 49, type: "MCQ", q: "Which color is the Google Drive logo?", options: ["Red only", "Blue only", "Green/Yellow/Blue", "Black"], ans: "Green/Yellow/Blue", exp: "Tri-color triangle." },
+            { id: 50, type: "MCQ", q: "Can you access cloud data from a library computer?", options: ["Yes", "No", "Only if it's yours", "Never"], ans: "Yes", exp: "Log in via browser." },
+
+            { id: 51, type: "MCQ", q: "What connects you to the cloud?", options: ["Printer", "Internet", "Mouse", "Speaker"], ans: "Internet", exp: "Network connection is key." },
+            { id: 52, type: "MCQ", q: "DropBox is a:", options: ["Game", "Cloud Storage", "Music Player", "Video"], ans: "Cloud Storage", exp: "Storage service." },
+            { id: 53, type: "Fill", q: "Amazon's cloud is called ______.", options: ["AWS", "AZS", "AMS", "APS"], ans: "AWS", exp: "Amazon Web Services." },
+            { id: 54, type: "MCQ", q: "Is Netflix a cloud service?", options: ["No", "Yes", "It's a DVD", "It's a book"], ans: "Yes", exp: "It streams form the cloud." },
+            { id: 55, type: "MCQ", q: "Can we undo changes in Google Docs?", options: ["Yes", "No", "Maybe", "Once only"], ans: "Yes", exp: "Version history exists." },
+            { id: 56, type: "TF", q: "Cloud computing is only for businesses.", options: ["True", "False"], ans: "False", exp: "Individuals use it too." },
+            { id: 57, type: "MCQ", q: "What is OTP used for?", options: ["Verification", "Decorating", "Gaming", "Eating"], ans: "Verification", exp: "Security check." },
+            { id: 58, type: "MCQ", q: "Which allows video meetings?", options: ["Google Meet", "Calculator", "Notepad", "Clock"], ans: "Google Meet", exp: "Cloud video conferencing." },
+            { id: 59, type: "MCQ", q: "Paytm is a:", options: ["Browser", "Digital Wallet", "Search Engine", "Antivirus"], ans: "Digital Wallet", exp: "Payment app." },
+            { id: 60, type: "OneWord", q: "The 'S' in HTTPS stands for?", options: ["Simple", "Secure", "Speed", "Soft"], ans: "Secure", exp: "Secure connection." },
+
+            { id: 61, type: "MCQ", q: "To use cloud, you must:", options: ["Log in", "Jump", "Run", "Sleep"], ans: "Log in", exp: "Authentication is required." },
+            { id: 62, type: "MCQ", q: "Which is a cyber safety rule?", options: ["Share Password", "Keep Password Private", "Post Address", "Trust Everyone"], ans: "Keep Password Private", exp: "Safety first." },
+            { id: 63, type: "MCQ", q: "Can you store songs on OneDrive?", options: ["Yes", "No", "Only text", "Only silent"], ans: "Yes", exp: "Any file type." },
+            { id: 64, type: "TF", q: "Deleting a file on the cloud deletes it everywhere.", options: ["True", "False"], ans: "True", exp: "If synced, yes." },
+            { id: 65, type: "MCQ", q: "Google Forms is used for:", options: ["Surveys/Quizzes", "Drawing", "Music", "Video"], ans: "Surveys/Quizzes", exp: "Data collection." },
+            { id: 66, type: "Fill", q: "Zoom is used for ______.", options: ["Meetings", "Sleeping", "Cooking", "Walking"], ans: "Meetings", exp: "Online meetings." },
+            { id: 67, type: "MCQ", q: "DigiLocker is linked to your:", options: ["Aadhaar", "Toy", "Pet", "Bike"], ans: "Aadhaar", exp: "For verification." },
+            { id: 68, type: "MCQ", q: "Which is fastest?", options: ["Post", "Email", "Pigeon", "Walking"], ans: "Email", exp: "Instant delivery." },
+            { id: 69, type: "MCQ", q: "Can you print from the cloud?", options: ["Yes", "No", "Never", "Maybe"], ans: "Yes", exp: "If printer is connected." },
+            { id: 70, type: "OneWord", q: "The brain of the computer?", options: ["CPU", "Mouse", "Cloud", "Screen"], ans: "CPU", exp: "Basic revision." }
+        ];
+
+        const longQuestions = [
+            { id: 1, q: "Explain how Cloud Computing helps a student in homework.", keywords: ["access", "anywhere", "save", "lose", "share"], model: "1. Access files from home or school.\n2. No fear of losing homework.\n3. Easy to share with teachers." },
+            { id: 2, q: "Why is it important to keep your UPI PIN secret?", keywords: ["theft", "steal", "money", "safe", "hack"], model: "1. Prevents theft of money.\n2. Keeps bank account safe.\n3. Prevents unauthorized transactions." },
+            { id: 3, q: "What is the benefit of DigiLocker for a driver?", keywords: ["license", "carry", "police", "phone", "physical"], model: "1. No need to carry physical license.\n2. Show license on phone.\n3. Valid for police verification." },
+            { id: 4, q: "How does Google Docs help in group projects?", keywords: ["together", "same time", "edit", "remote", "collaborate"], model: "1. Work together at same time.\n2. Edit from different houses.\n3. See changes instantly." },
+            { id: 5, q: "Imagine you lost your phone. How does Google Photos help?", keywords: ["backup", "restore", "safe", "cloud", "new phone"], model: "1. Photos are backed up.\n2. Log in on new phone to see them.\n3. Memories are not lost." },
+            { id: 6, q: "Why is Digital India important for rural areas?", keywords: ["services", "internet", "connect", "village", "online"], model: "1. Brings government services to villages.\n2. Reduces travel to cities.\n3. Improves connectivity." },
+            { id: 7, q: "Difference between Pen Drive and Cloud Storage.", keywords: ["physical", "internet", "lost", "break", "access"], model: "1. Pen drive is physical, Cloud is internet.\n2. Pen drive can be lost, Cloud is safe.\n3. Cloud accessible everywhere." },
+            { id: 8, q: "What precautions should you take while using Online Payments?", keywords: ["pin", "otp", "verify", "stranger", "link"], model: "1. Hide PIN.\n2. Don't share OTP.\n3. Don't click unknown links." },
+            { id: 9, q: "Write three advantages of Cloud Computing.", keywords: ["cost", "backup", "access", "space", "sharing"], model: "1. Cost saving.\n2. Easy Backup.\n3. Access from anywhere." },
+            { id: 10, q: "How has technology changed the way we pay money?", keywords: ["cash", "fast", "mobile", "scan", "bank"], model: "1. Less cash usage.\n2. Faster payments via mobile.\n3. Scan and pay instantly." }
+        ];
+
+        // --- STATE ---
+        let currentQIndex = 0;
+        let score = { correct: 0, wrong: 0, attempted: 0, totalMarks: 0 };
+        const MAX_MARKS = 70 + (10 * 5); // 70 practice + 50 long answer
+        let practiceAnswered = new Array(70).fill(false);
+        let longAnswered = new Array(10).fill(false);
+
+        // --- INIT ---
+        document.addEventListener('DOMContentLoaded', () => {
+            initImpQuestions();
+            renderPracticeQuestion(0);
+            initLongQuestions();
+        });
+
+        // --- FUNCTIONS ---
+
+        function updateScorePanel() {
+            document.getElementById('score-correct').textContent = score.correct;
+            document.getElementById('score-wrong').textContent = score.wrong;
+            document.getElementById('score-total').textContent = score.attempted;
+            document.getElementById('score-marks').textContent = score.totalMarks;
+        }
+
+        function initImpQuestions() {
+            const container = document.getElementById('imp-q-list');
+            impQuestions.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'imp-q-item';
+                div.innerHTML = `<strong>Q${index + 1}: ${item.q}</strong><br><em>Ans: ${item.a}</em>`;
+                container.appendChild(div);
+            });
+        }
+
+        function renderPracticeQuestion(index) {
+            const q = practiceData[index];
+            document.getElementById('current-q-num').textContent = index + 1;
+            document.getElementById('q-type-label').textContent = q.type;
+            document.getElementById('question-text').textContent = q.q;
+            
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            document.getElementById('feedback-area').classList.add('hidden');
+            document.getElementById('next-btn').classList.add('hidden');
+
+            // Handle Image Placeholders if any (currently text only in data, but logic ready)
+            const imgCont = document.getElementById('img-container');
+            if(q.img) {
+                imgCont.textContent = q.img;
+                imgCont.style.display = 'block';
+            } else {
+                imgCont.style.display = 'none';
+            }
+
+            // Shuffle options for rendering, but track correctness
+            // Actually, prompt says "Correct answers distributed A, B, C, D". 
+            // My data has specific "options" array. I will render them as is.
+            
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = opt;
+                btn.onclick = () => checkPracticeAnswer(index, opt, q.ans, q.exp);
+                if (practiceAnswered[index]) btn.disabled = true;
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkPracticeAnswer(qIndex, selected, correct, explanation) {
+            if (practiceAnswered[qIndex]) return;
+            practiceAnswered[qIndex] = true;
+            score.attempted++;
+
+            const optionsBtns = document.querySelectorAll('.option-btn');
+            const feedback = document.getElementById('feedback-area');
+            feedback.classList.remove('hidden');
+
+            let isCorrect = (selected === correct);
+
+            if (isCorrect) {
+                score.correct++;
+                score.totalMarks += 1;
+                feedback.className = 'feedback success';
+                feedback.innerHTML = `<strong>Excellent ⭐</strong><br>${explanation}`;
+            } else {
+                score.wrong++;
+                feedback.className = 'feedback error';
+                feedback.innerHTML = `<strong>Try Again!</strong><br>Correct Answer: ${correct}<br><em>${explanation}</em>`;
+            }
+
+            optionsBtns.forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent === correct) btn.classList.add('correct');
+                if (btn.textContent === selected && !isCorrect) btn.classList.add('wrong');
+            });
+
+            document.getElementById('next-btn').classList.remove('hidden');
+            updateScorePanel();
+        }
+
+        function nextQuestion() {
+            if (currentQIndex < practiceData.length - 1) {
+                currentQIndex++;
+                renderPracticeQuestion(currentQIndex);
+            } else {
+                alert("Practice Section Completed! Try the Advanced Questions.");
+            }
+        }
+
+        function initLongQuestions() {
+            const container = document.getElementById('long-q-container');
+            longQuestions.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'long-q-card';
+                div.innerHTML = `
+                    <h3>Q${index + 1}: ${item.q}</h3>
+                    <textarea id="long-ans-${index}" placeholder="Type your answer here..."></textarea>
+                    <button class="btn btn-check" onclick="checkLongAnswer(${index})">Check Answer</button>
+                    <div id="long-feedback-${index}" class="hidden" style="margin-top:10px; background:#fff; padding:10px; border-radius:5px;"></div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function checkLongAnswer(index) {
+            if (longAnswered[index]) return;
+            
+            const input = document.getElementById(`long-ans-${index}`).value.toLowerCase();
+            if (input.length < 5) {
+                alert("Please write a proper answer.");
+                return;
+            }
+
+            longAnswered[index] = true;
+            score.attempted++;
+            const q = longQuestions[index];
+            const keywords = q.keywords;
+            
+            // Check keywords
+            let foundCount = 0;
+            let foundWords = [];
+            keywords.forEach(k => {
+                if (input.includes(k.toLowerCase())) {
+                    foundCount++;
+                    foundWords.push(k);
+                }
+            });
+
+            // Grading Logic
+            // 0-1 keywords = 0 marks
+            // 2-3 keywords = 3 marks
+            // 4+ keywords = 5 marks
+            let marks = 0;
+            let status = "Needs Improvement";
+            let color = "red";
+
+            if (foundCount >= 4) { marks = 5; status = "Excellent!"; color = "green"; score.correct++; }
+            else if (foundCount >= 2) { marks = 3; status = "Good Attempt"; color = "orange"; score.correct++; }
+            else { marks = 0; score.wrong++; }
+
+            score.totalMarks += marks;
+
+            const feedbackDiv = document.getElementById(`long-feedback-${index}`);
+            feedbackDiv.classList.remove('hidden');
+            feedbackDiv.style.border = `2px solid ${color}`;
+            feedbackDiv.innerHTML = `
+                <strong style="color:${color}">${status} (${marks}/5 Marks)</strong><br>
+                Found Keywords: ${foundWords.join(", ") || "None"}<br>
+                <div class="missing-points">
+                    <strong>Model Points:</strong><br>
+                    <pre style="font-family:inherit; white-space:pre-wrap;">${q.model}</pre>
+                </div>
+            `;
+            
+            // Disable button and textarea
+            document.querySelector(`#long-ans-${index}`).disabled = true;
+            event.target.disabled = true; // Disable button
+
+            updateScorePanel();
+        }
+
+        function toggleRevision() {
+            const el = document.getElementById('revision-content');
+            el.classList.toggle('hidden');
+        }
+
+    </script>
+</body>
+</html>

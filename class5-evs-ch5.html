@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 5: Food, Nutrition and Health</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+
+        :root {
+            --bg-color: #fffdf0;
+            --paper-line: #e3e0cf;
+            --ink-color: #2d3436;
+            --highlight: #fdcb6e;
+            --correct: #00b894;
+            --wrong: #d63031;
+            --accent-blue: #74b9ff;
+            --accent-pink: #fab1a0;
+            --border-style: 2px solid #2d3436;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Patrick Hand', cursive;
+            background-color: var(--bg-color);
+            color: var(--ink-color);
+            margin: 0;
+            padding: 0;
+            font-size: 18px;
+            line-height: 1.6;
+            background-image: linear-gradient(var(--paper-line) 1px, transparent 1px);
+            background-size: 100% 2rem;
+        }
+
+        /* Typography - ALL BOLD per instruction */
+        h1, h2, h3, p, span, div, li, button, input, textarea {
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 3px dashed var(--ink-color);
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #d63031;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Score Panel */
+        #score-panel {
+            position: sticky;
+            top: 0;
+            background: #ffeaa7;
+            padding: 10px;
+            border-bottom: var(--border-style);
+            display: flex;
+            justify-content: space-around;
+            z-index: 100;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            font-size: 1.1rem;
+        }
+
+        .score-item span {
+            color: #d63031;
+            font-size: 1.3rem;
+        }
+
+        /* Sections */
+        section {
+            margin-bottom: 40px;
+            padding: 15px;
+            border: var(--border-style);
+            border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; /* Handwriting border effect */
+            background: white;
+        }
+
+        h2 {
+            background: var(--highlight);
+            display: inline-block;
+            padding: 5px 15px;
+            transform: rotate(-2deg);
+            margin-top: 0;
+            border-radius: 5px;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+        }
+
+        /* Notes Styling */
+        .topic-card {
+            background: #f0f8ff;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--accent-blue);
+            border-radius: 10px;
+        }
+
+        .topic-card:nth-child(even) {
+            background: #fff0f5;
+            border-left-color: var(--accent-pink);
+        }
+
+        .example-box {
+            background: rgba(255, 255, 255, 0.6);
+            padding: 10px;
+            border: 1px dashed var(--ink-color);
+            margin: 10px 0;
+        }
+
+        .memory-tip {
+            color: #6c5ce7;
+        }
+
+        .img-placeholder {
+            width: 100%;
+            height: 150px;
+            background: #dfe6e9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #b2bec3;
+            color: #636e72;
+            margin: 10px 0;
+            font-size: 0.9rem;
+        }
+
+        /* Questions Styling */
+        .imp-q-card {
+            background: #fff;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-bottom: 1px solid #dfe6e9;
+        }
+
+        .q-label { color: #d63031; }
+        .a-label { color: #00b894; }
+
+        /* Practice Area */
+        #question-display {
+            min-height: 200px;
+        }
+
+        .option-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            background: #fff;
+            border: 2px solid var(--ink-color);
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 1.1rem;
+            cursor: pointer;
+            text-align: left;
+            transition: transform 0.1s;
+        }
+
+        .option-btn:active {
+            transform: scale(0.98);
+        }
+
+        .feedback-box {
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 8px;
+            display: none;
+            text-align: center;
+        }
+
+        .feedback-correct { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .feedback-wrong { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+        /* Long Answer */
+        .long-q-card {
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #fff8e1;
+            border: 1px solid #ffeaa7;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin: 10px 0;
+            padding: 10px;
+            font-family: inherit;
+            border: 2px solid #b2bec3;
+            border-radius: 5px;
+        }
+
+        .check-btn {
+            background: var(--ink-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
+
+        .model-answer {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background: white;
+            border: 1px solid var(--correct);
+        }
+
+        /* Revision */
+        #revision-content {
+            display: none;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+            border-top: 3px dashed var(--ink-color);
+            font-size: 1.2rem;
+            color: #636e72;
+        }
+
+        /* Responsive */
+        @media (max-width: 400px) {
+            h1 { font-size: 1.8rem; }
+            #score-panel { font-size: 0.9rem; padding: 5px; }
+            .container { padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="score-panel">
+    <div class="score-item">Correct: <span id="score-correct">0</span></div>
+    <div class="score-item">Wrong: <span id="score-wrong">0</span></div>
+    <div class="score-item">Total: <span id="score-total">0</span></div>
+    <div class="score-item">Marks: <span id="score-marks">0</span>%</div>
+</div>
+
+<div class="container">
+    <header>
+        <h1>Chapter 5<br>Food, Nutrition and Health</h1>
+        <p>Class 5 - EVS / Science</p>
+    </header>
+
+    <!-- SECTION 1: NOTES -->
+    <section id="notes">
+        <h2>📚 My Revision Notes</h2>
+        <div id="notes-container"></div>
+    </section>
+
+    <!-- SECTION 2: IMPORTANT QUESTIONS -->
+    <section id="important-questions">
+        <h2>🎯 Important Questions</h2>
+        <div id="imp-q-container"></div>
+    </section>
+
+    <!-- SECTION 3: PRACTICE QUESTIONS (70) -->
+    <section id="practice-questions">
+        <h2>🧪 Practice Quiz (70 Qs)</h2>
+        <div class="progress-bar" style="background:#dfe6e9; height:10px; border-radius:5px; margin-bottom:15px;">
+            <div id="progress-fill" style="background:#00b894; width:0%; height:100%; border-radius:5px; transition:0.3s;"></div>
+        </div>
+        <div id="question-display">
+            <!-- Dynamic Content -->
+        </div>
+        <div id="feedback-area" class="feedback-box"></div>
+        <button id="next-btn" class="option-btn" style="background:var(--highlight); margin-top:10px; display:none;">Next Question ➡️</button>
+    </section>
+
+    <!-- SECTION 4: ADVANCED LONG QUESTIONS -->
+    <section id="long-questions">
+        <h2>🧠 Advanced Thinking Zone</h2>
+        <p>Type your answer and check against key points!</p>
+        <div id="long-q-container"></div>
+    </section>
+
+    <!-- SECTION 5: REVISION -->
+    <section id="revision">
+        <h2>🔁 Quick Revision</h2>
+        <button class="option-btn" onclick="toggleRevision()" style="background:var(--accent-blue); color:white;">Show/Hide Revision Card</button>
+        <div id="revision-content">
+            <ul id="revision-list">
+                <!-- Populated by JS -->
+            </ul>
+        </div>
+    </section>
+
+    <footer>
+        Designed & Created by SHRISHANT YADAV<br>ShanEduHub
+    </footer>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    // --- DATA: NOTES (20 Topics) ---
+    const notesData = [
+        {
+            title: "1. Meaning of Food and Nutrition",
+            def: "Food is any substance we eat to grow and stay alive. Nutrition is the process of taking in food and using it for growth and health.",
+            example: "Roti, Dal, Rice (Food). Digestion gives energy (Nutrition).",
+            tip: "Food = Fuel ⛽ for the body engine.",
+            check: "What provides energy to work?",
+            img: "Image: Kids eating lunch"
+        },
+        {
+            title: "2. Nutrients Classification",
+            def: "Nutrients are useful substances present in food. There are 5 main types.",
+            example: "Carbohydrates, Fats, Proteins, Vitamins, Minerals.",
+            tip: "C-F-P-V-M (Can Fat People Visit Mars?) 🚀",
+            check: "Name the 5 main nutrients.",
+            img: "Image: Nutrient Chart"
+        },
+        {
+            title: "3. Carbohydrates (Go Foods)",
+            def: "They give us instant energy to work and play.",
+            example: "Rice, Potato, Sugar, Bread, Chapati.",
+            tip: "Carbs = Car keys (Start the engine) 🔑",
+            check: "Why do laborers eat more rice/roti?",
+            img: "Image: Potato & Rice"
+        },
+        {
+            title: "4. Proteins (Grow Foods)",
+            def: "They help build muscles and repair damaged body parts.",
+            example: "Pulses (Dal), Milk, Eggs, Fish, Soya bean.",
+            tip: "Proteins = Body Builders 💪",
+            check: "What helps heal a wound?",
+            img: "Image: Milk & Dal bowl"
+        },
+        {
+            title: "5. Fats (Energy Bank)",
+            def: "Fats give more energy than carbohydrates and keep the body warm.",
+            example: "Ghee, Butter, Oil, Nuts (Almonds, Cashews).",
+            tip: "Fat = Warm Coat 🧥",
+            check: "Which gives more energy: Sugar or Ghee?",
+            img: "Image: Ghee jar & Butter"
+        },
+        {
+            title: "6. Vitamins & Minerals (Glow Foods)",
+            def: "They protect us from diseases and keep us healthy.",
+            example: "Fruits (Vitamins), Green Leafy Veggies (Minerals like Iron).",
+            tip: "Vitamins = Body Guards 🛡️",
+            check: "Why should we eat spinach?",
+            img: "Image: Fruit basket"
+        },
+        {
+            title: "7. Water and Roughage",
+            def: "Water helps digestion. Roughage (fiber) helps throw out waste.",
+            example: "Cucumber, Salad (Roughage). 8 glasses of water daily.",
+            tip: "Roughage = Broom 🧹 for the stomach.",
+            check: "Is roughage a nutrient? (No, but essential)",
+            img: "Image: Glass of water & Salad"
+        },
+        {
+            title: "8. Balanced Diet",
+            def: "A diet containing all nutrients, roughage, and water in the RIGHT amount.",
+            example: "Thali with Roti, Dal, Sabzi, Curd, Salad.",
+            tip: "Rainbow Plate 🌈 (Colors imply variety)",
+            check: "Is eating only burgers a balanced diet?",
+            img: "Image: Indian Thali"
+        },
+        {
+            title: "9. Malnutrition",
+            def: "Condition caused by eating too little or unhealthy food for a long time.",
+            example: "A weak child who gets only rice (no dal/veggies).",
+            tip: "Mal = Bad. Bad Nutrition.",
+            check: "What happens if we don't eat protein?",
+            img: "Image: Weak child illustration"
+        },
+        {
+            title: "10. Deficiency Diseases",
+            def: "Diseases caused by lack of specific nutrients.",
+            example: "Lack of Iron -> Anaemia (Pale look).",
+            tip: "Deficiency = Shortage.",
+            check: "What causes Night Blindness?",
+            img: "Image: Chart of diseases"
+        },
+        {
+            title: "11. Overnutrition & Obesity",
+            def: "Eating more food than the body needs leads to fat accumulation.",
+            example: "Eating 5 burgers daily -> Obesity.",
+            tip: "Over = Too much.",
+            check: "Does overeating make you strong?",
+            img: "Image: Obese person"
+        },
+        {
+            title: "12. Junk Food Effects",
+            def: "Tasty but unhealthy food with high fat/sugar and zero nutrients.",
+            example: "Pizza, Burger, Chips, Cola.",
+            tip: "Junk = Trash 🗑️",
+            check: "Why is homemade food better?",
+            img: "Image: Cross over burger"
+        },
+        {
+            title: "13. Healthy Eating Habits",
+            def: "Rules to stay healthy while eating.",
+            example: "Wash hands, Chew food well, Don't talk while eating.",
+            tip: "Chew 32 times! 🦷",
+            check: "Should we watch TV while eating?",
+            img: "Image: Child washing hands"
+        },
+        {
+            title: "14. Food Hygiene",
+            def: "Keeping food clean and covered to prevent germs.",
+            example: "Covering milk, not buying cut fruits from street.",
+            tip: "Open food = Flies' party 🪰",
+            check: "Why cover food?",
+            img: "Image: Covered pots"
+        },
+        {
+            title: "15. Food Adulteration",
+            def: "Adding cheap or harmful substances to food for profit.",
+            example: "Water in milk, stones in rice, papaya seeds in pepper.",
+            tip: "Adulteration = Cheating ❌",
+            check: "Is it safe to drink adulterated milk?",
+            img: "Image: Milk can"
+        },
+        {
+            title: "16. Food Preservation",
+            def: "Treating food to stop it from spoiling for a long time.",
+            example: "Pickling (Mango), Freezing (Peas), Canning.",
+            tip: "Preserve = Save for later ⏳",
+            check: "How do we save milk from spoiling quickly?",
+            img: "Image: Pickle jar"
+        },
+        {
+            title: "17. Cooking Methods",
+            def: "Different ways to prepare food. Heat kills germs.",
+            example: "Boiling (Rice), Baking (Cake), Steaming (Idli), Frying (Puri).",
+            tip: "Steaming is healthiest ♨️",
+            check: "Is frying healthy?",
+            img: "Image: Pressure cooker"
+        },
+        {
+            title: "18. Safe Drinking Water",
+            def: "Water must be filtered or boiled to kill germs like cholera.",
+            example: "RO purifiers, Boiling for 20 mins.",
+            tip: "Boil it to kill it (germs) 💧",
+            check: "Can we drink river water directly?",
+            img: "Image: Boiling water"
+        },
+        {
+            title: "19. Importance of Nutrition",
+            def: "Good nutrition improves concentration, immunity, and strength.",
+            example: "Eating almonds for brain power.",
+            tip: "Eat well, Score well 💯",
+            check: "Does food affect your exam results?",
+            img: "Image: Happy student"
+        },
+        {
+            title: "20. Role in Growth",
+            def: "Different ages need different food. Growing kids need more protein.",
+            example: "Baby drinks milk; Athlete eats bananas/eggs.",
+            tip: "Fuel depends on the car size 🚗🚛",
+            check: "Who needs more food: You or your grandfather?",
+            img: "Image: Height chart"
+        }
+    ];
+
+    // --- RENDER NOTES ---
+    const notesContainer = document.getElementById('notes-container');
+    const revisionList = document.getElementById('revision-list');
+    
+    notesData.forEach(topic => {
+        // Notes Card
+        const card = document.createElement('div');
+        card.className = 'topic-card';
+        card.innerHTML = `
+            <h3>${topic.title}</h3>
+            <p>${topic.def}</p>
+            <div class="example-box"><strong>🇮🇳 Example:</strong> ${topic.example}</div>
+            <p class="memory-tip"><strong>💡 Tip:</strong> ${topic.tip}</p>
+            <div class="img-placeholder">${topic.img}</div>
+            <p><em>❓ Check: ${topic.check}</em></p>
+        `;
+        notesContainer.appendChild(card);
+
+        // Revision Item
+        const li = document.createElement('li');
+        li.textContent = `${topic.title.split('.')[1]}: ${topic.def}`;
+        revisionList.appendChild(li);
+    });
+
+    // --- DATA: IMPORTANT QUESTIONS (30) ---
+    const impQuestions = [
+        {q: "Why do we need food?", a: "To get energy, grow, and repair our body."},
+        {q: "What are nutrients?", a: "Useful substances in food that our body needs."},
+        {q: "Name two energy-giving foods.", a: "Rice and Potato (Carbohydrates)."},
+        {q: "Which nutrient helps build muscles?", a: "Proteins (e.g., Dal, Eggs)."},
+        {q: "What is a balanced diet?", a: "A diet with all nutrients in right amounts."},
+        {q: "Why is water important?", a: "It helps in digestion and removing waste."},
+        {q: "What is roughage?", a: "Fiber in food (salad) that helps clean the stomach."},
+        {q: "Name a disease caused by lack of Vitamin C.", a: "Scurvy (bleeding gums)."},
+        {q: "What causes Goitre?", a: "Lack of Iodine in salt/food."},
+        {q: "Why should we not eat junk food?", a: "It has too much fat/sugar and no nutrients."},
+        {q: "What is food preservation?", a: "Keeping food safe from spoilage for later use."},
+        {q: "Name one method to preserve mangoes.", a: "Pickling (using salt and oil)."},
+        {q: "Why do we boil milk?", a: "To kill germs and make it last longer."},
+        {q: "What is dehydration?", a: "Removing water from food (e.g., dried chillies)."},
+        {q: "What is obesity?", a: "Becoming very fat due to overeating."},
+        {q: "Why should we wash fruits?", a: "To remove chemicals and dust."},
+        {q: "Which vitamin is made by our body in sunlight?", a: "Vitamin D."},
+        {q: "What is anaemia?", a: "Low blood count caused by lack of Iron."},
+        {q: "Name a communicable disease spread by water.", a: "Cholera or Typhoid."},
+        {q: "What is pasteurization?", a: "Boiling and cooling milk to kill germs."},
+        {q: "Why is steaming better than frying?", a: "Steaming saves nutrients; frying destroys them."},
+        {q: "What are protective foods?", a: "Vitamins and Minerals."},
+        {q: "Name a source of Calcium.", a: "Milk and Cheese."},
+        {q: "What happens if we lack Vitamin A?", a: "Night Blindness (cannot see in dim light)."},
+        {q: "Why is salt added to pickles?", a: "Salt acts as a preservative."},
+        {q: "What is food adulteration?", a: "Mixing impure things in food for profit."},
+        {q: "How can we purify water at home?", a: "By boiling or using filters."},
+        {q: "What is the mid-day meal?", a: "Free lunch provided in government schools."},
+        {q: "Why do we need proteins?", a: "For growth and repair of wear and tear."},
+        {q: "What is the best food for a newborn?", a: "Mother's milk."}
+    ];
+
+    const impContainer = document.getElementById('imp-q-container');
+    impQuestions.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'imp-q-card';
+        div.innerHTML = `<span class="q-label">Q${index+1}: ${item.q}</span><br><span class="a-label">Ans: ${item.a}</span>`;
+        impContainer.appendChild(div);
+    });
+
+    // --- DATA: PRACTICE QUESTIONS (70) ---
+    // Types: MCQ (4 options), TF (True/False), FIB (Fill in Blank - presented as MCQ for mobile ease)
+    const practiceQs = [
+        // Nutrients
+        {q: "Rice and potatoes are rich in ___.", options: ["Carbohydrates", "Proteins", "Vitamins", "Fats"], correct: 0, why: "Rice/Potato give energy."},
+        {q: "Which nutrient builds muscles?", options: ["Fats", "Carbohydrates", "Proteins", "Water"], correct: 2, why: "Proteins repair tissues."},
+        {q: "Ghee and butter are sources of ___.", options: ["Vitamins", "Fats", "Roughage", "Minerals"], correct: 1, why: "Fats give heat and energy."},
+        {q: "Vitamins are called ___ foods.", options: ["Energy-giving", "Protective", "Body-building", "Junk"], correct: 1, why: "They protect from disease."},
+        {q: "Which is a source of protein?", options: ["Sugar", "Dal (Pulses)", "Oil", "Potato"], correct: 1, why: "Dal is a body-building food."},
+        {q: "We need ___ for strong bones.", options: ["Iron", "Calcium", "Iodine", "Salt"], correct: 1, why: "Calcium makes bones hard."},
+        {q: "Iron is found in ___.", options: ["Spinach", "Rice", "Butter", "Sugar"], correct: 0, why: "Green leafy veggies have iron."},
+        {q: "Sugar gives us ___.", options: ["Muscles", "Energy", "Vitamins", "Roughage"], correct: 1, why: "Sugar is a simple carbohydrate."},
+        {q: "Lack of Vitamin A causes ___.", options: ["Scurvy", "Rickets", "Night Blindness", "Beriberi"], correct: 2, why: "Vit A is for eyes."},
+        {q: "Lack of Vitamin C causes ___.", options: ["Scurvy", "Night Blindness", "Goitre", "Anaemia"], correct: 0, why: "Scurvy affects gums."},
+        
+        // Diseases & Health
+        {q: "Anaemia is caused by lack of ___.", options: ["Calcium", "Iron", "Water", "Fat"], correct: 1, why: "Iron makes blood red."},
+        {q: "Goitre makes the ___ swell.", options: ["Leg", "Neck", "Eye", "Hand"], correct: 1, why: "Thyroid gland is in the neck."},
+        {q: "Sunlight helps our body make Vitamin ___.", options: ["A", "B", "C", "D"], correct: 3, why: "Sunlight = Vitamin D."},
+        {q: "Rickets makes bones ___.", options: ["Strong", "Soft/Bent", "Heavy", "Long"], correct: 1, why: "Lack of Vit D softens bones."},
+        {q: "Obesity is caused by ___.", options: ["Overeating", "Exercise", "Sleeping", "Reading"], correct: 0, why: "Too much food stores as fat."},
+        {q: "Junk food contains too much ___.", options: ["Vitamins", "Fat & Sugar", "Protein", "Water"], correct: 1, why: "That's why it's unhealthy."},
+        {q: "Communicable diseases ___.", options: ["Do not spread", "Spread from person to person", "Are genetic", "Are good"], correct: 1, why: "They spread via germs."},
+        {q: "Cholera spreads through ___.", options: ["Air", "Dirty Water", "Touch", "Mosquito"], correct: 1, why: "Waterborne disease."},
+        {q: "Mosquitoes spread ___.", options: ["Malaria", "Cancer", "Scurvy", "Anaemia"], correct: 0, why: "They carry the parasite."},
+        {q: "Vaccination protects us from ___.", options: ["Hunger", "Thirst", "Diseases", "Tiredness"], correct: 2, why: "It builds immunity."},
+
+        // Diet & Digestion
+        {q: "A diet with all nutrients is a ___.", options: ["Tasty Diet", "Heavy Diet", "Balanced Diet", "Poor Diet"], correct: 2, why: "Balanced = Right mix."},
+        {q: "Roughage helps in ___.", options: ["Thinking", "Digestion/Bowel movement", "Running", "Seeing"], correct: 1, why: "It adds bulk to waste."},
+        {q: "We should drink ___ glasses of water daily.", options: ["1-2", "8-10", "50", "0"], correct: 1, why: "Water keeps us hydrated."},
+        {q: "Digestion starts in the ___.", options: ["Stomach", "Mouth", "Intestine", "Leg"], correct: 1, why: "Saliva breaks down starch."},
+        {q: "Saliva is produced in the ___.", options: ["Mouth", "Stomach", "Liver", "Lungs"], correct: 0, why: "By salivary glands."},
+        {q: "Which is NOT a nutrient?", options: ["Protein", "Roughage", "Fat", "Vitamin"], correct: 1, why: "Roughage is fiber, not a nutrient."},
+        {q: "Mid-day meal is for ___.", options: ["Office workers", "School children", "Doctors", "Farmers"], correct: 1, why: "Govt scheme for kids."},
+        {q: "Growing children need more ___.", options: ["Fats", "Proteins", "Water", "Spices"], correct: 1, why: "To build body tissues."},
+        {q: "Old people need ___ food.", options: ["Heavy", "Spicy", "Easily digestible", "Raw"], correct: 2, why: "Digestion is weak in old age."},
+        {q: "We should eat food at ___ times.", options: ["Fixed", "Random", "Night only", "Never"], correct: 0, why: "Routine helps digestion."},
+
+        // Preservation & Cooking
+        {q: "Boiling kills ___.", options: ["Vitamins", "Germs", "Taste", "Color"], correct: 1, why: "Heat destroys bacteria."},
+        {q: "Milk is preserved by ___.", options: ["Drying", "Pasteurization", "Salting", "Frying"], correct: 1, why: "Boil then cool quickly."},
+        {q: "Pickles are preserved using ___.", options: ["Sugar", "Salt & Oil", "Water", "Air"], correct: 1, why: "Oil cuts off air supply."},
+        {q: "Freezing food ___.", options: ["Kills germs", "Stops germ growth", "Adds vitamins", "Cooks it"], correct: 1, why: "Cold slows down germs."},
+        {q: "Dehydration means removing ___.", options: ["Seeds", "Skin", "Water", "Color"], correct: 2, why: "No water = No germs."},
+        {q: "Which food is preserved by drying?", options: ["Milk", "Red Chillies/Papad", "Juice", "Bread"], correct: 1, why: "Moisture is removed."},
+        {q: "Sugar is used to preserve ___.", options: ["Pickles", "Jam/Jelly", "Chips", "Fish"], correct: 1, why: "Sugar syrup preserves fruit."},
+        {q: "Canning keeps food ___.", options: ["Airtight", "Wet", "Dirty", "Open"], correct: 0, why: "Air cannot enter cans."},
+        {q: "Washing vegetables AFTER cutting removes ___.", options: ["Dirt", "Nutrients", "Taste", "Color"], correct: 1, why: "Vitamins wash away."},
+        {q: "Overcooking food destroys ___.", options: ["Germs", "Nutrients", "Plates", "Water"], correct: 1, why: "Especially Vitamin C."},
+
+        // True/False (Binary Choice)
+        {q: "True or False: Fats give less energy than carbohydrates.", options: ["True", "False"], correct: 1, why: "Fats give MORE energy."},
+        {q: "True or False: We should buy uncovered food.", options: ["True", "False"], correct: 1, why: "It has germs/dust."},
+        {q: "True or False: Wood is a nutrient.", options: ["True", "False"], correct: 1, why: "We cannot eat wood."},
+        {q: "True or False: Water has zero calories.", options: ["True", "False"], correct: 0, why: "Water gives no energy."},
+        {q: "True or False: Burger is a healthy food.", options: ["True", "False"], correct: 1, why: "It is junk food."},
+        {q: "True or False: Salt contains Iodine.", options: ["True", "False"], correct: 0, why: "Iodized salt prevents Goitre."},
+        {q: "True or False: We should chew food well.", options: ["True", "False"], correct: 0, why: "Helps digestion."},
+        {q: "True or False: Refrigeration kills all germs.", options: ["True", "False"], correct: 1, why: "It only stops growth."},
+        {q: "True or False: Steaming makes Idli.", options: ["True", "False"], correct: 0, why: "Idli is steamed."},
+        {q: "True or False: Adulteration is good for health.", options: ["True", "False"], correct: 1, why: "It is harmful."},
+
+        // Mixed / Application
+        {q: "To check if an egg is bad, put it in ___.", options: ["Fire", "Water", "Sand", "Milk"], correct: 1, why: "Bad eggs float."},
+        {q: "If you have bleeding gums, eat ___.", options: ["Oranges (Vit C)", "Rice", "Bread", "Oil"], correct: 0, why: "Citrus cures scurvy."},
+        {q: "The body temperature is maintained by ___.", options: ["Water", "Fats", "Vitamins", "Minerals"], correct: 1, why: "Fat acts as insulation."},
+        {q: "A person doing hard labor needs more ___.", options: ["Carbohydrates", "Vitamins", "Water", "Air"], correct: 0, why: "For physical energy."},
+        {q: "Which is a complete food?", options: ["Meat", "Milk", "Apple", "Rice"], correct: 1, why: "Milk has almost all nutrients."},
+        {q: "We get roughage from ___.", options: ["Milk", "Salad/Fruits", "Egg", "Fish"], correct: 1, why: "Plants have fiber."},
+        {q: "Deficiency means ___.", options: ["Too much", "Shortage/Lack", "Perfect", "Extra"], correct: 1, why: "Not enough of something."},
+        {q: "Communicable means ___.", options: ["Talking", "Spreading", "Stopping", "Eating"], correct: 1, why: "Disease that travels."},
+        {q: "ORS is given during ___.", options: ["Fever", "Loose motions/Dehydration", "Cough", "Headache"], correct: 1, why: "To replace water/salts."},
+        {q: "Sprouting pulses increases ___.", options: ["Fats", "Vitamins", "Sugar", "Salt"], correct: 1, why: "Makes them healthier."},
+
+        // Fill in Blanks (Multiple Choice format)
+        {q: "___ is the body building nutrient.", options: ["Fat", "Protein", "Carb", "Vitamin"], correct: 1, why: "Proteins build body."},
+        {q: "___ protects delicate organs.", options: ["Fat", "Skin", "Hair", "Nails"], correct: 0, why: "Fat acts as cushion."},
+        {q: "Papaya is rich in Vitamin ___.", options: ["A", "B", "C", "D"], correct: 0, why: "Yellow fruits have Vit A."},
+        {q: "Germs need moisture, warmth and ___ to grow.", options: ["Light", "Food", "Music", "Soap"], correct: 1, why: "They eat food too."},
+        {q: "Baking is done in an ___.", options: ["Oven", "Fridge", "Bucket", "Pan"], correct: 0, why: "Ovens bake cakes."},
+        {q: "We should not eat ___ fruit.", options: ["Fresh", "Cut & Uncovered", "Washed", "Whole"], correct: 1, why: "It has germs."},
+        {q: "Adding water to milk is ___.", options: ["Cooking", "Adulteration", "Preservation", "Cleaning"], correct: 1, why: "It's cheating."},
+        {q: "Typhoid is caused by contaminated ___.", options: ["Air", "Food & Water", "Touch", "Sound"], correct: 1, why: "Dirty water spreads it."},
+        {q: "Excercise makes muscles ___.", options: ["Weak", "Strong", "Fat", "Soft"], correct: 1, why: "Usage builds strength."},
+        {q: "Rest helps the body ___.", options: ["Tire", "Repair/Relax", "Break", "Fall"], correct: 1, why: "Sleep is essential."}
+    ];
+
+    // --- GAME STATE ---
+    let currentQIndex = 0;
+    let score = 0;
+    let wrong = 0;
+    let totalAttempts = 0;
+    let marks = 0;
+
+    // DOM Elements
+    const qDisplay = document.getElementById('question-display');
+    const feedbackArea = document.getElementById('feedback-area');
+    const nextBtn = document.getElementById('next-btn');
+    const scoreCorrect = document.getElementById('score-correct');
+    const scoreWrong = document.getElementById('score-wrong');
+    const scoreTotal = document.getElementById('score-total');
+    const scoreMarks = document.getElementById('score-marks');
+    const progressFill = document.getElementById('progress-fill');
+
+    function updateScore() {
+        scoreCorrect.textContent = score;
+        scoreWrong.textContent = wrong;
+        scoreTotal.textContent = totalAttempts;
+        if(totalAttempts > 0) {
+            marks = Math.round((score / totalAttempts) * 100);
+        }
+        scoreMarks.textContent = marks;
+        
+        // Progress Bar
+        const percent = ((currentQIndex) / practiceQs.length) * 100;
+        progressFill.style.width = `${percent}%`;
+    }
+
+    function renderQuestion() {
+        if (currentQIndex >= practiceQs.length) {
+            qDisplay.innerHTML = "<h3>🎉 Quiz Completed! Great job!</h3>";
+            nextBtn.style.display = 'none';
+            feedbackArea.style.display = 'none';
+            return;
+        }
+
+        const qData = practiceQs[currentQIndex];
+        qDisplay.innerHTML = `
+            <div class="topic-card" style="background:white; border-left:none;">
+                <h3 style="color:#2d3436;">Q${currentQIndex + 1}: ${qData.q}</h3>
+                <div id="options-container">
+                    ${qData.options.map((opt, idx) => `
+                        <button class="option-btn" onclick="checkAnswer(${idx})">${opt}</button>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        feedbackArea.style.display = 'none';
+        nextBtn.style.display = 'none';
+    }
+
+    window.checkAnswer = (selectedIdx) => {
+        const qData = practiceQs[currentQIndex];
+        const buttons = document.querySelectorAll('#options-container .option-btn');
+        
+        // Disable buttons
+        buttons.forEach(btn => btn.disabled = true);
+
+        totalAttempts++;
+
+        if (selectedIdx === qData.correct) {
+            score++;
+            feedbackArea.className = 'feedback-box feedback-correct';
+            feedbackArea.innerHTML = `<strong>Excellent ⭐</strong><br>${qData.why}`;
+            buttons[selectedIdx].style.background = '#d4edda';
+            buttons[selectedIdx].style.borderColor = '#28a745';
+        } else {
+            wrong++;
+            feedbackArea.className = 'feedback-box feedback-wrong';
+            feedbackArea.innerHTML = `<strong>Try Again!</strong><br>Correct Answer: ${qData.options[qData.correct]}<br>Reason: ${qData.why}`;
+            buttons[selectedIdx].style.background = '#f8d7da';
+            buttons[selectedIdx].style.borderColor = '#dc3545';
+            buttons[qData.correct].style.background = '#d4edda'; // Show correct one
+        }
+
+        feedbackArea.style.display = 'block';
+        nextBtn.style.display = 'block';
+        updateScore();
+    };
+
+    nextBtn.addEventListener('click', () => {
+        currentQIndex++;
+        renderQuestion();
+    });
+
+    // --- LONG ANSWER LOGIC ---
+    const longQs = [
+        {
+            id: "l1", q: "Why is it important to eat a balanced diet?",
+            keys: ["all nutrients", "right amount", "growth", "health", "disease"],
+            model: "A balanced diet provides all nutrients in the right amount. It helps us grow, gives energy, and protects us from diseases."
+        },
+        {
+            id: "l2", q: "Explain two methods of food preservation with examples.",
+            keys: ["freezing", "drying", "canning", "pickling", "boiling"],
+            model: "1. Freezing: Keeping food cold (Peas). 2. Pickling: Adding salt and oil (Mango)."
+        },
+        {
+            id: "l3", q: "Why should we not eat junk food regularly?",
+            keys: ["fat", "sugar", "obesity", "nutrients", "unhealthy"],
+            model: "Junk food has too much fat and sugar but no nutrients. It causes obesity and diseases."
+        },
+        {
+            id: "l4", q: "What are deficiency diseases? Give one example.",
+            keys: ["lack", "nutrient", "scurvy", "rickets", "anaemia", "goitre"],
+            model: "Diseases caused by the lack of specific nutrients are deficiency diseases. E.g., Lack of Iron causes Anaemia."
+        },
+        {
+            id: "l5", q: "Why is water important for our body?",
+            keys: ["digestion", "temperature", "waste", "blood", "hydrate"],
+            model: "Water helps in digestion, maintains body temperature, and throws out waste as sweat and urine."
+        },
+        {
+            id: "l6", q: "Difference between Energy-giving and Body-building foods.",
+            keys: ["carbohydrate", "fat", "protein", "muscle", "work"],
+            model: "Energy-giving (Carbs/Fats) help us work. Body-building (Proteins) help us grow and repair muscles."
+        },
+        {
+            id: "l7", q: "How does cooking food help us?",
+            keys: ["kill germs", "soft", "tasty", "digest"],
+            model: "Cooking kills germs, makes food soft, tasty, and easy to digest."
+        },
+        {
+            id: "l8", q: "What is food adulteration? Why is it bad?",
+            keys: ["mix", "cheap", "harmful", "profit", "sick"],
+            model: "Mixing cheap or harmful things in food for profit. It is bad because it can make us sick."
+        },
+        {
+            id: "l9", q: "Why should we include roughage in our diet?",
+            keys: ["fiber", "digestion", "waste", "clean", "stomach"],
+            model: "Roughage is fiber that helps move waste out of the body and keeps the stomach clean."
+        },
+        {
+            id: "l10", q: "How can we prevent wastage of food?",
+            keys: ["plate", "shopping", "store", "leftover"],
+            model: "Take only what you can eat, store food properly, and do not cook too much."
+        }
+    ];
+
+    const longContainer = document.getElementById('long-q-container');
+    longQs.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'long-q-card';
+        div.innerHTML = `
+            <h3>Q${index+1}: ${item.q}</h3>
+            <textarea id="ans-${index}" placeholder="Type your answer here..."></textarea>
+            <button class="check-btn" onclick="checkLongAnswer(${index})">Check Answer</button>
+            <div id="model-${index}" class="model-answer">
+                <strong>Status:</strong> <span id="status-${index}"></span><br>
+                <strong>Key Points Needed:</strong> ${item.keys.join(", ")}<br>
+                <strong>Model Answer:</strong> ${item.model}
+            </div>
+        `;
+        longContainer.appendChild(div);
+    });
+
+    window.checkLongAnswer = (idx) => {
+        const userAns = document.getElementById(`ans-${idx}`).value.toLowerCase();
+        const modelDiv = document.getElementById(`model-${idx}`);
+        const statusSpan = document.getElementById(`status-${idx}`);
+        const qData = longQs[idx];
+        
+        let foundKeys = 0;
+        qData.keys.forEach(key => {
+            if(userAns.includes(key)) foundKeys++;
+        });
+
+        totalAttempts++; // Update global stats
+        modelDiv.style.display = 'block';
+
+        if(foundKeys >= 2) { // Lenient checking
+            statusSpan.innerHTML = "✅ Good Attempt! (+1 Score)";
+            statusSpan.style.color = "green";
+            score++;
+        } else {
+            statusSpan.innerHTML = "❌ Needs Improvement";
+            statusSpan.style.color = "red";
+            wrong++;
+        }
+        updateScore();
+    };
+
+    // --- REVISION TOGGLE ---
+    window.toggleRevision = () => {
+        const content = document.getElementById('revision-content');
+        if(content.style.display === 'block') {
+            content.style.display = 'none';
+        } else {
+            content.style.display = 'block';
+        }
+    };
+
+    // Initialize
+    renderQuestion();
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 5 EVS: Chapter 3 - Animals</title>
+    <!-- Importing a handwriting style font -->
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --paper-color: #fdfbf7;
+            --line-color: #a2d2ff;
+            --ink-color: #2b2d42;
+            --red-ink: #d90429;
+            --green-ink: #2b9348;
+            --highlight: #fff3b0;
+            --font-main: 'Patrick Hand', cursive;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            font-family: var(--font-main);
+            color: var(--ink-color);
+            font-size: 18px;
+            line-height: 1.5;
+        }
+
+        /* Container imitating a notebook */
+        .notebook-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--paper-color);
+            min-height: 100vh;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        /* Header */
+        header {
+            background: #ffecd1;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid var(--ink-color);
+            border-radius: 0 0 15px 15px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.2rem;
+            color: var(--red-ink);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        h2, h3 {
+            color: var(--ink-color);
+            border-bottom: 2px dashed var(--line-color);
+            padding-bottom: 5px;
+        }
+
+        /* Sticky Score Panel */
+        #score-panel {
+            position: sticky;
+            top: 0;
+            background: var(--ink-color);
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 1000;
+            font-size: 1.1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .score-item span {
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        /* Sections */
+        section {
+            padding: 20px;
+            margin-bottom: 20px;
+            border-bottom: 4px double var(--line-color);
+        }
+
+        /* Notes Styling */
+        .topic-card {
+            background: white;
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.1);
+        }
+
+        .topic-title {
+            font-size: 1.4rem;
+            color: var(--red-ink);
+            text-decoration: underline;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 150px;
+            background: #e9ecef;
+            border: 2px dashed #adb5bd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .memory-tip {
+            background: var(--highlight);
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin-top: 5px;
+            font-weight: bold;
+        }
+
+        /* Question Styles */
+        .q-card {
+            background: #fff;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border: 2px solid var(--line-color);
+        }
+
+        .q-text {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .options-grid {
+            display: grid;
+            gap: 10px;
+        }
+
+        .option-btn {
+            background: white;
+            border: 2px solid var(--ink-color);
+            padding: 12px;
+            border-radius: 8px;
+            font-family: var(--font-main);
+            font-size: 1.1rem;
+            cursor: pointer;
+            text-align: left;
+            transition: 0.2s;
+            font-weight: bold;
+        }
+
+        .option-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .option-btn.correct {
+            background: #d4edda;
+            border-color: #155724;
+            color: #155724;
+        }
+
+        .option-btn.wrong {
+            background: #f8d7da;
+            border-color: #721c24;
+            color: #721c24;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            font-weight: bold;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        /* Long Answer */
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            font-family: var(--font-main);
+            font-size: 1rem;
+            margin: 10px 0;
+            border: 2px solid var(--ink-color);
+            border-radius: 5px;
+        }
+
+        .check-btn, .nav-btn {
+            background: var(--ink-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-family: var(--font-main);
+            font-size: 1.2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .check-btn:active, .nav-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Revision */
+        .revision-content {
+            display: none;
+            background: #fff;
+            padding: 15px;
+            border: 2px solid var(--red-ink);
+        }
+
+        .revision-content.visible {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Important Questions List */
+        .imp-q-item {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+        .imp-q-ans {
+            color: var(--green-ink);
+            display: block;
+            margin-top: 5px;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--ink-color);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            font-size: 0.9rem;
+        }
+
+        /* Utility */
+        .hidden { display: none; }
+        
+        /* Practice Mode Navigation */
+        #practice-container {
+            min-height: 400px;
+        }
+
+        .next-btn {
+            background: var(--red-ink);
+            float: right;
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="notebook-container">
+    
+    <header>
+        <h1>Chapter 3: Animals</h1>
+        <p>Diversity and Adaptations</p>
+    </header>
+
+    <div id="score-panel">
+        <div class="score-item">Correct: <span id="score-correct">0</span></div>
+        <div class="score-item">Wrong: <span id="score-wrong">0</span></div>
+        <div class="score-item">Score: <span id="score-percent">0%</span></div>
+    </div>
+
+    <!-- NOTES SECTION -->
+    <section id="notes-section">
+        <h2>📚 Class Notes</h2>
+        
+        <div class="topic-card">
+            <span class="topic-title">1. Classification of Animals</span>
+            <p><strong>Definition:</strong> Grouping animals based on their similarities and differences.</p>
+            <p><strong>Explanation:</strong> Scientists classify animals to study them easily. The main groups are based on backbones, food habits, and body temperature.</p>
+            <p><strong>Indian Example:</strong> In an Indian forest, we see Tigers (mammals) and Snakes (reptiles).</p>
+            <div class="image-placeholder">[Image: Chart showing Animal Kingdom tree]</div>
+            <div class="memory-tip">🐾 Tip: Think of a library sorting books!</div>
+            <p><em>Quick Check: Why do we classify animals? (To study them easily)</em></p>
+        </div>
+
+        <div class="topic-card">
+            <span class="topic-title">2. Vertebrates and Invertebrates</span>
+            <p><strong>Definition:</strong> Vertebrates have a backbone; Invertebrates do not.</p>
+            <p><strong>Explanation:</strong> Vertebrates include Mammals, Birds, Fish, Reptiles, Amphibians. Invertebrates include Insects, Worms, Snails.</p>
+            <p><strong>Indian Example:</strong> Vertebrate: Cow, Rohu Fish. Invertebrate: Earthworm, Mosquito.</p>
+            <div class="image-placeholder">[Image: Skeleton of a fish vs Earthworm]</div>
+            <div class="memory-tip">🦴 Tip: Touch your back! Feel the bones? You are a Vertebrate.</div>
+            <p><em>Quick Check: Is a butterfly a vertebrate? (No)</em></p>
+        </div>
+
+        <div class="topic-card">
+            <span class="topic-title">3. Domestic and Wild Animals</span>
+            <p><strong>Definition:</strong> Domestic animals live with humans; Wild animals live in nature.</p>
+            <p><strong>Explanation:</strong> Domestic animals are tamed for milk, work, or company. Wild animals hunt and live freely.</p>
+            <p><strong>Indian Example:</strong> Domestic: Buffalo, Goat. Wild: Lion (Gir Forest), Elephant.</p>
+            <div class="image-placeholder">[Image: A farm dog and a jungle tiger]</div>
+            <div class="memory-tip">🏠 Tip: Domestic = House/Farm. Wild = Jungle.</div>
+            <p><em>Quick Check: Where does a wild animal live? (Forest/Nature)</em></p>
+        </div>
+
+        <div class="topic-card">
+            <span class="topic-title">4. Herbivores, Carnivores, Omnivores</span>
+            <p><strong>Definition:</strong> Grouping based on what they eat.</p>
+            <p><strong>Explanation:</strong> Herbivores eat plants. Carnivores eat flesh. Omnivores eat both.</p>
+            <p><strong>Indian Example:</strong> Herb: Deer. Carn: Leopard. Omni: Crow, Bear.</p>
+            <div class="image-placeholder">[Image: Cow eating grass, Lion eating meat]</div>
+            <div class="memory-tip">🥗🥩 Tip: Herbi = Herbs (Plants), Carni = Meat.</div>
+            <p><em>Quick Check: What eats both plants and animals? (Omnivore)</em></p>
+        </div>
+
+        <div class="topic-card">
+            <span class="topic-title">5. Food Habits of Animals</span>
+            <p><strong>Definition:</strong> How animals eat their food.</p>
+            <p><strong>Explanation:</strong> Teeth and beaks shape depends on food. Cows swallow and chew cud. Snakes swallow whole.</p>
+            <p><strong>Indian Example:</strong> Squirrels gnaw nuts. Butterflies suck nectar.</p>
+            <div class="image-placeholder">[Image: Different types of teeth/beaks]</div>
+            <div class="memory-tip">🦷 Tip: Sharp teeth for tearing, flat teeth for grinding.</div>
+            <p><em>Quick Check: How does a snake eat? (Swallows whole)</em></p>
+        </div>
+
+        <div class="topic-card">
+            <span class="topic-title">6. Animal Habitats</span>
+            <p><strong>Definition:</strong> The natural home of an animal.</p>
+            <p><strong>Explanation:</strong> Terrestrial (Land), Aquatic (Water), Arboreal (Trees), Aerial (Air), Amphibian (Land & Water).</p>
+            <p><strong>Indian Example:</strong> Camel (Desert), Dolphin (Ganga River), Monkey (Trees).</p>
+            <div class="image-placeholder">[Image: Desert, Ocean, and Forest scenes]</div>
+            <div class="memory-tip">🌍 Tip: Fish need water, Camels need sand.</div>
+            <p><em>Quick Check: What is the habitat of a Monkey? (Arboreal/Trees)</em></p>
+        </div>
+
+        <div class="topic-card">
+            <span class="topic-title">7. Adaptation to Habitats</span>
+            <p><strong>Definition:</strong> Changes in body or behavior to survive.</p>
+            <p><strong>Explanation:</strong> Camels have humps for fat. Fish have streamlined bodies to swim. Polar bears have fur.</p>
+            <p><strong>Indian Example:</strong> Yak in Himalayas has long hair for cold.</p>
+            <div class="image-placeholder">[Image: Camel hump close up]</div>
+            <div class="memory-tip">🛡️ Tip: Adaptation is like wearing a raincoat in rain.</div>
+            <p><em>Quick Check: Why do fish have fins? (To swim)</em></p>
+        </div>
+
+        <div class="topic-card">
+            <span class="topic-title">8. Body Coverings</span>
+            <p><strong>Definition:</strong> The outer layer of an animal.</p>
+            <p><strong>Explanation:</strong> Scales (Fish/Snakes), Shells (Tortoise/Snail), Feathers (Birds), Fur/Wool (Mammals).</p>
+            <p><strong>Indian Example:</strong> Peacock feathers, Pangolin scales.</p>
+            <div class="image-placeholder">[Image: Scales, Feathers, Fur examples]</div>
+            <div class="memory-tip">🧥 Tip: It's their natural clothes!</div>
+            <p><em>Quick Check: What covers a snail's body? (Shell)</em></p>
+        </div>
+
+        <div class="topic-card">
+            <span class="topic-title">9. Movement in Animals</span>
+            <p><strong>Definition:</strong> How animals go from place to place.</p>
+            <p><strong>Explanation:</strong> Walking, Flying, Swimming, Slithering, Hopping.</p>
+            <p><strong>Indian Example:</strong> Cheetah runs, Snake slithers, Eagle flies.</p>
+            <div class="image-placeholder">[Image: Bird wings vs Fish fins]</div>
+            <div class="memory-tip">🏃 Tip: Limbs, wings, and fins help movement.</div>
+            <p><em>Quick Check: How do snakes move? (Slither/Crawl)</em></p>
+        </div>
+
+        <div class="topic-card">
+            <span class="topic-title">10. Breathing Organs</span>
+            <p><strong>Definition:</strong> Organs used to take in oxygen.</p>
+            <p><strong>Explanation:</strong> Lungs (Mammals/Birds/Reptiles), Gills (Fish), Spiracles (Insects), Moist Skin (Earthworms/Frogs).</p>
+            <p><strong>Indian Example:</strong> Humans use lungs. Rohu fish use gills.</p>
+            <div class="image-placeholder">[Image: Gills in fish vs Lungs in human]</div>
+            <div class="memory-tip">🌬️ Tip: Fish Gulp (Gills), Insects Spiracle (Spiracles).</div>
+            <p><em>Quick Check: What do insects use to breathe? (Spiracles/Air holes)</em></p>
+        </div>
+
+        <div class="topic-card">
+            <span class="topic-title">11. Reproduction in Animals</span>
+            <p><strong>Definition:</strong> Producing young ones.</p>
+            <p><strong>Explanation:</strong> Oviparous (Lay eggs: Birds, Snakes, Frogs). Viviparous (Give birth: Mammals).</p>
+            <p><strong>Indian Example:</strong> Hens lay eggs. Cows give birth to calves.</p>
+            <div class="image-placeholder">[Image: Egg hatching vs Mother dog with puppies]</div>
+            <div class="memory-tip">🥚👶 Tip: O for Oviparous (Oval Egg).</div>
+            <p><em>Quick Check: Do mammals lay eggs? (Mostly No)</em></p>
+        </div>
+
+        <div class="topic-card">
+            <span class="topic-title">12. Life Cycle of Animals</span>
+            <p><strong>Definition:</strong> Stages of life from birth to adult.</p>
+            <p><strong>Explanation:</strong> Butterfly: Egg → Larva (Caterpillar) → Pupa → Adult. Frog: Egg → Tadpole → Frog.</p>
+            <p><strong>Indian Example:</strong> Silkworms farming.</p>
+            <div class="image-placeholder">[Image: Butterfly life cycle circle]</div>
+            <div class="memory-tip">🐛🦋 Tip: The caterpillar changes completely (Metamorphosis).</div>
+            <p><em>Quick Check: What comes after the egg in a butterfly? (Larva/Caterpillar)</em></p>
+        </div>
+
+        <div class="topic-card">
+            <span class="topic-title">13. Animal Instincts</span>
+            <p><strong>Definition:</strong> Natural behavior they are born with.</p>
+            <p><strong>Explanation:</strong> Migration (Birds flying south), Hibernation (Sleeping through winter).</p>
+            <p><strong>Indian Example:</strong> Siberian Cranes coming to India in winter.</p>
+            <div class="image-placeholder">[Image: Birds flying in V shape]</div>
+            <div class="memory-tip">😴 Tip: Instinct is nature's software pre-installed.</div>
+            <p><em>Quick Check: What is winter sleep called? (Hibernation)</em></p>
+        </div>
+
+        <div class="topic-card">
+            <span class="topic-title">14. Animal Behavior</span>
+            <p><strong>Definition:</strong> How animals act and communicate.</p>
+            <p><strong>Explanation:</strong> Bees dance to show food location. Dolphins use clicks. Elephants live in herds.</p>
+            <p><strong>Indian Example:</strong> Langurs warn deer of tigers.</p>
+            <div class="image-placeholder">[Image: Bees dancing]</div>
+            <div class="memory-tip">🗣️ Tip: Animals talk without words.</div>
+            <p><em>Quick Check: Do bees communicate? (Yes, by dancing)</em></p>
+        </div>
+
+        <div class="topic-card">
+            <span class="topic-title">15. Role in Ecosystem</span>
+            <p><strong>Definition:</strong> How animals help nature balance.</p>
+            <p><strong>Explanation:</strong> Food chains. Scavengers (Vultures) clean up dead bodies. Bees pollinate flowers.</p>
+            <p><strong>Indian Example:</strong> Vultures cleaning carcasses.</p>
+            <div class="image-placeholder">[Image: Food chain pyramid]</div>
+            <div class="memory-tip">⚖️ Tip: Nature is a balanced scale.</div>
+            <p><em>Quick Check: Who cleans dead animals? (Scavengers)</em></p>
+        </div>
+
+        <div class="topic-card">
+            <span class="topic-title">16. Use of Animals by Humans</span>
+            <p><strong>Definition:</strong> How humans use animals for needs.</p>
+            <p><strong>Explanation:</strong> Milk (Cow), Wool (Sheep), Silk (Silkworm), Load (Donkey/Camel).</p>
+            <p><strong>Indian Example:</strong> Bullocks ploughing fields.</p>
+            <div class="image-placeholder">[Image: Sheep shearing wool]</div>
+            <div class="memory-tip">🚜 Tip: Animals are our helpers.</div>
+            <p><em>Quick Check: What do we get from sheep? (Wool)</em></p>
+        </div>
+
+        <div class="topic-card">
+            <span class="topic-title">17. Endangered Animals</span>
+            <p><strong>Definition:</strong> Animals close to disappearing forever.</p>
+            <p><strong>Explanation:</strong> Numbers are very low due to hunting and habitat loss.</p>
+            <p><strong>Indian Example:</strong> Royal Bengal Tiger, One-horned Rhino.</p>
+            <div class="image-placeholder">[Image: Tiger face]</div>
+            <div class="memory-tip">⚠️ Tip: Endangered means "In Danger".</div>
+            <p><em>Quick Check: Name one endangered animal in India. (Tiger/Rhino)</em></p>
+        </div>
+
+        <div class="topic-card">
+            <span class="topic-title">18. Extinct Animals</span>
+            <p><strong>Definition:</strong> Animals that no longer exist on Earth.</p>
+            <p><strong>Explanation:</strong> They died out completely.</p>
+            <p><strong>Indian Example:</strong> Asiatic Cheetah (in India), Dodo bird.</p>
+            <div class="image-placeholder">[Image: Dodo bird sketch]</div>
+            <div class="memory-tip">❌ Tip: Extinct means "Gone Forever".</div>
+            <p><em>Quick Check: Is the Dinosaur extinct? (Yes)</em></p>
+        </div>
+
+        <div class="topic-card">
+            <span class="topic-title">19. Wildlife Conservation</span>
+            <p><strong>Definition:</strong> Saving animals and their homes.</p>
+            <p><strong>Explanation:</strong> National Parks and Sanctuaries protect animals.</p>
+            <p><strong>Indian Example:</strong> Jim Corbett National Park, Kaziranga.</p>
+            <div class="image-placeholder">[Image: Park Ranger logo]</div>
+            <div class="memory-tip">🛡️ Tip: Conserve means to Protect.</div>
+            <p><em>Quick Check: Where are animals protected? (National Parks)</em></p>
+        </div>
+
+        <div class="topic-card">
+            <span class="topic-title">20. Animal Protection Laws</span>
+            <p><strong>Definition:</strong> Rules to stop hurting animals.</p>
+            <p><strong>Explanation:</strong> Hunting is banned. Selling animal skin/tusks is illegal.</p>
+            <p><strong>Indian Example:</strong> Wildlife Protection Act, 1972.</p>
+            <div class="image-placeholder">[Image: No Hunting sign]</div>
+            <div class="memory-tip">⚖️ Tip: Poaching is a crime.</div>
+            <p><em>Quick Check: Is hunting legal in India? (No)</em></p>
+        </div>
+    </section>
+
+    <!-- IMPORTANT QUESTIONS -->
+    <section>
+        <h2>🎯 Important Questions</h2>
+        <div id="imp-questions-list">
+            <!-- Populated via static HTML for reliability -->
+            <div class="imp-q-item">
+                <strong>Q1. Why do aerial animals have hollow bones?</strong>
+                <span class="imp-q-ans">To make their body light for flying.</span>
+            </div>
+            <div class="imp-q-item">
+                <strong>Q2. What is camouflage?</strong>
+                <span class="imp-q-ans">The ability to blend with surroundings to hide from enemies.</span>
+            </div>
+            <div class="imp-q-item">
+                <strong>Q3. How do fish breathe in water?</strong>
+                <span class="imp-q-ans">Fish use gills to take oxygen dissolved in water.</span>
+            </div>
+            <div class="imp-q-item">
+                <strong>Q4. Define 'Migration'.</strong>
+                <span class="imp-q-ans">Mass movement of animals from one place to another for food or breeding.</span>
+            </div>
+            <div class="imp-q-item">
+                <strong>Q5. What is the difference between a frog and a toad?</strong>
+                <span class="imp-q-ans">Frogs have smooth, moist skin; Toads have dry, bumpy skin.</span>
+            </div>
+            <div class="imp-q-item">
+                <strong>Q6. Why is the camel called the 'Ship of the Desert'?</strong>
+                <span class="imp-q-ans">It can survive without water for days and walk easily on sand.</span>
+            </div>
+            <div class="imp-q-item">
+                <strong>Q7. What are ruminants?</strong>
+                <span class="imp-q-ans">Animals like cows that chew their cud (partially digested food).</span>
+            </div>
+            <div class="imp-q-item">
+                <strong>Q8. Name a mammal that can fly.</strong>
+                <span class="imp-q-ans">Bat.</span>
+            </div>
+            <div class="imp-q-item">
+                <strong>Q9. What are nocturnal animals?</strong>
+                <span class="imp-q-ans">Animals active during the night, like owls.</span>
+            </div>
+            <div class="imp-q-item">
+                <strong>Q10. How do reptiles breathe?</strong>
+                <span class="imp-q-ans">Reptiles breathe through lungs.</span>
+            </div>
+            <div class="imp-q-item">
+                <strong>Q11. What is the function of scales on a snake?</strong>
+                <span class="imp-q-ans">They help in movement and protect the body.</span>
+            </div>
+            <div class="imp-q-item">
+                <strong>Q12. What is a food chain?</strong>
+                <span class="imp-q-ans">A sequence showing who eats whom in nature.</span>
+            </div>
+            <div class="imp-q-item">
+                <strong>Q13. Why do polar bears have thick fur?</strong>
+                <span class="imp-q-ans">To keep them warm in freezing temperatures.</span>
+            </div>
+            <div class="imp-q-item">
+                <strong>Q14. What are arboreal animals?</strong>
+                <span class="imp-q-ans">Animals that spend most time on trees (e.g., Monkeys).</span>
+            </div>
+            <div class="imp-q-item">
+                <strong>Q15. Name an egg-laying mammal.</strong>
+                <span class="imp-q-ans">Platypus or Echidna.</span>
+            </div>
+            <div class="imp-q-item">
+                <strong>Q16. What is moulting?</strong>
+                <span class="imp-q-ans">Shedding of old skin or shell (e.g., Snakes, Insects).</span>
+            </div>
+            <div class="imp-q-item">
+                <strong>Q17. How do insects feel things?</strong>
+                <span class="imp-q-ans">Using their antennae (feelers).</span>
+            </div>
+            <div class="imp-q-item">
+                <strong>Q18. Why are tigers endangered?</strong>
+                <span class="imp-q-ans">Due to poaching for skin and destruction of forests.</span>
+            </div>
+            <div class="imp-q-item">
+                <strong>Q19. What helps a duck swim?</strong>
+                <span class="imp-q-ans">Webbed feet.</span>
+            </div>
+            <div class="imp-q-item">
+                <strong>Q20. What is a habitat?</strong>
+                <span class="imp-q-ans">The natural environment where an animal lives and grows.</span>
+            </div>
+             <div class="imp-q-item">
+                <strong>Q21. How do earthworms breathe?</strong>
+                <span class="imp-q-ans">Through their moist skin.</span>
+            </div>
+            <div class="imp-q-item">
+                <strong>Q22. What is the larval stage of a frog called?</strong>
+                <span class="imp-q-ans">Tadpole.</span>
+            </div>
+            <div class="imp-q-item">
+                <strong>Q23. Why do birds have boat-shaped bodies?</strong>
+                <span class="imp-q-ans">To cut through air easily while flying.</span>
+            </div>
+            <div class="imp-q-item">
+                <strong>Q24. Name a scavenger.</strong>
+                <span class="imp-q-ans">Vulture or Hyena.</span>
+            </div>
+            <div class="imp-q-item">
+                <strong>Q25. What is the use of a trunk for an elephant?</strong>
+                <span class="imp-q-ans">To smell, breathe, lift objects, and drink water.</span>
+            </div>
+            <div class="imp-q-item">
+                <strong>Q26. What are spiracles?</strong>
+                <span class="imp-q-ans">Tiny air holes on the body of insects for breathing.</span>
+            </div>
+            <div class="imp-q-item">
+                <strong>Q27. Why do tortoises have shells?</strong>
+                <span class="imp-q-ans">For protection against predators.</span>
+            </div>
+            <div class="imp-q-item">
+                <strong>Q28. What is the difference between wild and domestic animals?</strong>
+                <span class="imp-q-ans">Wild animals live in nature; domestic animals live with humans.</span>
+            </div>
+            <div class="imp-q-item">
+                <strong>Q29. Why is the Blue Whale special?</strong>
+                <span class="imp-q-ans">It is the largest animal on Earth (and is a mammal).</span>
+            </div>
+            <div class="imp-q-item">
+                <strong>Q30. What is poaching?</strong>
+                <span class="imp-q-ans">Illegal hunting of wild animals.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRACTICE QUESTIONS -->
+    <section id="practice-section">
+        <h2>🧪 Practice Questions (70+)</h2>
+        <div id="practice-container">
+            <!-- Questions rendered here by JS -->
+            <div id="q-render-area"></div>
+            <button id="next-q-btn" class="nav-btn next-btn" onclick="nextQuestion()">Next Question ➡️</button>
+        </div>
+    </section>
+
+    <!-- LONG QUESTIONS -->
+    <section>
+        <h2>🧠 Advanced Long Questions</h2>
+        <div id="long-q-container">
+            <!-- Generated by JS -->
+        </div>
+    </section>
+
+    <!-- REVISION -->
+    <section>
+        <h2>🔁 Quick Revision</h2>
+        <button class="nav-btn" onclick="toggleRevision()">Show/Hide Revision</button>
+        <div id="revision-box" class="revision-content">
+            <ul>
+                <li><strong>Vertebrates:</strong> Have backbones (Mammals, Birds, Fish, Reptiles, Amphibians).</li>
+                <li><strong>Invertebrates:</strong> No backbone (Insects, Worms).</li>
+                <li><strong>Breathing:</strong> Lungs (Humans), Gills (Fish), Spiracles (Insects), Skin (Earthworm).</li>
+                <li><strong>Movement:</strong> Limbs, Wings, Fins, Scales.</li>
+                <li><strong>Diet:</strong> Herbivores (Plants), Carnivores (Meat), Omnivores (Both).</li>
+                <li><strong>Reproduction:</strong> Viviparous (Birth), Oviparous (Eggs).</li>
+                <li><strong>Conservation:</strong> Save animals in National Parks. Stop hunting.</li>
+            </ul>
+        </div>
+    </section>
+
+    <footer>
+        <p>Designed & Created by SHRISHANT YADAV</p>
+        <p>ShanEduHub</p>
+    </footer>
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    /* --- DATA: PRACTICE QUESTIONS (70) --- */
+    const practiceQuestions = [
+        // Level 1: Basics (MCQ)
+        { t: 'mcq', q: 'Which of these is a domestic animal?', options: ['Lion', 'Tiger', 'Cow', 'Wolf'], ans: 2, exp: 'Cow is kept in farms/homes. Others are wild.' },
+        { t: 'mcq', q: 'Animals that eat only plants are called...', options: ['Carnivores', 'Herbivores', 'Omnivores', 'Scavengers'], ans: 1, exp: 'Herbivores eat herbs/plants.' },
+        { t: 'mcq', q: 'A frog is an...', options: ['Amphibian', 'Reptile', 'Bird', 'Mammal'], ans: 0, exp: 'Frogs live on both land and water.' },
+        { t: 'mcq', q: 'Which animal has a hump?', options: ['Horse', 'Camel', 'Dog', 'Cat'], ans: 1, exp: 'Camels store fat in their hump.' },
+        { t: 'mcq', q: 'Fish breathe through...', options: ['Lungs', 'Skin', 'Gills', 'Nose'], ans: 2, exp: 'Gills take oxygen from water.' },
+        { t: 'mcq', q: 'The largest land animal is...', options: ['Lion', 'Elephant', 'Giraffe', 'Rhino'], ans: 1, exp: 'The African Elephant is the largest land animal.' },
+        { t: 'mcq', q: 'Which bird cannot fly?', options: ['Parrot', 'Crow', 'Ostrich', 'Eagle'], ans: 2, exp: 'Ostrich is a flightless bird due to its weight.' },
+        { t: 'mcq', q: 'Insects have how many legs?', options: ['2', '4', '6', '8'], ans: 2, exp: 'All insects have 6 legs.' },
+        { t: 'mcq', q: 'A baby cat is called a...', options: ['Puppy', 'Kitten', 'Cub', 'Calf'], ans: 1, exp: 'Kitten is a young cat.' },
+        { t: 'mcq', q: 'Which animal gives us wool?', options: ['Cow', 'Dog', 'Sheep', 'Hen'], ans: 2, exp: 'Sheep hair is used to make wool.' },
+
+        // Level 2: Medium (Mix)
+        { t: 'mcq', q: 'Which of these is an invertebrate?', options: ['Snake', 'Fish', 'Earthworm', 'Lizard'], ans: 2, exp: 'Earthworms have no backbone.' },
+        { t: 'mcq', q: 'Tigers are...', options: ['Herbivores', 'Carnivores', 'Omnivores', 'Producers'], ans: 1, exp: 'Tigers eat meat.' },
+        { t: 'mcq', q: 'Where do lions live?', options: ['Den', 'Shed', 'Coop', 'Stable'], ans: 0, exp: 'Lions live in a Den.' },
+        { t: 'mcq', q: 'Snakes move by...', options: ['Walking', 'Flying', 'Slithering', 'Hopping'], ans: 2, exp: 'Snakes have no legs; they slither.' },
+        { t: 'mcq', q: 'Birds have bones that are...', options: ['Heavy', 'Solid', 'Hollow', 'Soft'], ans: 2, exp: 'Hollow bones make them light for flying.' },
+        { t: 'mcq', q: 'Which is a scavenger?', options: ['Vulture', 'Deer', 'Rabbit', 'Parrot'], ans: 0, exp: 'Vultures eat dead animals.' },
+        { t: 'mcq', q: 'The home of a spider is called...', options: ['Nest', 'Web', 'Hive', 'Burrow'], ans: 1, exp: 'Spiders spin webs.' },
+        { t: 'mcq', q: 'Monkeys are ______ animals.', options: ['Aquatic', 'Aerial', 'Arboreal', 'Amphibian'], ans: 2, exp: 'Arboreal means living on trees.' },
+        { t: 'mcq', q: 'Humans breathe through...', options: ['Gills', 'Lungs', 'Skin', 'Spiracles'], ans: 1, exp: 'Humans are mammals and use lungs.' },
+        { t: 'mcq', q: 'A tadpole grows into a...', options: ['Fish', 'Frog', 'Lizard', 'Turtle'], ans: 1, exp: 'Tadpole is the baby stage of a frog.' },
+        
+        // True/False
+        { t: 'mcq', q: 'True or False: Bats are birds.', options: ['True', 'False'], ans: 1, exp: 'False. Bats are mammals because they have hair and give birth.' },
+        { t: 'mcq', q: 'True or False: Lizards are reptiles.', options: ['True', 'False'], ans: 0, exp: 'True. They have scales and lay eggs.' },
+        { t: 'mcq', q: 'True or False: Sharks are mammals.', options: ['True', 'False'], ans: 1, exp: 'False. Sharks are fish.' },
+        { t: 'mcq', q: 'True or False: Bears are omnivores.', options: ['True', 'False'], ans: 0, exp: 'True. They eat berries and fish.' },
+        { t: 'mcq', q: 'True or False: Whales breathe through gills.', options: ['True', 'False'], ans: 1, exp: 'False. Whales have lungs and blowholes.' },
+
+        // Fill in blanks style (as MCQ for interactivity)
+        { t: 'mcq', q: 'Butterflies suck nectar using a ______.', options: ['Beak', 'Proboscis (Tube)', 'Teeth', 'Tongue'], ans: 1, exp: 'A proboscis is a straw-like tube.' },
+        { t: 'mcq', q: 'The ______ is the National Animal of India.', options: ['Lion', 'Elephant', 'Tiger', 'Peacock'], ans: 2, exp: 'The Royal Bengal Tiger.' },
+        { t: 'mcq', q: 'Animals active at night are called ______.', options: ['Diurnal', 'Nocturnal', 'Annual', 'Seasonal'], ans: 1, exp: 'Nocturnal (like Owls).' },
+        { t: 'mcq', q: 'Fish swim using ______.', options: ['Legs', 'Fins', 'Wings', 'Arms'], ans: 1, exp: 'Fins help fish balance and steer.' },
+        { t: 'mcq', q: 'Cows swallow food and chew it later. This is called ______.', options: ['Eating', 'Chewing Cud', 'Gnawing', 'Slurping'], ans: 1, exp: 'Chewing the cud helps digest grass.' },
+
+        // Level 3: Advanced/Reasoning
+        { t: 'mcq', q: 'Why do penguins have a thick layer of fat?', options: ['To look big', 'To float', 'To keep warm', 'To run fast'], ans: 2, exp: 'Fat (blubber) protects them from cold.' },
+        { t: 'mcq', q: 'Which animal uses echolocation?', options: ['Bat', 'Dog', 'Cat', 'Cow'], ans: 0, exp: 'Bats use sound echoes to find way in dark.' },
+        { t: 'mcq', q: 'If you see an animal with fur and milk glands, it is a...', options: ['Reptile', 'Bird', 'Mammal', 'Amphibian'], ans: 2, exp: 'Fur and milk are key mammal features.' },
+        { t: 'mcq', q: 'Which group of animals lay soft, jelly-like eggs in water?', options: ['Birds', 'Reptiles', 'Amphibians', 'Mammals'], ans: 2, exp: 'Amphibians like frogs lay jelly eggs.' },
+        { t: 'mcq', q: 'Why do deer have eyes on the side of their head?', options: ['To look scary', 'To see all around for predators', 'To sleep better', 'To run faster'], ans: 1, exp: 'Wide vision helps them spot tigers.' },
+        { t: 'mcq', q: 'Which is NOT a reason for migration?', options: ['To find food', 'To escape cold', 'To lay eggs', 'To sleep'], ans: 3, exp: 'Migration is travel, not sleep.' },
+        { t: 'mcq', q: 'What happens if we destroy forests?', options: ['Animals get more space', 'Animals lose homes', 'Nothing happens', 'Trees grow faster'], ans: 1, exp: 'Forests are habitats.' },
+        { t: 'mcq', q: 'Which animal gnaws its food?', options: ['Snake', 'Rabbit', 'Lion', 'Frog'], ans: 1, exp: 'Rodents like rabbits/squirrels gnaw nuts.' },
+        { t: 'mcq', q: 'Tortoises hibernate in winter. What does this mean?', options: ['They die', 'They migrate', 'They sleep deeply', 'They fly away'], ans: 2, exp: 'Hibernation is winter sleep.' },
+        { t: 'mcq', q: 'A chameleon changes color to...', options: ['Look pretty', 'Hide (Camouflage)', 'Scare friends', 'Cool down'], ans: 1, exp: 'Camouflage helps it hide.' },
+
+        // More Variety
+        { t: 'mcq', q: 'Which animal has scales?', options: ['Frog', 'Snake', 'Dog', 'Sparrow'], ans: 1, exp: 'Reptiles like snakes have scales.' },
+        { t: 'mcq', q: 'An octopus is an...', options: ['Invertebrate', 'Vertebrate', 'Mammal', 'Bird'], ans: 0, exp: 'It has no backbone.' },
+        { t: 'mcq', q: 'The dodo is an example of an ______ animal.', options: ['Endangered', 'Extinct', 'Common', 'Rare'], ans: 1, exp: 'Dodos are gone forever.' },
+        { t: 'mcq', q: 'Silkworms feed on leaves of which tree?', options: ['Mango', 'Neem', 'Mulberry', 'Banyan'], ans: 2, exp: 'Mulberry leaves are their food.' },
+        { t: 'mcq', q: 'Which is a parasite?', options: ['Lice', 'Ant', 'Bee', 'Butterfly'], ans: 0, exp: 'Lice live on other bodies and suck blood.' },
+        { t: 'mcq', q: 'Mosquitoes breed in...', options: ['Flowing water', 'Stagnant water', 'Dry sand', 'Ice'], ans: 1, exp: 'Still/dirty water.' },
+        { t: 'mcq', q: 'Porcupines have ______ for protection.', options: ['Shells', 'Quills (Spines)', 'Fur', 'Scales'], ans: 1, exp: 'Sharp quills keep enemies away.' },
+        { t: 'mcq', q: 'Which animal has a trunk?', options: ['Rhino', 'Hippo', 'Elephant', 'Giraffe'], ans: 2, exp: 'Only elephants have trunks.' },
+        { t: 'mcq', q: 'Birds use their beak to...', options: ['Eat', 'Build nests', 'Preen feathers', 'All of these'], ans: 3, exp: 'Beaks are multi-purpose tools.' },
+        { t: 'mcq', q: 'Which of these lays eggs with hard shells?', options: ['Frog', 'Fish', 'Hen', 'Insect'], ans: 2, exp: 'Birds lay hard-shelled eggs.' },
+
+        // Final Batch (Reaching 70+)
+        { t: 'mcq', q: 'Earthworms are good for farmers because...', options: ['They eat crops', 'They loosen soil', 'They eat pests', 'They make noise'], ans: 1, exp: 'They plough the soil naturally.' },
+        { t: 'mcq', q: 'Which animal stands and sleeps?', options: ['Horse', 'Dog', 'Cat', 'Rat'], ans: 0, exp: 'Horses can lock their legs and sleep standing.' },
+        { t: 'mcq', q: 'The young one of a Kangaroo is...', options: ['Cub', 'Joey', 'Calf', 'Kid'], ans: 1, exp: 'Joey lives in the pouch.' },
+        { t: 'mcq', q: 'Rhinos are hunted for their...', options: ['Skin', 'Horns', 'Teeth', 'Meat'], ans: 1, exp: 'Their horns are sold illegally.' },
+        { t: 'mcq', q: 'Which is NOT an aquatic animal?', options: ['Dolphin', 'Whale', 'Shark', 'Camel'], ans: 3, exp: 'Camel lives in deserts.' },
+        { t: 'mcq', q: 'Bees give us...', options: ['Milk', 'Honey and Wax', 'Wool', 'Silk'], ans: 1, exp: 'Honey comes from beehives.' },
+        { t: 'mcq', q: 'A group of lions is called a...', options: ['Herd', 'Pack', 'Pride', 'Flock'], ans: 2, exp: 'A Pride of Lions.' },
+        { t: 'mcq', q: 'Eagles have strong eyesight to...', options: ['Read', 'Spot prey from high', 'See stars', 'Fly fast'], ans: 1, exp: 'They are birds of prey.' },
+        { t: 'mcq', q: 'Cockroaches breathe through...', options: ['Nose', 'Lungs', 'Spiracles', 'Gills'], ans: 2, exp: 'Spiracles on their abdomen.' },
+        { t: 'mcq', q: 'Which animal lives in a burrow?', options: ['Rabbit', 'Monkey', 'Bird', 'Cow'], ans: 0, exp: 'Rabbits dig burrows.' },
+        { t: 'mcq', q: 'Elephants have large ears to...', options: ['Hear better', 'Fly', 'Fan themselves/Cool down', 'Scare others'], ans: 2, exp: 'Flapping ears cools their blood.' },
+        { t: 'mcq', q: 'Pandas mainly eat...', options: ['Meat', 'Bamboo', 'Fish', 'Insects'], ans: 1, exp: 'Giant Pandas eat bamboo.' },
+        { t: 'mcq', q: 'Which animal has no legs?', options: ['Spider', 'Ant', 'Snake', 'Crab'], ans: 2, exp: 'Snakes are legless reptiles.' },
+        { t: 'mcq', q: 'Dogs wag their tail to show...', options: ['Anger', 'Happiness/Friendship', 'Sleepiness', 'Hunger'], ans: 1, exp: 'It is a sign of joy.' },
+        { t: 'mcq', q: 'Owls hunt at night, so they have big...', options: ['Ears', 'Noses', 'Eyes', 'Teeth'], ans: 2, exp: 'Big eyes gather light.' },
+        { t: 'mcq', q: 'A snail protects itself inside a...', options: ['Cave', 'Shell', 'Hole', 'Tree'], ans: 1, exp: 'The shell is its house.' },
+        { t: 'mcq', q: 'Which animal can change its gender?', options: ['Dog', 'Cat', 'Clownfish', 'Lion'], ans: 2, exp: 'Some fish like Clownfish can change gender.' },
+        { t: 'mcq', q: 'Leeches are...', options: ['Herbivores', 'Parasites (Blood suckers)', 'Carnivores', 'Producers'], ans: 1, exp: 'They suck blood.' },
+        { t: 'mcq', q: 'Which bird imitates human voice?', options: ['Crow', 'Parrot', 'Pigeon', 'Sparrow'], ans: 1, exp: 'Parrots can mimic sounds.' },
+        { t: 'mcq', q: 'The King Cobra is venomous. Venomous means...', options: ['Friendly', 'Poisonous', 'Fast', 'Slow'], ans: 1, exp: 'It has poison.' }
+    ];
+
+    /* --- DATA: LONG QUESTIONS (10) --- */
+    const longQuestions = [
+        {
+            q: "1. Explain the difference between Vertebrates and Invertebrates with two examples for each.",
+            keys: ["backbone", "spine", "vertebrate", "invertebrate", "example"],
+            model: "Vertebrates have a backbone (e.g., Human, Dog). Invertebrates do not have a backbone (e.g., Ant, Worm)."
+        },
+        {
+            q: "2. What is adaptation? Give one example of a desert animal adaptation.",
+            keys: ["adaptation", "survive", "camel", "hump", "water", "desert"],
+            model: "Adaptation is a change to survive. Camels have humps to store fat/water for desert life."
+        },
+        {
+            q: "3. Describe the breathing process in fish.",
+            keys: ["gills", "water", "oxygen", "mouth", "breathe"],
+            model: "Fish take in water through the mouth. Water passes over gills. Gills absorb oxygen from water."
+        },
+        {
+            q: "4. Differentiate between Herbivores, Carnivores, and Omnivores.",
+            keys: ["herbivore", "plant", "carnivore", "flesh", "meat", "omnivore", "both"],
+            model: "Herbivores eat plants. Carnivores eat meat. Omnivores eat both plants and meat."
+        },
+        {
+            q: "5. Why do animals migrate? Give an example.",
+            keys: ["migrate", "food", "weather", "cold", "breeding", "siberian crane", "bird"],
+            model: "Animals migrate to find food, escape extreme cold, or reproduce. Example: Siberian Cranes."
+        },
+        {
+            q: "6. Explain the life cycle of a butterfly.",
+            keys: ["egg", "larva", "caterpillar", "pupa", "adult", "cocoon"],
+            model: "4 stages: Egg -> Larva (Caterpillar) -> Pupa (Cocoon) -> Adult Butterfly."
+        },
+        {
+            q: "7. How do snakes move without legs?",
+            keys: ["scale", "muscle", "slither", "ground", "push"],
+            model: "Snakes have strong muscles and scales on their underside. They push against the ground to slither."
+        },
+        {
+            q: "8. What is the importance of wildlife conservation?",
+            keys: ["protect", "extinct", "balance", "future", "hunting"],
+            model: "It saves animals from extinction, maintains nature's balance, and stops illegal hunting."
+        },
+        {
+            q: "9. How are birds adapted for flying?",
+            keys: ["hollow", "bones", "wings", "light", "boat", "shape"],
+            model: "They have hollow bones (light body), wings with feathers, and a boat-shaped body to cut air."
+        },
+        {
+            q: "10. What is a food chain? Draw (describe) a simple one.",
+            keys: ["energy", "eats", "producer", "sun", "grass", "deer", "lion"],
+            model: "A sequence of who eats whom. Example: Grass -> Deer -> Lion."
+        }
+    ];
+
+    /* --- LOGIC: SCORING & STATE --- */
+    let currentQIndex = 0;
+    let scoreCorrect = 0;
+    let scoreWrong = 0;
+    let totalAttempted = 0;
+
+    const scoreCorrectEl = document.getElementById('score-correct');
+    const scoreWrongEl = document.getElementById('score-wrong');
+    const scorePercentEl = document.getElementById('score-percent');
+    const qRenderArea = document.getElementById('q-render-area');
+    const nextBtn = document.getElementById('next-q-btn');
+    const longQContainer = document.getElementById('long-q-container');
+
+    function updateScoreDisplay() {
+        scoreCorrectEl.textContent = scoreCorrect;
+        scoreWrongEl.textContent = scoreWrong;
+        const total = scoreCorrect + scoreWrong;
+        const percent = total === 0 ? 0 : Math.round((scoreCorrect / total) * 100);
+        scorePercentEl.textContent = percent + "%";
+    }
+
+    /* --- LOGIC: PRACTICE QUESTIONS --- */
+    function renderQuestion(index) {
+        if (index >= practiceQuestions.length) {
+            qRenderArea.innerHTML = `<div class='q-card'><h3>🎉 All Practice Questions Completed!</h3><p>Great job practicing!</p></div>`;
+            nextBtn.style.display = 'none';
+            return;
+        }
+
+        const q = practiceQuestions[index];
+        nextBtn.style.display = 'none';
+        
+        let html = `
+            <div class="q-card">
+                <div class="q-text">Q${index + 1}. ${q.q}</div>
+                <div class="options-grid" id="options-box-${index}">
+                    ${q.options.map((opt, i) => 
+                        `<button class="option-btn" onclick="checkMCQ(this, ${index}, ${i})">${['A','B','C','D'][i]}. ${opt}</button>`
+                    ).join('')}
+                </div>
+                <div id="feedback-${index}" class="feedback"></div>
+            </div>
+        `;
+        qRenderArea.innerHTML = html;
+    }
+
+    window.checkMCQ = function(btn, qIndex, optIndex) {
+        const q = practiceQuestions[qIndex];
+        const parent = document.getElementById(`options-box-${qIndex}`);
+        const feedback = document.getElementById(`feedback-${qIndex}`);
+        const buttons = parent.getElementsByClassName('option-btn');
+
+        // Disable all buttons
+        for (let b of buttons) {
+            b.disabled = true;
+            b.style.cursor = 'default';
+        }
+
+        totalAttempted++;
+
+        if (optIndex === q.ans) {
+            // Correct
+            btn.classList.add('correct');
+            feedback.innerHTML = `Excellent ⭐ <br> ${q.exp}`;
+            feedback.className = 'feedback show';
+            feedback.style.background = '#d4edda';
+            feedback.style.color = '#155724';
+            scoreCorrect++;
+        } else {
+            // Wrong
+            btn.classList.add('wrong');
+            buttons[q.ans].classList.add('correct'); // Show correct one
+            feedback.innerHTML = `Try Again. <br> <strong>Correct Answer:</strong> ${q.options[q.ans]} <br> <em>${q.exp}</em>`;
+            feedback.className = 'feedback show';
+            feedback.style.background = '#f8d7da';
+            feedback.style.color = '#721c24';
+            scoreWrong++;
+        }
+
+        updateScoreDisplay();
+        nextBtn.style.display = 'block';
+    };
+
+    window.nextQuestion = function() {
+        currentQIndex++;
+        renderQuestion(currentQIndex);
+    };
+
+    /* --- LOGIC: LONG ANSWERS --- */
+    function renderLongQuestions() {
+        longQuestions.forEach((item, idx) => {
+            const div = document.createElement('div');
+            div.className = 'q-card';
+            div.innerHTML = `
+                <div class="q-text">${item.q}</div>
+                <textarea id="la-input-${idx}" placeholder="Type your answer here..."></textarea>
+                <button class="check-btn" onclick="checkLongAnswer(${idx})">Check Answer</button>
+                <div id="la-feedback-${idx}" class="feedback"></div>
+            `;
+            longQContainer.appendChild(div);
+        });
+    }
+
+    window.checkLongAnswer = function(idx) {
+        const input = document.getElementById(`la-input-${idx}`).value.toLowerCase();
+        const feedback = document.getElementById(`la-feedback-${idx}`);
+        const item = longQuestions[idx];
+        
+        if (input.trim().length < 5) {
+            alert("Please write a proper answer.");
+            return;
+        }
+
+        // Basic keyword matching logic
+        let foundKeys = 0;
+        item.keys.forEach(key => {
+            if (input.includes(key)) foundKeys++;
+        });
+
+        const isCorrect = foundKeys >= 2; // Threshold: finding at least 2 relevant words
+
+        if (isCorrect) {
+            feedback.innerHTML = `<strong>Good Effort! ✅</strong><br>Key points covered.<br><em>Model Answer: ${item.model}</em>`;
+            feedback.style.background = '#d4edda';
+            feedback.style.color = '#155724';
+            scoreCorrect++;
+        } else {
+            feedback.innerHTML = `<strong>Needs Improvement.</strong><br>Try to include words like: ${item.keys.slice(0,3).join(", ")}.<br><em>Model Answer: ${item.model}</em>`;
+            feedback.style.background = '#fff3cd';
+            feedback.style.color = '#856404';
+            scoreWrong++; // Penalize or just Neutral? Prompt says "Update SAME live score".
+        }
+        
+        feedback.classList.add('show');
+        updateScoreDisplay();
+        // Disable button after check to prevent score spamming
+        document.querySelector(`#long-q-container .q-card:nth-child(${idx+1}) button`).disabled = true;
+    };
+
+    /* --- LOGIC: REVISION TOGGLE --- */
+    window.toggleRevision = function() {
+        const box = document.getElementById('revision-box');
+        if (box.classList.contains('visible')) {
+            box.classList.remove('visible');
+        } else {
+            box.classList.add('visible');
+        }
+    };
+
+    /* --- INIT --- */
+    renderQuestion(0);
+    renderLongQuestions();
+
+});
+</script>
+
+</body>
+</html>

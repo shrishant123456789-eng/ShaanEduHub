@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Class 5 - Math - Ch 7: Data Handling</title>
+<style>
+    :root {
+        --bg-color: #FFF9C4; /* Pale Yellow Notebook */
+        --primary-color: #FF7043; /* Warm Orange */
+        --secondary-color: #4DB6AC; /* Teal */
+        --accent-color: #7986CB; /* Periwinkle */
+        --text-color: #37474F;
+        --border-color: #37474F;
+        --note-bg: #E1F5FE; /* Light Blue */
+        --correct: #66BB6A;
+        --wrong: #EF5350;
+        --card-shadow: 4px 4px 0px rgba(0,0,0,0.15);
+    }
+
+    * {
+        box-sizing: border-box;
+        font-weight: bold !important; /* STRICT REQUIREMENT */
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', 'Marker Felt', sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        line-height: 1.5;
+        font-size: 16px;
+    }
+
+    /* --- HERO --- */
+    header {
+        text-align: center;
+        padding: 30px 15px;
+        background: #FFCCBC;
+        border-bottom: 3px solid var(--border-color);
+    }
+    h1 { margin: 0; font-size: 2rem; color: #D84315; text-shadow: 2px 2px 0px #fff; }
+    h2 { margin: 5px 0 0; font-size: 1.1rem; opacity: 0.8; }
+
+    /* --- STICKY SCORE PANEL --- */
+    #score-panel {
+        position: sticky;
+        top: 0;
+        background: #fff;
+        border-bottom: 3px solid var(--border-color);
+        padding: 8px;
+        z-index: 1000;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        font-size: 0.85rem;
+    }
+    .score-item { text-align: center; }
+    .score-val { color: var(--primary-color); font-size: 1.1rem; }
+
+    /* --- LAYOUT --- */
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 15px;
+        padding-bottom: 80px;
+    }
+
+    .section-title {
+        text-align: center;
+        background: var(--accent-color);
+        color: white;
+        padding: 12px;
+        border-radius: 12px;
+        margin: 30px 0 20px;
+        border: 2px solid var(--border-color);
+        box-shadow: var(--card-shadow);
+        text-transform: uppercase;
+        font-size: 1.2rem;
+        letter-spacing: 1px;
+    }
+
+    /* --- NOTES --- */
+    .topic-card {
+        background: white;
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+        box-shadow: var(--card-shadow);
+    }
+    .topic-head {
+        font-size: 1.2rem;
+        color: var(--secondary-color);
+        border-bottom: 2px dashed var(--border-color);
+        padding-bottom: 5px;
+        margin-bottom: 10px;
+    }
+    .illustration-box {
+        background: var(--note-bg);
+        border: 2px solid var(--border-color);
+        height: 120px;
+        margin: 10px 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    svg { max-height: 90%; max-width: 90%; }
+    .memory-tip {
+        background: #FFF59D;
+        padding: 8px;
+        border-radius: 6px;
+        border-left: 4px solid #FBC02D;
+        margin-top: 10px;
+        font-size: 0.9rem;
+    }
+    .check-q {
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid #eee;
+        font-style: italic;
+        color: #555;
+    }
+
+    /* --- IMP QUESTIONS --- */
+    .imp-q-card {
+        background: #E0F2F1;
+        padding: 12px;
+        border: 1px solid var(--border-color);
+        margin-bottom: 10px;
+        border-radius: 6px;
+    }
+    .q-lbl { color: var(--primary-color); }
+    .a-lbl { color: #2E7D32; margin-top: 4px; display: block; }
+    .exp-lbl { font-size: 0.9em; color: #555; margin-top: 2px; }
+
+    /* --- PRACTICE AREA --- */
+    .question-box {
+        background: white;
+        border: 3px solid var(--border-color);
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 15px;
+        position: relative;
+    }
+    .q-text { font-size: 1.1rem; margin-bottom: 15px; }
+    
+    .options-grid { display: grid; gap: 8px; }
+    .option-btn {
+        background: #F5F5F5;
+        border: 2px solid var(--border-color);
+        padding: 12px;
+        text-align: left;
+        cursor: pointer;
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 1rem;
+        transition: 0.1s;
+    }
+    .option-btn:active { transform: scale(0.98); }
+    .option-btn.correct { background: var(--correct); color: white; border-color: #2E7D32; }
+    .option-btn.wrong { background: var(--wrong); color: white; border-color: #C62828; }
+    
+    .feedback-box {
+        margin-top: 15px;
+        padding: 10px;
+        border-radius: 8px;
+        display: none;
+        text-align: center;
+    }
+    .feedback-box.show { display: block; }
+    .feed-correct { background: #E8F5E9; border: 2px solid var(--correct); color: #2E7D32; }
+    .feed-wrong { background: #FFEBEE; border: 2px solid var(--wrong); color: #C62828; }
+
+    .nav-btn {
+        background: var(--text-color);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        margin-top: 10px;
+        cursor: pointer;
+        width: 100%;
+        font-family: inherit;
+        font-size: 1rem;
+        display: none;
+    }
+
+    /* --- LONG ANSWER --- */
+    .long-q-card {
+        background: white;
+        border: 2px solid var(--border-color);
+        padding: 15px;
+        margin-bottom: 25px;
+        border-radius: 10px;
+    }
+    textarea {
+        width: 100%;
+        height: 80px;
+        border: 2px solid #999;
+        border-radius: 6px;
+        padding: 8px;
+        font-family: inherit;
+        margin: 10px 0;
+        resize: vertical;
+    }
+    .check-btn {
+        background: var(--secondary-color);
+        border: 2px solid var(--border-color);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-family: inherit;
+    }
+    .long-feedback {
+        margin-top: 10px;
+        padding: 8px;
+        border-radius: 5px;
+        background: #F9F9F9;
+        border: 1px solid #ddd;
+        display: none;
+    }
+
+    /* --- REVISION --- */
+    .revision-sheet {
+        background: #FFFDE7;
+        border: 4px solid var(--text-color);
+        padding: 15px;
+        display: none;
+    }
+    .rev-toggle {
+        width: 100%;
+        padding: 12px;
+        background: var(--primary-color);
+        color: white;
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        cursor: pointer;
+        font-family: inherit;
+    }
+    ul.rev-list li { margin-bottom: 8px; }
+
+    /* --- FOOTER --- */
+    footer {
+        text-align: center;
+        padding: 20px;
+        background: #37474F;
+        color: white;
+        margin-top: 40px;
+        font-size: 0.9rem;
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>Data Handling</h1>
+    <h2>Class 5 • Mathematics • Chapter 7</h2>
+</header>
+
+<!-- SCORE PANEL -->
+<div id="score-panel">
+    <div class="score-item">✔ <span id="s-correct" class="score-val">0</span></div>
+    <div class="score-item">✘ <span id="s-wrong" class="score-val">0</span></div>
+    <div class="score-item">Total: <span id="s-total" class="score-val">0</span></div>
+    <div class="score-item">Marks: <span id="s-marks" class="score-val">0</span></div>
+</div>
+
+<div class="container">
+
+    <!-- NOTES SECTION -->
+    <div class="section-title">Class Notes 📊</div>
+    
+    <!-- 1. Collection -->
+    <div class="topic-card">
+        <div class="topic-head">1. Collection of Data</div>
+        <p>Data is a collection of facts, numbers, or information. When we ask people about their favorite fruit or count cars on a road, we are collecting data.</p>
+        <div class="illustration-box">
+            <svg viewBox="0 0 200 100">
+                <text x="10" y="30" font-size="14">🍎 Apple: 5</text>
+                <text x="10" y="55" font-size="14">🍌 Banana: 3</text>
+                <text x="10" y="80" font-size="14">🍇 Grapes: 8</text>
+                <rect x="100" y="10" width="90" height="80" rx="5" fill="none" stroke="#333"/>
+                <text x="110" y="55" font-size="12" fill="#555">Data List</text>
+            </svg>
+        </div>
+        <div class="memory-tip">💡 TIP: Raw data is mixed up. We need to organize it!</div>
+        <div class="check-q">Check: Is a list of student marks called data? (Yes)</div>
+    </div>
+
+    <!-- 2. Organizing -->
+    <div class="topic-card">
+        <div class="topic-head">2. Organizing Data</div>
+        <p>After collecting data, we arrange it to understand it better. We can organize data in Ascending (small to big) or Descending (big to small) order.</p>
+        <div class="illustration-box">
+            <svg viewBox="0 0 200 100">
+                <text x="20" y="50" font-size="20">2, 5, 8, 12, 15</text>
+                <line x1="20" y1="60" x2="160" y2="60" stroke="black" stroke-width="2" marker-end="url(#arrow)"/>
+                <text x="50" y="80" font-size="12">Ascending Order ⬆️</text>
+            </svg>
+        </div>
+        <div class="memory-tip">💡 TIP: Organized data is easier to read.</div>
+    </div>
+
+    <!-- 3. Tally Marks -->
+    <div class="topic-card">
+        <div class="topic-head">3. Tally Marks</div>
+        <p>Tally marks are a quick way to count. We draw vertical lines for 1, 2, 3, 4. For 5, we draw a diagonal line across the four. This makes a group of 5.</p>
+        <div class="illustration-box">
+            <svg viewBox="0 0 200 100">
+                <!-- 5 tally -->
+                <line x1="50" y1="30" x2="50" y2="70" stroke="black" stroke-width="3"/>
+                <line x1="60" y1="30" x2="60" y2="70" stroke="black" stroke-width="3"/>
+                <line x1="70" y1="30" x2="70" y2="70" stroke="black" stroke-width="3"/>
+                <line x1="80" y1="30" x2="80" y2="70" stroke="black" stroke-width="3"/>
+                <line x1="45" y1="30" x2="85" y2="70" stroke="red" stroke-width="3"/>
+                <text x="100" y="60" font-size="30">= 5</text>
+            </svg>
+        </div>
+        <div class="memory-tip">💡 TIP: Count in 5s (5, 10, 15...) using tally groups.</div>
+        <div class="check-q">Check: How do you write 6 in tally? (One group of 5 + 1 line)</div>
+    </div>
+
+    <!-- 4. Frequency Tables -->
+    <div class="topic-card">
+        <div class="topic-head">4. Frequency Tables</div>
+        <p>A table that shows 'how many times' an item appears. 'Frequency' means the count.</p>
+        <div class="illustration-box">
+            <svg viewBox="0 0 200 100">
+                <rect x="20" y="10" width="160" height="80" fill="white" stroke="black"/>
+                <line x1="20" y1="35" x2="180" y2="35" stroke="black"/>
+                <line x1="100" y1="10" x2="100" y2="90" stroke="black"/>
+                <text x="30" y="28" font-size="12">Item</text>
+                <text x="110" y="28" font-size="12">Count</text>
+                <text x="30" y="55" font-size="12">Red Car</text>
+                <text x="130" y="55" font-size="12">4</text>
+                <text x="30" y="75" font-size="12">Blue Car</text>
+                <text x="130" y="75" font-size="12">2</text>
+            </svg>
+        </div>
+        <div class="memory-tip">💡 TIP: Tally marks help fill the Frequency Table.</div>
+    </div>
+
+    <!-- 5. Pictographs -->
+    <div class="topic-card">
+        <div class="topic-head">5. Pictographs</div>
+        <p>Representing data using pictures. ALWAYS check the **Key**. One picture might stand for 10 items!</p>
+        <div class="illustration-box">
+            <svg viewBox="0 0 200 100">
+                <circle cx="40" cy="40" r="10" fill="orange"/>
+                <circle cx="70" cy="40" r="10" fill="orange"/>
+                <text x="100" y="45" font-size="14">= 20 Oranges</text>
+                <rect x="20" y="70" width="160" height="20" fill="#eee" stroke="#999"/>
+                <text x="30" y="84" font-size="10">KEY: 1 Circle = 10 Oranges</text>
+            </svg>
+        </div>
+        <div class="memory-tip">💡 TIP: If 1 face = 10 kids, then half face = 5 kids.</div>
+    </div>
+
+    <!-- 6. Bar Graphs -->
+    <div class="topic-card">
+        <div class="topic-head">6. Bar Graphs</div>
+        <p>Using rectangular bars to show numbers. Taller bar means more value. <br>• X-axis: Horizontal line (Names)<br>• Y-axis: Vertical line (Numbers/Scale)</p>
+        <div class="illustration-box">
+            <svg viewBox="0 0 200 100">
+                <line x1="20" y1="10" x2="20" y2="90" stroke="black" stroke-width="2"/>
+                <line x1="20" y1="90" x2="180" y2="90" stroke="black" stroke-width="2"/>
+                <rect x="30" y="50" width="20" height="40" fill="#4DB6AC"/>
+                <rect x="60" y="30" width="20" height="60" fill="#FF7043"/>
+                <rect x="90" y="70" width="20" height="20" fill="#7986CB"/>
+            </svg>
+        </div>
+        <div class="memory-tip">💡 TIP: The width of bars must be same. Gaps must be equal.</div>
+    </div>
+
+    <!-- 7. Reading Graphs -->
+    <div class="topic-card">
+        <div class="topic-head">7. Reading Graphs</div>
+        <p>To read a bar graph, look at the top of the bar and trace it to the number on the vertical axis.</p>
+        <div class="illustration-box">
+            <svg viewBox="0 0 200 100">
+                <rect x="50" y="40" width="30" height="50" fill="#FFCCBC"/>
+                <line x1="40" y1="40" x2="90" y2="40" stroke="red" stroke-dasharray="4"/>
+                <text x="10" y="45" font-size="12" fill="red">50</text>
+                <line x1="20" y1="90" x2="150" y2="90" stroke="black"/>
+            </svg>
+        </div>
+        <div class="check-q">Check: If bar touches line 50, value is? (50)</div>
+    </div>
+
+    <!-- 8. Comparison -->
+    <div class="topic-card">
+        <div class="topic-head">8. Comparison Using Data</div>
+        <p>Graphs help us compare quickly. <br>• Highest bar = Maximum value<br>• Shortest bar = Minimum value<br>• Equal height = Same value</p>
+        <div class="illustration-box">
+            <svg viewBox="0 0 200 100">
+                <rect x="30" y="60" width="20" height="30" fill="blue"/>
+                <rect x="70" y="20" width="20" height="70" fill="green"/>
+                <text x="70" y="15" font-size="10">Max</text>
+                <rect x="110" y="40" width="20" height="50" fill="orange"/>
+            </svg>
+        </div>
+    </div>
+
+    <!-- 9. Mean (Average) -->
+    <div class="topic-card">
+        <div class="topic-head">9. Mean (Average - Basic)</div>
+        <p>Mean is the central value. <br>Formula: <strong>Sum of all values ÷ Number of values</strong>.<br>Example: Average of 2 and 4 is (2+4)÷2 = 3.</p>
+        <div class="illustration-box">
+            <svg viewBox="0 0 200 100">
+                <text x="50" y="40" font-size="14">3, 5, 7</text>
+                <text x="20" y="60" font-size="12">Sum = 15. Count = 3.</text>
+                <text x="20" y="80" font-size="12">Average = 15 ÷ 3 = 5</text>
+            </svg>
+        </div>
+        <div class="memory-tip">💡 TIP: Add them all up, divide by how many there are.</div>
+    </div>
+
+    <!-- 10. Real-life Problems -->
+    <div class="topic-card">
+        <div class="topic-head">10. Real-life Data</div>
+        <p>We use data handling for Census (counting people), Weather reports (temperature), Cricket scores, and Exam results.</p>
+        <div class="illustration-box">
+            <svg viewBox="0 0 200 100">
+                <text x="60" y="30" font-size="20">🏏</text>
+                <text x="40" y="55" font-size="12">Score Charts</text>
+                <text x="120" y="30" font-size="20">🌦️</text>
+                <text x="110" y="55" font-size="12">Rainfall</text>
+            </svg>
+        </div>
+    </div>
+
+    <!-- 11. Logical Interpretation -->
+    <div class="topic-card">
+        <div class="topic-head">11. Logical Interpretation</div>
+        <p>Using data to predict or understand trends. E.g., If ice cream sales are high in May, it means May is hot.</p>
+        <div class="illustration-box">
+            <svg viewBox="0 0 200 100">
+                <polyline points="20,80 60,60 100,70 140,20" fill="none" stroke="blue" stroke-width="2"/>
+                <text x="145" y="20" font-size="12">High!</text>
+            </svg>
+        </div>
+        <div class="memory-tip">💡 TIP: Look at the pattern, not just numbers.</div>
+    </div>
+
+    <!-- IMPORTANT QUESTIONS -->
+    <div class="section-title">Important Questions 🌟</div>
+    <div id="imp-questions-container">
+        <!-- JS will populate this -->
+    </div>
+
+    <!-- PRACTICE QUESTIONS -->
+    <div class="section-title">Practice Quiz (70 Qs) 🚀</div>
+    <div id="practice-container">
+        <div id="question-area" class="question-box">
+            <div id="q-text" class="q-text">Loading...</div>
+            <div id="q-options" class="options-grid"></div>
+            <div id="q-feedback" class="feedback-box"></div>
+            <button id="next-btn" class="nav-btn">Next Question ➜</button>
+        </div>
+    </div>
+
+    <!-- LONG QUESTIONS -->
+    <div class="section-title">Advanced Challenge 🧠</div>
+    <div id="long-questions-container">
+        <!-- JS will populate this -->
+    </div>
+
+    <!-- REVISION -->
+    <div class="section-title">Quick Revision ⚡</div>
+    <button class="rev-toggle" onclick="toggleRevision()">Revise Fast</button>
+    <div id="revision-sheet" class="revision-sheet">
+        <ul class="rev-list">
+            <li><strong>Data:</strong> Collection of facts/numbers.</li>
+            <li><strong>Tally Marks:</strong> Group of 5 (4 vertical, 1 diagonal).</li>
+            <li><strong>Frequency:</strong> Number of times an item occurs.</li>
+            <li><strong>Pictograph:</strong> Data shown with pictures. Check the KEY!</li>
+            <li><strong>Bar Graph:</strong> Data shown with rectangular bars.</li>
+            <li><strong>Scale:</strong> Represents unit value on graph axes.</li>
+            <li><strong>X-axis:</strong> Horizontal line (Names).</li>
+            <li><strong>Y-axis:</strong> Vertical line (Numbers).</li>
+            <li><strong>Mean/Average:</strong> Sum ÷ Count.</li>
+            <li><strong>Organization:</strong> Arranging data (Ascending/Descending).</li>
+        </ul>
+    </div>
+
+</div>
+
+<footer>
+    Designed & Created by SHRISHANT YADAV<br>
+    ShanEduHub
+</footer>
+
+<script>
+/* ----------------------------------------------------------------
+   DATASETS
+---------------------------------------------------------------- */
+
+const importantQuestions = [
+    {q: "What is data?", a: "Collection of facts or numbers", exp: "Information collected in the form of numbers is called data."},
+    {q: "Which axis is vertical in a bar graph?", a: "Y-axis", exp: "The vertical line is Y, horizontal is X."},
+    {q: "What does one tally group represent?", a: "5", exp: "4 vertical lines crossed by 1 diagonal line."},
+    {q: "What is a Pictograph?", a: "Data representation using pictures", exp: "Pictures or symbols are used to show numbers."},
+    {q: "If 1 smiley = 10 students, how many students are 3 smileys?", a: "30", exp: "3 × 10 = 30 students."},
+    {q: "What is the 'Key' in a pictograph?", a: "Value of one picture", exp: "It tells us how much one symbol stands for."},
+    {q: "Formula for Average?", a: "Sum of values ÷ Number of values", exp: "Total of all numbers divided by count."},
+    {q: "How do we show 4 in tally marks?", a: "||||", exp: "Four vertical lines."},
+    {q: "What is frequency?", a: "Count of an item", exp: "How many times a particular observation occurs."},
+    {q: "Can bars in a bar graph be horizontal?", a: "Yes", exp: "Bar graphs can be vertical or horizontal."},
+    {q: "What is 'Raw Data'?", a: "Unorganized data", exp: "Data as it is collected before arranging."},
+    {q: "Find average of 2, 4, 6.", a: "4", exp: "(2+4+6) = 12. 12 ÷ 3 = 4."},
+    {q: "What represents 5 in Roman Numerals (Comparison)?", a: "V", exp: "Just like Tally has a specific sign for 5."},
+    {q: "If a bar height is 40 and scale is 1 unit = 10, how many units?", a: "4 units", exp: "40 ÷ 10 = 4."},
+    {q: "Which graph uses bars of equal width?", a: "Bar Graph", exp: "Width must be consistent."},
+    {q: "To compare marks of 5 students, which graph is best?", a: "Bar Graph", exp: "Easy to compare heights."},
+    {q: "What is the title of a graph?", a: "Name of the topic", exp: "Tells us what the graph is about."},
+    {q: "In tally, the diagonal line is drawn on which count?", a: "5th", exp: "After 4 lines, the 5th crosses them."},
+    {q: "If 1 Star = 5 cars, and we have 20 cars, how many stars?", a: "4 Stars", exp: "20 ÷ 5 = 4."},
+    {q: "Ascending order means?", a: "Small to Big", exp: "Increasing order."},
+    {q: "Descending order means?", a: "Big to Small", exp: "Decreasing order."},
+    {q: "A table showing counts using tally marks is?", a: "Frequency Distribution Table", exp: "Organizes data systematically."},
+    {q: "Can a pictograph show half pictures?", a: "Yes", exp: "Represents half the value of the key."},
+    {q: "If total is 50 and count is 5, what is average?", a: "10", exp: "50 ÷ 5 = 10."},
+    {q: "Does the order of bars matter in a bar graph?", a: "No", exp: "Usually no, unless specific order required."},
+    {q: "What represents zero frequency?", a: "No tally marks", exp: "Absence of data."},
+    {q: "Is 'Blue' qualitative or quantitative data?", a: "Qualitative", exp: "It describes a quality, not a number."},
+    {q: "Is 'Height 150cm' qualitative or quantitative?", a: "Quantitative", exp: "It involves numbers."},
+    {q: "Why do we organize data?", a: "To interpret easily", exp: "Makes reading and understanding faster."},
+    {q: "Symbol for average is also called?", a: "Mean", exp: "Mean and Average are used interchangeably."}
+];
+
+const practiceQuestions = [
+    // 1-10: Basics
+    { q: "Data is a collection of _______.", options: ["Facts", "Stones", "Water", "Air"], a: "Facts", exp: "Numbers or information." },
+    { q: "Visual representation of data is called _______.", options: ["Story", "Graph", "Poem", "Song"], a: "Graph", exp: "Graphs show data visually." },
+    { q: "Tally marks help in _______.", options: ["Writing", "Counting", "Drawing", "Sleeping"], a: "Counting", exp: "Used for counting frequencies." },
+    { q: "Which is the 5th tally mark?", options: ["Horizontal", "Diagonal", "Vertical", "Circle"], a: "Diagonal", exp: "Crosses the first 4." },
+    { q: "Arranging data from small to big is _______.", options: ["Descending", "Ascending", "Random", "Mixed"], a: "Ascending", exp: "Going up." },
+    { q: "Arranging data from big to small is _______.", options: ["Ascending", "Descending", "Straight", "Curved"], a: "Descending", exp: "Going down." },
+    { q: "Information in number form is _______ data.", options: ["Numeric", "Alphabetic", "Picture", "Sound"], a: "Numeric", exp: "Involves numbers." },
+    { q: "A list of temperatures is an example of _______.", options: ["Data", "Art", "Music", "Sport"], a: "Data", exp: "Information collected." },
+    { q: "The number of times an observation happens is _______.", options: ["Frequency", "Height", "Width", "Length"], a: "Frequency", exp: "How frequent it is." },
+    { q: "Raw data is _______.", options: ["Organized", "Unorganized", "Sorted", "Cleaned"], a: "Unorganized", exp: "Data before processing." },
+
+    // 11-20: Tally Marks & Pictographs
+    { q: "How many vertical lines in tally for 4?", options: ["3", "4", "5", "2"], a: "4", exp: "||||" },
+    { q: "If 1 🍎 = 2 apples, what is 🍎🍎?", options: ["2", "4", "3", "5"], a: "4", exp: "2 + 2 = 4." },
+    { q: "If Key says 1 Box = 10 Toys, how to show 5 toys?", options: ["1 Box", "Half Box", "2 Boxes", "5 Boxes"], a: "Half Box", exp: "Half of 10 is 5." },
+    { q: "Symbol used in Pictograph must be defined in the _______.", options: ["Title", "Key", "Scale", "Axis"], a: "Key", exp: "Key explains the symbol." },
+    { q: "Tally group |||| with cross represents _______.", options: ["4", "5", "6", "10"], a: "5", exp: "Standard group of 5." },
+    { q: "Two tally groups of 5 equal _______.", options: ["5", "10", "15", "8"], a: "10", exp: "5 + 5 = 10." },
+    { q: "Which chart uses pictures?", options: ["Bar Graph", "Pictograph", "Pie Chart", "Line Graph"], a: "Pictograph", exp: "Picto = Picture." },
+    { q: "Pictographs are visually _______.", options: ["Boring", "Attractive", "Invisible", "Hard"], a: "Attractive", exp: "Pictures look good." },
+    { q: "To show 100 students where 1 😊 = 10, draw _______.", options: ["10 😊", "100 😊", "5 😊", "1 😊"], a: "10 😊", exp: "100 ÷ 10 = 10." },
+    { q: "Can tally marks count above 100?", options: ["Yes", "No", "Maybe", "Never"], a: "Yes", exp: "Just keep making groups." },
+
+    // 21-30: Bar Graphs (Structure)
+    { q: "Horizontal line on a graph is _______.", options: ["Y-axis", "X-axis", "Z-axis", "Scale"], a: "X-axis", exp: "Bottom line." },
+    { q: "Vertical line on a graph is _______.", options: ["X-axis", "Y-axis", "Line", "Bar"], a: "Y-axis", exp: "Standing line." },
+    { q: "Bars in a bar graph must have equal _______.", options: ["Height", "Width", "Color", "Name"], a: "Width", exp: "Thickness stays same." },
+    { q: "Height of the bar represents _______.", options: ["Name", "Value", "Width", "Color"], a: "Value", exp: "Taller = More." },
+    { q: "Distance between bars should be _______.", options: ["Equal", "Different", "Zero", "Random"], a: "Equal", exp: "Uniform gaps." },
+    { q: "Scale is usually written on _______.", options: ["Top", "Bottom", "Side/Corner", "Center"], a: "Side/Corner", exp: "E.g., 1 unit = 10 cm." },
+    { q: "Can bars be horizontal?", options: ["No", "Yes", "Never", "Rarely"], a: "Yes", exp: "Horizontal bar charts exist." },
+    { q: "A graph showing temperature of 7 days needs _______ bars.", options: ["5", "7", "12", "1"], a: "7", exp: "One for each day." },
+    { q: "Which graph is best for comparison?", options: ["Text", "Bar Graph", "List", "Audio"], a: "Bar Graph", exp: "Visual height comparison." },
+    { q: "If scale is 1 unit = 5 marks, bar of 4 units is _______.", options: ["9", "20", "5", "4"], a: "20", exp: "4 × 5 = 20." },
+
+    // 31-40: Reading Graphs (Logic)
+    { q: "Tallest bar indicates _______ value.", options: ["Minimum", "Maximum", "Average", "Zero"], a: "Maximum", exp: "Highest quantity." },
+    { q: "Shortest bar indicates _______ value.", options: ["Maximum", "Minimum", "Total", "Equal"], a: "Minimum", exp: "Lowest quantity." },
+    { q: "If Bar A is twice as tall as Bar B, value is _______.", options: ["Half", "Double", "Same", "Triple"], a: "Double", exp: "2 times height." },
+    { q: "In a graph of fruits, if Apple bar is highest, people like _______ most.", options: ["Banana", "Apple", "Grapes", "Orange"], a: "Apple", exp: "Highest bar wins." },
+    { q: "If two bars are same height, values are _______.", options: ["Different", "Equal", "Unknown", "Zero"], a: "Equal", exp: "Same height = Same number." },
+    { q: "Graph Title: 'Rainfall in July'. What is it about?", options: ["Snow", "Rain", "Sun", "Wind"], a: "Rain", exp: "Title says Rainfall." },
+    { q: "If scale is 1 unit = 100 people, half unit is _______.", options: ["10", "50", "25", "200"], a: "50", exp: "Half of 100." },
+    { q: "Where do X and Y axes meet?", options: ["End", "Origin (0)", "Top", "Middle"], a: "Origin (0)", exp: "Starting point." },
+    { q: "Can we have negative numbers in graphs?", options: ["Yes", "No", "Class 5", "Never"], a: "Yes", exp: "Though basic graphs are positive." },
+    { q: "Data about 'Colors' is usually on _______ axis.", options: ["Y", "X", "Z", "None"], a: "X", exp: "Names go on X usually." },
+
+    // 41-50: Averages (Mean)
+    { q: "Average of 2 and 4 is _______.", options: ["2", "4", "3", "6"], a: "3", exp: "(2+4)/2 = 3." },
+    { q: "Mean is another name for _______.", options: ["Total", "Average", "Sum", "Difference"], a: "Average", exp: "Mean = Average." },
+    { q: "Calculate mean of 5, 5, 5.", options: ["15", "5", "10", "25"], a: "5", exp: "Total 15 ÷ 3 = 5." },
+    { q: "To find average, we first find the _______.", options: ["Product", "Sum", "Difference", "Zero"], a: "Sum", exp: "Add all numbers first." },
+    { q: "Average of 10 and 20?", options: ["10", "15", "20", "30"], a: "15", exp: "30 ÷ 2 = 15." },
+    { q: "If sum is 20 and count is 4, average is _______.", options: ["5", "80", "16", "24"], a: "5", exp: "20 ÷ 4 = 5." },
+    { q: "Can average be a decimal number?", options: ["No", "Yes", "Never", "Impossible"], a: "Yes", exp: "E.g., average of 2 and 3 is 2.5." },
+    { q: "Average of first 3 numbers (1, 2, 3)?", options: ["1", "2", "3", "6"], a: "2", exp: "6 ÷ 3 = 2." },
+    { q: "Formula: Sum ÷ _______.", options: ["Total", "Count", "Sum", "Average"], a: "Count", exp: "Number of items." },
+    { q: "Average of 0 and 10?", options: ["0", "5", "10", "1"], a: "5", exp: "10 ÷ 2 = 5." },
+
+    // 51-60: Real Life & Thinking
+    { q: "Census counts _______.", options: ["Cars", "Population", "Trees", "Stars"], a: "Population", exp: "Counting people." },
+    { q: "Most common shoe size in shop data helps to _______.", options: ["Stock more", "Throw away", "Close shop", "Sleep"], a: "Stock more", exp: "Business decision." },
+    { q: "Weather report data helps in _______.", options: ["Cooking", "Prediction", "Dancing", "Painting"], a: "Prediction", exp: "Forecast weather." },
+    { q: "If ice-cream sales go up, temperature is likely _______.", options: ["Low", "High", "Freezing", "Constant"], a: "High", exp: "Hot weather = More ice cream." },
+    { q: "To record daily attendance, teacher uses _______.", options: ["Register", "Graph", "Painting", "Song"], a: "Register", exp: "Data collection tool." },
+    { q: "Which is easiest to read quickly?", options: ["Paragraph", "Bar Graph", "List", "Book"], a: "Bar Graph", exp: "Visuals are faster." },
+    { q: "Counting cars passing a school is _______.", options: ["Survey", "Test", "Exam", "Game"], a: "Survey", exp: "Data collection method." },
+    { q: "If a student gets 10, 20, 30 marks, are they improving?", options: ["No", "Yes", "Same", "Bad"], a: "Yes", exp: "Increasing trend." },
+    { q: "Data collected by yourself is _______ data.", options: ["Primary", "Secondary", "Old", "Fake"], a: "Primary", exp: "First-hand." },
+    { q: "Data from a book is _______ data.", options: ["Primary", "Secondary", "New", "Raw"], a: "Secondary", exp: "Collected by others." },
+
+    // 61-70: Mixed Bag
+    { q: "5 groups of tally marks = _______.", options: ["20", "25", "15", "30"], a: "25", exp: "5 × 5 = 25." },
+    { q: "Graph showing parts of a whole circle?", options: ["Bar", "Pie Chart", "Line", "Tally"], a: "Pie Chart", exp: "Circle graph." },
+    { q: "If average is 10 and sum is 30, count is?", options: ["2", "3", "4", "5"], a: "3", exp: "30 ÷ 10 = 3." },
+    { q: "X-axis is also called _______ axis.", options: ["Vertical", "Horizontal", "Slant", "Round"], a: "Horizontal", exp: "Sleeping line." },
+    { q: "Y-axis is also called _______ axis.", options: ["Horizontal", "Vertical", "Flat", "Curved"], a: "Vertical", exp: "Standing line." },
+    { q: "Scale: 1cm = 10km. 5cm on map is?", options: ["10km", "50km", "5km", "15km"], a: "50km", exp: "5 × 10." },
+    { q: "Can we use tally marks for numbers like 13?", options: ["No", "Yes", "Never", "Hard"], a: "Yes", exp: "5 + 5 + 3 lines." },
+    { q: "Does a graph need a label for axes?", options: ["No", "Yes", "Optional", "Never"], a: "Yes", exp: "To know what they represent." },
+    { q: "Is 'Happiness' easy to measure in numbers?", options: ["Yes", "No", "Always", "Easy"], a: "No", exp: "It's a feeling." },
+    { q: "Interpretation means _______.", options: ["Drawing", "Understanding", "Coloring", "Erasing"], a: "Understanding", exp: "Making sense of data." }
+];
+
+const longQuestions = [
+    {
+        q: "Explain how to draw 13 using Tally Marks. Describe the groups and lines.",
+        keywords: ["5", "5", "3", "two groups", "three vertical", "diagonal", "cross"],
+        model: "Draw two groups of 5 (four vertical lines crossed by a diagonal line). Then draw 3 vertical lines. (5 + 5 + 3 = 13)."
+    },
+    {
+        q: "What is the difference between X-axis and Y-axis in a bar graph?",
+        keywords: ["horizontal", "vertical", "sleeping", "standing", "names", "numbers", "scale"],
+        model: "X-axis is the horizontal (sleeping) line usually for names. Y-axis is the vertical (standing) line usually for numbers/scale."
+    },
+    {
+        q: "If a Pictograph Key says '1 Tree Symbol = 10 Trees', how will you represent 25 Trees?",
+        keywords: ["2 symbols", "half symbol", "two", "half", "2 full", "1 half"],
+        model: "Draw 2 full tree symbols (representing 20) and 1 half tree symbol (representing 5). Total 25."
+    },
+    {
+        q: "Why do we use a 'Scale' in a bar graph? Explain with an example.",
+        keywords: ["large numbers", "fit", "paper", "unit", "represent"],
+        model: "We use a scale to fit large numbers on small paper. Example: If we have 100 students, we can't draw 100 cm bar, so we take scale 1 cm = 10 students."
+    },
+    {
+        q: "Find the mean (average) of these numbers: 10, 20, 30, 40, 50. Show steps.",
+        keywords: ["sum", "150", "divide", "5", "30", "total"],
+        model: "Sum = 10+20+30+40+50 = 150. Count = 5. Average = 150 ÷ 5 = 30."
+    },
+    {
+        q: "Look at your class attendance. If Monday has 40, Tuesday 35, Wednesday 40. Which days have equal attendance?",
+        keywords: ["monday", "wednesday", "same", "equal"],
+        model: "Monday and Wednesday both have 40 students, so they have equal attendance."
+    },
+    {
+        q: "What is the use of 'Organizing Data' in ascending or descending order?",
+        keywords: ["easy", "read", "understand", "find", "min", "max", "quickly"],
+        model: "It makes it easier to read, understand, and quickly find the smallest (minimum) and largest (maximum) values."
+    },
+    {
+        q: "Describe a real-life situation where you see data handling used.",
+        keywords: ["cricket", "score", "weather", "report", "marks", "census", "election"],
+        model: "Cricket scorecards show runs per over. Weather reports show temperature graphs. Report cards show marks."
+    },
+    {
+        q: "In a bar graph, can the bars be of different widths? Why or why not?",
+        keywords: ["no", "width", "equal", "same", "confusing", "fair"],
+        model: "No, bars must have equal width. Different widths make the comparison unfair and confusing."
+    },
+    {
+        q: "If you have data of favorite colors of 50 students, which is better: a list of names or a bar graph? Why?",
+        keywords: ["bar graph", "visual", "fast", "compare", "list is long"],
+        model: "A bar graph is better because it visualizes the count of each color, making it faster to compare than reading a long list."
+    }
+];
+
+/* ----------------------------------------------------------------
+   APP STATE & LOGIC
+---------------------------------------------------------------- */
+
+const state = {
+    qIndex: 0,
+    score: { correct: 0, wrong: 0, marks: 0, total: 0 },
+    answered: false
+};
+
+// --- INITIALIZATION ---
+document.addEventListener('DOMContentLoaded', () => {
+    initImpQuestions();
+    initPractice();
+    initLongQuestions();
+    updateScoreUI();
+});
+
+// --- RENDER IMPORTANT QUESTIONS ---
+function initImpQuestions() {
+    const container = document.getElementById('imp-questions-container');
+    importantQuestions.forEach((item, i) => {
+        const div = document.createElement('div');
+        div.className = 'imp-q-card';
+        div.innerHTML = `
+            <div class="q-lbl"><strong>Q${i+1}:</strong> ${item.q}</div>
+            <span class="a-lbl"><strong>Ans:</strong> ${item.a}</span>
+            <div class="exp-lbl"><em>(Why? ${item.exp})</em></div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+// --- PRACTICE ENGINE ---
+function initPractice() {
+    loadQuestion();
+    document.getElementById('next-btn').addEventListener('click', nextQuestion);
+}
+
+function loadQuestion() {
+    if (state.qIndex >= practiceQuestions.length) {
+        finishPractice();
+        return;
+    }
+    
+    const q = practiceQuestions[state.qIndex];
+    state.answered = false;
+    
+    document.getElementById('q-text').innerText = `Q${state.qIndex + 1}: ${q.q}`;
+    
+    const optContainer = document.getElementById('q-options');
+    optContainer.innerHTML = '';
+    
+    const feedback = document.getElementById('q-feedback');
+    feedback.className = 'feedback-box';
+    feedback.style.display = 'none';
+    
+    document.getElementById('next-btn').style.display = 'none';
+
+    // Shuffle options strictly for display, but keep logic simple
+    let opts = [...q.options];
+    opts.sort(() => Math.random() - 0.5);
+
+    opts.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerText = opt;
+        btn.onclick = () => checkAnswer(btn, opt, q);
+        optContainer.appendChild(btn);
+    });
+}
+
+function checkAnswer(btn, selected, q) {
+    if (state.answered) return;
+    state.answered = true;
+    
+    const isCorrect = selected === q.a;
+    const feedback = document.getElementById('q-feedback');
+    const options = document.querySelectorAll('.option-btn');
+
+    options.forEach(b => {
+        b.disabled = true;
+        if (b.innerText === q.a) b.classList.add('correct'); // Show correct always
+    });
+
+    if (isCorrect) {
+        btn.classList.add('correct');
+        feedback.innerHTML = `<strong>Excellent ⭐</strong><br>${q.exp}`;
+        feedback.classList.add('feed-correct');
+        updateScore(true);
+    } else {
+        btn.classList.add('wrong');
+        feedback.innerHTML = `<strong>Try Again!</strong><br>Correct Answer: ${q.a}<br><em>${q.exp}</em>`;
+        feedback.classList.add('feed-wrong');
+        updateScore(false);
+    }
+    
+    feedback.classList.add('show');
+    document.getElementById('next-btn').style.display = 'block';
+}
+
+function nextQuestion() {
+    state.qIndex++;
+    loadQuestion();
+}
+
+function finishPractice() {
+    document.getElementById('practice-container').innerHTML = `
+        <div class="question-box" style="text-align:center;">
+            <h3>Practice Completed! 🎉</h3>
+            <p>You answered 70 Questions.</p>
+            <p>Check the Score Panel for your result.</p>
+        </div>
+    `;
+}
+
+// --- LONG QUESTIONS LOGIC ---
+function initLongQuestions() {
+    const container = document.getElementById('long-questions-container');
+    longQuestions.forEach((item, i) => {
+        const div = document.createElement('div');
+        div.className = 'long-q-card';
+        div.innerHTML = `
+            <div><strong>Q${i+1}: ${item.q}</strong></div>
+            <textarea id="la-${i}" placeholder="Type your answer here..."></textarea>
+            <button class="check-btn" onclick="checkLongAnswer(${i})">Check Answer</button>
+            <div id="lf-${i}" class="long-feedback"></div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+function checkLongAnswer(idx) {
+    const txt = document.getElementById(`la-${idx}`).value.toLowerCase();
+    const feedback = document.getElementById(`lf-${idx}`);
+    const q = longQuestions[idx];
+    
+    if (txt.trim().length < 5) {
+        feedback.style.display = 'block';
+        feedback.innerHTML = "Please write a proper answer.";
+        return;
+    }
+
+    // Check keywords (Lenient)
+    let hits = 0;
+    q.keywords.forEach(k => {
+        if (txt.includes(k.toLowerCase())) hits++;
+    });
+
+    const isCorrect = hits >= 1; // At least one keyword match for Class 5
+    
+    // One time score update per question
+    if (!feedback.getAttribute('data-scored')) {
+        updateScore(isCorrect);
+        feedback.setAttribute('data-scored', 'true');
+    }
+
+    feedback.style.display = 'block';
+    if (isCorrect) {
+        feedback.style.borderLeft = "4px solid green";
+        feedback.innerHTML = `<strong>Correct! ✔</strong><br><em>Model Answer: ${q.model}</em>`;
+    } else {
+        feedback.style.borderLeft = "4px solid red";
+        feedback.innerHTML = `<strong>Incomplete/Incorrect ✘</strong><br><strong>Missing Keywords:</strong> ${q.keywords.join(', ')}<br><em>Model Answer: ${q.model}</em>`;
+    }
+}
+
+// --- SCORING & UTILS ---
+function updateScore(isCorrect) {
+    state.score.total++;
+    if (isCorrect) {
+        state.score.correct++;
+        state.score.marks += 1;
+    } else {
+        state.score.wrong++;
+    }
+    updateScoreUI();
+}
+
+function updateScoreUI() {
+    document.getElementById('s-correct').innerText = state.score.correct;
+    document.getElementById('s-wrong').innerText = state.score.wrong;
+    document.getElementById('s-total').innerText = state.score.total;
+    document.getElementById('s-marks').innerText = state.score.marks;
+}
+
+function toggleRevision() {
+    const sheet = document.getElementById('revision-sheet');
+    if (sheet.style.display === 'block') {
+        sheet.style.display = 'none';
+    } else {
+        sheet.style.display = 'block';
+        sheet.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+</script>
+</body>
+</html>

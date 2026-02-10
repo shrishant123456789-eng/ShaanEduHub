@@ -1,0 +1,2810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 5 GK Interactive Games</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: #ffffff;
+            color: #333;
+            padding: 20px;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        
+        .header {
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .score-panel {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            z-index: 1000;
+            max-width: 150px;
+        }
+        
+        .score-panel div {
+            margin: 3px 0;
+        }
+        
+        .game-menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .game-btn {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+        
+        .game-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .game-btn.active {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .game-container {
+            display: none;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .game-container.active {
+            display: block;
+        }
+        
+        .game-title {
+            text-align: center;
+            font-size: 22px;
+            color: #667eea;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .task-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .task-question {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+            line-height: 1.5;
+        }
+        
+        .option-btn {
+            display: block;
+            width: 100%;
+            background: #e3f2fd;
+            border: 2px solid #2196f3;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+        }
+        
+        .option-btn:hover {
+            background: #bbdefb;
+            transform: translateX(5px);
+        }
+        
+        .option-btn.correct {
+            background: #c8e6c9;
+            border-color: #4caf50;
+        }
+        
+        .option-btn.wrong {
+            background: #ffcdd2;
+            border-color: #f44336;
+        }
+        
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            display: none;
+        }
+        
+        .feedback.show {
+            display: block;
+        }
+        
+        .feedback.correct {
+            background: #c8e6c9;
+            color: #2e7d32;
+        }
+        
+        .feedback.wrong {
+            background: #ffcdd2;
+            color: #c62828;
+        }
+        
+        .nav-btns {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .nav-btn {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .nav-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .input-answer {
+            width: 100%;
+            padding: 12px;
+            font-size: 14px;
+            border: 2px solid #2196f3;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .submit-btn:hover {
+            opacity: 0.9;
+        }
+        
+        .drag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .drag-item {
+            background: #fff3e0;
+            border: 2px solid #ff9800;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: move;
+            font-size: 13px;
+            user-select: none;
+        }
+        
+        .drop-zone {
+            min-height: 50px;
+            background: #f5f5f5;
+            border: 2px dashed #9e9e9e;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        
+        .drop-zone.filled {
+            background: #e8f5e9;
+            border-color: #4caf50;
+        }
+        
+        .match-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        
+        .match-item {
+            background: #e3f2fd;
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid #2196f3;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .match-item.selected {
+            background: #ffd54f;
+            border-color: #ffa000;
+        }
+        
+        .match-item.matched {
+            background: #c8e6c9;
+            border-color: #4caf50;
+            pointer-events: none;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 10px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 25px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
+            transition: width 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .hint-btn {
+            background: #fff9c4;
+            border: 2px solid #fbc02d;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        
+        .hint-text {
+            background: #fff9c4;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: none;
+            font-size: 13px;
+        }
+        
+        .hint-text.show {
+            display: block;
+        }
+        
+        .tf-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 15px 0;
+        }
+        
+        .tf-btn {
+            flex: 1;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            border: 2px solid;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .tf-btn.true {
+            background: #e8f5e9;
+            border-color: #4caf50;
+            color: #2e7d32;
+        }
+        
+        .tf-btn.false {
+            background: #ffebee;
+            border-color: #f44336;
+            color: #c62828;
+        }
+        
+        .tf-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .image-task {
+            text-align: center;
+            margin: 15px 0;
+        }
+        
+        .image-task img {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+        
+        @media (max-width: 360px) {
+            .score-panel {
+                font-size: 9px;
+                padding: 8px;
+                max-width: 120px;
+            }
+            
+            .game-title {
+                font-size: 18px;
+            }
+            
+            .task-question {
+                font-size: 14px;
+            }
+            
+            .option-btn {
+                font-size: 12px;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🌟 Class 5 GK Interactive Games 🌟</h1>
+        <p>Complete Syllabus Coverage | 500+ Tasks | Learn & Play</p>
+    </div>
+    
+    <div class="score-panel" id="scorePanel">
+        <div><strong>Score Panel</strong></div>
+        <div>Correct: <span id="correctCount">0</span></div>
+        <div>Wrong: <span id="wrongCount">0</span></div>
+        <div>Not Attempted: <span id="notAttemptedCount">500</span></div>
+        <div>Total: <span id="totalAttempted">0</span>/500</div>
+        <div>Percentage: <span id="percentage">0</span>%</div>
+        <div>Marks: <span id="marks">0</span>/5000</div>
+    </div>
+    
+    <div class="game-menu" id="gameMenu"></div>
+    
+    <div id="gamesContainer"></div>
+    
+    <div class="footer">
+        <strong>Designed & Created by SHRISHANT YADAV, ShanEduHub</strong>
+    </div>
+    
+    <script>
+        const gameData = [
+            {
+                name: "🌍 Planet Quest",
+                chapter: "The World & Our Planet",
+                tasks: [
+                    {
+                        type: "mcq",
+                        question: "What is the shape of Earth?",
+                        options: ["Perfect sphere", "Oblate spheroid", "Flat disc", "Cube"],
+                        correct: 1,
+                        explanation: "Earth is an oblate spheroid, slightly flattened at poles and bulging at equator."
+                    },
+                    {
+                        type: "mcq",
+                        question: "How many layers does Earth have?",
+                        options: ["2", "3", "4", "5"],
+                        correct: 1,
+                        explanation: "Earth has 3 main layers: Crust, Mantle, and Core."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Earth rotates on its:",
+                        options: ["Equator", "Axis", "Orbit", "Surface"],
+                        correct: 1,
+                        explanation: "Earth rotates on its axis, an imaginary line passing through North and South poles."
+                    },
+                    {
+                        type: "mcq",
+                        question: "How long does Earth take to complete one rotation?",
+                        options: ["12 hours", "24 hours", "48 hours", "365 days"],
+                        correct: 1,
+                        explanation: "Earth completes one rotation in 24 hours, causing day and night."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Revolution of Earth causes:",
+                        options: ["Day and night", "Seasons", "Tides", "Winds"],
+                        correct: 1,
+                        explanation: "Revolution around the Sun in 365 days causes seasons."
+                    },
+                    {
+                        type: "mcq",
+                        question: "How many continents are there?",
+                        options: ["5", "6", "7", "8"],
+                        correct: 2,
+                        explanation: "There are 7 continents: Asia, Africa, North America, South America, Antarctica, Europe, Australia."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which is the largest ocean?",
+                        options: ["Atlantic", "Indian", "Pacific", "Arctic"],
+                        correct: 2,
+                        explanation: "Pacific Ocean is the largest and deepest ocean covering about 46% of Earth's water surface."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which ocean is the smallest?",
+                        options: ["Indian", "Arctic", "Southern", "Atlantic"],
+                        correct: 1,
+                        explanation: "Arctic Ocean is the smallest and shallowest ocean."
+                    },
+                    {
+                        type: "input",
+                        question: "Name the sea between India and Sri Lanka.",
+                        answer: ["palk strait", "palk"],
+                        explanation: "Palk Strait separates India and Sri Lanka."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which strait connects Mediterranean Sea to Atlantic Ocean?",
+                        options: ["Bering Strait", "Strait of Gibraltar", "Strait of Hormuz", "Palk Strait"],
+                        correct: 1,
+                        explanation: "Strait of Gibraltar connects Mediterranean Sea to Atlantic Ocean."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which is the highest mountain peak in the world?",
+                        options: ["K2", "Kanchenjunga", "Mount Everest", "Makalu"],
+                        correct: 2,
+                        explanation: "Mount Everest (8,849m) is the highest peak located in Himalayas."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which is the largest desert in the world?",
+                        options: ["Gobi", "Sahara", "Arabian", "Thar"],
+                        correct: 1,
+                        explanation: "Sahara is the largest hot desert covering most of North Africa."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Plains are formed by:",
+                        options: ["Volcanoes", "Rivers", "Winds", "Glaciers"],
+                        correct: 1,
+                        explanation: "Plains are mainly formed by deposition of sediments by rivers."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Deccan Plateau is located in:",
+                        options: ["North India", "South India", "East India", "West India"],
+                        correct: 1,
+                        explanation: "Deccan Plateau is a large plateau in southern India."
+                    },
+                    {
+                        type: "tf",
+                        question: "Volcanoes are openings in Earth's crust. True or False?",
+                        answer: true,
+                        explanation: "True. Volcanoes are openings where molten rock erupts from Earth's interior."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Earthquakes are measured using:",
+                        options: ["Thermometer", "Barometer", "Seismograph", "Anemometer"],
+                        correct: 2,
+                        explanation: "Seismograph measures and records earthquake waves."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which climate zone has hot and wet weather throughout the year?",
+                        options: ["Polar", "Temperate", "Tropical", "Desert"],
+                        correct: 2,
+                        explanation: "Tropical climate zones are hot and humid with heavy rainfall."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which natural disaster is caused by underwater earthquakes?",
+                        options: ["Cyclone", "Tsunami", "Tornado", "Drought"],
+                        correct: 1,
+                        explanation: "Tsunami is a series of ocean waves caused by underwater earthquakes."
+                    },
+                    {
+                        type: "mcq",
+                        question: "During earthquake, we should:",
+                        options: ["Run outside", "Use elevator", "Hide under table", "Stand near window"],
+                        correct: 2,
+                        explanation: "Drop, Cover, and Hold under a sturdy table during earthquake."
+                    },
+                    {
+                        type: "input",
+                        question: "Name one renewable source of energy.",
+                        answer: ["solar", "wind", "hydro", "hydroelectric", "water", "tidal", "geothermal"],
+                        explanation: "Solar, wind, hydro, and geothermal are renewable energy sources."
+                    },
+                    {
+                        type: "mcq",
+                        question: "What does the 3 Rs stand for in environmental protection?",
+                        options: ["Read, Run, Rest", "Reduce, Reuse, Recycle", "Rice, Roti, Rajma", "Rain, River, Road"],
+                        correct: 1,
+                        explanation: "Reduce, Reuse, Recycle helps protect environment and save resources."
+                    },
+                    {
+                        type: "tf",
+                        question: "Plastic bags are good for the environment. True or False?",
+                        answer: false,
+                        explanation: "False. Plastic bags harm environment as they don't decompose easily."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which gas do plants absorb from air?",
+                        options: ["Oxygen", "Nitrogen", "Carbon dioxide", "Hydrogen"],
+                        correct: 2,
+                        explanation: "Plants absorb carbon dioxide during photosynthesis."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Rainwater harvesting helps in:",
+                        options: ["Wasting water", "Conserving water", "Polluting water", "Heating water"],
+                        correct: 1,
+                        explanation: "Rainwater harvesting collects and stores rainwater for future use."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which layer of atmosphere protects us from harmful UV rays?",
+                        options: ["Troposphere", "Stratosphere (Ozone layer)", "Mesosphere", "Thermosphere"],
+                        correct: 1,
+                        explanation: "Ozone layer in stratosphere protects us from harmful ultraviolet radiation."
+                    }
+                ]
+            },
+            {
+                name: "🇮🇳 India Explorer",
+                chapter: "India Complete Awareness",
+                tasks: [
+                    {
+                        type: "mcq",
+                        question: "India is located in which continent?",
+                        options: ["Africa", "Europe", "Asia", "Australia"],
+                        correct: 2,
+                        explanation: "India is located in South Asia continent."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which ocean is located to the south of India?",
+                        options: ["Pacific Ocean", "Indian Ocean", "Atlantic Ocean", "Arctic Ocean"],
+                        correct: 1,
+                        explanation: "Indian Ocean is located to the south of India."
+                    },
+                    {
+                        type: "mcq",
+                        question: "How many states does India have currently?",
+                        options: ["28", "29", "30", "31"],
+                        correct: 0,
+                        explanation: "India has 28 states (after reorganization)."
+                    },
+                    {
+                        type: "mcq",
+                        question: "How many Union Territories does India have?",
+                        options: ["7", "8", "9", "10"],
+                        correct: 1,
+                        explanation: "India has 8 Union Territories including Delhi and Jammu & Kashmir."
+                    },
+                    {
+                        type: "input",
+                        question: "What is the capital of India?",
+                        answer: ["new delhi", "delhi"],
+                        explanation: "New Delhi is the capital of India."
+                    },
+                    {
+                        type: "input",
+                        question: "What is the capital of Maharashtra?",
+                        answer: ["mumbai"],
+                        explanation: "Mumbai is the capital of Maharashtra."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which is the largest state by area in India?",
+                        options: ["Madhya Pradesh", "Rajasthan", "Maharashtra", "Uttar Pradesh"],
+                        correct: 1,
+                        explanation: "Rajasthan is the largest state by area in India."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which mountain range separates India from China?",
+                        options: ["Aravalli", "Western Ghats", "Himalayas", "Vindhya"],
+                        correct: 2,
+                        explanation: "Himalayas separate India from China and Central Asia."
+                    },
+                    {
+                        type: "mcq",
+                        question: "What is the national animal of India?",
+                        options: ["Lion", "Tiger", "Elephant", "Peacock"],
+                        correct: 1,
+                        explanation: "Royal Bengal Tiger is the national animal of India."
+                    },
+                    {
+                        type: "mcq",
+                        question: "What is the national bird of India?",
+                        options: ["Parrot", "Peacock", "Sparrow", "Eagle"],
+                        correct: 1,
+                        explanation: "Peacock (Indian Peafowl) is the national bird of India."
+                    },
+                    {
+                        type: "mcq",
+                        question: "What is the national flower of India?",
+                        options: ["Rose", "Lotus", "Sunflower", "Jasmine"],
+                        correct: 1,
+                        explanation: "Lotus is the national flower of India."
+                    },
+                    {
+                        type: "mcq",
+                        question: "How many colors are there in the Indian flag?",
+                        options: ["2", "3", "4", "5"],
+                        correct: 1,
+                        explanation: "Indian flag has 3 colors: Saffron, White, and Green with Ashoka Chakra."
+                    },
+                    {
+                        type: "mcq",
+                        question: "How many spokes are there in Ashoka Chakra?",
+                        options: ["12", "16", "24", "32"],
+                        correct: 2,
+                        explanation: "Ashoka Chakra has 24 spokes representing 24 hours of the day."
+                    },
+                    {
+                        type: "input",
+                        question: "Who wrote the national anthem 'Jana Gana Mana'?",
+                        answer: ["rabindranath tagore", "tagore"],
+                        explanation: "Rabindranath Tagore wrote the national anthem."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which day is celebrated as Independence Day?",
+                        options: ["15th August", "26th January", "2nd October", "14th November"],
+                        correct: 0,
+                        explanation: "15th August is celebrated as Independence Day (1947)."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which day is celebrated as Republic Day?",
+                        options: ["15th August", "26th January", "2nd October", "14th November"],
+                        correct: 1,
+                        explanation: "26th January is celebrated as Republic Day (1950)."
+                    },
+                    {
+                        type: "mcq",
+                        question: "2nd October is the birthday of:",
+                        options: ["Jawaharlal Nehru", "Mahatma Gandhi", "Sardar Patel", "Subhash Chandra Bose"],
+                        correct: 1,
+                        explanation: "2nd October is Mahatma Gandhi's birthday, celebrated as Gandhi Jayanti."
+                    },
+                    {
+                        type: "tf",
+                        question: "The Constitution of India came into effect on 26th January 1950. True or False?",
+                        answer: true,
+                        explanation: "True. Indian Constitution was adopted on 26th January 1950."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Who is known as the Father of Indian Constitution?",
+                        options: ["Mahatma Gandhi", "Dr. B.R. Ambedkar", "Jawaharlal Nehru", "Sardar Patel"],
+                        correct: 1,
+                        explanation: "Dr. B.R. Ambedkar is known as the Father of Indian Constitution."
+                    },
+                    {
+                        type: "mcq",
+                        question: "How many fundamental rights are there in Indian Constitution?",
+                        options: ["5", "6", "7", "8"],
+                        correct: 1,
+                        explanation: "There are 6 fundamental rights in Indian Constitution."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Who is the head of the Indian Government?",
+                        options: ["President", "Prime Minister", "Chief Justice", "Governor"],
+                        correct: 1,
+                        explanation: "Prime Minister is the head of the government."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Who is the head of the Indian State?",
+                        options: ["President", "Prime Minister", "Vice President", "Chief Justice"],
+                        correct: 0,
+                        explanation: "President is the constitutional head of Indian State."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Indian Parliament consists of:",
+                        options: ["Lok Sabha only", "Rajya Sabha only", "Lok Sabha and Rajya Sabha", "Supreme Court"],
+                        correct: 2,
+                        explanation: "Indian Parliament has two houses: Lok Sabha and Rajya Sabha."
+                    },
+                    {
+                        type: "tf",
+                        question: "Every Indian citizen has the right to vote at age 18. True or False?",
+                        answer: true,
+                        explanation: "True. Citizens aged 18 and above can vote in India."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which river is considered the longest in India?",
+                        options: ["Yamuna", "Ganga", "Brahmaputra", "Godavari"],
+                        correct: 1,
+                        explanation: "River Ganga is considered the longest river in India."
+                    }
+                ]
+            },
+            {
+                name: "🌏 World Explorer",
+                chapter: "World Countries & Global Awareness",
+                tasks: [
+                    {
+                        type: "input",
+                        question: "What is the capital of France?",
+                        answer: ["paris"],
+                        explanation: "Paris is the capital and largest city of France."
+                    },
+                    {
+                        type: "input",
+                        question: "What is the capital of United States of America?",
+                        answer: ["washington dc", "washington d.c.", "washington"],
+                        explanation: "Washington D.C. is the capital of USA."
+                    },
+                    {
+                        type: "input",
+                        question: "What is the capital of China?",
+                        answer: ["beijing"],
+                        explanation: "Beijing is the capital of China."
+                    },
+                    {
+                        type: "input",
+                        question: "What is the capital of Japan?",
+                        answer: ["tokyo"],
+                        explanation: "Tokyo is the capital of Japan."
+                    },
+                    {
+                        type: "input",
+                        question: "What is the capital of Australia?",
+                        answer: ["canberra"],
+                        explanation: "Canberra is the capital of Australia (not Sydney)."
+                    },
+                    {
+                        type: "mcq",
+                        question: "What is the currency of USA?",
+                        options: ["Pound", "Euro", "Dollar", "Yen"],
+                        correct: 2,
+                        explanation: "US Dollar ($) is the currency of United States."
+                    },
+                    {
+                        type: "mcq",
+                        question: "What is the currency of United Kingdom?",
+                        options: ["Pound Sterling", "Euro", "Dollar", "Franc"],
+                        correct: 0,
+                        explanation: "Pound Sterling (£) is the currency of UK."
+                    },
+                    {
+                        type: "mcq",
+                        question: "What is the currency of Japan?",
+                        options: ["Yuan", "Won", "Yen", "Ringgit"],
+                        correct: 2,
+                        explanation: "Japanese Yen (¥) is the currency of Japan."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which country has the Eiffel Tower?",
+                        options: ["Italy", "France", "Spain", "Germany"],
+                        correct: 1,
+                        explanation: "Eiffel Tower is located in Paris, France."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which country has the Statue of Liberty?",
+                        options: ["Canada", "USA", "Australia", "Brazil"],
+                        correct: 1,
+                        explanation: "Statue of Liberty is in New York, USA."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which country has pyramids?",
+                        options: ["Egypt", "Mexico", "India", "China"],
+                        correct: 0,
+                        explanation: "Famous pyramids are in Egypt (also some in Mexico)."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which continent has the most countries?",
+                        options: ["Asia", "Africa", "Europe", "South America"],
+                        correct: 1,
+                        explanation: "Africa has 54 countries, the most of any continent."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which is the largest country by area?",
+                        options: ["China", "USA", "Russia", "Canada"],
+                        correct: 2,
+                        explanation: "Russia is the largest country by area in the world."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which is the smallest country in the world?",
+                        options: ["Monaco", "Vatican City", "San Marino", "Liechtenstein"],
+                        correct: 1,
+                        explanation: "Vatican City is the smallest country by both area and population."
+                    },
+                    {
+                        type: "mcq",
+                        question: "What does UN stand for?",
+                        options: ["United Nations", "Universal Network", "Unified Nations", "Union Nations"],
+                        correct: 0,
+                        explanation: "UN stands for United Nations, formed in 1945."
+                    },
+                    {
+                        type: "mcq",
+                        question: "What does WHO stand for?",
+                        options: ["World Health Office", "World Health Organization", "World Hospital Organization", "Worldwide Health Office"],
+                        correct: 1,
+                        explanation: "WHO stands for World Health Organization."
+                    },
+                    {
+                        type: "mcq",
+                        question: "What does UNICEF work for?",
+                        options: ["Adults", "Children", "Animals", "Plants"],
+                        correct: 1,
+                        explanation: "UNICEF works for children's rights and wellbeing worldwide."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which city is known as the Big Apple?",
+                        options: ["Los Angeles", "New York", "Chicago", "Boston"],
+                        correct: 1,
+                        explanation: "New York City is nicknamed the Big Apple."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Great Wall is located in which country?",
+                        options: ["Japan", "China", "Korea", "Mongolia"],
+                        correct: 1,
+                        explanation: "Great Wall of China is located in China."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which country is known as the Land of Rising Sun?",
+                        options: ["China", "Japan", "Thailand", "Korea"],
+                        correct: 1,
+                        explanation: "Japan is known as the Land of Rising Sun."
+                    },
+                    {
+                        type: "tf",
+                        question: "Brazil is the largest country in South America. True or False?",
+                        answer: true,
+                        explanation: "True. Brazil is the largest country in South America."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which language is most widely spoken in the world?",
+                        options: ["English", "Mandarin Chinese", "Spanish", "Hindi"],
+                        correct: 1,
+                        explanation: "Mandarin Chinese has the most native speakers globally."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Taj Mahal is one of the Seven Wonders of:",
+                        options: ["Ancient World", "Modern World", "Medieval World", "Natural World"],
+                        correct: 1,
+                        explanation: "Taj Mahal is one of the New Seven Wonders of the World."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which wonder is located in Egypt?",
+                        options: ["Colosseum", "Machu Picchu", "Pyramids of Giza", "Petra"],
+                        correct: 2,
+                        explanation: "Pyramids of Giza are the only remaining Ancient Wonder."
+                    },
+                    {
+                        type: "mcq",
+                        question: "When do we add or subtract hours for time zones?",
+                        options: ["Moving north-south", "Moving east-west", "Random", "Never"],
+                        correct: 1,
+                        explanation: "Time changes when moving east or west across time zones."
+                    }
+                ]
+            },
+            {
+                name: "🏛️ History Explorer",
+                chapter: "History & Civilization",
+                tasks: [
+                    {
+                        type: "mcq",
+                        question: "Which ancient civilization developed along the Indus River?",
+                        options: ["Egyptian", "Mesopotamian", "Indus Valley", "Greek"],
+                        correct: 2,
+                        explanation: "Indus Valley Civilization developed along Indus River around 2500 BCE."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which ancient civilization built the pyramids?",
+                        options: ["Roman", "Egyptian", "Greek", "Chinese"],
+                        correct: 1,
+                        explanation: "Ancient Egyptians built pyramids as tombs for pharaohs."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Mesopotamia was located between which two rivers?",
+                        options: ["Nile and Amazon", "Tigris and Euphrates", "Ganges and Yamuna", "Rhine and Danube"],
+                        correct: 1,
+                        explanation: "Mesopotamia was between Tigris and Euphrates rivers."
+                    },
+                    {
+                        type: "input",
+                        question: "Who is known as the Father of the Nation in India?",
+                        answer: ["mahatma gandhi", "gandhi"],
+                        explanation: "Mahatma Gandhi is called the Father of the Nation."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which movement did Mahatma Gandhi start?",
+                        options: ["Quit India", "Non-Cooperation", "Civil Disobedience", "All of these"],
+                        correct: 3,
+                        explanation: "Gandhi led multiple movements including all these."
+                    },
+                    {
+                        type: "input",
+                        question: "Who was the first Prime Minister of India?",
+                        answer: ["jawaharlal nehru", "nehru"],
+                        explanation: "Jawaharlal Nehru was India's first Prime Minister."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Who gave the slogan 'Give me blood, I will give you freedom'?",
+                        options: ["Bhagat Singh", "Subhash Chandra Bose", "Chandrashekhar Azad", "Lala Lajpat Rai"],
+                        correct: 1,
+                        explanation: "Netaji Subhash Chandra Bose gave this famous slogan."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Taj Mahal was built by:",
+                        options: ["Akbar", "Shah Jahan", "Aurangzeb", "Jahangir"],
+                        correct: 1,
+                        explanation: "Emperor Shah Jahan built Taj Mahal in memory of Mumtaz Mahal."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Red Fort is located in:",
+                        options: ["Mumbai", "Kolkata", "Delhi", "Agra"],
+                        correct: 2,
+                        explanation: "Red Fort is located in Old Delhi, built by Shah Jahan."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Qutub Minar is located in:",
+                        options: ["Delhi", "Agra", "Jaipur", "Lucknow"],
+                        correct: 0,
+                        explanation: "Qutub Minar is in Delhi, built by Qutub-ud-din Aibak."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Who built the Gateway of India?",
+                        options: ["Mughals", "British", "Portuguese", "French"],
+                        correct: 1,
+                        explanation: "Gateway of India was built by British in Mumbai."
+                    },
+                    {
+                        type: "mcq",
+                        question: "In which year did India gain independence?",
+                        options: ["1945", "1946", "1947", "1948"],
+                        correct: 2,
+                        explanation: "India gained independence on 15th August 1947."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Who was known as the Iron Man of India?",
+                        options: ["Bhagat Singh", "Sardar Vallabhbhai Patel", "Subhash Chandra Bose", "Lal Bahadur Shastri"],
+                        correct: 1,
+                        explanation: "Sardar Vallabhbhai Patel unified India and is called Iron Man."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which leader is associated with non-violence?",
+                        options: ["Bhagat Singh", "Mahatma Gandhi", "Chandrashekhar Azad", "Rani Laxmibai"],
+                        correct: 1,
+                        explanation: "Mahatma Gandhi believed in ahimsa (non-violence)."
+                    },
+                    {
+                        type: "input",
+                        question: "Who wrote the national song 'Vande Mataram'?",
+                        answer: ["bankim chandra chatterjee", "bankim chandra", "chatterjee"],
+                        explanation: "Bankim Chandra Chatterjee wrote Vande Mataram."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Jallianwala Bagh massacre happened in which city?",
+                        options: ["Delhi", "Amritsar", "Lahore", "Mumbai"],
+                        correct: 1,
+                        explanation: "Jallianwala Bagh massacre occurred in Amritsar in 1919."
+                    },
+                    {
+                        type: "tf",
+                        question: "Bhagat Singh was a freedom fighter who sacrificed his life for India. True or False?",
+                        answer: true,
+                        explanation: "True. Bhagat Singh was hanged at age 23 for India's freedom."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Who led the Salt March (Dandi March)?",
+                        options: ["Nehru", "Gandhi", "Patel", "Bose"],
+                        correct: 1,
+                        explanation: "Mahatma Gandhi led the Salt March in 1930."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which monument in India has no doors or windows?",
+                        options: ["Qutub Minar", "Taj Mahal", "Charminar", "India Gate"],
+                        correct: 2,
+                        explanation: "Charminar in Hyderabad is built without doors and windows in traditional style."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Ashoka was an emperor of which dynasty?",
+                        options: ["Gupta", "Maurya", "Mughal", "Chola"],
+                        correct: 1,
+                        explanation: "Ashoka was a Mauryan emperor who spread Buddhism."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which is the oldest civilization?",
+                        options: ["Egyptian", "Mesopotamian", "Indus Valley", "Greek"],
+                        correct: 1,
+                        explanation: "Mesopotamian civilization is considered one of the oldest."
+                    },
+                    {
+                        type: "mcq",
+                        question: "A museum preserves:",
+                        options: ["Food", "History and artifacts", "Animals", "Plants"],
+                        correct: 1,
+                        explanation: "Museums preserve historical objects and cultural heritage."
+                    },
+                    {
+                        type: "tf",
+                        question: "Heritage sites should be protected and conserved. True or False?",
+                        answer: true,
+                        explanation: "True. Heritage sites are part of our history and culture."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Who invented the telephone?",
+                        options: ["Thomas Edison", "Alexander Graham Bell", "Nikola Tesla", "Benjamin Franklin"],
+                        correct: 1,
+                        explanation: "Alexander Graham Bell invented the telephone in 1876."
+                    },
+                    {
+                        type: "mcq",
+                        question: "The ancient Olympic Games originated in:",
+                        options: ["Rome", "Egypt", "Greece", "India"],
+                        correct: 2,
+                        explanation: "Ancient Olympic Games started in Olympia, Greece."
+                    }
+                ]
+            },
+            {
+                name: "🔬 Science & Tech Master",
+                chapter: "Science & Technology",
+                tasks: [
+                    {
+                        type: "input",
+                        question: "Who invented the light bulb?",
+                        answer: ["thomas edison", "edison"],
+                        explanation: "Thomas Edison invented the practical electric light bulb."
+                    },
+                    {
+                        type: "input",
+                        question: "Who invented the airplane?",
+                        answer: ["wright brothers", "wright"],
+                        explanation: "Wright Brothers (Orville and Wilbur) invented the airplane."
+                    },
+                    {
+                        type: "mcq",
+                        question: "How many planets are in our solar system?",
+                        options: ["7", "8", "9", "10"],
+                        correct: 1,
+                        explanation: "There are 8 planets after Pluto was reclassified as dwarf planet."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which is the largest planet?",
+                        options: ["Earth", "Saturn", "Jupiter", "Neptune"],
+                        correct: 2,
+                        explanation: "Jupiter is the largest planet in our solar system."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which planet is known as the Red Planet?",
+                        options: ["Venus", "Mars", "Jupiter", "Saturn"],
+                        correct: 1,
+                        explanation: "Mars is called Red Planet due to iron oxide on surface."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which is the hottest planet?",
+                        options: ["Mercury", "Venus", "Mars", "Jupiter"],
+                        correct: 1,
+                        explanation: "Venus is the hottest planet due to greenhouse effect."
+                    },
+                    {
+                        type: "mcq",
+                        question: "What is a natural satellite of Earth?",
+                        options: ["Sun", "Mars", "Moon", "ISS"],
+                        correct: 2,
+                        explanation: "Moon is Earth's only natural satellite."
+                    },
+                    {
+                        type: "mcq",
+                        question: "ISRO stands for:",
+                        options: ["Indian Space Research Organization", "International Space Research Office", "Indian Satellite Research Office", "International Scientific Research Organization"],
+                        correct: 0,
+                        explanation: "ISRO is Indian Space Research Organization."
+                    },
+                    {
+                        type: "mcq",
+                        question: "India's first satellite was:",
+                        options: ["Chandrayaan", "Mangalyaan", "Aryabhata", "INSAT"],
+                        correct: 2,
+                        explanation: "Aryabhata was India's first satellite launched in 1975."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Chandrayaan is India's mission to:",
+                        options: ["Sun", "Moon", "Mars", "Venus"],
+                        correct: 1,
+                        explanation: "Chandrayaan is India's lunar exploration mission."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Mangalyaan is India's mission to:",
+                        options: ["Moon", "Mars", "Venus", "Jupiter"],
+                        correct: 1,
+                        explanation: "Mangalyaan (Mars Orbiter Mission) is India's Mars mission."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which energy source will never run out?",
+                        options: ["Coal", "Petroleum", "Solar", "Natural gas"],
+                        correct: 2,
+                        explanation: "Solar energy is renewable and won't run out."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which is a non-renewable energy source?",
+                        options: ["Wind", "Solar", "Coal", "Hydro"],
+                        correct: 2,
+                        explanation: "Coal is non-renewable as it takes millions of years to form."
+                    },
+                    {
+                        type: "tf",
+                        question: "Wind energy is a clean source of energy. True or False?",
+                        answer: true,
+                        explanation: "True. Wind energy produces no pollution or greenhouse gases."
+                    },
+                    {
+                        type: "mcq",
+                        question: "What does AI stand for?",
+                        options: ["Automatic Intelligence", "Artificial Intelligence", "Advanced Internet", "Automated Information"],
+                        correct: 1,
+                        explanation: "AI stands for Artificial Intelligence."
+                    },
+                    {
+                        type: "mcq",
+                        question: "A robot is a:",
+                        options: ["Living being", "Machine", "Animal", "Plant"],
+                        correct: 1,
+                        explanation: "A robot is a programmable machine that can perform tasks."
+                    },
+                    {
+                        type: "tf",
+                        question: "Robots can be programmed to do different tasks. True or False?",
+                        answer: true,
+                        explanation: "True. Robots can be programmed for various functions."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which device helps us search information on internet?",
+                        options: ["Television", "Radio", "Computer/Mobile", "Telephone"],
+                        correct: 2,
+                        explanation: "Computers and mobile phones help access internet."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Email is used for:",
+                        options: ["Watching movies", "Playing games", "Sending messages", "Making calls"],
+                        correct: 2,
+                        explanation: "Email (electronic mail) is used for sending messages."
+                    },
+                    {
+                        type: "mcq",
+                        question: "What does www stand for?",
+                        options: ["World Wide Web", "World Wide Work", "World Web Wire", "Wide World Web"],
+                        correct: 0,
+                        explanation: "WWW stands for World Wide Web."
+                    },
+                    {
+                        type: "input",
+                        question: "Who invented the radio?",
+                        answer: ["guglielmo marconi", "marconi"],
+                        explanation: "Guglielmo Marconi invented the radio."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Vaccination helps in:",
+                        options: ["Curing disease", "Preventing disease", "Spreading disease", "None"],
+                        correct: 1,
+                        explanation: "Vaccination prevents diseases by building immunity."
+                    },
+                    {
+                        type: "tf",
+                        question: "Technology makes our life easier. True or False?",
+                        answer: true,
+                        explanation: "True. Technology helps us in communication, work, and daily tasks."
+                    },
+                    {
+                        type: "mcq",
+                        question: "3D printing can create:",
+                        options: ["Only papers", "Only metals", "Physical objects", "Only food"],
+                        correct: 2,
+                        explanation: "3D printing creates physical objects layer by layer."
+                    },
+                    {
+                        type: "mcq",
+                        question: "The first computer programmer was:",
+                        options: ["Steve Jobs", "Bill Gates", "Ada Lovelace", "Mark Zuckerberg"],
+                        correct: 2,
+                        explanation: "Ada Lovelace is considered the first computer programmer."
+                    }
+                ]
+            },
+            {
+                name: "💪 Health & Body Care",
+                chapter: "Human Body & Health",
+                tasks: [
+                    {
+                        type: "mcq",
+                        question: "How many main systems does the human body have?",
+                        options: ["5", "8", "11", "15"],
+                        correct: 2,
+                        explanation: "Human body has 11 major organ systems."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which organ pumps blood throughout the body?",
+                        options: ["Lungs", "Heart", "Liver", "Kidneys"],
+                        correct: 1,
+                        explanation: "Heart pumps blood to all parts of the body."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which system helps us breathe?",
+                        options: ["Digestive", "Circulatory", "Respiratory", "Nervous"],
+                        correct: 2,
+                        explanation: "Respiratory system helps us breathe and take in oxygen."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which organ helps digest food?",
+                        options: ["Heart", "Brain", "Stomach", "Lungs"],
+                        correct: 2,
+                        explanation: "Stomach is the main organ for digestion."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which nutrient gives us instant energy?",
+                        options: ["Proteins", "Carbohydrates", "Vitamins", "Minerals"],
+                        correct: 1,
+                        explanation: "Carbohydrates provide quick energy to the body."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which nutrient helps build muscles?",
+                        options: ["Fats", "Proteins", "Vitamins", "Water"],
+                        correct: 1,
+                        explanation: "Proteins are building blocks for muscles and tissues."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which vitamin helps us see in dim light?",
+                        options: ["Vitamin A", "Vitamin B", "Vitamin C", "Vitamin D"],
+                        correct: 0,
+                        explanation: "Vitamin A is essential for good vision."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which vitamin do we get from sunlight?",
+                        options: ["Vitamin A", "Vitamin C", "Vitamin D", "Vitamin E"],
+                        correct: 2,
+                        explanation: "Vitamin D is produced in skin when exposed to sunlight."
+                    },
+                    {
+                        type: "mcq",
+                        question: "A balanced diet should include:",
+                        options: ["Only carbohydrates", "Only proteins", "All nutrients", "Only vitamins"],
+                        correct: 2,
+                        explanation: "Balanced diet includes all nutrients in right proportions."
+                    },
+                    {
+                        type: "mcq",
+                        question: "We should drink at least how many glasses of water daily?",
+                        options: ["2-3", "4-5", "8-10", "15-20"],
+                        correct: 2,
+                        explanation: "We should drink 8-10 glasses of water daily."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Common cold is caused by:",
+                        options: ["Bacteria", "Virus", "Fungus", "Worm"],
+                        correct: 1,
+                        explanation: "Common cold is caused by viruses."
+                    },
+                    {
+                        type: "mcq",
+                        question: "To prevent diseases, we should:",
+                        options: ["Not wash hands", "Eat junk food", "Maintain hygiene", "Skip meals"],
+                        correct: 2,
+                        explanation: "Maintaining hygiene prevents many diseases."
+                    },
+                    {
+                        type: "mcq",
+                        question: "In case of minor burn, we should:",
+                        options: ["Apply oil", "Put under cool water", "Use ice directly", "Do nothing"],
+                        correct: 1,
+                        explanation: "Cool running water helps soothe minor burns."
+                    },
+                    {
+                        type: "mcq",
+                        question: "In case of nose bleeding, we should:",
+                        options: ["Tilt head back", "Lie down", "Sit and lean forward", "Run around"],
+                        correct: 2,
+                        explanation: "Sit upright and lean slightly forward during nose bleed."
+                    },
+                    {
+                        type: "tf",
+                        question: "Mental health is as important as physical health. True or False?",
+                        answer: true,
+                        explanation: "True. Both mental and physical health are equally important."
+                    },
+                    {
+                        type: "mcq",
+                        question: "When feeling stressed, we should:",
+                        options: ["Keep it inside", "Talk to someone", "Ignore it", "Get angry"],
+                        correct: 1,
+                        explanation: "Talking to trusted people helps manage stress."
+                    },
+                    {
+                        type: "mcq",
+                        question: "How many hours should children sleep daily?",
+                        options: ["4-5 hours", "6-7 hours", "9-10 hours", "12-13 hours"],
+                        correct: 2,
+                        explanation: "Children need 9-10 hours of sleep for proper growth."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which exercise is good for overall fitness?",
+                        options: ["Only running", "Only swimming", "Only yoga", "All forms of exercise"],
+                        correct: 3,
+                        explanation: "Different exercises benefit different aspects of fitness."
+                    },
+                    {
+                        type: "tf",
+                        question: "Yoga helps in both physical and mental fitness. True or False?",
+                        answer: true,
+                        explanation: "True. Yoga improves flexibility, strength, and mental peace."
+                    },
+                    {
+                        type: "mcq",
+                        question: "We should wash hands:",
+                        options: ["Only before meals", "Only after toilet", "Before meals and after toilet", "Never"],
+                        correct: 2,
+                        explanation: "Wash hands before eating and after using toilet."
+                    },
+                    {
+                        type: "mcq",
+                        question: "We should brush our teeth:",
+                        options: ["Once a day", "Twice a day", "Once a week", "Never"],
+                        correct: 1,
+                        explanation: "Brush teeth twice daily - morning and before bed."
+                    },
+                    {
+                        type: "tf",
+                        question: "Junk food is healthy for regular consumption. True or False?",
+                        answer: false,
+                        explanation: "False. Junk food lacks nutrition and can harm health."
+                    },
+                    {
+                        type: "mcq",
+                        question: "During fire emergency, we should:",
+                        options: ["Use elevator", "Hide in room", "Use stairs to exit", "Jump from window"],
+                        correct: 2,
+                        explanation: "Always use stairs during fire, never elevators."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Emergency number in India is:",
+                        options: ["100", "101", "102", "112"],
+                        correct: 3,
+                        explanation: "112 is the unified emergency number in India."
+                    },
+                    {
+                        type: "tf",
+                        question: "We should play outside in extreme heat. True or False?",
+                        answer: false,
+                        explanation: "False. Avoid outdoor activities during extreme heat."
+                    }
+                ]
+            },
+            {
+                name: "🌿 Nature & Environment",
+                chapter: "Plants, Animals & Environment",
+                tasks: [
+                    {
+                        type: "mcq",
+                        question: "Plants are classified into:",
+                        options: ["Herbs, Shrubs, Trees", "Big and Small", "Green and Non-green", "Tall and Short"],
+                        correct: 0,
+                        explanation: "Plants are classified as Herbs, Shrubs, and Trees."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Animals are classified into:",
+                        options: ["Big and Small", "Vertebrates and Invertebrates", "Fast and Slow", "Herbivores only"],
+                        correct: 1,
+                        explanation: "Animals are classified as Vertebrates (with backbone) and Invertebrates."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Desert animals are adapted to:",
+                        options: ["Cold weather", "Hot and dry climate", "Wet climate", "Snow"],
+                        correct: 1,
+                        explanation: "Desert animals have adaptations for hot, dry conditions."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Polar bears live in:",
+                        options: ["Desert", "Forest", "Arctic region", "Ocean"],
+                        correct: 2,
+                        explanation: "Polar bears are adapted to cold Arctic regions."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Food chain starts with:",
+                        options: ["Carnivores", "Herbivores", "Producers (Plants)", "Decomposers"],
+                        correct: 2,
+                        explanation: "Food chain starts with producers (plants) that make their own food."
+                    },
+                    {
+                        type: "mcq",
+                        question: "In a food chain, herbivores are:",
+                        options: ["Producers", "Primary consumers", "Secondary consumers", "Decomposers"],
+                        correct: 1,
+                        explanation: "Herbivores eat plants and are primary consumers."
+                    },
+                    {
+                        type: "mcq",
+                        question: "A food web is:",
+                        options: ["Single food chain", "Multiple connected food chains", "Spider's web", "Plant roots"],
+                        correct: 1,
+                        explanation: "Food web shows how multiple food chains interconnect."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which animal is endangered in India?",
+                        options: ["Cow", "Dog", "Bengal Tiger", "Crow"],
+                        correct: 2,
+                        explanation: "Bengal Tiger is endangered due to habitat loss and poaching."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Extinct means:",
+                        options: ["Very rare", "No longer exists", "Very common", "Sleeping"],
+                        correct: 1,
+                        explanation: "Extinct species have completely disappeared from Earth."
+                    },
+                    {
+                        type: "tf",
+                        question: "Dinosaurs are extinct. True or False?",
+                        answer: true,
+                        explanation: "True. Dinosaurs became extinct millions of years ago."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Jim Corbett National Park is famous for:",
+                        options: ["Lions", "Tigers", "Elephants", "Rhinos"],
+                        correct: 1,
+                        explanation: "Jim Corbett is famous for Bengal Tigers."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Kaziranga National Park has:",
+                        options: ["Tigers", "One-horned Rhinos", "Lions", "Elephants"],
+                        correct: 1,
+                        explanation: "Kaziranga is famous for one-horned rhinoceros."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Gir National Park has:",
+                        options: ["Tigers", "Asiatic Lions", "Leopards", "Bears"],
+                        correct: 1,
+                        explanation: "Gir in Gujarat is the only home of Asiatic Lions."
+                    },
+                    {
+                        type: "input",
+                        question: "Name one medicinal plant.",
+                        answer: ["tulsi", "neem", "aloe vera", "turmeric", "ginger"],
+                        explanation: "Tulsi, Neem, Aloe Vera, Turmeric are medicinal plants."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Aloe vera is used for:",
+                        options: ["Cooking", "Skin care", "Building", "Painting"],
+                        correct: 1,
+                        explanation: "Aloe vera has medicinal properties for skin care."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Neem has properties that are:",
+                        options: ["Sweet", "Antibacterial", "Sour", "Salty"],
+                        correct: 1,
+                        explanation: "Neem has antibacterial and medicinal properties."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Environmental balance means:",
+                        options: ["Only plants", "Only animals", "Harmony between all living things", "Only humans"],
+                        correct: 2,
+                        explanation: "Environmental balance is harmony among all organisms."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Deforestation means:",
+                        options: ["Planting trees", "Cutting down forests", "Growing forests", "Protecting forests"],
+                        correct: 1,
+                        explanation: "Deforestation is large-scale cutting down of forests."
+                    },
+                    {
+                        type: "tf",
+                        question: "Deforestation harms the environment. True or False?",
+                        answer: true,
+                        explanation: "True. Deforestation causes climate change and habitat loss."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Biodiversity means:",
+                        options: ["One type of plant", "Variety of life forms", "Only animals", "Only humans"],
+                        correct: 1,
+                        explanation: "Biodiversity is variety of all living organisms."
+                    },
+                    {
+                        type: "mcq",
+                        question: "To conserve wildlife, we should:",
+                        options: ["Hunt animals", "Destroy forests", "Create sanctuaries", "Pollute rivers"],
+                        correct: 2,
+                        explanation: "Wildlife sanctuaries protect animals and their habitats."
+                    },
+                    {
+                        type: "tf",
+                        question: "Planting trees helps the environment. True or False?",
+                        answer: true,
+                        explanation: "True. Trees provide oxygen, prevent soil erosion, and reduce pollution."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Carnivorous plants eat:",
+                        options: ["Soil", "Insects", "Stones", "Water"],
+                        correct: 1,
+                        explanation: "Carnivorous plants like Venus flytrap eat insects."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Decomposers help in:",
+                        options: ["Making food", "Breaking down dead matter", "Hunting", "Flying"],
+                        correct: 1,
+                        explanation: "Decomposers break down dead organisms and return nutrients to soil."
+                    },
+                    {
+                        type: "tf",
+                        question: "All animals need oxygen to survive. True or False?",
+                        answer: true,
+                        explanation: "True. All animals need oxygen for respiration."
+                    }
+                ]
+            },
+            {
+                name: "⚽ Sports Champion",
+                chapter: "Sports & Games",
+                tasks: [
+                    {
+                        type: "mcq",
+                        question: "Which is the national sport of India?",
+                        options: ["Cricket", "Hockey", "Football", "Kabaddi"],
+                        correct: 1,
+                        explanation: "Hockey is considered the national sport of India."
+                    },
+                    {
+                        type: "mcq",
+                        question: "How many players are there in a cricket team?",
+                        options: ["9", "10", "11", "12"],
+                        correct: 2,
+                        explanation: "A cricket team has 11 players."
+                    },
+                    {
+                        type: "mcq",
+                        question: "How many players are in a football team?",
+                        options: ["9", "10", "11", "12"],
+                        correct: 2,
+                        explanation: "A football team has 11 players on field."
+                    },
+                    {
+                        type: "mcq",
+                        question: "A badminton match is played with:",
+                        options: ["Ball", "Shuttlecock", "Disc", "Puck"],
+                        correct: 1,
+                        explanation: "Badminton is played with a shuttlecock."
+                    },
+                    {
+                        type: "input",
+                        question: "Who is known as the God of Cricket?",
+                        answer: ["sachin tendulkar", "tendulkar", "sachin"],
+                        explanation: "Sachin Tendulkar is called the God of Cricket."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Virat Kohli is associated with which sport?",
+                        options: ["Hockey", "Cricket", "Football", "Tennis"],
+                        correct: 1,
+                        explanation: "Virat Kohli is an Indian cricket player."
+                    },
+                    {
+                        type: "mcq",
+                        question: "P.V. Sindhu is famous for:",
+                        options: ["Cricket", "Badminton", "Tennis", "Hockey"],
+                        correct: 1,
+                        explanation: "P.V. Sindhu is a badminton champion."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Mary Kom is associated with:",
+                        options: ["Boxing", "Wrestling", "Archery", "Shooting"],
+                        correct: 0,
+                        explanation: "Mary Kom is an Olympic bronze medalist boxer."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Neeraj Chopra won Olympic gold in:",
+                        options: ["100m race", "Javelin throw", "Long jump", "Shot put"],
+                        correct: 1,
+                        explanation: "Neeraj Chopra won gold in javelin throw at Tokyo Olympics 2020."
+                    },
+                    {
+                        type: "input",
+                        question: "Who is known as the Flying Sikh?",
+                        answer: ["milkha singh"],
+                        explanation: "Milkha Singh was called the Flying Sikh."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Highest award for sports in India is:",
+                        options: ["Arjuna Award", "Rajiv Gandhi Khel Ratna", "Dronacharya Award", "Dhyan Chand Award"],
+                        correct: 1,
+                        explanation: "Rajiv Gandhi Khel Ratna (now Major Dhyan Chand Award) is highest sports honor."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Arjuna Award is given for:",
+                        options: ["Coaching", "Outstanding performance", "Lifetime achievement", "Fair play"],
+                        correct: 1,
+                        explanation: "Arjuna Award recognizes outstanding performance in sports."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Dronacharya Award is given to:",
+                        options: ["Players", "Coaches", "Referees", "Commentators"],
+                        correct: 1,
+                        explanation: "Dronacharya Award honors excellent coaches."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Olympic Games are held every:",
+                        options: ["2 years", "4 years", "5 years", "6 years"],
+                        correct: 1,
+                        explanation: "Summer Olympics are held every 4 years."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Olympic symbol has how many rings?",
+                        options: ["3", "4", "5", "6"],
+                        correct: 2,
+                        explanation: "Olympic symbol has 5 interlocking rings representing continents."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Olympic motto is:",
+                        options: ["Faster, Higher, Stronger", "Win at all costs", "Play to win", "Never give up"],
+                        correct: 0,
+                        explanation: "Olympic motto is 'Citius, Altius, Fortius' (Faster, Higher, Stronger)."
+                    },
+                    {
+                        type: "mcq",
+                        question: "A hat-trick in cricket means:",
+                        options: ["100 runs", "3 wickets in 3 balls", "3 catches", "3 sixes"],
+                        correct: 1,
+                        explanation: "Hat-trick is taking 3 wickets in 3 consecutive balls."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Century in cricket means:",
+                        options: ["50 runs", "75 runs", "100 runs", "200 runs"],
+                        correct: 2,
+                        explanation: "Century means scoring 100 or more runs."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Penalty in football is taken from:",
+                        options: ["Center circle", "Penalty box", "Corner", "Halfway line"],
+                        correct: 1,
+                        explanation: "Penalty kick is taken from penalty spot in penalty box."
+                    },
+                    {
+                        type: "input",
+                        question: "Name one traditional Indian game.",
+                        answer: ["kabaddi", "kho kho", "gilli danda", "pitthu"],
+                        explanation: "Kabaddi, Kho-Kho, Gilli Danda are traditional Indian games."
+                    },
+                    {
+                        type: "tf",
+                        question: "Yoga originated in India. True or False?",
+                        answer: true,
+                        explanation: "True. Yoga is an ancient Indian practice for mind and body."
+                    },
+                    {
+                        type: "mcq",
+                        question: "International Yoga Day is celebrated on:",
+                        options: ["15th August", "21st June", "2nd October", "26th January"],
+                        correct: 1,
+                        explanation: "International Yoga Day is celebrated on 21st June."
+                    },
+                    {
+                        type: "tf",
+                        question: "Sportsmanship means playing fair and respecting others. True or False?",
+                        answer: true,
+                        explanation: "True. Sportsmanship is about fair play and respect."
+                    },
+                    {
+                        type: "mcq",
+                        question: "FIFA World Cup is associated with:",
+                        options: ["Cricket", "Hockey", "Football", "Tennis"],
+                        correct: 2,
+                        explanation: "FIFA World Cup is the biggest football tournament."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Wimbledon is famous for:",
+                        options: ["Cricket", "Football", "Tennis", "Golf"],
+                        correct: 2,
+                        explanation: "Wimbledon is the oldest and most prestigious tennis tournament."
+                    }
+                ]
+            },
+            {
+                name: "🎨 Culture & Heritage",
+                chapter: "Culture, Art & Heritage",
+                tasks: [
+                    {
+                        type: "mcq",
+                        question: "Diwali is known as the festival of:",
+                        options: ["Colors", "Lights", "Harvest", "Flowers"],
+                        correct: 1,
+                        explanation: "Diwali is the festival of lights celebrated across India."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Holi is known as the festival of:",
+                        options: ["Lights", "Colors", "Kites", "Sweets"],
+                        correct: 1,
+                        explanation: "Holi is the festival of colors celebrating spring."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which festival marks the harvest season in Punjab?",
+                        options: ["Diwali", "Holi", "Baisakhi", "Onam"],
+                        correct: 2,
+                        explanation: "Baisakhi celebrates harvest in Punjab."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Onam is the main festival of:",
+                        options: ["Punjab", "Kerala", "Bengal", "Gujarat"],
+                        correct: 1,
+                        explanation: "Onam is the harvest festival of Kerala."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Durga Puja is mainly celebrated in:",
+                        options: ["Kerala", "Punjab", "West Bengal", "Rajasthan"],
+                        correct: 2,
+                        explanation: "Durga Puja is the biggest festival in West Bengal."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Christmas celebrates the birth of:",
+                        options: ["Prophet Muhammad", "Jesus Christ", "Lord Buddha", "Guru Nanak"],
+                        correct: 1,
+                        explanation: "Christmas celebrates the birth of Jesus Christ."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Eid-ul-Fitr comes after:",
+                        options: ["Diwali", "Holi", "Ramadan", "Christmas"],
+                        correct: 2,
+                        explanation: "Eid-ul-Fitr marks the end of Ramadan fasting month."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Guru Nanak Jayanti is celebrated by:",
+                        options: ["Hindus", "Muslims", "Sikhs", "Christians"],
+                        correct: 2,
+                        explanation: "Guru Nanak Jayanti celebrates Guru Nanak's birthday."
+                    },
+                    {
+                        type: "mcq",
+                        question: "How many classical dance forms are there in India?",
+                        options: ["5", "6", "8", "10"],
+                        correct: 2,
+                        explanation: "India has 8 classical dance forms officially recognized."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Bharatanatyam dance originated in:",
+                        options: ["Kerala", "Tamil Nadu", "Karnataka", "Odisha"],
+                        correct: 1,
+                        explanation: "Bharatanatyam is from Tamil Nadu."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Kathak dance originated in:",
+                        options: ["South India", "North India", "East India", "West India"],
+                        correct: 1,
+                        explanation: "Kathak is a classical dance from North India."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Odissi dance is from which state?",
+                        options: ["Odisha", "Assam", "Kerala", "Manipur"],
+                        correct: 0,
+                        explanation: "Odissi is the classical dance of Odisha."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Bhangra is a folk dance of:",
+                        options: ["Gujarat", "Punjab", "Rajasthan", "Maharashtra"],
+                        correct: 1,
+                        explanation: "Bhangra is an energetic folk dance from Punjab."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Garba is a dance form of:",
+                        options: ["Punjab", "Gujarat", "Bengal", "Kashmir"],
+                        correct: 1,
+                        explanation: "Garba is performed during Navratri in Gujarat."
+                    },
+                    {
+                        type: "input",
+                        question: "Name one classical music form of India.",
+                        answer: ["hindustani", "carnatic", "hindustani classical", "carnatic classical"],
+                        explanation: "Hindustani and Carnatic are two classical music forms."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Tabla is a:",
+                        options: ["String instrument", "Percussion instrument", "Wind instrument", "Electronic instrument"],
+                        correct: 1,
+                        explanation: "Tabla is a percussion instrument (drums)."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Sitar is a:",
+                        options: ["String instrument", "Percussion instrument", "Wind instrument", "Brass instrument"],
+                        correct: 0,
+                        explanation: "Sitar is a stringed musical instrument."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Taj Mahal is made of:",
+                        options: ["Red sandstone", "White marble", "Granite", "Limestone"],
+                        correct: 1,
+                        explanation: "Taj Mahal is made of white marble."
+                    },
+                    {
+                        type: "input",
+                        question: "Which monument has four gates and is located in Hyderabad?",
+                        answer: ["charminar"],
+                        explanation: "Charminar in Hyderabad has four grand gates."
+                    },
+                    {
+                        type: "tf",
+                        question: "UNESCO World Heritage Sites are important monuments. True or False?",
+                        answer: true,
+                        explanation: "True. UNESCO sites are of cultural or natural significance."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Pashmina shawls are from:",
+                        options: ["Kashmir", "Punjab", "Gujarat", "Bengal"],
+                        correct: 0,
+                        explanation: "Pashmina shawls are a famous handicraft of Kashmir."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Madhubani paintings are from:",
+                        options: ["Kerala", "Bihar", "Rajasthan", "Odisha"],
+                        correct: 1,
+                        explanation: "Madhubani is a traditional art form from Bihar."
+                    },
+                    {
+                        type: "tf",
+                        question: "India has unity in diversity. True or False?",
+                        answer: true,
+                        explanation: "True. India has diverse cultures, languages, religions living together."
+                    },
+                    {
+                        type: "mcq",
+                        question: "How many languages are officially recognized in India?",
+                        options: ["15", "18", "22", "25"],
+                        correct: 2,
+                        explanation: "22 languages are in the 8th Schedule of Constitution."
+                    },
+                    {
+                        type: "mcq",
+                        question: "The cave paintings at Ajanta are how many years old approximately?",
+                        options: ["500 years", "1000 years", "2000 years", "5000 years"],
+                        correct: 2,
+                        explanation: "Ajanta cave paintings date back to around 2nd century BCE."
+                    }
+                ]
+            },
+            {
+                name: "📰 Current Affairs Quiz",
+                chapter: "Current Affairs",
+                tasks: [
+                    {
+                        type: "mcq",
+                        question: "G20 Summit 2023 was hosted by:",
+                        options: ["USA", "China", "India", "Brazil"],
+                        correct: 2,
+                        explanation: "India hosted the G20 Summit in 2023 in New Delhi."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Chandrayaan-3 mission was launched to:",
+                        options: ["Mars", "Moon", "Venus", "Jupiter"],
+                        correct: 1,
+                        explanation: "Chandrayaan-3 successfully landed on Moon's south pole."
+                    },
+                    {
+                        type: "tf",
+                        question: "India successfully landed on Moon with Chandrayaan-3. True or False?",
+                        answer: true,
+                        explanation: "True. Chandrayaan-3 landed on Moon on 23 August 2023."
+                    },
+                    {
+                        type: "mcq",
+                        question: "What does PM SHRI stand for?",
+                        options: ["Prime Minister Schools for Rising India", "Prime Minister Scheme for Rural India", "Prime Minister Schools for Health and Research in India", "None"],
+                        correct: 0,
+                        explanation: "PM SHRI is for modernizing schools across India."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Ayushman Bharat scheme provides:",
+                        options: ["Free education", "Health insurance", "Free food", "Free transport"],
+                        correct: 1,
+                        explanation: "Ayushman Bharat provides health insurance to families."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Swachh Bharat Mission aims to:",
+                        options: ["Plant trees", "Clean India", "Build roads", "Generate electricity"],
+                        correct: 1,
+                        explanation: "Swachh Bharat promotes cleanliness and sanitation."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Digital India initiative aims to:",
+                        options: ["Make India cashless", "Provide digital infrastructure", "Stop internet", "Ban mobiles"],
+                        correct: 1,
+                        explanation: "Digital India promotes digital empowerment and infrastructure."
+                    },
+                    {
+                        type: "mcq",
+                        question: "What does UPI stand for?",
+                        options: ["United Payment Interface", "Unified Payment Interface", "Universal Payment Interface", "Unique Payment Interface"],
+                        correct: 1,
+                        explanation: "UPI is Unified Payment Interface for instant money transfer."
+                    },
+                    {
+                        type: "mcq",
+                        question: "India's first indigenously built aircraft carrier is:",
+                        options: ["INS Vikrant", "INS Vikramaditya", "INS Arihant", "INS Shivalik"],
+                        correct: 0,
+                        explanation: "INS Vikrant is India's first indigenous aircraft carrier."
+                    },
+                    {
+                        type: "tf",
+                        question: "India is a member of G20. True or False?",
+                        answer: true,
+                        explanation: "True. India is a founding member of G20."
+                    },
+                    {
+                        type: "mcq",
+                        question: "FIFA World Cup 2022 was won by:",
+                        options: ["Brazil", "France", "Argentina", "Germany"],
+                        correct: 2,
+                        explanation: "Argentina won FIFA World Cup 2022 in Qatar."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Olympic Games 2024 will be held in:",
+                        options: ["Tokyo", "Paris", "Los Angeles", "London"],
+                        correct: 1,
+                        explanation: "Paris, France will host 2024 Summer Olympics."
+                    },
+                    {
+                        type: "mcq",
+                        question: "ICC Cricket World Cup 2023 was won by:",
+                        options: ["India", "Australia", "England", "Pakistan"],
+                        correct: 1,
+                        explanation: "Australia won ICC Cricket World Cup 2023."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Nobel Peace Prize 2023 was awarded for:",
+                        options: ["Economics", "Women's rights in Iran", "Climate change", "Medicine"],
+                        correct: 1,
+                        explanation: "Narges Mohammadi received Nobel Peace Prize for fighting oppression."
+                    },
+                    {
+                        type: "tf",
+                        question: "Climate change is a global concern. True or False?",
+                        answer: true,
+                        explanation: "True. Climate change affects the entire planet."
+                    },
+                    {
+                        type: "mcq",
+                        question: "COP stands for:",
+                        options: ["Conference of Parties", "Council of People", "Committee of Protection", "Climate Organization Program"],
+                        correct: 0,
+                        explanation: "COP is Conference of Parties for climate discussions."
+                    },
+                    {
+                        type: "mcq",
+                        question: "International Day of Yoga is celebrated on:",
+                        options: ["21st May", "21st June", "21st July", "21st August"],
+                        correct: 1,
+                        explanation: "International Yoga Day is on 21st June every year."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Who became the youngest ever Chess Grandmaster?",
+                        options: ["Viswanathan Anand", "Magnus Carlsen", "Rameshbabu Praggnanandhaa", "Abhimanyu Mishra"],
+                        correct: 3,
+                        explanation: "Abhimanyu Mishra became youngest GM at 12 years 4 months."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Bharat Ratna is India's:",
+                        options: ["Sports award", "Highest civilian award", "Military award", "Science award"],
+                        correct: 1,
+                        explanation: "Bharat Ratna is India's highest civilian honor."
+                    },
+                    {
+                        type: "tf",
+                        question: "Artificial Intelligence is being used in education. True or False?",
+                        answer: true,
+                        explanation: "True. AI helps in personalized learning and smart education."
+                    },
+                    {
+                        type: "mcq",
+                        question: "India's semiconductor mission aims to:",
+                        options: ["Import chips", "Manufacture chips in India", "Export chips only", "Ban chips"],
+                        correct: 1,
+                        explanation: "India aims to become self-reliant in semiconductor manufacturing."
+                    },
+                    {
+                        type: "mcq",
+                        question: "National Education Policy (NEP) was introduced in:",
+                        options: ["2018", "2019", "2020", "2021"],
+                        correct: 2,
+                        explanation: "National Education Policy 2020 was introduced to reform education."
+                    },
+                    {
+                        type: "tf",
+                        question: "Electric vehicles help reduce pollution. True or False?",
+                        answer: true,
+                        explanation: "True. EVs produce zero emissions and reduce air pollution."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Make in India campaign promotes:",
+                        options: ["Imports", "Manufacturing in India", "Tourism", "Education"],
+                        correct: 1,
+                        explanation: "Make in India encourages manufacturing within the country."
+                    },
+                    {
+                        type: "mcq",
+                        question: "5G technology in India was launched in:",
+                        options: ["2020", "2021", "2022", "2023"],
+                        correct: 2,
+                        explanation: "5G services were launched in India in 2022."
+                    }
+                ]
+            },
+            {
+                name: "💰 Money Smart Kids",
+                chapter: "Economy & Banking",
+                tasks: [
+                    {
+                        type: "mcq",
+                        question: "The currency of India is:",
+                        options: ["Dollar", "Rupee", "Pound", "Euro"],
+                        correct: 1,
+                        explanation: "Indian Rupee (₹) is the currency of India."
+                    },
+                    {
+                        type: "mcq",
+                        question: "₹ symbol stands for:",
+                        options: ["Rupee", "Dollar", "Pound", "Yen"],
+                        correct: 0,
+                        explanation: "₹ is the symbol for Indian Rupee."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Reserve Bank of India (RBI) is:",
+                        options: ["Commercial bank", "Central bank", "Post office", "ATM"],
+                        correct: 1,
+                        explanation: "RBI is India's central bank that controls monetary policy."
+                    },
+                    {
+                        type: "mcq",
+                        question: "ATM stands for:",
+                        options: ["Automatic Teller Machine", "Any Time Money", "All Time Machine", "Automatic Transfer Machine"],
+                        correct: 0,
+                        explanation: "ATM is Automated Teller Machine for cash withdrawal."
+                    },
+                    {
+                        type: "mcq",
+                        question: "What is a savings account used for?",
+                        options: ["Spending all money", "Saving money", "Taking loans", "Paying taxes"],
+                        correct: 1,
+                        explanation: "Savings account helps save money and earn interest."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Interest means:",
+                        options: ["Money borrowed", "Money saved", "Money earned on savings", "Money spent"],
+                        correct: 2,
+                        explanation: "Interest is money earned when we keep money in bank 
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which app is used for UPI payments?",
+                        options: ["WhatsApp", "Google Pay", "Instagram", "YouTube"],
+                        correct: 1,
+                        explanation: "Google Pay, PhonePe, Paytm are UPI payment apps."
+                    },
+                    {
+                        type: "tf",
+                        question: "Digital payments are safer than carrying cash. True or False?",
+                        answer: true,
+                        explanation: "True. Digital payments are tracked and more secure."
+                    },
+                    {
+                        type: "mcq",
+                        question: "A budget helps us:",
+                        options: ["Waste money", "Plan spending", "Borrow money", "Lose money"],
+                        correct: 1,
+                        explanation: "Budget helps plan how to spend and save money wisely."
+                    },
+                    {
+                        type: "mcq",
+                        question: "If you earn ₹100 and save ₹20, you spend:",
+                        options: ["₹20", "₹50", "₹80", "₹100"],
+                        correct: 2,
+                        explanation: "₹100 - ₹20 saved = ₹80 spent."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Trade means:",
+                        options: ["Buying and selling", "Only buying", "Only selling", "Saving"],
+                        correct: 0,
+                        explanation: "Trade is the exchange of goods through buying and selling."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Goods are transported by:",
+                        options: ["Only roads", "Only railways", "Roads, railways, ships, airways", "Only airways"],
+                        correct: 2,
+                        explanation: "Goods are transported using all modes of transport."
+                    },
+                    {
+                        type: "mcq",
+                        question: "The fastest mode of transport is:",
+                        options: ["Road", "Railway", "Waterways", "Airways"],
+                        correct: 3,
+                        explanation: "Airways (airplanes) is the fastest mode of transport."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which is the cheapest mode of transport for heavy goods?",
+                        options: ["Road", "Railway", "Waterways", "Airways"],
+                        correct: 2,
+                        explanation: "Waterways (ships) are cheapest for heavy bulk goods."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Telephone helps in:",
+                        options: ["Transport", "Communication", "Cooking", "Cleaning"],
+                        correct: 1,
+                        explanation: "Telephone is a means of communication."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Internet helps us:",
+                        options: ["Only play games", "Communicate and get information", "Only watch movies", "Sleep"],
+                        correct: 1,
+                        explanation: "Internet helps in communication, learning, and information access."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Post office helps in sending:",
+                        options: ["Only letters", "Letters and parcels", "Only money", "Only stamps"],
+                        correct: 1,
+                        explanation: "Post office sends letters, parcels, and money orders."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Emergency number for police in India is:",
+                        options: ["100", "101", "102", "108"],
+                        correct: 0,
+                        explanation: "100 is the police emergency number."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Emergency number for fire service is:",
+                        options: ["100", "101", "102", "108"],
+                        correct: 1,
+                        explanation: "101 is the fire brigade emergency number."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Ambulance emergency number is:",
+                        options: ["100", "101", "102", "112"],
+                        correct: 2,
+                        explanation: "102 or 108 is for ambulance services."
+                    },
+                    {
+                        type: "mcq",
+                        question: "As a consumer, we have the right to:",
+                        options: ["Buy anything at any price", "Get quality products", "Accept defective items", "Not complain"],
+                        correct: 1,
+                        explanation: "Consumers have right to quality products and fair prices."
+                    },
+                    {
+                        type: "tf",
+                        question: "We should check the expiry date before buying food items. True or False?",
+                        answer: true,
+                        explanation: "True. Always check expiry dates to ensure food safety."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Pin code helps in:",
+                        options: ["Banking", "Postal delivery", "Calling", "Shopping"],
+                        correct: 1,
+                        explanation: "Pin code helps identify location for postal delivery."
+                    }
+                ]
+            },
+            {
+                name: "🧩 Logic & Reasoning GK",
+                chapter: "Logical GK & Mixed Knowledge",
+                tasks: [
+                    {
+                        type: "mcq",
+                        question: "Which one is odd? Tiger, Lion, Elephant, Leopard",
+                        options: ["Tiger", "Lion", "Elephant", "Leopard"],
+                        correct: 2,
+                        explanation: "Elephant is herbivore; others are carnivores."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which one is odd? Mercury, Venus, Earth, Sun",
+                        options: ["Mercury", "Venus", "Earth", "Sun"],
+                        correct: 3,
+                        explanation: "Sun is a star; others are planets."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which one is odd? Rose, Lotus, Mango, Jasmine",
+                        options: ["Rose", "Lotus", "Mango", "Jasmine"],
+                        correct: 2,
+                        explanation: "Mango is a tree; others are flowers."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which one is odd? Delhi, Mumbai, Kolkata, India",
+                        options: ["Delhi", "Mumbai", "Kolkata", "India"],
+                        correct: 3,
+                        explanation: "India is a country; others are cities."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Match: Taj Mahal is in ___",
+                        options: ["Delhi", "Agra", "Jaipur", "Mumbai"],
+                        correct: 1,
+                        explanation: "Taj Mahal is located in Agra, Uttar Pradesh."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Match: Capital of France is ___",
+                        options: ["London", "Paris", "Rome", "Berlin"],
+                        correct: 1,
+                        explanation: "Paris is the capital of France."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Match: Tiger is to Den as Bird is to ___",
+                        options: ["Cave", "Nest", "Hole", "Pond"],
+                        correct: 1,
+                        explanation: "Tiger lives in den; bird lives in nest."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Match: Doctor treats patients as Teacher ___",
+                        options: ["Cooks food", "Teaches students", "Drives vehicle", "Builds houses"],
+                        correct: 1,
+                        explanation: "Doctor treats patients; teacher teaches students."
+                    },
+                    {
+                        type: "mcq",
+                        question: "If all roses are flowers and some flowers are red, then:",
+                        options: ["All roses are red", "Some roses may be red", "No roses are red", "Flowers are not roses"],
+                        correct: 1,
+                        explanation: "Some roses may be red based on given information."
+                    },
+                    {
+                        type: "mcq",
+                        question: "India : Rupee :: USA : ?",
+                        options: ["Pound", "Euro", "Dollar", "Yen"],
+                        correct: 2,
+                        explanation: "India's currency is Rupee; USA's currency is Dollar."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which symbol represents Indian Rupee?",
+                        options: ["$", "₹", "£", "€"],
+                        correct: 1,
+                        explanation: "₹ is the symbol for Indian Rupee."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which flag has Ashoka Chakra?",
+                        options: ["USA flag", "UK flag", "Indian flag", "Chinese flag"],
+                        correct: 2,
+                        explanation: "Indian tricolor flag has Ashoka Chakra in center."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Identify: Red Fort + India Gate + Qutub Minar are in?",
+                        options: ["Mumbai", "Delhi", "Kolkata", "Chennai"],
+                        correct: 1,
+                        explanation: "All three monuments are located in Delhi."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Identify the continent: Kangaroos are found here",
+                        options: ["Africa", "Asia", "Australia", "Europe"],
+                        correct: 2,
+                        explanation: "Kangaroos are native to Australia."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Raj has 5 apples. He gives 2 to his friend. How many does he have?",
+                        options: ["2", "3", "5", "7"],
+                        correct: 1,
+                        explanation: "5 - 2 = 3 apples remaining."
+                    },
+                    {
+                        type: "mcq",
+                        question: "A year has how many months?",
+                        options: ["10", "12", "15", "20"],
+                        correct: 1,
+                        explanation: "A year has 12 months."
+                    },
+                    {
+                        type: "mcq",
+                        question: "A week has how many days?",
+                        options: ["5", "6", "7", "8"],
+                        correct: 2,
+                        explanation: "A week has 7 days."
+                    },
+                    {
+                        type: "mcq",
+                        question: "If today is Monday, what day will it be after 3 days?",
+                        options: ["Tuesday", "Wednesday", "Thursday", "Friday"],
+                        correct: 2,
+                        explanation: "Monday + 3 days = Thursday."
+                    },
+                    {
+                        type: "tf",
+                        question: "Sun rises in the East. True or False?",
+                        answer: true,
+                        explanation: "True. Sun always rises in the East."
+                    },
+                    {
+                        type: "tf",
+                        question: "Water boils at 50°C. True or False?",
+                        answer: false,
+                        explanation: "False. Water boils at 100°C at normal pressure."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Case Study: Ram plants 10 trees. 2 don't survive. How many trees remain?",
+                        options: ["8", "10", "12", "2"],
+                        correct: 0,
+                        explanation: "10 - 2 = 8 trees survived."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Case Study: A library has 100 books. 30 are borrowed. How many are left?",
+                        options: ["30", "70", "100", "130"],
+                        correct: 1,
+                        explanation: "100 - 30 = 70 books remaining in library."
+                    },
+                    {
+                        type: "mcq",
+                        question: "If A=1, B=2, C=3, what is the value of CAB?",
+                        options: ["123", "312", "321", "213"],
+                        correct: 1,
+                        explanation: "C=3, A=1, B=2, so CAB = 312."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Which comes next: 2, 4, 6, 8, ?",
+                        options: ["9", "10", "12", "14"],
+                        correct: 1,
+                        explanation: "Pattern increases by 2, so next is 10."
+                    },
+                    {
+                        type: "mcq",
+                        question: "Complete: January, February, March, ?",
+                        options: ["May", "April", "June", "July"],
+                        correct: 1,
+                        explanation: "Months go in order: April comes after March."
+                    }
+                ]
+            }
+        ];
+
+        let globalScore = {
+            correct: 0,
+            wrong: 0,
+            notAttempted: 500,
+            totalAttempted: 0,
+            marks: 0
+        };
+
+        let currentGame = 0;
+        let currentTask = 0;
+        let taskAttempted = {};
+        let draggedElement = null;
+        let selectedMatches = [];
+
+        function updateScorePanel() {
+            document.getElementById('correctCount').textContent = globalScore.correct;
+            document.getElementById('wrongCount').textContent = globalScore.wrong;
+            document.getElementById('notAttemptedCount').textContent = globalScore.notAttempted;
+            document.getElementById('totalAttempted').textContent = globalScore.totalAttempted;
+            const percentage = globalScore.totalAttempted > 0 ? 
+                Math.round((globalScore.correct / globalScore.totalAttempted) * 100) : 0;
+            document.getElementById('percentage').textContent = percentage;
+            document.getElementById('marks').textContent = globalScore.marks;
+        }
+
+        function recordAnswer(isCorrect) {
+            const taskId = `${currentGame}-${currentTask}`;
+            if (taskAttempted[taskId]) return;
+            
+            taskAttempted[taskId] = true;
+            globalScore.totalAttempted++;
+            globalScore.notAttempted--;
+            
+            if (isCorrect) {
+                globalScore.correct++;
+                globalScore.marks += 10;
+            } else {
+                globalScore.wrong++;
+                globalScore.marks -= 2;
+            }
+            
+            updateScorePanel();
+        }
+
+        function showFeedback(isCorrect, explanation) {
+            const feedback = document.querySelector(`#game${currentGame} .task-container.active .feedback`);
+            feedback.className = 'feedback show ' + (isCorrect ? 'correct' : 'wrong');
+            feedback.textContent = (isCorrect ? '✅ Great Job! ' : '❌ Try Again! ') + explanation;
+        }
+
+        function renderMCQ(task, container) {
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'task-question';
+            questionDiv.textContent = task.question;
+            container.appendChild(questionDiv);
+
+            task.options.forEach((option, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = option;
+                btn.onclick = () => {
+                    if (btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
+                    
+                    const isCorrect = index === task.correct;
+                    btn.classList.add(isCorrect ? 'correct' : 'wrong');
+                    recordAnswer(isCorrect);
+                    showFeedback(isCorrect, task.explanation);
+                    
+                    Array.from(container.querySelectorAll('.option-btn')).forEach(b => b.style.pointerEvents = 'none');
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        function renderInput(task, container) {
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'task-question';
+            questionDiv.textContent = task.question;
+            container.appendChild(questionDiv);
+
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'input-answer';
+            input.placeholder = 'Type your answer here...';
+            container.appendChild(input);
+
+            const submitBtn = document.createElement('button');
+            submitBtn.className = 'submit-btn';
+            submitBtn.textContent = 'Submit Answer';
+            submitBtn.onclick = () => {
+                const userAnswer = input.value.trim().toLowerCase();
+                const isCorrect = task.answer.some(ans => userAnswer.includes(ans));
+                
+                input.style.borderColor = isCorrect ? '#4caf50' : '#f44336';
+                input.disabled = true;
+                submitBtn.disabled = true;
+                
+                recordAnswer(isCorrect);
+                showFeedback(isCorrect, task.explanation);
+            };
+            container.appendChild(submitBtn);
+        }
+
+        function renderTrueFalse(task, container) {
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'task-question';
+            questionDiv.textContent = task.question;
+            container.appendChild(questionDiv);
+
+            const tfContainer = document.createElement('div');
+            tfContainer.className = 'tf-container';
+
+            const trueBtn = document.createElement('button');
+            trueBtn.className = 'tf-btn true';
+            trueBtn.textContent = 'TRUE ✓';
+            trueBtn.onclick = () => handleTFClick(true, task, tfContainer);
+
+            const falseBtn = document.createElement('button');
+            falseBtn.className = 'tf-btn false';
+            falseBtn.textContent = 'FALSE ✗';
+            falseBtn.onclick = () => handleTFClick(false, task, tfContainer);
+
+            tfContainer.appendChild(trueBtn);
+            tfContainer.appendChild(falseBtn);
+            container.appendChild(tfContainer);
+        }
+
+        function handleTFClick(userChoice, task, tfContainer) {
+            const isCorrect = userChoice === task.answer;
+            Array.from(tfContainer.children).forEach(btn => btn.disabled = true);
+            recordAnswer(isCorrect);
+            showFeedback(isCorrect, task.explanation);
+        }
+
+        function renderTask(gameIndex, taskIndex) {
+            const game = gameData[gameIndex];
+            const task = game.tasks[taskIndex];
+            const gameContainer = document.getElementById(`game${gameIndex}`);
+            
+            const existingTasks = gameContainer.querySelectorAll('.task-container');
+            existingTasks.forEach(t => t.classList.remove('active'));
+
+            let taskContainer = gameContainer.querySelector(`.task-${taskIndex}`);
+            if (!taskContainer) {
+                taskContainer = document.createElement('div');
+                taskContainer.className = `task-container task-${taskIndex}`;
+                
+                if (task.type === 'mcq') {
+                    renderMCQ(task, taskContainer);
+                } else if (task.type === 'input') {
+                    renderInput(task, taskContainer);
+                } else if (task.type === 'tf') {
+                    renderTrueFalse(task, taskContainer);
+                }
+
+                const feedback = document.createElement('div');
+                feedback.className = 'feedback';
+                taskContainer.appendChild(feedback);
+
+                gameContainer.appendChild(taskContainer);
+            }
+            
+            taskContainer.classList.add('active');
+        }
+
+        function createNavigationButtons(gameIndex) {
+            const gameContainer = document.getElementById(`game${gameIndex}`);
+            const navDiv = document.createElement('div');
+            navDiv.className = 'nav-btns';
+
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'nav-btn';
+            prevBtn.textContent = '← Previous';
+            prevBtn.onclick = () => {
+                if (currentTask > 0) {
+                    currentTask--;
+                    renderTask(gameIndex, currentTask);
+                    updateNavButtons(gameIndex);
+                }
+            };
+
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'nav-btn';
+            nextBtn.textContent = 'Next →';
+            nextBtn.onclick = () => {
+                if (currentTask < gameData[gameIndex].tasks.length - 1) {
+                    currentTask++;
+                    renderTask(gameIndex, currentTask);
+                    updateNavButtons(gameIndex);
+                }
+            };
+
+            navDiv.appendChild(prevBtn);
+            navDiv.appendChild(nextBtn);
+            gameContainer.appendChild(navDiv);
+        }
+
+        function updateNavButtons(gameIndex) {
+            const gameContainer = document.getElementById(`game${gameIndex}`);
+            const prevBtn = gameContainer.querySelector('.nav-btns button:first-child');
+            const nextBtn = gameContainer.querySelector('.nav-btns button:last-child');
+
+            prevBtn.disabled = currentTask === 0;
+            nextBtn.disabled = currentTask === gameData[gameIndex].tasks.length - 1;
+        }
+
+        function initGames() {
+            const menuContainer = document.getElementById('gameMenu');
+            const gamesContainer = document.getElementById('gamesContainer');
+
+            gameData.forEach((game, index) => {
+                const menuBtn = document.createElement('button');
+                menuBtn.className = 'game-btn';
+                menuBtn.textContent = game.name;
+                menuBtn.onclick = () => {
+                    document.querySelectorAll('.game-btn').forEach(b => b.classList.remove('active'));
+                    menuBtn.classList.add('active');
+                    
+                    document.querySelectorAll('.game-container').forEach(g => g.classList.remove('active'));
+                    document.getElementById(`game${index}`).classList.add('active');
+                    
+                    currentGame = index;
+                    currentTask = 0;
+                    renderTask(index, 0);
+                    updateNavButtons(index);
+                };
+                menuContainer.appendChild(menuBtn);
+
+                const gameDiv = document.createElement('div');
+                gameDiv.id = `game${index}`;
+                gameDiv.className = 'game-container';
+                
+                const title = document.createElement('div');
+                title.className = 'game-title';
+                title.textContent = game.name;
+                gameDiv.appendChild(title);
+
+                const chapterBadge = document.createElement('div');
+                chapterBadge.style.textAlign = 'center';
+                chapterBadge.style.fontSize = '13px';
+                chapterBadge.style.color = '#666';
+                chapterBadge.style.marginBottom = '15px';
+                chapterBadge.textContent = `📚 Chapter: ${game.chapter}`;
+                gameDiv.appendChild(chapterBadge);
+
+                const progressBar = document.createElement('div');
+                progressBar.className = 'progress-bar';
+                const progressFill = document.createElement('div');
+                progressFill.className = 'progress-fill';
+                progressFill.style.width = '0%';
+                progressFill.textContent = `0/${game.tasks.length}`;
+                progressBar.appendChild(progressFill);
+                gameDiv.appendChild(progressBar);
+
+                createNavigationButtons(index);
+                gamesContainer.appendChild(gameDiv);
+            });
+
+            document.querySelector('.game-btn').click();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initGames();
+            updateScorePanel();
+        });
+    </script>
+</body>
+</html>

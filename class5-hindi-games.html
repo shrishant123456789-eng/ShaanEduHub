@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>कक्षा 5 हिंदी - अल्टीमेट गेम सुइट (ShanEduHub)</title>
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            --primary: #FF9F1C; /* Orange */
+            --secondary: #2EC4B6; /* Teal/Green */
+            --accent: #FFBF69; /* Light Orange */
+            --blue: #4CC9F0;
+            --white: #ffffff;
+            --dark: #2B2D42;
+            --success: #6BCB77;
+            --error: #FF6B6B;
+            --font-stack: 'Comic Sans MS', 'Chalkboard SE', 'Laila', sans-serif;
+            --card-shadow: 0 10px 0px rgba(0,0,0,0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-stack);
+            background-color: #fdfdfd;
+            background-image: radial-gradient(var(--blue) 0.5px, transparent 0.5px), radial-gradient(var(--primary) 0.5px, #fdfdfd 0.5px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            margin: 0;
+            padding: 0;
+            color: var(--dark);
+            padding-bottom: 60px;
+        }
+
+        /* --- HEADER & SCOREBOARD --- */
+        header {
+            background: var(--white);
+            padding: 15px;
+            text-align: center;
+            border-bottom: 4px solid var(--secondary);
+            border-radius: 0 0 30px 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: var(--dark);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        #score-panel {
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+            background: var(--white);
+            margin: 0 15px;
+            padding: 10px 15px;
+            border-radius: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 3px solid var(--primary);
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .score-item span {
+            display: block;
+            font-size: 0.7rem;
+            color: #888;
+        }
+
+        .score-val {
+            font-size: 1.1rem;
+            color: var(--secondary);
+        }
+
+        /* --- GAME NAVIGATION --- */
+        #game-nav {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 15px;
+            scrollbar-width: none; /* Firefox */
+        }
+        #game-nav::-webkit-scrollbar { display: none; }
+
+        .game-btn {
+            flex: 0 0 auto;
+            background: var(--white);
+            border: 3px solid var(--blue);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: 0 4px 0 var(--blue);
+            color: var(--dark);
+        }
+
+        .game-btn.active {
+            background: var(--blue);
+            color: var(--white);
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        /* --- MAIN GAME AREA --- */
+        #game-area {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        .card {
+            background: var(--white);
+            border: 3px solid var(--dark);
+            border-radius: 25px;
+            padding: 25px;
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.2);
+            position: relative;
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            min-height: 400px;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .level-tag {
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: var(--primary);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border: 2px solid var(--dark);
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            margin: 25px 0;
+            line-height: 1.5;
+        }
+
+        /* --- INTERACTION ELEMENTS --- */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        @media(min-width: 600px) {
+            .options-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        .option-btn {
+            background: #f4f4f4;
+            border: 2px solid #ddd;
+            padding: 15px;
+            border-radius: 15px;
+            font-family: inherit;
+            font-size: 1.1rem;
+            cursor: pointer;
+            text-align: left;
+            transition: 0.2s;
+        }
+
+        .option-btn:hover { background: #eef; border-color: var(--blue); }
+        
+        .option-btn.correct {
+            background: var(--success);
+            color: white;
+            border-color: #4CAF50;
+        }
+
+        .option-btn.wrong {
+            background: var(--error);
+            color: white;
+            border-color: #d32f2f;
+        }
+
+        /* Text Inputs */
+        .input-box, textarea {
+            width: 100%;
+            padding: 15px;
+            border: 3px solid #ddd;
+            border-radius: 15px;
+            font-family: inherit;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            outline: none;
+        }
+        
+        .input-box:focus { border-color: var(--secondary); }
+
+        textarea { height: 100px; resize: none; }
+
+        /* --- FEEDBACK --- */
+        #feedback-panel {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+        }
+
+        .feedback-success { background: #d4edda; color: #155724; border: 2px solid #c3e6cb; }
+        .feedback-error { background: #f8d7da; color: #721c24; border: 2px solid #f5c6cb; }
+
+        /* --- CONTROLS --- */
+        .control-bar {
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .action-btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #00897b;
+            font-family: inherit;
+        }
+
+        .action-btn:active { transform: translateY(4px); box-shadow: none; }
+
+        /* --- FOOTER --- */
+        footer {
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            font-size: 0.8rem;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        /* --- HELPERS --- */
+        .hidden { display: none; }
+        .hint-text { font-size: 0.9rem; color: #666; font-style: italic; margin-top: 5px; }
+        .emoji-icon { font-size: 1.5rem; vertical-align: middle; margin-right: 10px; }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>कक्षा 5 हिंदी 🎲</h1>
+    <div class="subtitle">एडवांस लर्निंग गेम्स • 300+ टास्क</div>
+</header>
+
+<!-- Sticky Score Panel -->
+<div id="score-panel">
+    <div class="score-item">
+        <span>सही (Correct)</span>
+        <div class="score-val" id="score-correct">0</div>
+    </div>
+    <div class="score-item">
+        <span>गलत (Wrong)</span>
+        <div class="score-val" style="color:var(--error)" id="score-wrong">0</div>
+    </div>
+    <div class="score-item">
+        <span>प्रगति (Progress)</span>
+        <div class="score-val" id="score-percent">0%</div>
+    </div>
+</div>
+
+<!-- Game Set Navigation -->
+<div id="game-nav">
+    <!-- Buttons injected by JS -->
+</div>
+
+<!-- Main Game Area -->
+<div id="game-area">
+    <div class="card" id="card-content">
+        <!-- Dynamic Content -->
+        <div style="text-align:center; padding-top:50px;">
+            <h2>नमस्ते! 👋</h2>
+            <p>हिंदी व्याकरण और कौशल के खेल में आपका स्वागत है।</p>
+            <p>खेलने के लिए ऊपर दिए गए किसी भी गेम (Game) को चुनें।</p>
+            <div style="font-size:3rem; margin:20px;">🎲 📚 🏆</div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    Designed & Created by SHRISHANT YADAV, ShanEduHub
+</footer>
+
+<script>
+/**
+ * DATA ENGINE & GAME LOGIC
+ * Architecture:
+ * 1. Syllabus-based Data Generators: Functions that return arrays of Question Objects.
+ * 2. State Manager: Tracks current game, question index, scores.
+ * 3. Renderer: Builds DOM elements based on question type (mcq, input, long).
+ */
+
+// --- 1. DATA GENERATION UTILS ---
+
+const DATA = {
+    vowels: ['अ', 'आ', 'इ', 'ई', 'उ', 'ऊ', 'ऋ', 'ए', 'ऐ', 'ओ', 'औ'],
+    consonants: ['क', 'ख', 'ग', 'घ', 'च', 'छ', 'ज', 'झ', 'ट', 'ठ', 'ड', 'ढ', 'त', 'थ', 'द', 'ध', 'न', 'प', 'फ', 'ब', 'भ', 'म', 'य', 'र', 'ल', 'व', 'श', 'ष', 'स', 'ह'],
+    nouns: [
+        {w: 'हिमालय', t: 'व्यक्तिवाचक'}, {w: 'गंगा', t: 'व्यक्तिवाचक'}, {w: 'रामायण', t: 'व्यक्तिवाचक'},
+        {w: 'लड़का', t: 'जातिवाचक'}, {w: 'नदी', t: 'जातिवाचक'}, {w: 'शहर', t: 'जातिवाचक'}, {w: 'पुस्तक', t: 'जातिवाचक'},
+        {w: 'बचपन', t: 'भाववाचक'}, {w: 'मिठास', t: 'भाववाचक'}, {w: 'ईमानदारी', t: 'भाववाचक'}, {w: 'थकावट', t: 'भाववाचक'},
+        {w: 'सेना', t: 'समूहवाचक'}, {w: 'भीड़', t: 'समूहवाचक'}, {w: 'कक्षा', t: 'समूहवाचक'}
+    ],
+    genders: [
+        {m: 'लड़का', f: 'लड़की'}, {m: 'शेर', f: 'शेरनी'}, {m: 'मोर', f: 'मोरनी'}, {m: 'शिक्षक', f: 'शिक्षिका'},
+        {m: 'सेवक', f: 'सेविका'}, {m: 'छात्र', f: 'छात्रा'}, {m: 'दादा', f: 'दादी'}, {m: 'बकरा', f: 'बकरी'}
+    ],
+    synonyms: [
+        {q: 'सूर्य', a: 'रवि'}, {q: 'चन्द्रमा', a: 'शशि'}, {q: 'जल', a: 'नीर'}, {q: 'हवा', a: 'पवन'},
+        {q: 'आकाश', a: 'गगन'}, {q: 'फूल', a: 'सुमन'}, {q: 'मित्र', a: 'दोस्त'}, {q: 'माता', a: 'माँ'}
+    ],
+    sentences: [
+        {s: 'राम आम खाता है।', t: 'वर्तमान काल'}, {s: 'सीता ने गाना गाया।', t: 'भूतकाल'}, {s: 'हम कल दिल्ली जाएंगे।', t: 'भविष्य काल'},
+        {s: 'बच्चे खेल रहे हैं।', t: 'वर्तमान काल'}, {s: 'बारिश हो रही थी।', t: 'भूतकाल'}
+    ]
+};
+
+// --- 2. GAME SET CONFIGURATIONS ---
+
+const GAMES = [
+    {
+        id: 'g1',
+        title: 'भाषा हीरो 🦸',
+        topic: 'वर्ण विचार & भाषा',
+        bg: '#FF9F1C',
+        generator: () => {
+            let q = [];
+            // MCQs on Vowels/Consonants
+            q.push({
+                type: 'mcq', q: 'हिंदी भाषा किस लिपि में लिखी जाती है?',
+                opts: ['रोमन', 'देवनागरी', 'गुरुमुखी', 'फारसी'], ans: 'देवनागरी'
+            });
+            q.push({
+                type: 'mcq', q: 'वर्णों के व्यवस्थित समूह को क्या कहते हैं?',
+                opts: ['शब्द', 'वाक्य', 'वर्णमाला', 'लिपि'], ans: 'वर्णमाला'
+            });
+            // Generate vowel identification
+            for(let i=0; i<4; i++) {
+                let v = DATA.vowels[Math.floor(Math.random()*DATA.vowels.length)];
+                q.push({type: 'mcq', q: `इनमें से '${v}' क्या है?`, opts: ['स्वर', 'व्यंजन', 'अयोगवाह'], ans: 'स्वर'});
+            }
+             // Generate consonant identification
+            for(let i=0; i<4; i++) {
+                let c = DATA.consonants[Math.floor(Math.random()*DATA.consonants.length)];
+                q.push({type: 'mcq', q: `इनमें से '${c}' क्या है?`, opts: ['स्वर', 'व्यंजन', 'संयुक्त अक्षर'], ans: 'व्यंजन'});
+            }
+            q.push({type: 'input', q: 'क्ष, त्र, ज्ञ, श्र कौन से व्यंजन कहलाते हैं?', ans: 'संयुक्त', hint: '(संयुक्त / ऊष्म)'});
+            q.push({type: 'mcq', q: 'अनुस्वार का चिन्ह कौन सा है?', opts: ['ँ', 'ं', 'ः'], ans: 'ं'});
+            
+            // Phonetics
+            q.push({type: 'mcq', q: '"क" का उच्चारण स्थान क्या है?', opts: ['कंठ', 'तालु', 'दंत'], ans: 'कंठ'});
+            
+            // Add filler concepts from Ch1
+            q.push({type: 'tf', q: 'भाषा के दो रूप होते हैं: मौखिक और लिखित।', ans: 'सही'});
+            q.push({type: 'tf', q: 'व्याकरण हमें भाषा को अशुद्ध बोलना सिखाता है।', ans: 'गलत'});
+            
+            return q; 
+        }
+    },
+    {
+        id: 'g2',
+        title: 'संज्ञा मास्टर 🏰',
+        topic: 'Noun Types & Gender',
+        bg: '#2EC4B6',
+        generator: () => {
+            let q = [];
+            q.push({type: 'input', q: 'किसी व्यक्ति, वस्तु, स्थान या भाव के नाम को क्या कहते हैं?', ans: 'संज्ञा'});
+            
+            // Generate Noun Type Questions
+            DATA.nouns.forEach(n => {
+                let others = ['व्यक्तिवाचक', 'जातिवाचक', 'भाववाचक', 'समूहवाचक'].filter(x => x !== n.t);
+                q.push({
+                    type: 'mcq', 
+                    q: `'${n.w}' शब्द में कौन सी संज्ञा है?`, 
+                    opts: shuffle([n.t, others[0], others[1]]), 
+                    ans: n.t
+                });
+            });
+
+            // Gender Change
+            DATA.genders.forEach(g => {
+                q.push({type: 'input', q: `'${g.m}' का स्त्रीलिंग रूप लिखिए:`, ans: g.f});
+            });
+
+            q.push({type: 'long', q: 'भाववाचक संज्ञा किसे कहते हैं? उदाहरण सहित बताएं।', keywords: ['गुण', 'दोष', 'अवस्था', 'भाव']});
+            q.push({type: 'mcq', q: 'कारक के कितने भेद होते हैं?', opts: ['5', '7', '8'], ans: '8'});
+
+            return shuffle(q).slice(0, 30); // Return 30 random tasks
+        }
+    },
+    {
+        id: 'g3',
+        title: 'सर्वनाम विशेषज्ञ 🕵️',
+        topic: 'Pronouns & Adjectives',
+        bg: '#4CC9F0',
+        generator: () => {
+            let q = [];
+            let pronouns = [
+                {w:'मैं', t:'पुरुषवाचक'}, {w:'कौन', t:'प्रश्नवाचक'}, {w:'यह', t:'निश्चयवाचक'}, {w:'कोई', t:'अनिश्चयवाचक'}
+            ];
+            
+            pronouns.forEach(p => {
+                q.push({type: 'mcq', q: `'${p.w}' कौन सा सर्वनाम है?`, opts: shuffle(['पुरुषवाचक', 'प्रश्नवाचक', 'निश्चयवाचक', 'अनिश्चयवाचक']), ans: p.t});
+            });
+
+            // Adjectives
+            q.push({type: 'mcq', q: '"लाल गुलाब" में विशेषण शब्द कौन सा है?', opts: ['लाल', 'गुलाब'], ans: 'लाल'});
+            q.push({type: 'mcq', q: '"दो किलो चीनी" में विशेषण का भेद बताएं।', opts: ['गुणवाचक', 'परिमाणवाचक', 'संख्यावाचक'], ans: 'परिमाणवाचक'});
+            q.push({type: 'input', q: 'संज्ञा के स्थान पर प्रयोग किए जाने वाले शब्द को ___ कहते हैं।', ans: 'सर्वनाम'});
+            
+            // Fillers
+            q.push({type: 'tf', q: 'विशेषण, संज्ञा और सर्वनाम की विशेषता बताते हैं।', ans: 'सही'});
+            q.push({type: 'long', q: 'सर्वनाम और सार्वनामिक विशेषण में क्या अंतर है?', keywords: ['संज्ञा', 'साथ', 'जगह']});
+            
+            // More generated tasks
+            let adjs = ['सुंदर', 'मीठा', 'ऊँचा', 'बहादुर'];
+            adjs.forEach(a => {
+                q.push({type: 'mcq', q: `'${a}' शब्द क्या है?`, opts: ['संज्ञा', 'विशेषण', 'क्रिया'], ans: 'विशेषण'});
+            });
+
+            return shuffle(q).slice(0, 25);
+        }
+    },
+    {
+        id: 'g4',
+        title: 'क्रिया चैलेंज ⚡',
+        topic: 'Verbs & Tenses',
+        bg: '#FF6B6B',
+        generator: () => {
+            let q = [];
+            // Identification
+            q.push({type: 'mcq', q: '"मोहन सो रहा है।" - इसमें क्रिया क्या है?', opts: ['मोहन', 'सो रहा है', 'है'], ans: 'सो रहा है'});
+            q.push({type: 'mcq', q: 'जिस क्रिया में कर्म की आवश्यकता हो, उसे क्या कहते हैं?', opts: ['अकर्मक', 'सकर्मक'], ans: 'सकर्मक'});
+            
+            // Tenses
+            DATA.sentences.forEach(s => {
+                q.push({type: 'mcq', q: `वाक्य "${s.s}" किस काल में है?`, opts: ['वर्तमान काल', 'भूतकाल', 'भविष्य काल'], ans: s.t});
+            });
+            
+            // Conversion
+            q.push({type: 'input', q: '"राम जाता है" को भूतकाल में बदलें (जैसे: राम गया):', ans: 'राम गया'});
+            q.push({type: 'input', q: '"वह पढ़ेगा" का वर्तमान काल क्या होगा?', ans: 'वह पढ़ता है'});
+            
+            // Concepts
+            q.push({type: 'long', q: 'सकर्मक और अकर्मक क्रिया में अंतर कैसे पहचानेंगे?', keywords: ['क्या', 'किसको', 'उत्तर', 'कर्म']});
+
+            return q;
+        }
+    },
+    {
+        id: 'g5',
+        title: 'शब्द पहेली 🧩',
+        topic: 'Vocabulary',
+        bg: '#9B5DE5',
+        generator: () => {
+            let q = [];
+            DATA.synonyms.forEach(s => {
+                q.push({type: 'mcq', q: `'${s.q}' का पर्यायवाची शब्द है:`, opts: shuffle([s.a, 'विपरीत', 'शत्रु', 'पेड़']), ans: s.a});
+            });
+            
+            let antonyms = [{q:'दिन', a:'रात'}, {q:'सुख', a:'दुःख'}, {q:'मित्र', a:'शत्रु'}, {q:'आशा', a:'निराशा'}, {q:'सत्य', a:'असत्य'}];
+            antonyms.forEach(an => {
+                q.push({type: 'input', q: `'${an.q}' का विलोम शब्द लिखें:`, ans: an.a});
+            });
+
+            q.push({type: 'input', q: 'जो कभी न मरे (एक शब्द):', ans: 'अमर'});
+            q.push({type: 'input', q: 'जो लोहे का काम करता है (एक शब्द):', ans: 'लोहार'});
+            q.push({type: 'mcq', q: "'आग बबूला होना' मुहावरे का अर्थ क्या है?", opts: ['बहुत गुस्सा होना', 'आग लगाना', 'भाग जाना'], ans: 'बहुत गुस्सा होना'});
+
+            return shuffle(q).slice(0, 30);
+        }
+    },
+    {
+        id: 'g6',
+        title: 'वाक्य बिल्डर 🏗️',
+        topic: 'Sentence Structure',
+        bg: '#00BBF9',
+        generator: () => {
+            let q = [];
+            q.push({type: 'mcq', q: 'अर्थ के आधार पर वाक्य के कितने भेद हैं?', opts: ['8', '3', '4'], ans: '8'});
+            q.push({type: 'mcq', q: '"वाह! कितना सुंदर दृश्य है।" - यह कैसा वाक्य है?', opts: ['विधानवाचक', 'प्रश्नवाचक', 'विस्मयादिबोधक'], ans: 'विस्मयादिबोधक'});
+            q.push({type: 'mcq', q: '"तुम कहाँ जा रहे हो?" - वाक्य भेद बताएं।', opts: ['प्रश्नवाचक', 'आज्ञार्थक', 'इच्छावाचक'], ans: 'प्रश्नवाचक'});
+            
+            q.push({type: 'input', q: 'वाक्य को शुद्ध करें: "मेरे को जाना है" ->', ans: 'मुझे जाना है', hint: 'मुझे...'});
+            q.push({type: 'long', q: 'संयुक्त वाक्य किसे कहते हैं?', keywords: ['और', 'दो', 'जुड़े', 'स्वतंत्र']});
+            
+            q.push({type: 'tf', q: 'वाक्य के दो अंग होते हैं - उद्देश्य और विधेय।', ans: 'सही'});
+            q.push({type: 'mcq', q: '"राम और श्याम खेल रहे हैं" - यह कैसा वाक्य है?', opts: ['सरल', 'संयुक्त', 'मिश्र'], ans: 'संयुक्त'});
+
+            return q;
+        }
+    },
+    {
+        id: 'g7',
+        title: 'विराम चिन्ह 🛑',
+        topic: 'Punctuation',
+        bg: '#F15BB5',
+        generator: () => {
+            let q = [];
+            let marks = [
+                {s:'।', n:'पूर्ण विराम'}, {s:'?', n:'प्रश्नवाचक'}, {s:'!', n:'विस्मयादिबोधक'}, {s:',', n:'अल्पविराम'}
+            ];
+            marks.forEach(m => {
+                q.push({type: 'mcq', q: `चिन्ह '${m.s}' का नाम क्या है?`, opts: shuffle(['पूर्ण विराम', 'अल्पविराम', 'प्रश्नवाचक', 'कोष्टक', 'विस्मयादिबोधक']), ans: m.n});
+            });
+            
+            q.push({type: 'mcq', q: 'वाक्य के अंत में कौन सा चिन्ह लगता है?', opts: ['।', ',', '-'], ans: '।'});
+            q.push({type: 'mcq', q: 'प्रश्न पूछने पर कौन सा चिन्ह लगता है?', opts: ['?', '!', '।'], ans: '?'});
+            
+            // Usage
+            q.push({type: 'mcq', q: '"राम सीता और लक्ष्मण वन गए" - कहाँ अल्पविराम (,) लगेगा?', opts: ['राम के बाद', 'सीता के बाद', 'लक्ष्मण के बाद'], ans: 'राम के बाद'});
+
+            return shuffle(q).slice(0, 25);
+        }
+    },
+    {
+        id: 'g8',
+        title: 'गद्य-पद्य खोज 📖',
+        topic: 'Comprehension',
+        bg: '#00F5D4',
+        generator: () => {
+            let q = [];
+            q.push({type: 'input', q: 'कविता लिखने वाले को क्या कहते हैं?', ans: 'कवि'});
+            q.push({type: 'input', q: 'कहानी लिखने वाले को क्या कहते हैं?', ans: 'लेखक'});
+            
+            q.push({type: 'long', q: 'कविता के "भावार्थ" का क्या मतलब होता है?', keywords: ['अर्थ', 'संदेश', 'सीख', 'भाव']});
+            q.push({type: 'mcq', q: 'कविता में एक समान ध्वनि वाले शब्दों को क्या कहते हैं?', opts: ['तुकान्त', 'विलोम', 'पर्यायवाची'], ans: 'तुकान्त'});
+            
+            // Mini story
+            let story = "एक बार एक शेर सो रहा था। एक चूहा उसके ऊपर कूदने लगा। शेर जाग गया।";
+            q.push({type: 'mcq', q: `कहानी पढ़ें: "${story}" <br> शेर क्यों जाग गया?`, opts: ['भूख से', 'चूहे के कूदने से', 'शोर से'], ans: 'चूहे के कूदने से'});
+            
+            return q;
+        }
+    },
+    {
+        id: 'g9',
+        title: 'लेखन स्टूडियो ✍️',
+        topic: 'Writing Skills',
+        bg: '#FEE440',
+        generator: () => {
+            let q = [];
+            q.push({type: 'mcq', q: 'प्रधानाचार्य को लिखा गया पत्र कैसा होता है?', opts: ['औपचारिक', 'अनौपचारिक'], ans: 'औपचारिक'});
+            q.push({type: 'mcq', q: 'मित्र को लिखा गया पत्र कैसा होता है?', opts: ['औपचारिक', 'अनौपचारिक'], ans: 'अनौपचारिक'});
+            
+            q.push({type: 'long', q: 'अनुच्छेद लेखन और निबंध में क्या अंतर है?', keywords: ['छोटा', 'विस्तार', 'बड़ा', 'एक विचार']});
+            q.push({type: 'input', q: 'ईमेल का पूरा नाम क्या है?', ans: 'इलेक्ट्रॉनिक मेल', hint: 'Electronic...'});
+            
+            q.push({type: 'long', q: 'एक अच्छे पत्र में क्या होना चाहिए?', keywords: ['स्पष्ट', 'पता', 'दिनांक', 'विषय']});
+            
+            return q;
+        }
+    },
+    {
+        id: 'g10',
+        title: 'चैंपियन क्वेस्ट 🏆',
+        topic: 'Mixed Advanced',
+        bg: '#9E2A2B',
+        generator: () => {
+            let q = [];
+            // Advanced mixed bag
+            q.push({type: 'mcq', q: 'शुद्ध शब्द चुनें:', opts: ['आशीर्वाद', 'आशिरवाद', 'आरशीवाद'], ans: 'आशीर्वाद'});
+            q.push({type: 'mcq', q: 'शुद्ध शब्द चुनें:', opts: ['कृप्या', 'कृपया', 'क्रपा'], ans: 'कृपया'});
+            
+            q.push({type: 'long', q: 'चित्र वर्णन करते समय किन बातों का ध्यान रखना चाहिए?', keywords: ['ध्यान', 'वाक्य', 'दृश्य', 'क्रम']});
+            q.push({type: 'input', q: '9 2 11 होना मुहावरे का अर्थ:', ans: 'भाग जाना'});
+            
+            q.push({type: 'tf', q: 'संवाद में पात्रों के नाम लिखना जरुरी नहीं है।', ans: 'गलत'});
+            
+            // Generate some random revisions
+            DATA.nouns.slice(0,5).forEach(n => q.push({type: 'mcq', q: `रिवीजन: '${n.w}' क्या है?`, opts: ['संज्ञा', 'विशेषण'], ans: 'संज्ञा'}));
+
+            return shuffle(q);
+        }
+    }
+];
+
+// --- 3. STATE MANAGEMENT ---
+
+let APP_STATE = {
+    currentGameIndex: 0,
+    currentQuestions: [],
+    questionIndex: 0,
+    scores: {
+        correct: 0,
+        wrong: 0,
+        totalAttempted: 0
+    }
+};
+
+// --- 4. UTILITY FUNCTIONS ---
+
+function shuffle(array) {
+    let curId = array.length;
+    while (0 !== curId) {
+        let randId = Math.floor(Math.random() * curId);
+        curId -= 1;
+        let tmp = array[curId];
+        array[curId] = array[randId];
+        array[randId] = tmp;
+    }
+    return array;
+}
+
+// --- 5. INITIALIZATION ---
+
+document.addEventListener('DOMContentLoaded', () => {
+    renderGameNav();
+    loadGame(0);
+});
+
+function renderGameNav() {
+    const nav = document.getElementById('game-nav');
+    GAMES.forEach((game, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'game-btn';
+        btn.textContent = game.title;
+        btn.onclick = () => loadGame(idx);
+        if(idx === 0) btn.classList.add('active');
+        nav.appendChild(btn);
+    });
+}
+
+function loadGame(index) {
+    // UI Update
+    document.querySelectorAll('.game-btn').forEach((b, i) => {
+        b.classList.toggle('active', i === index);
+    });
+
+    APP_STATE.currentGameIndex = index;
+    APP_STATE.currentQuestions = GAMES[index].generator();
+    APP_STATE.questionIndex = 0;
+
+    renderQuestion();
+}
+
+function renderQuestion() {
+    const game = GAMES[APP_STATE.currentGameIndex];
+    const qData = APP_STATE.currentQuestions[APP_STATE.questionIndex];
+    const totalQ = APP_STATE.currentQuestions.length;
+
+    const card = document.getElementById('card-content');
+    card.innerHTML = ''; // Clear previous
+
+    // Tag
+    const tag = document.createElement('div');
+    tag.className = 'level-tag';
+    tag.textContent = `${game.topic} | प्रश्न ${APP_STATE.questionIndex + 1}/${totalQ}`;
+    card.appendChild(tag);
+
+    // Question Text
+    const qText = document.createElement('div');
+    qText.className = 'question-text';
+    qText.innerHTML = qData.q;
+    card.appendChild(qText);
+
+    // Input Area
+    const inputArea = document.createElement('div');
+    
+    // RENDER BASED ON TYPE
+    if (qData.type === 'mcq' || qData.type === 'tf') {
+        inputArea.className = 'options-grid';
+        let options = qData.type === 'tf' ? ['सही', 'गलत'] : qData.opts;
+        
+        options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.textContent = opt;
+            btn.onclick = () => handleAnswer(qData, opt, btn);
+            inputArea.appendChild(btn);
+        });
+    } 
+    else if (qData.type === 'input') {
+        const inp = document.createElement('input');
+        inp.type = 'text';
+        inp.className = 'input-box';
+        inp.placeholder = 'अपना उत्तर यहाँ लिखें...';
+        if(qData.hint) {
+            const h = document.createElement('div');
+            h.className = 'hint-text';
+            h.textContent = `संकेत: ${qData.hint}`;
+            inputArea.appendChild(h);
+        }
+        inputArea.appendChild(inp);
+        
+        // Add submit button for input
+        const subBtn = document.createElement('button');
+        subBtn.className = 'action-btn';
+        subBtn.textContent = 'जांचें (Check)';
+        subBtn.style.marginTop = '10px';
+        subBtn.onclick = () => handleAnswer(qData, inp.value, null, inp);
+        inputArea.appendChild(subBtn);
+    }
+    else if (qData.type === 'long') {
+        const txt = document.createElement('textarea');
+        txt.placeholder = 'विस्तार से उत्तर लिखें...';
+        inputArea.appendChild(txt);
+        
+        const subBtn = document.createElement('button');
+        subBtn.className = 'action-btn';
+        subBtn.textContent = 'जमा करें (Submit)';
+        subBtn.style.marginTop = '10px';
+        subBtn.onclick = () => handleAnswer(qData, txt.value, null, txt);
+        inputArea.appendChild(subBtn);
+    }
+
+    card.appendChild(inputArea);
+
+    // Feedback Container
+    const fb = document.createElement('div');
+    fb.id = 'feedback-panel';
+    card.appendChild(fb);
+
+    // Next Button (Hidden initially)
+    const nextDiv = document.createElement('div');
+    nextDiv.className = 'control-bar hidden';
+    nextDiv.id = 'next-control';
+    const nextBtn = document.createElement('button');
+    nextBtn.className = 'action-btn';
+    nextBtn.textContent = 'अगला प्रश्न ➡';
+    nextBtn.onclick = nextQuestion;
+    nextDiv.appendChild(nextBtn);
+    card.appendChild(nextDiv);
+}
+
+function handleAnswer(qData, userAns, btnElement, inputElement) {
+    const fb = document.getElementById('feedback-panel');
+    const nextCtrl = document.getElementById('next-control');
+    
+    // Disable inputs
+    const allOpts = document.querySelectorAll('.option-btn');
+    allOpts.forEach(b => b.style.pointerEvents = 'none');
+    if(inputElement) inputElement.disabled = true;
+    if(document.querySelector('.action-btn')) document.querySelector('.action-btn').style.display = 'none';
+
+    let isCorrect = false;
+    let msg = "";
+
+    // Evaluation Logic
+    if (qData.type === 'mcq' || qData.type === 'tf') {
+        isCorrect = (userAns === qData.ans);
+        if(isCorrect) {
+            btnElement.classList.add('correct');
+        } else {
+            btnElement.classList.add('wrong');
+            // Highlight correct one
+            allOpts.forEach(b => {
+                if(b.textContent === qData.ans) b.classList.add('correct');
+            });
+        }
+    } 
+    else if (qData.type === 'input') {
+        // Normalize: remove spaces, lowercase
+        let u = userAns.trim().toLowerCase();
+        let a = qData.ans.trim().toLowerCase();
+        isCorrect = (u === a);
+        msg = isCorrect ? "" : `सही उत्तर: ${qData.ans}`;
+    }
+    else if (qData.type === 'long') {
+        // Keyword matching
+        let matches = 0;
+        let u = userAns.trim();
+        qData.keywords.forEach(k => {
+            if(u.includes(k)) matches++;
+        });
+        isCorrect = (matches >= 1 && u.length > 10);
+        msg = isCorrect ? 
+            `बहुत अच्छे! आपने मुख्य बिंदुओं (${qData.keywords.join(', ')}) को शामिल किया।` : 
+            `उत्तर में ये शब्द होने चाहिए थे: ${qData.keywords.join(', ')}`;
+    }
+
+    // Update State
+    APP_STATE.scores.totalAttempted++;
+    if(isCorrect) {
+        APP_STATE.scores.correct++;
+        fb.innerHTML = `<span class="emoji-icon">⭐</span>बहुत बढ़िया! (Excellent)`;
+        fb.className = 'feedback-success';
+    } else {
+        APP_STATE.scores.wrong++;
+        fb.innerHTML = `<span class="emoji-icon">❌</span>फिर से प्रयास करें (Try Again)<br>${msg}`;
+        fb.className = 'feedback-error';
+    }
+
+    fb.style.display = 'block';
+    nextCtrl.classList.remove('hidden');
+    updateScoreBoard();
+}
+
+function nextQuestion() {
+    const totalQ = APP_STATE.currentQuestions.length;
+    if (APP_STATE.questionIndex < totalQ - 1) {
+        APP_STATE.questionIndex++;
+        renderQuestion();
+    } else {
+        // Level Complete
+        const card = document.getElementById('card-content');
+        card.innerHTML = `
+            <div style="text-align:center; padding:40px;">
+                <div style="font-size:4rem;">🎉</div>
+                <h2>Game Complete!</h2>
+                <p>आपने इस सेट को पूरा कर लिया है।</p>
+                <button class="action-btn" onclick="loadGame(${APP_STATE.currentGameIndex})">फिर से खेलें ↻</button>
+            </div>
+        `;
+    }
+}
+
+function updateScoreBoard() {
+    document.getElementById('score-correct').textContent = APP_STATE.scores.correct;
+    document.getElementById('score-wrong').textContent = APP_STATE.scores.wrong;
+    
+    let pct = 0;
+    if(APP_STATE.scores.totalAttempted > 0) {
+        pct = Math.round((APP_STATE.scores.correct / APP_STATE.scores.totalAttempted) * 100);
+    }
+    document.getElementById('score-percent').textContent = pct + "%";
+}
+
+</script>
+</body>
+</html>

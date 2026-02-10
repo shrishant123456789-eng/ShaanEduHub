@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 5 - Ch 4: Operating System (Advanced)</title>
+    <style>
+        :root {
+            --paper-bg: #fffdf0;
+            --line-color: #a4b0be;
+            --ink-color: #2f3542;
+            --accent-blue: #70a1ff;
+            --accent-green: #7bed9f;
+            --accent-red: #ff6b81;
+            --note-bg: #fff2cc;
+            --card-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', sans-serif;
+            background-color: var(--paper-bg);
+            color: var(--ink-color);
+            line-height: 1.6;
+            font-weight: bold; /* STRICT RULE: ALL TEXT BOLD */
+            overflow-x: hidden;
+        }
+
+        /* --- STICKY SCORE PANEL --- */
+        #score-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: #fff;
+            border-bottom: 3px solid var(--accent-blue);
+            padding: 5px 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 1000;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .score-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 1.1;
+        }
+
+        .score-val { font-size: 1.1rem; color: var(--accent-blue); }
+        .score-label { font-size: 0.7rem; color: #666; text-transform: uppercase; }
+
+        /* --- LAYOUT --- */
+        .container {
+            max-width: 800px;
+            margin: 60px auto 0; /* Top margin for sticky header */
+            padding: 20px;
+        }
+
+        h1, h2, h3 {
+            text-align: center;
+            color: #2c3e50;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px dashed var(--line-color);
+            padding-bottom: 10px;
+        }
+
+        h1 { font-size: 1.8rem; margin-bottom: 5px; }
+        .sub-header { text-align: center; margin-bottom: 30px; color: #555; font-size: 0.9rem; }
+
+        /* --- NOTES SECTION --- */
+        .topic-card {
+            background: #fff;
+            border: 2px solid var(--line-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 25px;
+            box-shadow: var(--card-shadow);
+            position: relative;
+        }
+
+        .topic-title {
+            background: var(--accent-blue);
+            color: #fff;
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 15px;
+            transform: rotate(-2deg);
+            margin-bottom: 15px;
+            box-shadow: 2px 2px 0 #000;
+        }
+
+        .concept-box {
+            background: var(--note-bg);
+            padding: 10px;
+            border-left: 5px solid #ffa502;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .life-example {
+            background: #dff9fb;
+            border: 1px dashed #22a6b3;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 8px;
+        }
+
+        .memory-tip {
+            font-style: italic;
+            color: #e056fd;
+            margin-top: 5px;
+            display: block;
+        }
+
+        /* --- QUESTION STYLES --- */
+        .question-container {
+            background: #fff;
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .q-text {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .option-btn {
+            background: #f1f2f6;
+            border: 2px solid #ced6e0;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: left;
+            font-family: inherit;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .option-btn:active { transform: scale(0.98); }
+
+        .option-btn.correct { background: var(--accent-green); border-color: #2ed573; color: #000; }
+        .option-btn.wrong { background: var(--accent-red); border-color: #ff4757; color: #fff; }
+
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            font-size: 0.9rem;
+        }
+
+        .feedback.show { display: block; }
+        .feedback.good { background: #d1fae5; color: #065f46; border: 1px solid #065f46; }
+        .feedback.bad { background: #fee2e2; color: #991b1b; border: 1px solid #991b1b; }
+
+        /* --- LONG ANSWER --- */
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border: 2px solid var(--line-color);
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            resize: vertical;
+        }
+
+        .check-btn {
+            background: #2f3542;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        /* --- REVISION TOGGLE --- */
+        .revision-box {
+            background: #fff;
+            border: 4px double #000;
+            padding: 20px;
+            display: none;
+        }
+
+        .toggle-btn {
+            background: #ff9f43;
+            color: #000;
+            border: 2px solid #000;
+            padding: 10px;
+            width: 100%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            padding: 30px 10px;
+            background: #2f3542;
+            color: #fff;
+            margin-top: 50px;
+            font-size: 0.8rem;
+        }
+
+        /* --- UTILS --- */
+        .hidden { display: none; }
+        .img-placeholder {
+            width: 100%;
+            height: 100px;
+            background: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #ccc;
+            color: #888;
+            margin: 10px 0;
+            font-size: 0.8rem;
+        }
+
+        /* Responsive */
+        @media (min-width: 600px) {
+            .options-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- STICKY SCORE PANEL -->
+    <div id="score-panel">
+        <div class="score-item">
+            <span class="score-val" id="score-correct">0</span>
+            <span class="score-label">Correct</span>
+        </div>
+        <div class="score-item">
+            <span class="score-val" id="score-wrong" style="color:var(--accent-red)">0</span>
+            <span class="score-label">Wrong</span>
+        </div>
+        <div class="score-item">
+            <span class="score-val" id="score-total">0/80</span>
+            <span class="score-label">Attempted</span>
+        </div>
+        <div class="score-item">
+            <span class="score-val" id="score-pct">0%</span>
+            <span class="score-label">Result</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- HEADER -->
+        <header>
+            <h1>Computer Science (Adv)</h1>
+            <div class="sub-header">Chapter 4: Operating System (Advanced Usage)<br>Class 5</div>
+        </header>
+
+        <!-- NOTES SECTION -->
+        <section id="notes-section">
+            <h2>📘 Study Notes</h2>
+
+            <!-- TOPIC 1: FUNCTIONS -->
+            <div class="topic-card">
+                <span class="topic-title">1. Functions of OS</span>
+                <div class="concept-box">
+                    <p>The Operating System is like the "Manager" of the computer. It handles three main jobs:</p>
+                    <ul>
+                        <li><strong>Process Management:</strong> Decides which program (app) uses the CPU.</li>
+                        <li><strong>Memory Management:</strong> Decides where to store data in RAM or Hard Disk.</li>
+                        <li><strong>File Management:</strong> Saves, deletes, and organizes your files in folders.</li>
+                    </ul>
+                </div>
+                <div class="img-placeholder">🖼️ [Diagram: OS in center, connecting Hardware & User]</div>
+                <div class="life-example">
+                    <strong>🏠 Daily Life Example:</strong><br>
+                    Think of the OS as the <strong>Principal of a School</strong>. The Principal decides which class goes to the playground (Process), which room is for which class (Memory), and keeps student records safe (File).
+                </div>
+                <span class="memory-tip">💡 Tip: Remember "PMF" - Process, Memory, File.</span>
+            </div>
+
+            <!-- TOPIC 2: TYPES -->
+            <div class="topic-card">
+                <span class="topic-title">2. Types of OS</span>
+                <div class="concept-box">
+                    <ul>
+                        <li><strong>Single User OS:</strong> Only one person can work at a time. (e.g., Your home laptop).</li>
+                        <li><strong>Multi User OS:</strong> Many people use the same computer at the same time via network. (e.g., Servers, Supercomputers).</li>
+                        <li><strong>Real Time OS (RTOS):</strong> Works strictly on time. No delays allowed! (e.g., Robots, Missile launches).</li>
+                    </ul>
+                </div>
+                <div class="img-placeholder">🖼️ [Diagram: Icons for Single User vs Server Network]</div>
+                <div class="life-example">
+                    <strong>🏠 Daily Life Example:</strong><br>
+                    <strong>Single User:</strong> A bicycle (only one person rides).<br>
+                    <strong>Multi User:</strong> A bus (many people travel together).
+                </div>
+            </div>
+
+            <!-- TOPIC 3: EXAMPLES -->
+            <div class="topic-card">
+                <span class="topic-title">3. Examples of OS</span>
+                <div class="concept-box">
+                    <ul>
+                        <li><strong>Windows:</strong> Made by Microsoft. Easy to use. Most popular (GUI).</li>
+                        <li><strong>Linux:</strong> Free and Open Source. Very secure. Used by hackers and servers.</li>
+                        <li><strong>Android:</strong> Made by Google. Used in Mobile Phones and Tablets.</li>
+                    </ul>
+                </div>
+                <div class="img-placeholder">🖼️ [Logos: Windows Flag, Penguin, Green Robot]</div>
+                <span class="memory-tip">💡 Tip: Android is for phones, Windows is for PC work!</span>
+            </div>
+
+            <!-- TOPIC 4: BOOTING -->
+            <div class="topic-card">
+                <span class="topic-title">4. Booting Process</span>
+                <div class="concept-box">
+                    <p>Booting is the process of loading the OS from Hard Disk to RAM when computer starts.</p>
+                    <ul>
+                        <li><strong>Cold Boot:</strong> Turning on the computer from a completely OFF state (Power Button).</li>
+                        <li><strong>Warm Boot:</strong> Restarting the computer while it is already ON (Restart button).</li>
+                    </ul>
+                </div>
+                <div class="life-example">
+                    <strong>🏠 Daily Life Example:</strong><br>
+                    <strong>Cold Boot:</strong> Waking up in the morning after sleeping all night.<br>
+                    <strong>Warm Boot:</strong> Washing your face in the afternoon to feel fresh.
+                </div>
+            </div>
+        </section>
+
+        <!-- IMPORTANT QUESTIONS -->
+        <section id="imp-questions">
+            <h2>❓ Important Questions</h2>
+            <div class="topic-card" style="background: #eefbee;">
+                <p><strong>Q1. What is the kernel?</strong><br>Ans: The core part of the OS that controls hardware directly.</p>
+                <hr style="border-top:1px dashed #ccc">
+                <p><strong>Q2. Why is Memory Management needed?</strong><br>Ans: To ensure one program doesn't use all the RAM and crash others.</p>
+                <hr style="border-top:1px dashed #ccc">
+                <p><strong>Q3. Which OS is used in Mars Rovers?</strong><br>Ans: Real Time OS (RTOS) because delays are dangerous in space.</p>
+            </div>
+        </section>
+
+        <!-- PRACTICE QUESTIONS -->
+        <section id="practice-section">
+            <h2>🧠 Practice Questions (70)</h2>
+            <div id="practice-container">
+                <!-- Questions injected via JS -->
+            </div>
+        </section>
+
+        <!-- LONG QUESTIONS -->
+        <section id="long-section">
+            <h2>🧪 Advanced Analysis (10)</h2>
+            <div class="sub-header">Type your answer. Keywords are checked automatically.</div>
+            <div id="long-container">
+                <!-- Long Questions injected via JS -->
+            </div>
+        </section>
+
+        <!-- REVISION -->
+        <button class="toggle-btn" onclick="toggleRevision()">📖 Open Quick Revision</button>
+        <div id="revision-panel" class="revision-box">
+            <h3>⚡ Rapid Fire Revision</h3>
+            <ul>
+                <li>OS acts as a bridge between User and Hardware.</li>
+                <li><strong>Process Management:</strong> Handling CPU tasks.</li>
+                <li><strong>Cold Boot:</strong> Switch ON from power off.</li>
+                <li><strong>Warm Boot:</strong> Restart (Ctrl+Alt+Del).</li>
+                <li><strong>Android:</strong> Mobile OS by Google.</li>
+                <li><strong>RTOS:</strong> Used in critical timing (Robots).</li>
+                <li><strong>Multi-user:</strong> Unix, Linux, Mainframes.</li>
+            </ul>
+        </div>
+
+        <footer>
+            Designed & Created by SHRISHANT YADAV<br>
+            ShanEduHub<br>
+            &copy; 2026
+        </footer>
+    </div>
+
+    <script>
+        // --- DATA ---
+        
+        // 70 Practice Questions (Mix of Difficulty)
+        // types: mcq, tf (true/false), blank (fill in blank - structured as mcq for mobile ease)
+        const practiceData = [
+            // TOPIC: FUNCTIONS (1-20)
+            { q: "What is the main job of Process Management?", options: ["Managing CPU time", "Managing Files", "Managing Mouse", "Managing Sound"], ans: 0, exp: "Process management decides which program gets the CPU." },
+            { q: "Which manager handles saving and deleting files?", options: ["Memory Manager", "File Manager", "Process Manager", "Device Manager"], ans: 1, exp: "File Manager organizes data in folders." },
+            { q: "Where does Memory Management store temporary data?", options: ["Hard Disk", "CD-ROM", "RAM", "Printer"], ans: 2, exp: "RAM is used for active, temporary memory." },
+            { q: "If you open 10 apps, which OS function keeps them running smoothly?", options: ["Booting", "Process Management", "File Management", "Formatting"], ans: 1, exp: "It allocates CPU time to all 10 apps." },
+            { q: "The OS acts as an interface between User and _______.", options: ["Internet", "Hardware", "Games", "Electricity"], ans: 1, exp: "OS controls the physical parts (hardware)." },
+            { q: "True or False: The OS manages the computer's memory.", options: ["True", "False"], ans: 0, exp: "Yes, via Memory Management." },
+            { q: "When you save a drawing as 'art.jpg', who handles it?", options: ["Process Manager", "File Manager", "Memory Manager", "Boot Loader"], ans: 1, exp: "Saving and naming files is File Management." },
+            { q: "Allocating memory to a new program is done by:", options: ["User", "OS", "Monitor", "Keyboard"], ans: 1, exp: "The OS handles allocation automatically." },
+            { q: "Which is NOT a function of OS?", options: ["Memory Mgmt", "Process Mgmt", "Cooking Food", "File Mgmt"], ans: 2, exp: "Computers cannot cook!" },
+            { q: "If memory is full, the OS moves data to:", options: ["Virtual Memory", "Mouse", "Screen", "Speakers"], ans: 0, exp: "It uses hard disk space as Virtual Memory." },
+            { q: "True or False: You can run apps without an OS.", options: ["True", "False"], ans: 1, exp: "No, software needs an OS to run." },
+            { q: "The 'Brain' of the computer that the OS controls is:", options: ["CPU", "UPS", "Mouse", "Scanner"], ans: 0, exp: "The CPU processes instructions." },
+            { q: "Prioritizing important tasks is part of:", options: ["Scheduling", "Painting", "Typing", "Clicking"], ans: 0, exp: "Scheduling is part of Process Management." },
+            { q: "Keeping track of free space on disk is done by:", options: ["File System", "Sound System", "Power System", "Cooling System"], ans: 0, exp: "File system maps used and free space." },
+            { q: "True or False: OS prevents one app from crashing another.", options: ["True", "False"], ans: 0, exp: "By using memory protection." },
+            { q: "Which component executes the processes?", options: ["Hard Disk", "Processor", "Monitor", "Keyboard"], ans: 1, exp: "The Processor (CPU) executes code." },
+            { q: "De-allocation of memory happens when:", options: ["App starts", "App closes", "App saves", "App prints"], ans: 1, exp: "Memory is freed when you close an app." },
+            { q: "Which is a 'resource' the OS manages?", options: ["Time", "Memory", "Printers", "All of these"], ans: 3, exp: "OS manages all hardware and time resources." },
+            { q: "Without File Management, data would be:", options: ["Organized", "A big mess", "Faster", "Colored"], ans: 1, exp: "We wouldn't know where data begins or ends." },
+            { q: "A folder inside a folder is a concept of:", options: ["Process Mgmt", "File Mgmt", "Booting", "Scanning"], ans: 1, exp: "Hierarchical file organization." },
+
+            // TOPIC: TYPES (21-40)
+            { q: "Which OS is for a single person at home?", options: ["Multi-user", "Single-user", "Real-time", "Super-user"], ans: 1, exp: "Windows/MacOS on laptops are Single-user." },
+            { q: "A Supercomputer used by scientists likely runs:", options: ["Single-user OS", "Multi-user OS", "Phone OS", "No OS"], ans: 1, exp: "Many scientists access it simultaneously." },
+            { q: "RTOS stands for:", options: ["Real Time OS", "Run Time OS", "Read Time OS", "Rare Time OS"], ans: 0, exp: "Real Time Operating System." },
+            { q: "A robot performing surgery needs which OS?", options: ["Windows 10", "RTOS", "Single User", "Android"], ans: 1, exp: "It needs instant, guaranteed response (Real Time)." },
+            { q: "True or False: Multi-user OS is used on small phones.", options: ["True", "False"], ans: 1, exp: "Phones are typically Single-user devices." },
+            { q: "Which OS is best for a bank server?", options: ["Single User", "Multi User", "Game OS", "Basic OS"], ans: 1, exp: "Servers handle thousands of users." },
+            { q: "Unix is an example of:", options: ["Single User", "Multi User", "RTOS", "Toy"], ans: 1, exp: "Unix is a classic Multi-user OS." },
+            { q: "An Air Traffic Control system uses:", options: ["RTOS", "Windows XP", "MS Paint", "Android"], ans: 0, exp: "Timing is critical for safety." },
+            { q: "MS-DOS is an example of:", options: ["Single User", "Multi User", "Network OS", "Cloud OS"], ans: 0, exp: "Old Disk Operating System was Single User." },
+            { q: "True or False: RTOS has strict deadlines.", options: ["True", "False"], ans: 0, exp: "If it's late, the system fails." },
+            { q: "Which allows time-sharing?", options: ["Single User", "Multi User", "Calculator", "Camera"], ans: 1, exp: "CPU time is shared among many users." },
+            { q: "A Washing Machine likely has a simple:", options: ["Windows 11", "Embedded/RTOS", "Linux Server", "Multi User OS"], ans: 1, exp: "Embedded systems use simple RTOS." },
+            { q: "Which is cheaper to maintain usually?", options: ["Mainframe OS", "Supercomputer OS", "Single User OS", "Server OS"], ans: 2, exp: "Home PCs are simpler than servers." },
+            { q: "True or False: Windows 95 was a Real Time OS.", options: ["True", "False"], ans: 1, exp: "It was a general purpose Single User OS." },
+            { q: "The ability to handle multiple users requires:", options: ["Security", "Passwords", "User Accounts", "All of these"], ans: 3, exp: "Multi-user OS needs strong security." },
+            { q: "Network Operating Systems are usually:", options: ["Single User", "Multi User", "Offline", "Paper"], ans: 1, exp: "They manage network traffic for many." },
+            { q: "Which OS handles weather forecasting data?", options: ["Android", "Multi User/Supercomputer", "DOS", "Basic"], ans: 1, exp: "Requires massive processing power." },
+            { q: "Latency (delay) must be zero in:", options: ["Single User", "Multi User", "RTOS", "Batch OS"], ans: 2, exp: "RTOS minimizes latency." },
+            { q: "Your school computer lab server runs:", options: ["Single User", "Multi User", "Game", "None"], ans: 1, exp: "It serves all students." },
+            { q: "A standalone digital camera uses:", options: ["Firmware/RTOS", "Windows", "Linux Mint", "Unix"], ans: 0, exp: "Embedded simple OS." },
+
+            // TOPIC: EXAMPLES (41-55)
+            { q: "Which OS is open-source and has a Penguin logo?", options: ["Windows", "Mac", "Linux", "Android"], ans: 2, exp: "Tux the Penguin is Linux's mascot." },
+            { q: "Android is owned by:", options: ["Apple", "Microsoft", "Google", "IBM"], ans: 2, exp: "Google develops Android." },
+            { q: "Windows 10 is a product of:", options: ["Google", "Microsoft", "Apple", "Dell"], ans: 1, exp: "Microsoft Windows." },
+            { q: "Which OS runs on iPhones?", options: ["Android", "iOS", "Linux", "Windows"], ans: 1, exp: "iOS is Apple's mobile OS." },
+            { q: "True or False: Linux is free to download.", options: ["True", "False"], ans: 0, exp: "Yes, it is Open Source." },
+            { q: "Which version comes after Windows 10?", options: ["Windows 9", "Windows 11", "Windows XP", "Windows 20"], ans: 1, exp: "Windows 11 is the successor." },
+            { q: "Ubuntu is a popular version of:", options: ["Windows", "Linux", "Mac", "Android"], ans: 1, exp: "Ubuntu is a Linux distribution." },
+            { q: "Which OS uses a 'Start Button'?", options: ["Mac", "Windows", "Linux (Command)", "DOS"], ans: 1, exp: "Classic Windows feature." },
+            { q: "True or False: Android is based on Linux.", options: ["True", "False"], ans: 0, exp: "Android uses the Linux kernel." },
+            { q: "MacOS is designed for which hardware?", options: ["Dell", "HP", "Apple Mac", "Samsung"], ans: 2, exp: "MacOS only runs on Apple computers." },
+            { q: "Which is a Mobile OS?", options: ["Windows Server", "iOS", "Unix", "Solaris"], ans: 1, exp: "iOS is for phones/tablets." },
+            { q: "GUI stands for:", options: ["Graphical User Interface", "Game User Interface", "Global Used Internet", "Green User Icon"], ans: 0, exp: "It means using icons and mouse." },
+            { q: "Linux is famous for being:", options: ["Expensive", "Secure & Stable", "Slow", "Full of viruses"], ans: 1, exp: "Servers use it for stability." },
+            { q: "Which is the oldest Windows version here?", options: ["Windows 10", "Windows 7", "Windows 95", "Windows XP"], ans: 2, exp: "Windows 95 came in 1995." },
+            { q: "Which OS is 'Closed Source'?", options: ["Linux", "Windows", "FreeBSD", "ReactOS"], ans: 1, exp: "You cannot see Windows code." },
+
+            // TOPIC: BOOTING & MIXED (56-70)
+            { q: "What is the first step when computer starts?", options: ["Process Mgmt", "Booting", "Saving", "Typing"], ans: 1, exp: "Booting loads the OS." },
+            { q: "Cold Boot means:", options: ["Restarting", "Turning ON from Off", "Cooling the PC", "Freezing"], ans: 1, exp: "Starting from a cold (off) state." },
+            { q: "Pressing Ctrl + Alt + Del causes:", options: ["Cold Boot", "Warm Boot", "Shutdown", "Explosion"], ans: 1, exp: "It triggers a restart (Warm Boot)." },
+            { q: "True or False: Warm Boot checks RAM completely.", options: ["True", "False"], ans: 1, exp: "No, Cold boot does the full hardware check (POST)." },
+            { q: "POST stands for:", options: ["Power On Self Test", "Post Office Simple Test", "Power Off System Test", "Program OS Test"], ans: 0, exp: "Checks hardware on startup." },
+            { q: "BIOS helps in:", options: ["Painting", "Booting", "Writing", "Singing"], ans: 1, exp: "Basic Input Output System starts the OS." },
+            { q: "Which button is used for Cold Boot?", options: ["Power Button", "Restart Button", "Mouse Click", "Key A"], ans: 0, exp: "Power button starts electricity." },
+            { q: "Restarting a computer is also called:", options: ["Cold Boot", "Reboot/Warm Boot", "Shutdown", "Sleep"], ans: 1, exp: "Rebooting." },
+            { q: "Why do we Warm Boot?", options: ["To start day", "To fix a stuck app", "To save power", "To delete files"], ans: 1, exp: "It clears RAM without full power cut." },
+            { q: "The OS is loaded from Hard Disk to:", options: ["Monitor", "RAM", "Mouse", "Keyboard"], ans: 1, exp: "CPU reads from RAM." },
+            { q: "If the OS is missing, the computer will:", options: ["Work fine", "Not start", "Play games", "Show movies"], ans: 1, exp: "Hardware needs OS to function." },
+            { q: "Login screen appears:", options: ["Before Booting", "After Booting", "During Shutdown", "Never"], ans: 1, exp: "Once OS is loaded, you login." },
+            { q: "The 'Desktop' appears after:", options: ["Booting is complete", "Power is off", "Monitor breaks", "Printing"], ans: 0, exp: "Desktop is the main screen." },
+            { q: "True or False: Cold Boot takes longer than Warm Boot.", options: ["True", "False"], ans: 0, exp: "Yes, because of full hardware tests." },
+            { q: "Safe Mode is used for:", options: ["Playing games", "Troubleshooting", "Watching videos", "Internet"], ans: 1, exp: "A special booting mode to fix errors." }
+        ];
+
+        // 10 Long Questions (Keywords for checking)
+        const longData = [
+            { id: 1, q: "Explain Cold Boot in simple terms.", keys: ["power", "switch", "off", "start", "button"] },
+            { id: 2, q: "Why do we need an Operating System?", keys: ["manager", "interface", "hardware", "user", "control"] },
+            { id: 3, q: "Difference between Single User and Multi User OS.", keys: ["one", "many", "single", "multiple", "person", "time"] },
+            { id: 4, q: "What is Process Management?", keys: ["cpu", "program", "task", "job", "schedule", "time"] },
+            { id: 5, q: "Give two examples of Real Time OS usage.", keys: ["robot", "missile", "satellite", "traffic", "medical", "flight"] },
+            { id: 6, q: "How does Memory Management help?", options: [], keys: ["ram", "space", "allocate", "crash", "full"] },
+            { id: 7, q: "Why is Linux considered safe?", keys: ["virus", "open", "source", "secure", "hacker", "permission"] },
+            { id: 8, q: "What happens during a Warm Boot?", keys: ["restart", "reset", "already", "on", "running"] },
+            { id: 9, q: "Explain File Management function.", keys: ["save", "delete", "folder", "organize", "name", "copy"] },
+            { id: 10, q: "Why is Android popular?", keys: ["phone", "mobile", "google", "app", "free", "touch"] }
+        ];
+
+        // --- STATE ---
+        let state = {
+            correct: 0,
+            wrong: 0,
+            attempted: new Set(), // Store IDs of attempted Qs
+            totalQs: 80
+        };
+
+        // --- DOM ELEMENTS ---
+        const practiceContainer = document.getElementById('practice-container');
+        const longContainer = document.getElementById('long-container');
+        const revisionPanel = document.getElementById('revision-panel');
+        
+        // Score Elements
+        const elCorrect = document.getElementById('score-correct');
+        const elWrong = document.getElementById('score-wrong');
+        const elTotal = document.getElementById('score-total');
+        const elPct = document.getElementById('score-pct');
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderPracticeQs();
+            renderLongQs();
+            updateScoreUI();
+        });
+
+        // --- RENDER PRACTICE QUESTIONS ---
+        function renderPracticeQs() {
+            practiceData.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'question-container';
+                div.id = `p-q-${index}`;
+                
+                let html = `<div class="q-text"><strong>Q${index + 1}.</strong> ${item.q}</div>`;
+                html += `<div class="options-grid">`;
+                
+                item.options.forEach((opt, optIndex) => {
+                    html += `<button class="option-btn" onclick="checkPractice(${index}, ${optIndex}, this)">${opt}</button>`;
+                });
+                
+                html += `</div>`;
+                html += `<div class="feedback" id="feed-${index}"></div>`;
+                
+                div.innerHTML = html;
+                practiceContainer.appendChild(div);
+            });
+        }
+
+        // --- RENDER LONG QUESTIONS ---
+        function renderLongQs() {
+            longData.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'question-container';
+                div.style.borderColor = '#70a1ff';
+                
+                let html = `<div class="q-text"><strong>LQ${index + 1}.</strong> ${item.q}</div>`;
+                html += `<textarea id="long-in-${index}" placeholder="Type your answer here..."></textarea>`;
+                html += `<button class="check-btn" onclick="checkLong(${index})">Check Answer</button>`;
+                html += `<div class="feedback" id="long-feed-${index}"></div>`;
+                
+                div.innerHTML = html;
+                longContainer.appendChild(div);
+            });
+        }
+
+        // --- LOGIC: PRACTICE CHECK ---
+        window.checkPractice = function(qIndex, optIndex, btnEl) {
+            if (state.attempted.has(`p-${qIndex}`)) return; // Prevent re-answering
+
+            const q = practiceData[qIndex];
+            const feedEl = document.getElementById(`feed-${qIndex}`);
+            const allBtns = btnEl.parentElement.querySelectorAll('.option-btn');
+
+            // Lock buttons
+            state.attempted.add(`p-${qIndex}`);
+            allBtns.forEach(b => b.style.cursor = 'not-allowed');
+
+            if (optIndex === q.ans) {
+                // Correct
+                btnEl.classList.add('correct');
+                feedEl.innerHTML = `<strong>Excellent ⭐</strong><br>${q.exp}`;
+                feedEl.className = 'feedback show good';
+                state.correct++;
+            } else {
+                // Wrong
+                btnEl.classList.add('wrong');
+                // Highlight correct
+                allBtns[q.ans].classList.add('correct');
+                
+                feedEl.innerHTML = `<strong>Try Again</strong><br>Correct Answer: ${q.options[q.ans]}<br><em>${q.exp}</em>`;
+                feedEl.className = 'feedback show bad';
+                state.wrong++;
+            }
+
+            updateScoreUI();
+        };
+
+        // --- LOGIC: LONG ANSWER CHECK ---
+        window.checkLong = function(index) {
+            if (state.attempted.has(`l-${index}`)) return;
+
+            const input = document.getElementById(`long-in-${index}`);
+            const feedEl = document.getElementById(`long-feed-${index}`);
+            const userText = input.value.toLowerCase().trim();
+            const keywords = longData[index].keys;
+
+            if (userText.length < 5) {
+                alert("Please write a proper answer.");
+                return;
+            }
+
+            state.attempted.add(`l-${index}`);
+            input.disabled = true;
+
+            // Check keywords
+            let matchCount = 0;
+            let missing = [];
+            keywords.forEach(k => {
+                if (userText.includes(k)) matchCount++;
+                else missing.push(k);
+            });
+
+            // Logic: Need at least 1 keyword for partial, 3 for full (simplified)
+            // Or roughly 30% of keywords matched
+            const threshold = Math.ceil(keywords.length * 0.3);
+
+            if (matchCount >= threshold) {
+                state.correct++;
+                feedEl.innerHTML = `<strong>Well Done! ✅</strong><br>You used key concepts. <br>Keywords matched: ${matchCount}/${keywords.length}`;
+                feedEl.className = 'feedback show good';
+            } else {
+                state.wrong++;
+                feedEl.innerHTML = `<strong>Needs Improvement ⚠️</strong><br>Your answer is missing key concepts.<br>Try to include words like: <em>${missing.slice(0, 3).join(", ")}</em>`;
+                feedEl.className = 'feedback show bad';
+            }
+
+            updateScoreUI();
+        };
+
+        // --- UI UPDATES ---
+        function updateScoreUI() {
+            elCorrect.innerText = state.correct;
+            elWrong.innerText = state.wrong;
+            elTotal.innerText = `${state.attempted.size}/${state.totalQs}`;
+            
+            if (state.attempted.size > 0) {
+                const pct = Math.round((state.correct / state.attempted.size) * 100);
+                elPct.innerText = `${pct}%`;
+                
+                if(pct > 80) elPct.style.color = 'green';
+                else if(pct < 50) elPct.style.color = 'red';
+                else elPct.style.color = 'orange';
+            }
+        }
+
+        // --- REVISION TOGGLE ---
+        window.toggleRevision = function() {
+            if (revisionPanel.style.display === 'block') {
+                revisionPanel.style.display = 'none';
+            } else {
+                revisionPanel.style.display = 'block';
+                revisionPanel.scrollIntoView({ behavior: 'smooth' });
+            }
+        };
+
+    </script>
+</body>
+</html>

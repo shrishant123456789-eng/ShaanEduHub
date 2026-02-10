@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 5 Computer - Chapter 6: Software Concepts (Advanced)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #fdf6e3; /* Paper color */
+            --header-bg: #ffeaa7;
+            --note-bg-1: #e0f7fa; /* Cyan tint */
+            --note-bg-2: #f1f8e9; /* Green tint */
+            --note-bg-3: #fff3e0; /* Orange tint */
+            --note-bg-4: #f3e5f5; /* Purple tint */
+            --card-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+            --text-color: #2d3436;
+            --accent-color: #6c5ce7;
+            --correct-color: #00b894;
+            --wrong-color: #d63031;
+            --border-color: #b2bec3;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Patrick Hand', 'Comic Sans MS', cursive, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            font-weight: bold; /* STRICT RULE: ALL TEXT BOLD */
+            overflow-x: hidden;
+        }
+
+        /* HEADER */
+        header {
+            background-color: var(--header-bg);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 3px dashed var(--border-color);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: #d35400;
+            text-transform: uppercase;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            color: #2c3e50;
+        }
+
+        /* STICKY SCORE PANEL */
+        #score-panel {
+            position: sticky;
+            top: 0;
+            background: #fff;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 5px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-bottom: 2px solid var(--border-color);
+            font-size: 0.9rem;
+        }
+
+        .score-item {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .score-val {
+            font-size: 1.2rem;
+            color: var(--accent-color);
+        }
+
+        .score-label {
+            font-size: 0.7rem;
+            color: #636e72;
+            text-transform: uppercase;
+        }
+
+        /* SECTIONS */
+        section {
+            padding: 15px;
+            max-width: 800px;
+            margin: 0 auto;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            background: var(--text-color);
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 15px;
+            transform: rotate(-2deg);
+        }
+
+        /* NOTES */
+        .note-card {
+            background: #fff;
+            border: 2px solid var(--text-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            position: relative;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+        }
+
+        .note-card:nth-child(odd) { background-color: var(--note-bg-1); transform: rotate(1deg); }
+        .note-card:nth-child(2n) { background-color: var(--note-bg-3); transform: rotate(-1deg); }
+        .note-card:nth-child(3n) { background-color: var(--note-bg-2); }
+        .note-card:nth-child(4n) { background-color: var(--note-bg-4); }
+
+        .note-topic { font-size: 1.3rem; text-decoration: underline; margin-bottom: 10px; color: #d35400; }
+        .note-sub { margin-top: 10px; color: #2980b9; }
+        .note-example { background: rgba(255,255,255,0.6); padding: 5px; border-radius: 5px; margin-top: 5px; border-left: 4px solid #e17055; }
+        .note-tip { margin-top: 8px; font-style: italic; color: #6c5ce7; }
+        .static-img-box {
+            width: 100%;
+            height: 100px;
+            background: #dfe6e9;
+            border: 2px dashed #b2bec3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+            color: #636e72;
+            text-align: center;
+            border-radius: 8px;
+        }
+
+        /* IMPORTANT QUESTIONS */
+        .imp-q-card {
+            background: #fff;
+            border-left: 5px solid #fdcb6e;
+            padding: 10px;
+            margin-bottom: 10px;
+            box-shadow: var(--card-shadow);
+        }
+        .imp-q { color: #d35400; margin-bottom: 5px; }
+        .imp-a { color: #2d3436; }
+
+        /* PRACTICE QUESTIONS */
+        #pq-container {
+            background: #fff;
+            border: 2px solid var(--text-color);
+            border-radius: 15px;
+            padding: 15px;
+            min-height: 300px;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .option-btn {
+            background: #f1f2f6;
+            border: 2px solid #ced6e0;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: inherit;
+            font-weight: bold;
+            font-size: 1rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover { background: #dfe4ea; }
+        .option-btn.selected-correct { background: var(--correct-color); color: white; border-color: #00947e; }
+        .option-btn.selected-wrong { background: var(--wrong-color); color: white; border-color: #b71c1c; }
+        .option-btn.disabled { pointer-events: none; opacity: 0.7; }
+
+        .feedback-box {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+        }
+        .feedback-correct { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .feedback-wrong { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+
+        .next-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            background: #0984e3;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-family: inherit;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: none; /* Hidden initially */
+        }
+
+        /* LONG ANSWERS */
+        .long-q-card {
+            background: #fff;
+            border: 2px solid #a29bfe;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .long-input {
+            width: 100%;
+            height: 80px;
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px solid #b2bec3;
+            border-radius: 8px;
+            font-family: inherit;
+            font-weight: bold;
+            resize: vertical;
+        }
+
+        .check-btn {
+            background: #00cec9;
+            color: #2d3436;
+            border: 2px solid #00b894;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .long-feedback {
+            margin-top: 10px;
+            font-size: 0.95rem;
+            display: none;
+        }
+
+        /* REVISION */
+        #revision-content {
+            display: none;
+            background: #ffeaa7;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px dashed #fdcb6e;
+        }
+        .revision-toggle {
+            background: #fab1a0;
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-family: inherit;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        /* FOOTER */
+        footer {
+            background: #2d3436;
+            color: #dfe6e9;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            font-size: 0.9rem;
+        }
+        .brand { color: #fab1a0; font-size: 1.1rem; }
+
+        /* UTILS */
+        .hidden { display: none !important; }
+        .text-input-answer { width: 100%; padding: 10px; margin-bottom: 10px; border: 2px solid #ccc; border-radius: 5px; font-family: inherit; font-weight: bold; }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Class 5 Computer</h1>
+    <h2>Chapter 6: Software Concepts (Advanced)</h2>
+</header>
+
+<div id="score-panel">
+    <div class="score-item">
+        <span class="score-val" id="score-correct">0</span>
+        <span class="score-label">Correct</span>
+    </div>
+    <div class="score-item">
+        <span class="score-val" id="score-wrong">0</span>
+        <span class="score-label">Wrong</span>
+    </div>
+    <div class="score-item">
+        <span class="score-val" id="score-total">0/80</span>
+        <span class="score-label">Attempted</span>
+    </div>
+    <div class="score-item">
+        <span class="score-val" id="score-perc">0%</span>
+        <span class="score-label">Score</span>
+    </div>
+</div>
+
+<section id="notes-section">
+    <div class="section-title">📚 Chapter Notes</div>
+
+    <!-- 1. System Software -->
+    <div class="note-card">
+        <div class="note-topic">1. System Software</div>
+        <div><strong>Definition:</strong> The main software that runs the computer hardware and helps other programs to work.</div>
+        <div class="note-sub">Basic → Advanced:</div>
+        <div>It starts when you turn on the PC (Booting). Without it, the computer is just a plastic box. It manages memory and processes.</div>
+        <div class="note-example">🇮🇳 <strong>Daily Life:</strong> Like the Principal of a school who manages all teachers and students but doesn't teach every class.</div>
+        <div class="static-img-box">[Image: Windows & Linux Logos managing Hardware]</div>
+        <div class="note-tip">💡 Tip: System = "Soul" of the computer.</div>
+        <div><em>Quick Check: Is Windows 10 System Software? Yes!</em></div>
+    </div>
+
+    <!-- 2. Utility Software -->
+    <div class="note-card">
+        <div class="note-topic">2. Utility Software</div>
+        <div><strong>Definition:</strong> Software designed to help analyze, configure, optimize or maintain a computer.</div>
+        <div class="note-sub">Basic → Advanced:</div>
+        <div>These are the "Mechanics". They don't do your main work (like typing) but they keep the machine healthy.</div>
+        <div class="note-example">🇮🇳 <strong>Daily Life:</strong> Like the Electrician or Plumber who comes to fix issues in your house.</div>
+        <div class="static-img-box">[Image: Antivirus Shield & Broom cleaning disk]</div>
+        <div class="note-tip">💡 Tip: Utility = Useful Tools (Maintenance).</div>
+    </div>
+
+    <!-- 3. Application Software -->
+    <div class="note-card">
+        <div class="note-topic">3. Application Software</div>
+        <div><strong>Definition:</strong> Programs designed for end-users to perform specific tasks.</div>
+        <div class="note-sub">Basic → Advanced:</div>
+        <div>Apps you use for work or fun. Word for typing, Paint for drawing, Chrome for internet.</div>
+        <div class="note-example">🇮🇳 <strong>Daily Life:</strong> Like your Cricket Bat or Sketchbook. You use them to do specific things.</div>
+        <div class="static-img-box">[Image: Icons of Word, Excel, Games]</div>
+    </div>
+
+    <!-- 4. Open Source vs Proprietary -->
+    <div class="note-card">
+        <div class="note-topic">4. Open Source vs Proprietary</div>
+        <div><strong>Open Source:</strong> Code is free for everyone to see and change (e.g., Linux, VLC).</div>
+        <div><strong>Proprietary:</strong> Owned by a company. You must buy it and cannot change it (e.g., Windows, Photoshop).</div>
+        <div class="note-example">🇮🇳 <strong>Daily Life:</strong> Open Source = Grandma's Recipe (Shared with all). Proprietary = KFC Secret Recipe (Hidden/Sold).</div>
+        <div class="static-img-box">[Image: Unlocked Padlock vs Locked Padlock]</div>
+    </div>
+
+    <!-- 5. Examples of Utility Software -->
+    <div class="note-card">
+        <div class="note-topic">5. Utility Examples</div>
+        <ul>
+            <li><strong>Antivirus:</strong> Protects from viruses (QuickHeal, Norton).</li>
+            <li><strong>Backup:</strong> Saves copy of data (Google Drive).</li>
+            <li><strong>Compression:</strong> Reduces file size (WinZip).</li>
+            <li><strong>Disk Cleanup:</strong> Deletes junk files.</li>
+        </ul>
+        <div class="static-img-box">[Image: WinZip and Recycle Bin icons]</div>
+    </div>
+
+    <!-- 6. Installation & Uninstallation -->
+    <div class="note-card">
+        <div class="note-topic">6. Installation & Uninstallation</div>
+        <div><strong>Installation:</strong> Putting a program onto the computer so it can be executed. (Setup.exe)</div>
+        <div><strong>Uninstallation:</strong> Removing the software cleanly to free up space.</div>
+        <div class="note-tip">⚠️ Never just delete the folder! Use Control Panel -> Uninstall.</div>
+        <div class="static-img-box">[Image: Progress bar installing...]</div>
+    </div>
+
+    <!-- 7. Software Updates -->
+    <div class="note-card">
+        <div class="note-topic">7. Importance of Updates</div>
+        <div>Updates fix bugs (errors), add new features, and patch security holes.</div>
+        <div class="note-sub">Why update?</div>
+        <div>To stop hackers and make the software run faster.</div>
+        <div class="note-example">🇮🇳 <strong>Daily Life:</strong> Like servicing your scooter/car every 6 months to keep it running smooth.</div>
+        <div class="static-img-box">[Image: Update Refresh Icon]</div>
+    </div>
+
+    <!-- 8. Version Control (Basic) -->
+    <div class="note-card">
+        <div class="note-topic">8. Version Control</div>
+        <div><strong>Concept:</strong> Tracking changes to a file so you can recall specific versions later.</div>
+        <div><strong>Basic Idea:</strong> Saving "File_v1", "File_v2".</div>
+        <div><strong>Advanced:</strong> Using tools like Git to work together without overwriting each other's work.</div>
+        <div class="note-example">🇮🇳 <strong>Daily Life:</strong> Video Game Checkpoints. If you die, you restart from the last save point.</div>
+        <div class="static-img-box">[Image: Timeline showing v1.0 -> v1.1 -> v2.0]</div>
+    </div>
+</section>
+
+<section id="imp-questions-section">
+    <div class="section-title">❓ Important Questions</div>
+    <div id="imp-q-container">
+        <!-- JS will populate 30 questions here -->
+    </div>
+</section>
+
+<section id="practice-section">
+    <div class="section-title">🧠 Practice Questions (70)</div>
+    <div id="pq-container">
+        <div id="pq-count" style="margin-bottom:10px; color:#636e72; font-size:0.9rem;">Question 1 of 70</div>
+        <div id="pq-question" class="question-text">Loading...</div>
+        <div id="pq-options" class="options-grid"></div>
+        <div id="pq-feedback" class="feedback-box"></div>
+        <button id="pq-next-btn" class="next-btn">Next Question ➡️</button>
+    </div>
+</section>
+
+<section id="advanced-section">
+    <div class="section-title">🧪 Advanced Long Questions</div>
+    <div id="long-q-container">
+        <!-- JS will populate 10 long questions here -->
+    </div>
+</section>
+
+<section id="revision-section">
+    <button class="revision-toggle" id="rev-btn">🔄 Revise Fast (Click to Open)</button>
+    <div id="revision-content">
+        <h3>⚡ Quick Recall</h3>
+        <ul>
+            <li><strong>System Software:</strong> Runs hardware (OS).</li>
+            <li><strong>Application Software:</strong> Do specific work (Word, Games).</li>
+            <li><strong>Utility Software:</strong> Maintenance (Antivirus, Backup).</li>
+            <li><strong>Open Source:</strong> Free code, editable (Linux).</li>
+            <li><strong>Proprietary:</strong> Paid, locked code (Windows).</li>
+            <li><strong>Installation:</strong> Setting up software.</li>
+            <li><strong>Update:</strong> Fix bugs & security.</li>
+            <li><strong>Version Control:</strong> Managing changes/history.</li>
+        </ul>
+    </div>
+</section>
+
+<footer>
+    Designed & Created by SHRISHANT YADAV<br>
+    <span class="brand">ShanEduHub</span>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // --- STATE ---
+    const state = {
+        correct: 0,
+        wrong: 0,
+        attempted: 0,
+        totalQuestions: 80, // 70 Practice + 10 Long
+        currentPQIndex: 0
+    };
+
+    // --- DATA: IMPORTANT QUESTIONS (30) ---
+    const importantQuestions = [
+        {q: "What is System Software?", a: "Software that manages computer hardware and provides a platform for applications.", exp: "It bridges user and hardware."},
+        {q: "Example of System Software?", a: "Operating System (Windows, Linux, macOS).", exp: "It controls the PC."},
+        {q: "What is Utility Software?", a: "Software designed to maintain and optimize the computer.", exp: "Like a mechanic for your PC."},
+        {q: "Name one Antivirus.", a: "Norton, QuickHeal, or McAfee.", exp: "Removes viruses."},
+        {q: "What is Application Software?", a: "Software for specific tasks for users.", exp: "Like MS Word or Games."},
+        {q: "Difference between Open Source and Proprietary?", a: "Open Source code is free/editable. Proprietary is owned/locked.", exp: "Free vs Paid/Restricted."},
+        {q: "What is Booting?", a: "The process of starting the computer and loading the OS.", exp: "The first step."},
+        {q: "Why use Backup software?", a: "To save a copy of data in case of loss.", exp: "Safety for files."},
+        {q: "What is Defragmentation?", a: "Organizing files on disk to speed up access.", exp: "A utility function."},
+        {q: "What is Installation?", a: "Setting up a program on the hard drive to run it.", exp: "Making it ready to use."},
+        {q: "What does an Update do?", a: "Fixes bugs, improves security, adds features.", exp: "Keeps software healthy."},
+        {q: "What is Version Control?", a: "System to record changes to files over time.", exp: "Like game saves."},
+        {q: "Is MS Word System Software?", a: "No, it is Application Software.", exp: "It is for typing, not running hardware."},
+        {q: "What is the kernel?", a: "The core part of the OS.", exp: "Heart of the OS."},
+        {q: "What is a Bug?", a: "An error or flaw in software.", exp: "Updates fix these."},
+        {q: "Full form of GUI?", a: "Graphical User Interface.", exp: "Visual way to use PC."},
+        {q: "What is Compression?", a: "Reducing file size.", exp: "Saves space."},
+        {q: "Is Linux Free?", a: "Yes, it is mostly Open Source.", exp: "Free to use and change."},
+        {q: "What is a Driver?", a: "Software that tells OS how to talk to hardware.", exp: "Like printer drivers."},
+        {q: "Why Uninstall properly?", a: "To remove all associated files and registry entries.", exp: "Deleting folder leaves junk."},
+        {q: "What is Firmware?", a: "Software permanently etched in hardware.", exp: "Like BIOS."},
+        {q: "Who makes Windows?", a: "Microsoft.", exp: "It is Proprietary."},
+        {q: "Who makes Android?", a: "Google.", exp: "Mobile OS."},
+        {q: "What is a Patch?", a: "A small update to fix a specific problem.", exp: "Like a band-aid."},
+        {q: "Is a Game application software?", a: "Yes.", exp: "It is for entertainment."},
+        {q: "What is Disk Cleanup?", a: "Utility to remove unnecessary files.", exp: "Frees space."},
+        {q: "What is Encryption?", a: "Scrambling data for security.", exp: "Utility function."},
+        {q: "Example of Spreadsheet software?", a: "MS Excel.", exp: "Application Software."},
+        {q: "Example of Presentation software?", a: "MS PowerPoint.", exp: "Application Software."},
+        {q: "What is Multi-tasking?", a: "Running multiple apps at once.", exp: "OS manages this."}
+    ];
+
+    // --- DATA: PRACTICE QUESTIONS (70) ---
+    // Types: MCQ (type:'mcq'), T/F (type:'tf'), Fill (type:'mcq' to keep flow simple for mobile), Reasoning (type:'mcq')
+    // We strictly distribute correct answers A, B, C, D cyclically: 0, 1, 2, 3...
+    
+    const practiceQuestions = [
+        // Batch 1: System Software
+        { t: 'mcq', q: "Which software controls the internal operations of a computer?", o: ["System Software", "Application Software", "Game Software", "Utility Software"], c: 0, exp: "System software manages the hardware itself." },
+        { t: 'mcq', q: "Operating System is an example of:", o: ["Utility", "System Software", "Application", "None"], c: 1, exp: "OS is the main System Software." },
+        { t: 'mcq', q: "Without System Software, a computer is:", o: ["Faster", "Useless", "More Secure", "Cheaper"], c: 1, exp: "Hardware needs software to run." },
+        { t: 'mcq', q: "Which is NOT an Operating System?", o: ["Windows", "Linux", "MS Word", "MacOS"], c: 2, exp: "Word is Application software." },
+        { t: 'mcq', q: "The process of loading the OS is called:", o: ["Booting", "Typing", "Scanning", "Clicking"], c: 0, exp: "Booting starts the system." },
+        
+        // Batch 2: Utility
+        { t: 'mcq', q: "Utility software is mainly used for:", o: ["Entertainment", "Maintenance", "Typing", "Drawing"], c: 1, exp: "It maintains the system health." },
+        { t: 'mcq', q: "Which tool protects from viruses?", o: ["Backup", "Compression", "Antivirus", "Calculator"], c: 2, exp: "Antivirus stops malware." },
+        { t: 'mcq', q: "WinZip is used for:", o: ["Typing", "Singing", "Playing", "Compression"], c: 3, exp: "It compresses files." },
+        { t: 'mcq', q: "Disk Cleanup helps to:", o: ["Add viruses", "Remove junk files", "Paint pictures", "Play music"], c: 1, exp: "It cleans unnecessary files." },
+        
+        // Batch 3: Application
+        { t: 'mcq', q: "Software used for specific tasks is called:", o: ["System", "Utility", "Application", "Driver"], c: 2, exp: "Apps do specific work for users." },
+        { t: 'mcq', q: "MS Paint is an example of:", o: ["System Software", "Utility", "Hardware", "Application Software"], c: 3, exp: "It is used for drawing." },
+        { t: 'mcq', q: "Which is a web browser?", o: ["Google Chrome", "Windows", "Keyboard", "Mouse"], c: 0, exp: "Chrome is an app to browse web." },
+        
+        // Batch 4: Open/Proprietary
+        { t: 'tf', q: "True or False: Open Source software code is hidden.", o: ["True", "False"], c: 1, exp: "Open source code is visible to all." },
+        { t: 'mcq', q: "Microsoft Windows is:", o: ["Open Source", "Free", "Proprietary", "Public"], c: 2, exp: "It is owned by Microsoft." },
+        { t: 'mcq', q: "Linux is generally:", o: ["Expensive", "Closed", "Slow", "Open Source"], c: 3, exp: "Linux is free and open." },
+        
+        // Batch 5: Install/Update
+        { t: 'mcq', q: "To remove software, we should use:", o: ["Uninstall", "Delete Icon", "Rename", "Hide"], c: 0, exp: "Uninstall removes all files properly." },
+        { t: 'mcq', q: "Software updates help to fix:", o: ["Hardware", "Bugs", "Users", "Keyboard"], c: 1, exp: "Bugs are errors in code." },
+        
+        // Filling up to 70 with mixed concepts, maintaining correct index pattern: 2, 3, 0, 1...
+        { t: 'mcq', q: "Version Control is like:", o: ["Buying new PC", "Deleting files", "Game Save Points", "Painting"], c: 2, exp: "It saves history of work." },
+        { t: 'mcq', q: "Android is an OS for:", o: ["Cars", "Mobile Phones", "Toasters", "Calculators"], c: 1, exp: "Smartphones use Android." }, // Index pattern reset fix
+        // Let's ensure strictly balanced distribution manually for the rest
+        
+        // Pattern: 0, 1, 2, 3
+        { t: 'mcq', q: "Which is a presentation software?", o: ["PowerPoint", "Excel", "Paint", "Calculator"], c: 0, exp: "PowerPoint makes slides." },
+        { t: 'mcq', q: "Backup is essential to:", o: ["Waste space", "Prevent data loss", "Slow down PC", "Make virus"], c: 1, exp: "Backup saves data." },
+        { t: 'mcq', q: "Google Drive is used for:", o: ["Scanning", "Printing", "Cloud Storage", "Music"], c: 2, exp: "It stores files online." },
+        { t: 'mcq', q: "VLC Player is used for:", o: ["Writing", "Drawing", "Coding", "Playing Video"], c: 3, exp: "It is a media player." },
+        
+        { t: 'mcq', q: "Does a computer need a user to start apps?", o: ["Yes", "No", "Maybe", "Sometimes"], c: 0, exp: "User gives the command." },
+        { t: 'mcq', q: "Photoshop is used for:", o: ["Music", "Photo Editing", "Typing", "Math"], c: 1, exp: "It edits images." },
+        { t: 'mcq', q: "Which is NOT a version control system?", o: ["Git", "SVN", "MS Paint", "Mercurial"], c: 2, exp: "Paint is for drawing." },
+        { t: 'mcq', q: "What does 'OS' stand for?", o: ["Over System", "On Switch", "Open Source", "Operating System"], c: 3, exp: "Operating System." },
+
+        // 27 down, 43 to go.
+        { t: 'tf', q: "True or False: You can touch Software.", o: ["False", "True"], c: 0, exp: "Software is virtual, hardware is physical." },
+        { t: 'mcq', q: "A device driver is:", o: ["Hardware", "System Software", "Game", "Virus"], c: 1, exp: "It drives hardware logic." },
+        { t: 'mcq', q: "iOS is found on:", o: ["Samsung", "Dell", "Apple iPhone", "Nokia"], c: 2, exp: "Apple makes iOS." },
+        { t: 'mcq', q: "Scandisk is used to:", o: ["Play songs", "Type letters", "Draw", "Check Disk Errors"], c: 3, exp: "It checks hard disk health." },
+
+        { t: 'mcq', q: "Which icon represents a folder?", o: ["Yellow Box", "Blue Circle", "Red Cross", "Green Check"], c: 0, exp: "Folders are usually yellow icons." },
+        { t: 'mcq', q: "Spreadsheet software calculates using:", o: ["Pictures", "Formulas", "Music", "Videos"], c: 1, exp: "Formulas do the math." },
+        { t: 'mcq', q: "Identify the Proprietary Software:", o: ["Linux", "Firefox", "MacOS", "Audacity"], c: 2, exp: "MacOS is owned by Apple." },
+        { t: 'mcq', q: "Identify the Open Source Software:", o: ["Windows", "Photoshop", "MS Office", "Mozilla Firefox"], c: 3, exp: "Firefox is open source." },
+
+        { t: 'mcq', q: "Updates increase:", o: ["Security", "Weight", "Size of Monitor", "Dust"], c: 0, exp: "Security patches block hackers." },
+        { t: 'mcq', q: "Which is a Word Processor?", o: ["Excel", "MS Word", "Access", "Outlook"], c: 1, exp: "Word processes text." },
+        { t: 'mcq', q: "Norton is an example of:", o: ["OS", "Game", "Antivirus", "Browser"], c: 2, exp: "It is a security utility." },
+        { t: 'mcq', q: "Ubuntu is a version of:", o: ["Windows", "Mac", "Android", "Linux"], c: 3, exp: "Ubuntu is a popular Linux OS." },
+
+        { t: 'mcq', q: "What helps reduce file size for email?", o: ["Compression", "Expansion", "Rotation", "Deletion"], c: 0, exp: "Zipping/Compression makes it smaller." },
+        { t: 'mcq', q: "Control Panel is used to:", o: ["Play Games", "Change Settings", "Draw", "Chat"], c: 1, exp: "It configures the system." },
+        { t: 'mcq', q: "Calculator on PC is:", o: ["System Sw", "Hardware", "Application Sw", "None"], c: 2, exp: "It performs a user task." },
+        { t: 'mcq', q: "Git helps teams to:", o: ["Fight", "Sleep", "Eat", "Collaborate"], c: 3, exp: "Work together on code." },
+
+        { t: 'tf', q: "True or False: Calculator is System Software.", o: ["False", "True"], c: 0, exp: "It is an Application." },
+        { t: 'mcq', q: "Can we install multiple browsers?", o: ["No", "Yes", "Never", "Only one"], c: 1, exp: "You can have Chrome, Edge, etc." },
+        { t: 'mcq', q: "Which software manages memory?", o: ["Paint", "Word", "OS", "Mario"], c: 2, exp: "OS manages RAM." },
+        { t: 'mcq', q: "Setup.exe is usually for:", o: ["Deleting", "Playing", "Drawing", "Installing"], c: 3, exp: "It starts installation." },
+
+        { t: 'mcq', q: "A customized software is:", o: ["Tailor-made", "Ready-made", "Free", "Open"], c: 0, exp: "Made for specific user needs." },
+        { t: 'mcq', q: "DBMS stands for:", o: ["Data Box", "Database Management System", "Daily Bus", "None"], c: 1, exp: "Manages data." },
+        { t: 'mcq', q: "Firmware is stored in:", o: ["RAM", "Keyboard", "ROM", "Mouse"], c: 2, exp: "Read Only Memory." },
+        { t: 'mcq', q: "What connects hardware to OS?", o: ["Wire", "Glue", "Internet", "Drivers"], c: 3, exp: "Drivers are software bridges." },
+
+        { t: 'mcq', q: "Software License is:", o: ["Legal Permission", "A key", "A car license", "A game"], c: 0, exp: "Permission to use software." },
+        { t: 'mcq', q: "Freeware is:", o: ["Paid", "Free to use", "Stolen", "Broken"], c: 1, exp: "Available at no cost." },
+        { t: 'mcq', q: "Shareware is:", o: ["Free forever", "Sold only", "Free trial then pay", "Bad"], c: 2, exp: "Try before you buy." },
+        { t: 'mcq', q: "Malware stands for:", o: ["Mall Ware", "Good Ware", "Hard Ware", "Malicious Software"], c: 3, exp: "Bad software." },
+
+        { t: 'mcq', q: "Spyware is a type of:", o: ["Malware", "Hardware", "Game", "Antivirus"], c: 0, exp: "It spies on you." },
+        { t: 'mcq', q: "Firewall protects form:", o: ["Fire", "Network attacks", "Water", "Dust"], c: 1, exp: "Network security." },
+        { t: 'mcq', q: "Task Manager shows:", o: ["Games", "Time", "Running Programs", "Weather"], c: 2, exp: "Shows active tasks." },
+        { t: 'mcq', q: "Shortcut keys save:", o: ["Money", "Space", "Power", "Time"], c: 3, exp: "Faster to work." },
+
+        { t: 'mcq', q: "Ctrl+C is for:", o: ["Copy", "Cut", "Call", "Close"], c: 0, exp: "Copy text." },
+        { t: 'mcq', q: "Ctrl+V is for:", o: ["View", "Paste", "Verify", "Van"], c: 1, exp: "Paste text." },
+        { t: 'mcq', q: "Ctrl+Z is for:", o: ["Sleep", "Zoom", "Undo", "Zip"], c: 2, exp: "Undo action." },
+        { t: 'mcq', q: "Which is a text editor?", o: ["Paint", "Excel", "Calculator", "Notepad"], c: 3, exp: "Simple text editing." },
+
+        { t: 'mcq', q: "GUI makes computer:", o: ["Easier", "Harder", "Heavier", "Slower"], c: 0, exp: "User friendly." },
+        { t: 'mcq', q: "CLI stands for:", o: ["Click Line", "Command Line Interface", "Computer Line", "None"], c: 1, exp: "Typing commands." },
+        { t: 'mcq', q: "Is Windows 98 an OS?", o: ["No", "Maybe", "Yes", "It is a game"], c: 2, exp: "An old OS." },
+        { t: 'mcq', q: "Unix is an:", o: ["Antivirus", "Editor", "Game", "OS"], c: 3, exp: "Multi-user OS." },
+
+        { t: 'mcq', q: "Which key helps rename files?", o: ["F2", "F1", "F5", "Esc"], c: 0, exp: "F2 is standard rename." }, // 69
+        { t: 'mcq', q: "Restarting is also called:", o: ["Cold Boot", "Reboot", "Shutdown", "Sleep"], c: 1, exp: "Rebooting the system." } // 70
+    ];
+
+    // --- DATA: ADVANCED LONG QUESTIONS (10) ---
+    const longQuestions = [
+        { id: 1, q: "Explain the difference between System Software and Application Software.", keywords: ["system", "application", "hardware", "user", "run"], marks: 5, model: "System runs hardware; App helps user." },
+        { id: 2, q: "Why are Software Updates important?", keywords: ["security", "bug", "feature", "fix", "safe"], marks: 5, model: "Fix bugs, improve security, new features." },
+        { id: 3, q: "What is the function of Utility Software? Give 2 examples.", keywords: ["maintain", "optimize", "antivirus", "backup", "clean"], marks: 5, model: "Maintenance. Ex: Antivirus, Backup." },
+        { id: 4, q: "Write the steps to uninstall a program correctly.", keywords: ["control panel", "setting", "uninstall", "remove", "list"], marks: 5, model: "Go to Control Panel > Uninstall a Program." },
+        { id: 5, q: "What is Version Control? Why is it useful?", keywords: ["change", "track", "history", "save", "team"], marks: 5, model: "Tracks changes, allows undoing mistakes." },
+        { id: 6, q: "Differentiate between Open Source and Proprietary Software.", keywords: ["free", "paid", "code", "owner", "license"], marks: 5, model: "Open: Code free/visible. Proprietary: Owned/Locked." },
+        { id: 7, q: "Why do we need an Operating System?", keywords: ["manage", "interface", "hardware", "run", "platform"], marks: 5, model: "Manages memory, processes, and hardware." },
+        { id: 8, q: "Explain the role of a Device Driver.", keywords: ["communicate", "hardware", "os", "talk", "bridge"], marks: 5, model: "Helps OS talk to hardware like printers." },
+        { id: 9, q: "What is disk defragmentation?", keywords: ["organize", "space", "speed", "fragment", "file"], marks: 5, model: "Reorganizes files for faster access." },
+        { id: 10, q: "Why should we use Antivirus software?", keywords: ["virus", "protect", "malware", "secure", "scan"], marks: 5, model: "To detect and remove viruses/malware." }
+    ];
+
+    // --- DOM ELEMENTS ---
+    const scoreCorrect = document.getElementById('score-correct');
+    const scoreWrong = document.getElementById('score-wrong');
+    const scoreTotal = document.getElementById('score-total');
+    const scorePerc = document.getElementById('score-perc');
+    const impQContainer = document.getElementById('imp-q-container');
+    const pqContainer = document.getElementById('pq-container');
+    const longQContainer = document.getElementById('long-q-container');
+    const revBtn = document.getElementById('rev-btn');
+    const revContent = document.getElementById('revision-content');
+
+    // --- FUNCTIONS ---
+
+    function updateScoreDisplay() {
+        scoreCorrect.textContent = state.correct;
+        scoreWrong.textContent = state.wrong;
+        scoreTotal.textContent = `${state.attempted}/${state.totalQuestions}`;
+        const perc = state.attempted === 0 ? 0 : Math.round((state.correct / state.attempted) * 100);
+        scorePerc.textContent = `${perc}%`;
+    }
+
+    function renderImpQuestions() {
+        let html = '';
+        importantQuestions.forEach((item, index) => {
+            html += `
+                <div class="imp-q-card">
+                    <div class="imp-q"><strong>Q${index+1}:</strong> ${item.q}</div>
+                    <div class="imp-a"><strong>Ans:</strong> ${item.a}</div>
+                    <div style="font-size:0.85rem; color:#636e72;"><em>(${item.exp})</em></div>
+                </div>
+            `;
+        });
+        impQContainer.innerHTML = html;
+    }
+
+    function renderPracticeQuestion() {
+        const qData = practiceQuestions[state.currentPQIndex];
+        const countDiv = document.getElementById('pq-count');
+        const qDiv = document.getElementById('pq-question');
+        const optsDiv = document.getElementById('pq-options');
+        const fbDiv = document.getElementById('pq-feedback');
+        const nextBtn = document.getElementById('pq-next-btn');
+
+        countDiv.textContent = `Question ${state.currentPQIndex + 1} of 70`;
+        qDiv.textContent = qData.q;
+        optsDiv.innerHTML = '';
+        fbDiv.style.display = 'none';
+        fbDiv.className = 'feedback-box';
+        nextBtn.style.display = 'none';
+
+        // Check if question is T/F and adjust options accordingly
+        // Although our data has 'o' array for both types, T/F might need specific layout if wanted
+        // But unified grid works best for stability.
+
+        qData.o.forEach((opt, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.textContent = opt;
+            btn.onclick = () => checkPracticeAnswer(idx, btn, qData);
+            optsDiv.appendChild(btn);
+        });
+    }
+
+    function checkPracticeAnswer(selectedIdx, btnElement, qData) {
+        // Disable all buttons
+        const buttons = document.querySelectorAll('.option-btn');
+        buttons.forEach(b => b.classList.add('disabled'));
+
+        const fbDiv = document.getElementById('pq-feedback');
+        const nextBtn = document.getElementById('pq-next-btn');
+        
+        state.attempted++;
+
+        if (selectedIdx === qData.c) {
+            // Correct
+            state.correct++;
+            btnElement.classList.add('selected-correct');
+            fbDiv.innerHTML = `<strong>Excellent ⭐</strong><br>${qData.exp}`;
+            fbDiv.classList.add('feedback-correct');
+        } else {
+            // Wrong
+            state.wrong++;
+            btnElement.classList.add('selected-wrong');
+            // Highlight correct answer
+            buttons[qData.c].classList.add('selected-correct');
+            fbDiv.innerHTML = `<strong>Try Again</strong><br>Correct Answer: ${qData.o[qData.c]}<br><em>Why? ${qData.exp}</em>`;
+            fbDiv.classList.add('feedback-wrong');
+        }
+
+        fbDiv.style.display = 'block';
+        nextBtn.style.display = 'block';
+        
+        updateScoreDisplay();
+    }
+
+    document.getElementById('pq-next-btn').addEventListener('click', () => {
+        if (state.currentPQIndex < practiceQuestions.length - 1) {
+            state.currentPQIndex++;
+            renderPracticeQuestion();
+        } else {
+            document.getElementById('pq-container').innerHTML = `
+                <div style="text-align:center; padding:20px;">
+                    <h3>Practice Completed! 🎉</h3>
+                    <p>Proceed to Advanced Questions below.</p>
+                </div>
+            `;
+        }
+    });
+
+    function renderLongQuestions() {
+        let html = '';
+        longQuestions.forEach((q, index) => {
+            html += `
+                <div class="long-q-card" id="lq-card-${index}">
+                    <div><strong>Q${index+1}:</strong> ${q.q}</div>
+                    <textarea class="long-input" id="lq-input-${index}" placeholder="Type your answer here..."></textarea>
+                    <button class="check-btn" onclick="checkLongAnswer(${index})">Check Answer</button>
+                    <div class="long-feedback" id="lq-fb-${index}"></div>
+                </div>
+            `;
+        });
+        longQContainer.innerHTML = html;
+    }
+
+    window.checkLongAnswer = function(index) {
+        const qData = longQuestions[index];
+        const input = document.getElementById(`lq-input-${index}`);
+        const fbDiv = document.getElementById(`lq-fb-${index}`);
+        const userText = input.value.toLowerCase().trim();
+        const card = document.getElementById(`lq-card-${index}`);
+
+        if (userText.length < 5) {
+            alert("Please type a proper answer.");
+            return;
+        }
+
+        // Logic: Check for keywords
+        let foundKeywords = 0;
+        let missingKeywords = [];
+        
+        qData.keywords.forEach(k => {
+            if (userText.includes(k)) {
+                foundKeywords++;
+            } else {
+                missingKeywords.push(k);
+            }
+        });
+
+        const isCorrect = foundKeywords >= 1; // Lenient checking for Class 5
+        
+        // Disable input
+        input.disabled = true;
+        card.querySelector('button').disabled = true;
+
+        state.attempted++;
+        
+        if (isCorrect) {
+            state.correct++;
+            fbDiv.innerHTML = `<span style="color:#00b894"><strong>✔ Correct!</strong></span><br>Good job! Key points found.<br><em>Model Answer: ${qData.model}</em>`;
+        } else {
+            state.wrong++;
+            fbDiv.innerHTML = `<span style="color:#d63031"><strong>✘ Needs Improvement</strong></span><br>Try to include words like: ${missingKeywords.join(', ')}.<br><em>Model Answer: ${qData.model}</em>`;
+        }
+
+        fbDiv.style.display = 'block';
+        updateScoreDisplay();
+    };
+
+    // --- REVISION TOGGLE ---
+    revBtn.addEventListener('click', () => {
+        if (revContent.style.display === 'block') {
+            revContent.style.display = 'none';
+            revBtn.textContent = '🔄 Revise Fast (Click to Open)';
+        } else {
+            revContent.style.display = 'block';
+            revBtn.textContent = '🔽 Close Revision';
+        }
+    });
+
+    // --- INITIALIZATION ---
+    renderImpQuestions();
+    renderPracticeQuestion();
+    renderLongQuestions();
+    updateScoreDisplay();
+
+});
+</script>
+
+</body>
+</html>

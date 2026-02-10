@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 6: Matter and Materials</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #FFFDF5; /* Creamy notebook paper */
+            --line-color: #a2d2ff;
+            --margin-line: #ffadad;
+            --text-color: #2b2d42;
+            --highlight: #fdffb6;
+            --accent: #caffbf;
+            --wrong: #ffd6a5;
+            --btn-bg: #bdb2ff;
+            --btn-border: #2b2d42;
+            --card-bg: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Patrick Hand', cursive, sans-serif;
+            background-color: var(--bg-color);
+            background-image: linear-gradient(var(--line-color) 1px, transparent 1px);
+            background-size: 100% 2rem;
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            font-weight: bold; /* STRICT RULE: ALL TEXT BOLD */
+            font-size: 18px;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* UTILITIES */
+        .container {
+            width: 100%;
+            max-width: 600px; /* Mobile focused */
+            margin: 0 auto;
+            padding: 10px;
+            background: rgba(255, 253, 245, 0.9);
+        }
+
+        .hidden { display: none !important; }
+        .center { text-align: center; }
+        .highlight { background-color: var(--highlight); padding: 0 5px; border-radius: 4px; }
+        
+        /* HEADER */
+        header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 3px dashed var(--text-color);
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 2.2rem;
+            margin: 0;
+            color: #d62828;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 0px #fff;
+        }
+        .subtitle { font-size: 1.2rem; color: #023e8a; }
+
+        /* SCORE PANEL */
+        #score-panel {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: #2b2d42;
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            font-size: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 0 0 15px 15px;
+            margin-bottom: 20px;
+        }
+        .score-item span { color: #ffd60a; font-size: 1.2rem; }
+
+        /* SECTION STYLING */
+        .section-title {
+            background: var(--btn-bg);
+            padding: 10px 20px;
+            border: 2px solid var(--text-color);
+            border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; /* Hand drawn effect */
+            display: inline-block;
+            margin: 30px 0 15px;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+            font-size: 1.5rem;
+        }
+
+        /* NOTES */
+        .topic-card {
+            background: var(--card-bg);
+            border: 2px solid var(--text-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 5px 5px 0 #e0e0e0;
+        }
+        .topic-header {
+            font-size: 1.3rem;
+            color: #0077b6;
+            text-decoration: underline wavy #ffadad;
+            margin-bottom: 10px;
+        }
+        .example-box {
+            background: #f0f4f8;
+            border-left: 4px solid #0077b6;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.95rem;
+        }
+        .memory-tip {
+            background: #fff0f3;
+            border: 1px dashed #ff4d6d;
+            padding: 8px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        .img-placeholder {
+            width: 100%;
+            height: 120px;
+            background: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #adb5bd;
+            border-radius: 8px;
+            margin: 10px 0;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        /* QUESTIONS */
+        .question-box {
+            background: white;
+            border: 3px solid var(--text-color);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .q-text { font-size: 1.3rem; margin-bottom: 15px; }
+        
+        /* MCQ OPTIONS */
+        .options-grid { display: grid; gap: 10px; }
+        .option-btn {
+            background: #f8f9fa;
+            border: 2px solid var(--text-color);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: left;
+            font-family: inherit;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .option-btn:active { transform: scale(0.98); }
+        .option-btn.correct { background: var(--accent); border-color: #2b9348; }
+        .option-btn.wrong { background: var(--wrong); border-color: #e63946; }
+        .option-btn:disabled { opacity: 0.7; pointer-events: none; }
+
+        /* INPUTS */
+        .text-input {
+            width: 100%;
+            padding: 10px;
+            font-family: inherit;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border: 2px solid var(--text-color);
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .check-btn {
+            background: var(--btn-bg);
+            color: var(--text-color);
+            border: 2px solid var(--text-color);
+            padding: 10px 20px;
+            font-family: inherit;
+            font-weight: bold;
+            font-size: 1.1rem;
+            border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        /* FEEDBACK */
+        .feedback {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+        }
+        .feedback.show { display: block; }
+        .feedback.success { background: var(--accent); color: #004b23; }
+        .feedback.error { background: var(--wrong); color: #590d22; }
+
+        /* LISTS */
+        .imp-q-list { list-style: none; padding: 0; }
+        .imp-q-item {
+            border-bottom: 2px dashed #ccc;
+            padding: 15px 0;
+        }
+        .imp-q { color: #d62828; margin-bottom: 5px; }
+        .imp-a { color: #023e8a; }
+
+        /* LONG ANSWER */
+        .long-input {
+            width: 100%;
+            height: 120px;
+            padding: 10px;
+            font-family: inherit;
+            font-weight: bold;
+            border: 2px solid var(--text-color);
+            border-radius: 8px;
+            resize: vertical;
+            margin-bottom: 10px;
+        }
+
+        /* REVISION */
+        #revision-content {
+            background: #fff;
+            padding: 15px;
+            border: 2px solid var(--text-color);
+            border-radius: 10px;
+        }
+        .bullet { margin-bottom: 8px; padding-left: 20px; position: relative; }
+        .bullet::before { content: '📌'; position: absolute; left: 0; }
+
+        /* FOOTER */
+        footer {
+            margin-top: 50px;
+            padding: 20px;
+            background: var(--text-color);
+            color: white;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        /* NAV BUTTONS */
+        .nav-btn {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: #4cc9f0;
+            border: 2px solid var(--text-color);
+            border-radius: 10px;
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div id="score-panel">
+    <div class="score-item">✅ <span id="score-correct">0</span></div>
+    <div class="score-item">❌ <span id="score-wrong">0</span></div>
+    <div class="score-item">🏆 <span id="score-percent">0%</span></div>
+</div>
+
+<div class="container">
+    <header>
+        <div class="subtitle">Class 5 - EVS Science</div>
+        <h1>Chapter 6<br>Matter and Materials</h1>
+    </header>
+
+    <!-- 1. NOTES SECTION -->
+    <div id="notes-section">
+        <h2 class="center section-title">📚 Study Notes</h2>
+        
+        <!-- Topic 1 -->
+        <div class="topic-card">
+            <div class="topic-header">1. Definition of Matter</div>
+            <p><strong>Matter</strong> is anything that has mass (weight) and occupies space (volume).</p>
+            <p>Everything around us is made of tiny particles called molecules.</p>
+            <div class="example-box">🏠 <strong>Examples:</strong> Books, water, air, chair, pen.</div>
+            <div class="img-placeholder">[Image: Balance scale showing mass and a box occupying space]</div>
+            <div class="memory-tip">💡 Tip: If you can touch it or keep it in a jar (even air!), it is Matter.</div>
+            <p><em>Quick Check: Is the feeling of happiness matter? No, because it has no mass.</em></p>
+        </div>
+
+        <!-- Topic 2 & 3 & 4 & 5 -->
+        <div class="topic-card">
+            <div class="topic-header">2. States of Matter</div>
+            <p>Matter exists in three states based on how tightly particles are packed.</p>
+            
+            <h3 style="color:#d62828">🧱 Solids</h3>
+            <p>Particles are tightly packed. They cannot move freely.</p>
+            <ul>
+                <li>Fixed Shape: Yes</li>
+                <li>Fixed Volume: Yes</li>
+                <li>Can flow? No</li>
+            </ul>
+            <div class="example-box">Examples: Brick, Ice, Wood, Iron, Spoon.</div>
+
+            <h3 style="color:#0077b6">💧 Liquids</h3>
+            <p>Particles are loosely packed. They can slide over each other.</p>
+            <ul>
+                <li>Fixed Shape: No (takes shape of container)</li>
+                <li>Fixed Volume: Yes</li>
+                <li>Can flow? Yes</li>
+            </ul>
+            <div class="example-box">Examples: Water, Milk, Juice, Oil.</div>
+
+            <h3 style="color:#6a4c93">🎈 Gases</h3>
+            <p>Particles are very far apart. They move very fast in all directions.</p>
+            <ul>
+                <li>Fixed Shape: No</li>
+                <li>Fixed Volume: No (fills entire space)</li>
+                <li>Can flow? Yes</li>
+            </ul>
+            <div class="example-box">Examples: Air, Steam, Oxygen, Perfume smell.</div>
+            <div class="img-placeholder">[Image: Diagram showing particle arrangement in Solid, Liquid, Gas]</div>
+        </div>
+
+        <!-- Topic 6 -->
+        <div class="topic-card">
+            <div class="topic-header">3. Change of State</div>
+            <p>Matter can change from one form to another on heating or cooling.</p>
+            <ul>
+                <li><strong>Melting:</strong> Solid ➡️ Liquid (Heating) <br><em>Ex: Ice melting.</em></li>
+                <li><strong>Evaporation:</strong> Liquid ➡️ Gas (Heating) <br><em>Ex: Boiling water creates steam.</em></li>
+                <li><strong>Condensation:</strong> Gas ➡️ Liquid (Cooling) <br><em>Ex: Water drops on a cold glass.</em></li>
+                <li><strong>Freezing:</strong> Liquid ➡️ Solid (Cooling) <br><em>Ex: Making ice cubes.</em></li>
+            </ul>
+            <div class="memory-tip">🔥 Heat expands (Melting/Evap). ❄️ Cool contracts (Freezing/Cond).</div>
+        </div>
+
+        <!-- Topic 7, 8, 9, 10 -->
+        <div class="topic-card">
+            <div class="topic-header">4. Types of Changes</div>
+            <p><strong>Physical Change:</strong> Only the state or shape changes. No new substance is formed. Usually reversible.<br><em>Ex: Tearing paper, Melting wax.</em></p>
+            <p><strong>Chemical Change:</strong> A new substance is formed. Usually irreversible.<br><em>Ex: Burning wood, Cooking food, Rusting iron.</em></p>
+            <hr>
+            <p><strong>Reversible Change:</strong> Can go back to original form. (Ice ↔️ Water)</p>
+            <p><strong>Irreversible Change:</strong> Cannot go back. (Milk ➡️ Curd)</p>
+            <div class="img-placeholder">[Image: Ice melting vs Paper burning]</div>
+        </div>
+
+        <!-- Topic 11 & 12 -->
+        <div class="topic-card">
+            <div class="topic-header">5. Solutions and Solubility</div>
+            <p><strong>Solute:</strong> The solid that dissolves (e.g., Salt).</p>
+            <p><strong>Solvent:</strong> The liquid that dissolves the solid (e.g., Water).</p>
+            <p><strong>Solution:</strong> The mixture of solute and solvent (e.g., Salty water).</p>
+            <p><strong>Soluble Substances:</strong> Dissolve in water (Sugar, Salt, Lemon juice).</p>
+            <p><strong>Insoluble Substances:</strong> Do not dissolve (Sand, Chalk powder, Oil).</p>
+            <div class="memory-tip">🥣 Solute (Salt) + Solvent (Water) = Solution.</div>
+        </div>
+
+        <!-- Topic 13 -->
+        <div class="topic-card">
+            <div class="topic-header">6. Separation Techniques</div>
+            <p>How to separate insoluble substances?</p>
+            <ul>
+                <li><strong>Sedimentation:</strong> Letting impurities settle down.</li>
+                <li><strong>Decantation:</strong> Pouring out the clear liquid carefully.</li>
+                <li><strong>Filtration:</strong> Using a filter (like a tea strainer or filter paper) to separate solid from liquid.</li>
+            </ul>
+            <p>How to separate soluble substances?</p>
+            <ul>
+                <li><strong>Evaporation:</strong> Heating the solution so water turns to steam, leaving the solid (salt) behind.</li>
+            </ul>
+            <div class="img-placeholder">[Image: Funnel with filter paper showing Filtration]</div>
+        </div>
+
+        <!-- Topic 14 - 20 -->
+        <div class="topic-card">
+            <div class="topic-header">7. Materials in Daily Life</div>
+            <p><strong>Natural Materials:</strong> Found in nature. <br><em>Ex: Wood, Cotton, Wool, Gold, Clay.</em></p>
+            <p><strong>Man-made Materials:</strong> Made by humans in factories. <br><em>Ex: Plastic, Nylon, Glass, Steel, Paper.</em></p>
+            
+            <h4>Transparency Classification:</h4>
+            <ul>
+                <li><strong>Transparent:</strong> Allows light to pass fully. We can see clearly. (Glass, Clear water).</li>
+                <li><strong>Translucent:</strong> Allows some light. Vision is blurry. (Butter paper, Frosted glass).</li>
+                <li><strong>Opaque:</strong> No light passes. Cannot see through. (Wood, Wall, Metal).</li>
+            </ul>
+
+            <h4>Environment Impact:</h4>
+            <p>We must use materials wisely. Plastics are harmful because they don't rot.</p>
+            <div class="memory-tip">♻️ The 3 Rs: Reduce, Reuse, Recycle.</div>
+        </div>
+    </div>
+
+    <!-- 2. IMPORTANT QUESTIONS -->
+    <div id="imp-questions-section">
+        <h2 class="center section-title">⭐ Important Questions</h2>
+        <ul class="imp-q-list">
+            <li class="imp-q-item">
+                <div class="imp-q">Q1. Why do solids have a fixed shape?</div>
+                <div class="imp-a">Ans: Because the molecules in solids are very tightly packed and cannot move around freely.</div>
+            </li>
+            <li class="imp-q-item">
+                <div class="imp-q">Q2. Define Evaporation.</div>
+                <div class="imp-a">Ans: The process of changing a liquid into a gas on heating is called evaporation.</div>
+            </li>
+            <li class="imp-q-item">
+                <div class="imp-q">Q3. Give two examples of chemical changes.</div>
+                <div class="imp-a">Ans: Burning of paper and cooking of food.</div>
+            </li>
+            <li class="imp-q-item">
+                <div class="imp-q">Q4. What is a saturated solution?</div>
+                <div class="imp-a">Ans: A solution in which no more solute can be dissolved at a given temperature.</div>
+            </li>
+            <li class="imp-q-item">
+                <div class="imp-q">Q5. Difference between miscible and immiscible liquids?</div>
+                <div class="imp-a">Ans: Miscible liquids mix (Milk+Water). Immiscible liquids do not mix (Oil+Water).</div>
+            </li>
+            <li class="imp-q-item">
+                <div class="imp-q">Q6. How is salt obtained from sea water?</div>
+                <div class="imp-a">Ans: By the process of evaporation. Water evaporates in the sun, leaving salt behind.</div>
+            </li>
+            <li class="imp-q-item">
+                <div class="imp-q">Q7. What is condensation?</div>
+                <div class="imp-a">Ans: The process of gas changing into liquid on cooling (e.g., dew drops).</div>
+            </li>
+            <li class="imp-q-item">
+                <div class="imp-q">Q8. Why is air considered matter?</div>
+                <div class="imp-a">Ans: Because air has weight (mass) and occupies space (fills balloons/tyres).</div>
+            </li>
+            <li class="imp-q-item">
+                <div class="imp-q">Q9. What are translucent objects?</div>
+                <div class="imp-a">Ans: Objects that allow only some light to pass through them (e.g., butter paper).</div>
+            </li>
+            <li class="imp-q-item">
+                <div class="imp-q">Q10. Is rusting of iron reversible?</div>
+                <div class="imp-a">Ans: No, rusting is an irreversible chemical change.</div>
+            </li>
+            <!-- 20 more distinct questions would be here physically in a full book, simplified list for UI length limits but user asked for 30 minimum. Listing compact versions below -->
+            <li class="imp-q-item"><div class="imp-q">Q11. Define Solvent.</div><div class="imp-a">The liquid in which a solute dissolves.</div></li>
+            <li class="imp-q-item"><div class="imp-q">Q12. What is Filtration?</div><div class="imp-a">Separating insoluble solids from liquids using a filter.</div></li>
+            <li class="imp-q-item"><div class="imp-q">Q13. Is breaking glass physical or chemical?</div><div class="imp-a">Physical change.</div></li>
+            <li class="imp-q-item"><div class="imp-q">Q14. Name a universal solvent.</div><div class="imp-a">Water.</div></li>
+            <li class="imp-q-item"><div class="imp-q">Q15. Molecular arrangement in Gas?</div><div class="imp-a">Very loose, large spaces between particles.</div></li>
+            <li class="imp-q-item"><div class="imp-q">Q16. Example of opaque material?</div><div class="imp-a">Wood or Stone.</div></li>
+            <li class="imp-q-item"><div class="imp-q">Q17. What is Sedimentation?</div><div class="imp-a">Settling down of heavy insoluble impurities.</div></li>
+            <li class="imp-q-item"><div class="imp-q">Q18. Man-made material from trees?</div><div class="imp-a">Paper.</div></li>
+            <li class="imp-q-item"><div class="imp-q">Q19. Freezing point of water?</div><div class="imp-a">0 degree Celsius.</div></li>
+            <li class="imp-q-item"><div class="imp-q">Q20. Boiling point of water?</div><div class="imp-a">100 degree Celsius.</div></li>
+            <li class="imp-q-item"><div class="imp-q">Q21. Is burning a candle reversible?</div><div class="imp-a">No, the wax burns away (Chemical). Melting wax is physical.</div></li>
+            <li class="imp-q-item"><div class="imp-q">Q22. What is decantation?</div><div class="imp-a">Pouring out clear liquid after sedimentation.</div></li>
+            <li class="imp-q-item"><div class="imp-q">Q23. Define Volume.</div><div class="imp-a">The amount of space an object takes up.</div></li>
+            <li class="imp-q-item"><div class="imp-q">Q24. Can gases flow?</div><div class="imp-a">Yes, they flow easily in all directions.</div></li>
+            <li class="imp-q-item"><div class="imp-q">Q25. What happens to molecules on heating?</div><div class="imp-a">They move faster and spread apart.</div></li>
+            <li class="imp-q-item"><div class="imp-q">Q26. Example of sublimation?</div><div class="imp-a">Camphor (Kapoor) turns directly from solid to gas.</div></li>
+            <li class="imp-q-item"><div class="imp-q">Q27. Is sugar soluble?</div><div class="imp-a">Yes, sugar dissolves completely in water.</div></li>
+            <li class="imp-q-item"><div class="imp-q">Q28. Why use plastic for electric wires?</div><div class="imp-a">Plastic is an insulator (does not conduct electricity).</div></li>
+            <li class="imp-q-item"><div class="imp-q">Q29. What is an alloy?</div><div class="imp-a">A mixture of two metals (e.g., Brass).</div></li>
+            <li class="imp-q-item"><div class="imp-q">Q30. 3 States of water?</div><div class="imp-a">Ice (Solid), Water (Liquid), Water Vapour (Gas).</div></li>
+        </ul>
+    </div>
+
+    <!-- 3. PRACTICE QUESTIONS INTERACTIVE -->
+    <div id="practice-section">
+        <h2 class="center section-title">🧪 Practice Zone</h2>
+        <div id="quiz-container" class="question-box">
+            <div id="quiz-progress" style="text-align: right; color: #aaa; font-size: 0.9rem;">Question 1/70</div>
+            <div id="question-text" class="q-text">Loading...</div>
+            
+            <!-- Dynamic Content Area -->
+            <div id="options-area" class="options-grid"></div>
+            <div id="input-area" class="hidden">
+                <input type="text" id="text-answer" class="text-input" placeholder="Type answer here...">
+                <button id="submit-text-btn" class="check-btn">Submit</button>
+            </div>
+
+            <div id="quiz-feedback" class="feedback"></div>
+            <button id="next-btn" class="nav-btn hidden" style="width:100%; margin-top:15px;">Next Question ➡️</button>
+        </div>
+    </div>
+
+    <!-- 4. ADVANCED LONG QUESTIONS -->
+    <div id="long-answer-section">
+        <h2 class="center section-title">🧠 Advanced Thinking</h2>
+        <div id="long-q-container">
+            <!-- Populated by JS -->
+        </div>
+    </div>
+
+    <!-- 5. REVISION -->
+    <div id="revision-section">
+        <h2 class="center section-title">🔁 Quick Revision</h2>
+        <button id="toggle-rev-btn" class="check-btn" style="background:#ffadad; margin-bottom:10px;">Show/Hide Summary</button>
+        <div id="revision-content" class="hidden">
+            <div class="bullet">Matter has mass and volume.</div>
+            <div class="bullet">3 States: Solid (Fixed shape), Liquid (Flows), Gas (Fills space).</div>
+            <div class="bullet">Heating causes Melting & Evaporation. Cooling causes Condensation & Freezing.</div>
+            <div class="bullet">Solute + Solvent = Solution.</div>
+            <div class="bullet">Physical changes are temporary; Chemical changes are permanent.</div>
+            <div class="bullet">Filtration separates insoluble solids. Evaporation separates soluble solids.</div>
+            <div class="bullet">Transparent = See through clearly. Opaque = Cannot see through.</div>
+        </div>
+    </div>
+
+    <footer>
+        Designed & Created by SHRISHANT YADAV<br>
+        ShanEduHub
+    </footer>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    // --- STATE MANAGEMENT ---
+    let score = { correct: 0, wrong: 0, total: 0 };
+    let currentQIndex = 0;
+    
+    // --- DATABASE: PRACTICE QUESTIONS (70 items) ---
+    // Types: mcq, fill, truefalse, one, short
+    // Difficulty implied by position and content
+    const practiceQuestions = [
+        // BASICS (1-10)
+        { t: 'mcq', q: "Everything around us that has mass and occupies space is called...", o: ["Energy", "Matter", "Light", "Sound"], a: "Matter", exp: "Matter is defined as anything with mass and volume." },
+        { t: 'mcq', q: "Which of these is NOT matter?", o: ["Air", "Water", "Happiness", "Sand"], a: "Happiness", exp: "Feelings do not have mass or volume." },
+        { t: 'mcq', q: "The tiny particles that make up matter are called...", o: ["Bricks", "Molecules", "Cells", "Dust"], a: "Molecules", exp: "Molecules are the building blocks of matter." },
+        { t: 'truefalse', q: "Air has no mass.", a: "false", exp: "Air is matter and has mass (e.g., a filled balloon is heavier)." },
+        { t: 'mcq', q: "Which state of matter has a fixed shape?", o: ["Solid", "Liquid", "Gas", "None"], a: "Solid", exp: "Solids have tightly packed particles holding a fixed shape." },
+        { t: 'mcq', q: "Solids ... flow.", o: ["Can", "Cannot", "Sometimes", "Always"], a: "Cannot", exp: "Particles in solids are fixed in place." },
+        { t: 'fill', q: "Liquids take the shape of their ______.", a: "container", exp: "Liquids flow to fit the vessel they are in." },
+        { t: 'mcq', q: "Which state of matter fills the entire available space?", o: ["Solid", "Liquid", "Gas", "Ice"], a: "Gas", exp: "Gas particles move freely to fill all space." },
+        { t: 'one', q: "Name the solid state of water.", a: "ice", exp: "Ice is frozen water." },
+        { t: 'truefalse', q: "Gases can flow easily.", a: "true", exp: "Gases are fluids and flow freely." },
+
+        // PROPERTIES & PARTICLES (11-20)
+        { t: 'mcq', q: "In which state are molecules most tightly packed?", o: ["Gas", "Liquid", "Solid", "Steam"], a: "Solid", exp: "Solids have the closest particle arrangement." },
+        { t: 'mcq', q: "Intermolecular space is maximum in...", o: ["Solids", "Liquids", "Gases", "Ice"], a: "Gases", exp: "Gas particles are very far apart." },
+        { t: 'mcq', q: "Which of these can be compressed easily?", o: ["Stone", "Water", "Air inside balloon", "Wood"], a: "Air inside balloon", exp: "Gases have lots of empty space between particles so they can be squeezed." },
+        { t: 'truefalse', q: "Liquids have a fixed volume.", a: "true", exp: "1 liter of milk remains 1 liter even if poured into a different pot." },
+        { t: 'one', q: "What do we call the space between molecules?", a: "intermolecular space", exp: "It is the gap between particles." },
+        { t: 'mcq', q: "A stone is an example of...", o: ["Solid", "Liquid", "Gas", "Plasma"], a: "Solid", exp: "It is hard and has fixed shape." },
+        { t: 'mcq', q: "Milk is an example of...", o: ["Solid", "Liquid", "Gas", "Solution"], a: "Liquid", exp: "It flows and takes container shape." },
+        { t: 'short', q: "Do gases have a fixed volume?", a: "no", exp: "Gases expand to fill any container size." },
+        { t: 'mcq', q: "Which has more energy?", o: ["Ice particles", "Water particles", "Steam particles", "None"], a: "Steam particles", exp: "Heat gives energy. Steam is hottest." },
+        { t: 'truefalse', q: "Solids can diffuse (mix) into air easily.", a: "false", exp: "Only gases diffuse quickly." },
+
+        // CHANGE OF STATE (21-30)
+        { t: 'mcq', q: "The process of changing solid into liquid is...", o: ["Freezing", "Melting", "Boiling", "Cooling"], a: "Melting", exp: "Heat causes solid to melt to liquid." },
+        { t: 'mcq', q: "Water changing into ice is called...", o: ["Evaporation", "Melting", "Freezing", "Condensation"], a: "Freezing", exp: "Cooling water creates ice." },
+        { t: 'mcq', q: "Liquid to Gas is called...", o: ["Condensation", "Evaporation", "Melting", "Sublimation"], a: "Evaporation", exp: "Water boils to become steam." },
+        { t: 'mcq', q: "Gas changing into liquid is called...", o: ["Evaporation", "Condensation", "Freezing", "Heating"], a: "Condensation", exp: "Steam cools down to water." },
+        { t: 'fill', q: "Heating causes molecules to move ______.", a: "faster", exp: "Heat energy increases movement." },
+        { t: 'fill', q: "Cooling causes molecules to come ______.", a: "closer", exp: "Loss of heat brings particles together." },
+        { t: 'one', q: "What creates dew drops on grass in winter?", a: "condensation", exp: "Water vapour in air condenses on cold grass." },
+        { t: 'mcq', q: "Drying of wet clothes is due to...", o: ["Freezing", "Condensation", "Evaporation", "Rain"], a: "Evaporation", exp: "Water turns to vapour and leaves clothes." },
+        { t: 'truefalse', q: "Evaporation happens only at boiling point.", a: "false", exp: "It happens at any temperature (e.g., drying clothes)." },
+        { t: 'mcq', q: "Which process creates clouds?", o: ["Melting", "Condensation", "Filtration", "Decantation"], a: "Condensation", exp: "Water vapour condenses to form tiny droplets." },
+
+        // CHANGES (PHYSICAL/CHEMICAL) (31-40)
+        { t: 'mcq', q: "A change where no new substance is formed is...", o: ["Chemical", "Physical", "Biological", "Permanent"], a: "Physical", exp: "Physical changes only alter appearance." },
+        { t: 'mcq', q: "Burning of paper is a...", o: ["Physical Change", "Chemical Change", "Temporary Change", "Reversible Change"], a: "Chemical Change", exp: "Ash is a new substance formed." },
+        { t: 'mcq', q: "Melting of wax is...", o: ["Physical", "Chemical", "Irreversible", "None"], a: "Physical", exp: "Molten wax is still wax." },
+        { t: 'mcq', q: "Curdling of milk is...", o: ["Reversible", "Irreversible", "Physical", "Fast"], a: "Irreversible", exp: "You cannot get milk back from curd." },
+        { t: 'truefalse', q: "Rusting of iron is a chemical change.", a: "true", exp: "Rust is a new substance (Iron Oxide)." },
+        { t: 'mcq', q: "Tearing a paper is...", o: ["Chemical", "Physical", "Reversible", "Complex"], a: "Physical", exp: "It is still paper, just smaller pieces." },
+        { t: 'mcq', q: "Cooking vegetables is...", o: ["Physical", "Chemical", "Reversible", "Cooling"], a: "Chemical", exp: "Raw and cooked vegetables are chemically different." },
+        { t: 'mcq', q: "Inflating a balloon is...", o: ["Chemical", "Physical", "Permanent", "Growing"], a: "Physical", exp: "It's just air filling space." },
+        { t: 'fill', q: "Physical changes are usually ______.", a: "reversible", exp: "Like melting ice to water." },
+        { t: 'fill', q: "Chemical changes are usually ______.", a: "irreversible", exp: "Like burnt wood." },
+
+        // SOLUBILITY (41-50)
+        { t: 'mcq', q: "The substance that dissolves in a liquid is...", o: ["Solvent", "Solute", "Solution", "Water"], a: "Solute", exp: "Solute (like salt) dissolves." },
+        { t: 'mcq', q: "The liquid in which solute dissolves is...", o: ["Solvent", "Solute", "Mixer", "Solid"], a: "Solvent", exp: "Solvent (like water) does the dissolving." },
+        { t: 'mcq', q: "Solute + Solvent = ...", o: ["Mixture", "Solution", "Gas", "Ice"], a: "Solution", exp: "This is the formula for a solution." },
+        { t: 'mcq', q: "Which is soluble in water?", o: ["Sand", "Salt", "Oil", "Stone"], a: "Salt", exp: "Salt disappears in water." },
+        { t: 'mcq', q: "Which is insoluble in water?", o: ["Sugar", "Lemon juice", "Chalk powder", "Milk"], a: "Chalk powder", exp: "Chalk settles down." },
+        { t: 'one', q: "Name the universal solvent.", a: "water", exp: "Water dissolves more substances than any other liquid." },
+        { t: 'mcq', q: "Liquids that mix with each other are called...", o: ["Immiscible", "Miscible", "Solids", "Gases"], a: "Miscible", exp: "Like milk and water." },
+        { t: 'mcq', q: "Oil and water are...", o: ["Miscible", "Immiscible", "Soluble", "Friends"], a: "Immiscible", exp: "They do not mix; oil floats." },
+        { t: 'truefalse', q: "Gases can dissolve in water.", a: "true", exp: "Fish breathe oxygen dissolved in water." },
+        { t: 'mcq', q: "A solution where no more solute can dissolve is...", o: ["Dilute", "Saturated", "Weak", "Warm"], a: "Saturated", exp: "The solvent is full." },
+
+        // SEPARATION & MATERIALS (51-60)
+        { t: 'mcq', q: "Method to separate stones from rice?", o: ["Handpicking", "Evaporation", "Condensation", "Boiling"], a: "Handpicking", exp: "Stones are big enough to pick by hand." },
+        { t: 'mcq', q: "Settling down of heavy insoluble impurities is...", o: ["Decantation", "Sedimentation", "Filtration", "Mixing"], a: "Sedimentation", exp: "Gravity pulls heavy dirt down." },
+        { t: 'mcq', q: "Pouring out clear water after sedimentation is...", o: ["Filtration", "Decantation", "Evaporation", "Freezing"], a: "Decantation", exp: "Carefully pouring the top layer." },
+        { t: 'mcq', q: "Using a strainer to separate tea leaves is...", o: ["Sedimentation", "Decantation", "Filtration", "Evaporation"], a: "Filtration", exp: "Using a filter/mesh." },
+        { t: 'mcq', q: "Salt is separated from sea water by...", o: ["Filtration", "Evaporation", "Sedimentation", "Cooling"], a: "Evaporation", exp: "Water dries up, salt remains." },
+        { t: 'mcq', q: "Which is a natural material?", o: ["Plastic", "Nylon", "Wood", "Glass"], a: "Wood", exp: "It comes from trees." },
+        { t: 'mcq', q: "Which is a man-made material?", o: ["Cotton", "Silk", "Plastic", "Coal"], a: "Plastic", exp: "Made in factories using chemicals." },
+        { t: 'one', q: "Paper is made from...", a: "wood", exp: "Wood pulp is used to make paper." },
+        { t: 'truefalse', q: "Glass is a man-made material.", a: "true", exp: "It is made from sand." },
+        { t: 'mcq', q: "Plastic is harmful because it is...", o: ["Biodegradable", "Non-biodegradable", "Tasty", "Soft"], a: "Non-biodegradable", exp: "It does not rot or break down." },
+
+        // ADVANCED & MIXED (61-70)
+        { t: 'mcq', q: "Materials that allow light to pass completely are...", o: ["Opaque", "Translucent", "Transparent", "Dark"], a: "Transparent", exp: "Like clear glass." },
+        { t: 'mcq', q: "Materials that do NOT allow light to pass are...", o: ["Transparent", "Opaque", "Translucent", "Clear"], a: "Opaque", exp: "Like wood or wall." },
+        { t: 'mcq', q: "Butter paper is...", o: ["Transparent", "Opaque", "Translucent", "Invisible"], a: "Translucent", exp: "Allows partial light." },
+        { t: 'mcq', q: "Which is a good conductor of heat?", o: ["Wood", "Plastic", "Iron", "Wool"], a: "Iron", exp: "Metals allow heat to pass." },
+        { t: 'mcq', q: "Why handles of pressure cookers are plastic?", o: ["To look good", "It is an insulator", "It is cheap", "It is heavy"], a: "It is an insulator", exp: "It keeps your hand safe from heat." },
+        { t: 'one', q: "Gas produced when water boils.", a: "steam", exp: "Water vapour." },
+        { t: 'truefalse', q: "We should burn plastic to get rid of it.", a: "false", exp: "Burning releases toxic smoke." },
+        { t: 'mcq', q: "Which method is best to clean muddy water?", o: ["Filtration", "Handpicking", "Cooling", "Melting"], a: "Filtration", exp: "Filter paper catches the mud." },
+        { t: 'mcq', q: "Identify the ODD one out.", o: ["Milk", "Juice", "Water", "Stone"], a: "Stone", exp: "Stone is solid, others are liquids." },
+        { t: 'mcq', q: "Identify the ODD one out.", o: ["Melting", "Freezing", "Rusting", "Evaporation"], a: "Rusting", exp: "Rusting is chemical, others are physical changes." }
+    ];
+
+    // --- DATABASE: LONG QUESTIONS (10 items) ---
+    const longQuestions = [
+        {
+            id: 'lq1',
+            q: "Explain the difference between Solids and Liquids.",
+            keywords: ["shape", "volume", "flow", "fixed", "pack", "loose", "container"],
+            hint: "Talk about shape, volume, and how particles are packed."
+        },
+        {
+            id: 'lq2',
+            q: "What is Evaporation? Give one example.",
+            keywords: ["liquid", "gas", "heat", "change", "vapour", "water", "drying", "steam"],
+            hint: "Process of Liquid -> Gas."
+        },
+        {
+            id: 'lq3',
+            q: "Differentiate between Physical and Chemical changes.",
+            keywords: ["new", "substance", "reversible", "irreversible", "formed", "temporary", "permanent"],
+            hint: "Is a new thing formed?"
+        },
+        {
+            id: 'lq4',
+            q: "How can you separate a mixture of sand and water?",
+            keywords: ["sedimentation", "decantation", "filtration", "filter", "settle", "pour", "strainer"],
+            hint: "Mention methods like filtration or sedimentation."
+        },
+        {
+            id: 'lq5',
+            q: "Why should we reduce the use of plastic?",
+            keywords: ["harmful", "rot", "biodegradable", "pollution", "environment", "animal", "waste", "non-biodegradable"],
+            hint: "Is plastic good for nature?"
+        },
+        {
+            id: 'lq6',
+            q: "Differentiate between Transparent and Opaque objects.",
+            keywords: ["light", "pass", "through", "see", "clear", "glass", "wood", "shadow"],
+            hint: "Can you see through them?"
+        },
+        {
+            id: 'lq7',
+            q: "What is a Saturated Solution?",
+            keywords: ["dissolve", "more", "solute", "added", "temperature", "stop", "full"],
+            hint: "Can you add more salt?"
+        },
+        {
+            id: 'lq8',
+            q: "Explain the Water Cycle briefly.",
+            keywords: ["evaporation", "condensation", "rain", "sun", "cloud", "ocean", "river", "cycle"],
+            hint: "Sun heats water -> Cloud -> Rain."
+        },
+        {
+            id: 'lq9',
+            q: "What are Conductors and Insulators of heat?",
+            keywords: ["pass", "heat", "allow", "electricity", "metal", "plastic", "wood", "transfer"],
+            hint: "Does heat go through it?"
+        },
+        {
+            id: 'lq10',
+            q: "Difference between Natural and Man-made materials.",
+            keywords: ["nature", "human", "factory", "plant", "animal", "artificial", "synthetic"],
+            hint: "Where do they come from?"
+        }
+    ];
+
+    // --- UTILS ---
+    function updateScoreDisplay() {
+        document.getElementById('score-correct').innerText = score.correct;
+        document.getElementById('score-wrong').innerText = score.wrong;
+        if(score.total === 0) {
+            document.getElementById('score-percent').innerText = "0%";
+        } else {
+            let pct = Math.round((score.correct / score.total) * 100);
+            document.getElementById('score-percent').innerText = pct + "%";
+        }
+    }
+
+    // --- PRACTICE QUIZ LOGIC ---
+    function renderQuestion() {
+        const qData = practiceQuestions[currentQIndex];
+        const container = document.getElementById('quiz-container');
+        const qText = document.getElementById('question-text');
+        const optsArea = document.getElementById('options-area');
+        const inpArea = document.getElementById('input-area');
+        const feedback = document.getElementById('quiz-feedback');
+        const nextBtn = document.getElementById('next-btn');
+
+        // Reset UI
+        feedback.className = 'feedback';
+        feedback.innerHTML = '';
+        nextBtn.classList.add('hidden');
+        optsArea.innerHTML = '';
+        inpArea.classList.add('hidden');
+        document.getElementById('text-answer').value = '';
+        
+        // Set Text
+        document.getElementById('quiz-progress').innerText = `Question ${currentQIndex + 1} / ${practiceQuestions.length}`;
+        qText.innerText = qData.q;
+
+        // Render based on type
+        if (qData.t === 'mcq' || qData.t === 'truefalse') {
+            optsArea.classList.remove('hidden');
+            let options = [];
+            if (qData.t === 'truefalse') options = ["True", "False"];
+            else options = qData.o;
+
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => checkMCQ(btn, opt, qData);
+                optsArea.appendChild(btn);
+            });
+        } else {
+            // Text based
+            optsArea.classList.add('hidden');
+            inpArea.classList.remove('hidden');
+            document.getElementById('submit-text-btn').onclick = () => checkText(qData);
+        }
+    }
+
+    function checkMCQ(btn, selected, qData) {
+        if (document.querySelector('.option-btn:disabled')) return; // Prevent double click
+
+        // Disable all
+        const allBtns = document.querySelectorAll('.option-btn');
+        allBtns.forEach(b => b.disabled = true);
+
+        const isCorrect = selected.toLowerCase() === qData.a.toLowerCase();
+        score.total++;
+
+        const feedback = document.getElementById('quiz-feedback');
+        feedback.classList.add('show');
+
+        if (isCorrect) {
+            btn.classList.add('correct');
+            score.correct++;
+            feedback.innerHTML = `<strong>Excellent ⭐</strong><br>${qData.exp}`;
+            feedback.classList.add('success');
+        } else {
+            btn.classList.add('wrong');
+            score.wrong++;
+            feedback.innerHTML = `<strong>Try Again</strong><br>Correct: ${qData.a}<br>${qData.exp}`;
+            feedback.classList.add('error');
+            
+            // Highlight correct
+            allBtns.forEach(b => {
+                if (b.innerText.toLowerCase() === qData.a.toLowerCase()) b.classList.add('correct');
+            });
+        }
+        
+        updateScoreDisplay();
+        document.getElementById('next-btn').classList.remove('hidden');
+    }
+
+    function checkText(qData) {
+        const input = document.getElementById('text-answer');
+        const val = input.value.trim();
+        if (!val) return;
+
+        const isCorrect = val.toLowerCase() === qData.a.toLowerCase();
+        score.total++;
+        
+        const feedback = document.getElementById('quiz-feedback');
+        feedback.classList.add('show');
+        input.disabled = true;
+        document.getElementById('submit-text-btn').disabled = true;
+
+        if (isCorrect) {
+            score.correct++;
+            feedback.innerHTML = `<strong>Excellent ⭐</strong><br>${qData.exp}`;
+            feedback.classList.add('success');
+        } else {
+            score.wrong++;
+            feedback.innerHTML = `<strong>Try Again</strong><br>Correct: ${qData.a}<br>${qData.exp}`;
+            feedback.classList.add('error');
+        }
+
+        updateScoreDisplay();
+        document.getElementById('next-btn').classList.remove('hidden');
+    }
+
+    document.getElementById('next-btn').addEventListener('click', () => {
+        if (currentQIndex < practiceQuestions.length - 1) {
+            currentQIndex++;
+            renderQuestion();
+        } else {
+            document.getElementById('quiz-container').innerHTML = `<h3 class="center">🎉 Practice Completed! 🎉</h3><p class="center">Check your final score above.</p>`;
+        }
+    });
+
+    // --- LONG ANSWER LOGIC ---
+    function renderLongQuestions() {
+        const container = document.getElementById('long-q-container');
+        longQuestions.forEach((q, idx) => {
+            const div = document.createElement('div');
+            div.className = 'question-box';
+            div.innerHTML = `
+                <div class="q-text">LQ${idx+1}: ${q.q}</div>
+                <textarea class="long-input" placeholder="Type your detailed answer here..."></textarea>
+                <button class="check-btn" onclick="checkLongAnswer(this, ${idx})">Check Answer</button>
+                <div class="feedback"></div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    window.checkLongAnswer = function(btn, idx) {
+        const qData = longQuestions[idx];
+        const textarea = btn.previousElementSibling;
+        const feedback = btn.nextElementSibling;
+        const userText = textarea.value.toLowerCase();
+
+        if (userText.length < 5) {
+            alert("Please write a longer answer.");
+            return;
+        }
+
+        let hits = 0;
+        let missing = [];
+        
+        qData.keywords.forEach(k => {
+            if (userText.includes(k)) hits++;
+            else missing.push(k);
+        });
+
+        // Evaluation
+        score.total++;
+        const threshold = Math.ceil(qData.keywords.length * 0.4); // Need 40% keywords
+        
+        feedback.classList.add('show');
+        btn.disabled = true;
+        textarea.disabled = true;
+
+        if (hits >= threshold) {
+            score.correct++;
+            feedback.classList.add('success');
+            feedback.innerHTML = `<strong>Good Effort! ✅</strong><br>You used ${hits} important keywords.<br>Keep it up!`;
+        } else {
+            score.wrong++;
+            feedback.classList.add('error');
+            feedback.innerHTML = `<strong>Needs Improvement</strong><br>You missed key concepts.<br><strong>Try to include:</strong> ${missing.slice(0,3).join(", ")}...`;
+        }
+        updateScoreDisplay();
+    };
+
+    // --- REVISION TOGGLE ---
+    document.getElementById('toggle-rev-btn').addEventListener('click', () => {
+        document.getElementById('revision-content').classList.toggle('hidden');
+    });
+
+    // --- INIT ---
+    renderQuestion();
+    renderLongQuestions();
+});
+</script>
+
+</body>
+</html>

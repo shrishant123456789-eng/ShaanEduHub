@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Class 5 - Math - Ch 5: Geometry</title>
+<style>
+    :root {
+        --bg-color: #FFFBE6; /* Light yellow notebook paper */
+        --primary-color: #FF6B6B;
+        --secondary-color: #4ECDC4;
+        --accent-color: #FFE66D;
+        --text-color: #2C3E50;
+        --border-color: #2C3E50;
+        --note-bg: #E8F8F5;
+        --correct: #27ae60;
+        --wrong: #c0392b;
+    }
+
+    * {
+        box-sizing: border-box;
+        font-weight: bold; /* STRICT RULE: ALL TEXT BOLD */
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', 'Marker Felt', sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        line-height: 1.6;
+        font-size: 18px;
+    }
+
+    /* --- LAYOUT UTILS --- */
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        padding-bottom: 80px;
+    }
+
+    .section-title {
+        text-align: center;
+        background: var(--primary-color);
+        color: white;
+        padding: 15px;
+        border-radius: 15px;
+        margin-top: 40px;
+        margin-bottom: 20px;
+        border: 3px solid var(--border-color);
+        box-shadow: 4px 4px 0px var(--border-color);
+        text-transform: uppercase;
+        font-size: 1.5rem;
+    }
+
+    /* --- HERO --- */
+    header {
+        text-align: center;
+        padding: 40px 20px;
+        background: var(--secondary-color);
+        border-bottom: 4px solid var(--border-color);
+    }
+    h1 { margin: 0; font-size: 2.5rem; text-shadow: 2px 2px 0 #fff; }
+    h2 { margin: 10px 0 0; font-size: 1.2rem; opacity: 0.9; }
+
+    /* --- STICKY SCORE PANEL --- */
+    #score-panel {
+        position: sticky;
+        top: 0;
+        background: #fff;
+        border-bottom: 3px solid var(--border-color);
+        padding: 10px;
+        z-index: 1000;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        font-size: 0.9rem;
+    }
+    .score-item span { color: var(--primary-color); font-size: 1.2rem; }
+
+    /* --- NOTES --- */
+    .topic-card {
+        background: #fff;
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 25px;
+        box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+    }
+    .topic-header {
+        font-size: 1.3rem;
+        color: var(--primary-color);
+        border-bottom: 2px dashed var(--border-color);
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+    }
+    .illustration-box {
+        background: var(--note-bg);
+        border: 2px solid var(--border-color);
+        height: 150px;
+        margin: 15px 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 8px;
+    }
+    svg { width: 100%; height: 100%; max-width: 300px; }
+    .memory-tip {
+        background: #FFF9C4;
+        padding: 10px;
+        border-radius: 8px;
+        border-left: 5px solid #FFC107;
+        margin-top: 10px;
+        font-size: 0.9rem;
+    }
+    .quick-check {
+        margin-top: 15px;
+        padding-top: 10px;
+        border-top: 1px solid #eee;
+        font-style: italic;
+        color: #555;
+    }
+
+    /* --- IMPORTANT QUESTIONS --- */
+    .imp-q-card {
+        background: white;
+        padding: 15px;
+        border: 2px solid #ccc;
+        margin-bottom: 15px;
+        border-radius: 8px;
+    }
+    .imp-q-q { color: var(--primary-color); margin-bottom: 5px; }
+    .imp-q-a { color: #27ae60; }
+
+    /* --- PRACTICE AREA --- */
+    #practice-container {
+        min-height: 400px;
+    }
+    .question-box {
+        background: white;
+        border: 3px solid var(--border-color);
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    .q-text { font-size: 1.2rem; margin-bottom: 20px; }
+    .options-grid {
+        display: grid;
+        gap: 10px;
+    }
+    .option-btn {
+        background: #f0f0f0;
+        border: 2px solid var(--border-color);
+        padding: 15px;
+        text-align: left;
+        cursor: pointer;
+        border-radius: 8px;
+        transition: 0.2s;
+        font-family: inherit;
+        font-size: 1rem;
+        font-weight: bold;
+    }
+    .option-btn:hover { background: #e0e0e0; }
+    .option-btn.correct { background: var(--correct); color: white; border-color: #1e8449; }
+    .option-btn.wrong { background: var(--wrong); color: white; border-color: #922b21; }
+    .option-btn:disabled { cursor: not-allowed; opacity: 0.8; }
+    
+    .feedback-box {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 8px;
+        display: none;
+    }
+    .feedback-box.show { display: block; }
+    .feedback-correct { background: #d4edda; border: 2px solid #c3e6cb; color: #155724; }
+    .feedback-wrong { background: #f8d7da; border: 2px solid #f5c6cb; color: #721c24; }
+    
+    .nav-btn {
+        background: var(--text-color);
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        font-size: 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        margin-top: 15px;
+        font-family: inherit;
+        font-weight: bold;
+        display: none; /* Hidden until answered */
+    }
+
+    /* --- LONG ANSWER --- */
+    .long-q-card {
+        background: white;
+        border: 2px solid var(--border-color);
+        padding: 20px;
+        margin-bottom: 30px;
+        border-radius: 10px;
+    }
+    textarea {
+        width: 100%;
+        height: 100px;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        padding: 10px;
+        font-family: inherit;
+        font-weight: bold;
+        margin: 10px 0;
+        resize: vertical;
+    }
+    .check-btn {
+        background: var(--secondary-color);
+        border: 2px solid var(--border-color);
+        color: #000;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-family: inherit;
+        font-weight: bold;
+    }
+    .long-feedback {
+        margin-top: 15px;
+        padding: 10px;
+        border-radius: 5px;
+        background: #f9f9f9;
+        border: 1px solid #ddd;
+        display: none;
+    }
+
+    /* --- REVISION --- */
+    .revision-sheet {
+        background: #FFF9C4;
+        border: 4px solid var(--text-color);
+        padding: 20px;
+        display: none;
+    }
+    .rev-toggle {
+        width: 100%;
+        padding: 15px;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        font-size: 1.2rem;
+        border-radius: 10px;
+        cursor: pointer;
+        margin-bottom: 10px;
+    }
+
+    /* --- FOOTER --- */
+    footer {
+        text-align: center;
+        padding: 30px;
+        background: #2C3E50;
+        color: white;
+        margin-top: 50px;
+    }
+
+    /* SVG STYLES */
+    .svg-line { stroke: #2C3E50; stroke-width: 3; fill: none; stroke-linecap: round; }
+    .svg-fill { fill: #FF6B6B; stroke: #2C3E50; stroke-width: 3; }
+    .svg-text { font-family: 'Comic Sans MS'; font-size: 14px; fill: #000; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>Class 5 Geometry</h1>
+    <h2>Chapter 5: Shapes, Lines & Angles</h2>
+</header>
+
+<!-- SCORE PANEL -->
+<div id="score-panel">
+    <div class="score-item">Correct: <span id="score-correct">0</span></div>
+    <div class="score-item">Wrong: <span id="score-wrong">0</span></div>
+    <div class="score-item">Marks: <span id="score-marks">0</span></div>
+</div>
+
+<div class="container">
+
+    <!-- NOTES SECTION -->
+    <div class="section-title">Class Notes 📖</div>
+    
+    <div class="topic-card">
+        <div class="topic-header">1. Basic Geometric Terms</div>
+        <p>Geometry starts with points. A <strong>Point</strong> is an exact location. A <strong>Line</strong> goes on forever in both directions. A <strong>Ray</strong> starts at one point and goes forever in one direction. A <strong>Line Segment</strong> is part of a line with two end points.</p>
+        <div class="illustration-box">
+            <svg viewBox="0 0 300 100">
+                <!-- Point -->
+                <circle cx="30" cy="50" r="4" fill="black" />
+                <text x="20" y="80" class="svg-text">Point</text>
+                <!-- Line -->
+                <line x1="70" y1="50" x2="130" y2="50" class="svg-line" marker-end="url(#arrow)" marker-start="url(#arrow)" />
+                <path d="M70,50 L65,45 M70,50 L65,55 M130,50 L135,45 M130,50 L135,55" class="svg-line"/>
+                <text x="90" y="80" class="svg-text">Line</text>
+                <!-- Ray -->
+                <line x1="160" y1="50" x2="210" y2="50" class="svg-line" />
+                <circle cx="160" cy="50" r="3" fill="black" />
+                <path d="M210,50 L205,45 M210,50 L205,55" class="svg-line"/>
+                <text x="170" y="80" class="svg-text">Ray</text>
+                <!-- Segment -->
+                <line x1="240" y1="50" x2="280" y2="50" class="svg-line" />
+                <circle cx="240" cy="50" r="3" fill="black" />
+                <circle cx="280" cy="50" r="3" fill="black" />
+                <text x="235" y="80" class="svg-text">Segment</text>
+            </svg>
+        </div>
+        <div class="memory-tip">💡 TIP: Ray sounds like 'Sun Ray' -> Starts from Sun, goes forever!</div>
+        <div class="quick-check">Check: Can you measure the length of a Line? (No)</div>
+    </div>
+
+    <div class="topic-card">
+        <div class="topic-header">2. Types of Lines</div>
+        <p><strong>Parallel Lines:</strong> Never meet, like railway tracks. <br><strong>Intersecting Lines:</strong> Cross each other like an 'X'. <br><strong>Perpendicular Lines:</strong> Cross at exactly 90 degrees (L shape).</p>
+        <div class="illustration-box">
+            <svg viewBox="0 0 300 100">
+                <!-- Parallel -->
+                <line x1="20" y1="30" x2="80" y2="30" class="svg-line" />
+                <line x1="20" y1="60" x2="80" y2="60" class="svg-line" />
+                <text x="25" y="90" class="svg-text">Parallel</text>
+                <!-- Intersecting -->
+                <line x1="110" y1="20" x2="150" y2="80" class="svg-line" />
+                <line x1="150" y1="20" x2="110" y2="80" class="svg-line" />
+                <text x="100" y="90" class="svg-text">Intersecting</text>
+                <!-- Perpendicular -->
+                <line x1="200" y1="80" x2="260" y2="80" class="svg-line" />
+                <line x1="230" y1="80" x2="230" y2="30" class="svg-line" />
+                <rect x="230" y="70" width="10" height="10" fill="none" stroke="black" />
+                <text x="190" y="95" class="svg-text">Perpendicular</text>
+            </svg>
+        </div>
+        <div class="memory-tip">💡 TIP: Perpendicular lines make a Perfect corner (90°).</div>
+        <div class="quick-check">Check: The letter 'H' has what kind of lines? (Parallel & Perpendicular)</div>
+    </div>
+
+    <div class="topic-card">
+        <div class="topic-header">3. Types of Angles</div>
+        <p>An angle is made when two rays meet. Measured in degrees (°).</p>
+        <ul>
+            <li><strong>Acute:</strong> Less than 90° (Cute small mouth)</li>
+            <li><strong>Right:</strong> Exactly 90° (L shape)</li>
+            <li><strong>Obtuse:</strong> More than 90°, less than 180° (Wide open)</li>
+            <li><strong>Straight:</strong> Exactly 180° (Flat line)</li>
+            <li><strong>Reflex:</strong> More than 180°</li>
+        </ul>
+        <div class="illustration-box">
+            <svg viewBox="0 0 300 100">
+                <path d="M30,80 L50,80 L45,40" class="svg-line" fill="none"/>
+                <text x="20" y="95" class="svg-text">Acute</text>
+                
+                <path d="M100,30 L100,80 L140,80" class="svg-line" fill="none"/>
+                <rect x="100" y="70" width="10" height="10" stroke="black" fill="none"/>
+                <text x="100" y="95" class="svg-text">Right</text>
+                
+                <path d="M180,30 L220,80 L260,80" class="svg-line" fill="none"/>
+                <text x="200" y="95" class="svg-text">Obtuse</text>
+            </svg>
+        </div>
+        <div class="memory-tip">💡 TIP: 'Acute' is 'A Cute' little angle.</div>
+    </div>
+
+    <div class="topic-card">
+        <div class="topic-header">4. Polygons & Triangles</div>
+        <p>A Polygon is a closed shape with straight sides. A Triangle has 3 sides.</p>
+        <p><strong>By Sides:</strong> Equilateral (all equal), Isosceles (2 equal), Scalene (none equal).</p>
+        <div class="illustration-box">
+            <svg viewBox="0 0 300 100">
+                <polygon points="50,20 20,80 80,80" class="svg-fill" fill="#FFCCBC" />
+                <text x="25" y="95" class="svg-text">Triangle</text>
+                
+                <polygon points="120,20 180,20 180,80 120,80" class="svg-fill" fill="#C8E6C9" />
+                <text x="125" y="95" class="svg-text">Square</text>
+
+                <polygon points="220,20 270,50 220,80 170,50" class="svg-fill" fill="#E1BEE7" />
+                <text x="200" y="95" class="svg-text">Rhombus</text>
+            </svg>
+        </div>
+        <div class="memory-tip">💡 TIP: Tri = 3, Quad = 4, Penta = 5.</div>
+    </div>
+
+    <div class="topic-card">
+        <div class="topic-header">5. Symmetry</div>
+        <p>Symmetry means one half is the mirror image of the other. The line that divides them is the Line of Symmetry.</p>
+        <div class="illustration-box">
+            <svg viewBox="0 0 300 100">
+                <path d="M130,20 Q150,5 170,20 T150,90 T130,20" class="svg-fill" fill="#FFAB91" />
+                <line x1="150" y1="10" x2="150" y2="90" class="svg-line" stroke-dasharray="5,5" />
+                <text x="120" y="95" class="svg-text">Symmetry Line</text>
+            </svg>
+        </div>
+        <div class="quick-check">Check: Does a circle have symmetry? (Yes, infinite!)</div>
+    </div>
+
+    <!-- IMPORTANT QUESTIONS -->
+    <div class="section-title">Important Questions 🌟</div>
+    <div id="imp-questions-container">
+        <!-- JS will populate this -->
+    </div>
+
+    <!-- PRACTICE QUESTIONS -->
+    <div class="section-title">Practice Quiz (70 Qs) 🎮</div>
+    <div id="practice-container">
+        <div id="question-area" class="question-box">
+            <div id="q-text" class="q-text">Loading...</div>
+            <div id="q-options" class="options-grid"></div>
+            <div id="q-feedback" class="feedback-box"></div>
+            <button id="next-btn" class="nav-btn">Next Question ➜</button>
+        </div>
+    </div>
+
+    <!-- LONG QUESTIONS -->
+    <div class="section-title">Advanced Challenge 🧠</div>
+    <div id="long-questions-container">
+        <!-- JS will populate -->
+    </div>
+
+    <!-- REVISION -->
+    <div class="section-title">Quick Revision ⚡</div>
+    <button class="rev-toggle" onclick="toggleRevision()">Show/Hide Revision Sheet</button>
+    <div id="revision-sheet" class="revision-sheet">
+        <ul>
+            <li><strong>Point:</strong> Exact location (.)</li>
+            <li><strong>Line:</strong> No endpoints (<->)</li>
+            <li><strong>Ray:</strong> 1 endpoint (•->)</li>
+            <li><strong>Segment:</strong> 2 endpoints (•-•)</li>
+            <li><strong>Acute:</strong> < 90°</li>
+            <li><strong>Right:</strong> = 90°</li>
+            <li><strong>Obtuse:</strong> > 90° and < 180°</li>
+            <li><strong>Straight:</strong> = 180°</li>
+            <li><strong>Reflex:</strong> > 180°</li>
+            <li><strong>Triangle:</strong> 3 sides, Sum of angles = 180°</li>
+            <li><strong>Quadrilateral:</strong> 4 sides, Sum of angles = 360°</li>
+        </ul>
+    </div>
+
+</div>
+
+<footer>
+    Designed & Created by SHRISHANT YADAV<br>
+    ShanEduHub
+</footer>
+
+<script>
+/* ----------------------------------------------------------------
+   DATA: IMPORTANT QUESTIONS (30)
+---------------------------------------------------------------- */
+const importantQuestions = [
+    {q: "What has a starting point but no end point?", a: "A Ray.", exp: "Think of a sun ray starting from the sun."},
+    {q: "What is the angle measure of a straight line?", a: "180 degrees.", exp: "A straight angle is exactly 180°."},
+    {q: "Name the instrument used to measure angles.", a: "Protractor.", exp: "It is a semi-circular tool marked with degrees."},
+    {q: "How many end points does a line segment have?", a: "Two.", exp: "A segment is a fixed piece of a line."},
+    {q: "What do we call lines that never meet?", a: "Parallel Lines.", exp: "Like railway tracks, they keep the same distance."},
+    {q: "What is an angle less than 90° called?", a: "Acute Angle.", exp: "It is smaller than a right angle."},
+    {q: "What is the sum of angles in a triangle?", a: "180 degrees.", exp: "If you add all 3 corners, you always get 180°."},
+    {q: "Which polygon has 4 equal sides and 4 right angles?", a: "Square.", exp: "It is a regular quadrilateral."},
+    {q: "What is a triangle with 2 equal sides called?", a: "Isosceles Triangle.", exp: "Iso means equal, skelos means leg."},
+    {q: "What is the shape of a full moon?", a: "Circle.", exp: "It has no corners and one curved boundary."},
+    {q: "Does a scalene triangle have equal sides?", a: "No.", exp: "All 3 sides are different lengths."},
+    {q: "What is an angle greater than 90° but less than 180°?", a: "Obtuse Angle.", exp: "It opens wider than an L shape."},
+    {q: "How many degrees are in a Right Angle?", a: "90 degrees.", exp: "It forms a perfect L shape."},
+    {q: "Can two acute angles make a straight angle?", a: "No.", exp: "Two acute angles sum to less than 180°."},
+    {q: "Name a real life example of parallel lines.", a: "Edges of a ruler.", exp: "They run side by side without meeting."},
+    {q: "What do intersecting lines form?", a: "Angles.", exp: "When lines cross, they create angles at the vertex."},
+    {q: "What is the vertex of an angle?", a: "The corner point.", exp: "Where the two rays meet."},
+    {q: "Is a rectangle a parallelogram?", a: "Yes.", exp: "Because its opposite sides are parallel."},
+    {q: "How many lines of symmetry does a butterfly have?", a: "One.", exp: "Down the middle of its body."},
+    {q: "What tool draws circles?", a: "Compass.", exp: "It has a needle and a pencil holder."},
+    {q: "What is a 5-sided polygon called?", a: "Pentagon.", exp: "Penta means five."},
+    {q: "What does 'Perpendicular' mean?", a: "Intersecting at 90°.", exp: "Like the corner of a room."},
+    {q: "How many degrees in a complete circle?", a: "360 degrees.", exp: "A full turn is 360°."},
+    {q: "What is a reflex angle?", a: "More than 180°.", exp: "It bends back on itself."},
+    {q: "Can a triangle have two right angles?", a: "No.", exp: "180° total limit makes this impossible."},
+    {q: "What is the perimeter?", a: "Total length of boundary.", exp: "Sum of all sides."},
+    {q: "Does a line have a fixed length?", a: "No.", exp: "It goes on forever."},
+    {q: "Example of a sphere?", a: "A ball.", exp: "It is a 3D circle."},
+    {q: "What is a chord?", a: "Line joining two points on a circle.", exp: "Diameter is the longest chord."},
+    {q: "Opposite sides of a rectangle are?", a: "Equal and Parallel.", exp: "A key property of rectangles."}
+];
+
+/* ----------------------------------------------------------------
+   DATA: PRACTICE QUESTIONS (70)
+---------------------------------------------------------------- */
+const practiceQuestions = [
+    // 1-10: Basic Terms
+    { q: "A dot represents a ________.", options: ["Line", "Point", "Ray", "Angle"], a: "Point", exp: "A point is just a location/dot." },
+    { q: "A line has ________ end points.", options: ["One", "Two", "Zero", "Three"], a: "Zero", exp: "A line extends forever in both directions." },
+    { q: "Part of a line with two end points is a ________.", options: ["Ray", "Line", "Segment", "Point"], a: "Segment", exp: "It stops at both ends." },
+    { q: "A Ray has ________ end point(s).", options: ["1", "2", "0", "3"], a: "1", exp: "Starts at one point, goes forever." },
+    { q: "Which symbol represents a line segment AB?", options: ["AB", "←AB→", "AB with bar", "•AB"], a: "AB with bar", exp: "A bar over letters means segment." },
+    { q: "Can we measure the length of a line?", options: ["Yes", "No", "Sometimes", "Only on paper"], a: "No", exp: "It is infinite length." },
+    { q: "Can we measure a line segment?", options: ["Yes", "No", "Maybe", "Never"], a: "Yes", exp: "It has fixed end points." },
+    { q: "The edge of a table is an example of a ________.", options: ["Line", "Ray", "Segment", "Point"], a: "Segment", exp: "It has a start and end." },
+    { q: "Light from a torch represents a ________.", options: ["Line", "Ray", "Segment", "Angle"], a: "Ray", exp: "Start at torch, goes outward." },
+    { q: "Which is the shortest distance between two points?", options: ["Curved line", "Zigzag", "Straight segment", "Circle"], a: "Straight segment", exp: "Straight path is shortest." },
+
+    // 11-20: Lines Relations
+    { q: "Lines that never meet are called ________.", options: ["Perpendicular", "Parallel", "Intersecting", "Curved"], a: "Parallel", exp: "They stay equal distance apart." },
+    { q: "Railway tracks are an example of ________ lines.", options: ["Parallel", "Intersecting", "Perpendicular", "Zigzag"], a: "Parallel", exp: "They run side-by-side." },
+    { q: "The letter 'X' shows ________ lines.", options: ["Parallel", "Intersecting", "Straight", "None"], a: "Intersecting", exp: "They cross each other." },
+    { q: "Perpendicular lines meet at ________ degrees.", options: ["45", "180", "90", "60"], a: "90", exp: "They form a right angle." },
+    { q: "The corner of a book shows ________ lines.", options: ["Parallel", "Perpendicular", "Obtuse", "Acute"], a: "Perpendicular", exp: "It is an L shape (90°)." },
+    { q: "Can parallel lines intersect?", options: ["Yes", "No", "If long enough", "Sometimes"], a: "No", exp: "By definition, they never touch." },
+    { q: "The sign '+' shows ________ lines.", options: ["Parallel", "Perpendicular", "Curved", "None"], a: "Perpendicular", exp: "They cross at 90°." },
+    { q: "Two lines crossing at a point are called ________.", options: ["Intersecting", "Parallel", "Straight", "Ray"], a: "Intersecting", exp: "Meeting at a common point." },
+    { q: "Distance between parallel lines is always ________.", options: ["Changing", "Constant", "Zero", "Increasing"], a: "Constant", exp: "Same distance everywhere." },
+    { q: "Is the letter 'L' an example of perpendicular lines?", options: ["Yes", "No", "Maybe", "Only if curved"], a: "Yes", exp: "Vertical and horizontal meet at 90°." },
+
+    // 21-35: Angles
+    { q: "An angle measuring 90° is called ________.", options: ["Acute", "Obtuse", "Right", "Straight"], a: "Right", exp: "Right angle = 90°." },
+    { q: "An angle measuring 45° is ________.", options: ["Acute", "Obtuse", "Right", "Reflex"], a: "Acute", exp: "Less than 90° is Acute." },
+    { q: "An angle measuring 120° is ________.", options: ["Acute", "Obtuse", "Right", "Straight"], a: "Obtuse", exp: "Between 90° and 180° is Obtuse." },
+    { q: "A straight angle measures ________.", options: ["90°", "180°", "360°", "100°"], a: "180°", exp: "It forms a straight line." },
+    { q: "Which angle is larger: 80° or 100°?", options: ["80°", "100°", "Both equal", "Neither"], a: "100°", exp: "100 is a bigger number." },
+    { q: "The hands of a clock at 3:00 make a ________ angle.", options: ["Acute", "Right", "Obtuse", "Straight"], a: "Right", exp: "3 o'clock is exactly 90°." },
+    { q: "The hands of a clock at 6:00 make a ________ angle.", options: ["Acute", "Right", "Straight", "Reflex"], a: "Straight", exp: "It forms a straight line." },
+    { q: "An angle greater than 180° is called ________.", options: ["Reflex", "Obtuse", "Acute", "Right"], a: "Reflex", exp: "Reflex angles bend backwards." },
+    { q: "A full circle is ________ degrees.", options: ["180", "90", "360", "270"], a: "360", exp: "One complete revolution." },
+    { q: "Which instrument measures angles?", options: ["Ruler", "Scale", "Protractor", "Divider"], a: "Protractor", exp: "The semi-circle tool." },
+    { q: "Which is an Obtuse angle?", options: ["30°", "90°", "110°", "190°"], a: "110°", exp: "It is > 90 and < 180." },
+    { q: "Which is an Acute angle?", options: ["91°", "89°", "180°", "90°"], a: "89°", exp: "It is < 90." },
+    { q: "Unit of measuring angles is ________.", options: ["Centimeter", "Degree", "Liter", "Gram"], a: "Degree", exp: "Represented by °." },
+    { q: "Common point of an angle is called ________.", options: ["Arm", "Side", "Vertex", "Edge"], a: "Vertex", exp: "The corner point." },
+    { q: "Two rays forming an angle are called ________.", options: ["Arms", "Legs", "Heads", "Points"], a: "Arms", exp: "Arms or sides of the angle." },
+
+    // 36-45: Triangles
+    { q: "A triangle has ________ sides.", options: ["3", "4", "5", "2"], a: "3", exp: "Tri means three." },
+    { q: "Sum of angles in a triangle is ________.", options: ["90°", "180°", "360°", "100°"], a: "180°", exp: "Always sums to 180." },
+    { q: "Triangle with all sides equal is ________.", options: ["Isosceles", "Scalene", "Equilateral", "Right"], a: "Equilateral", exp: "Equi means equal, lateral means side." },
+    { q: "Triangle with 2 equal sides is ________.", options: ["Scalene", "Isosceles", "Equilateral", "None"], a: "Isosceles", exp: "Think 'Eye-sosceles' (2 eyes)." },
+    { q: "Triangle with NO equal sides is ________.", options: ["Scalene", "Isosceles", "Equilateral", "Regular"], a: "Scalene", exp: "All sides different." },
+    { q: "Can a triangle have two right angles?", options: ["Yes", "No", "Sometimes", "Only big ones"], a: "No", exp: "90+90=180, leaving 0 for 3rd angle." },
+    { q: "Triangle with one 90° angle is ________.", options: ["Acute Triangle", "Right Triangle", "Obtuse Triangle", "Flat"], a: "Right Triangle", exp: "Named after the right angle." },
+    { q: "An equilateral triangle always has angles of ________.", options: ["90°", "60°", "45°", "30°"], a: "60°", exp: "180 divided by 3 is 60." },
+    { q: "Can a triangle have two obtuse angles?", options: ["Yes", "No", "Maybe", "Rarely"], a: "No", exp: "Sum would exceed 180°." },
+    { q: "A triangle is a ________.", options: ["Polygon", "Circle", "Line", "Open shape"], a: "Polygon", exp: "Closed shape with straight lines." },
+
+    // 46-55: Quadrilaterals
+    { q: "A polygon with 4 sides is a ________.", options: ["Triangle", "Pentagon", "Quadrilateral", "Hexagon"], a: "Quadrilateral", exp: "Quad means four." },
+    { q: "A square has ________ right angles.", options: ["2", "3", "4", "0"], a: "4", exp: "All corners are 90°." },
+    { q: "Opposite sides of a rectangle are ________.", options: ["Equal", "Different", "Curved", "Crossing"], a: "Equal", exp: "Length = Length, Width = Width." },
+    { q: "Sum of angles in a quadrilateral is ________.", options: ["180°", "360°", "90°", "270°"], a: "360°", exp: "Two triangles make a quad (180+180)." },
+    { q: "A rhombus has ________ equal sides.", options: ["2", "4", "0", "3"], a: "4", exp: "Like a pushed over square." },
+    { q: "A square is also a ________.", options: ["Rectangle", "Circle", "Triangle", "Pentagon"], a: "Rectangle", exp: "It fits the rectangle definition." },
+    { q: "Which shape looks like a kite?", options: ["Square", "Rhombus", "Circle", "Line"], a: "Rhombus", exp: "Diamond shape." },
+    { q: "Do diagonals of a square cross at 90°?", options: ["Yes", "No", "Maybe", "Never"], a: "Yes", exp: "They are perpendicular bisectors." },
+    { q: "Shape of a blackboard is usually ________.", options: ["Square", "Rectangle", "Circle", "Triangle"], a: "Rectangle", exp: "Longer length than width." },
+    { q: "Which is NOT a quadrilateral?", options: ["Square", "Rectangle", "Triangle", "Rhombus"], a: "Triangle", exp: "Triangle has 3 sides." },
+
+    // 56-65: Shapes & Symmetry
+    { q: "Shape with 5 sides is ________.", options: ["Hexagon", "Pentagon", "Triangle", "Square"], a: "Pentagon", exp: "Penta = 5." },
+    { q: "Shape with 6 sides is ________.", options: ["Pentagon", "Octagon", "Hexagon", "Heptagon"], a: "Hexagon", exp: "Hexa = 6." },
+    { q: "A circle has ________ corners.", options: ["0", "1", "2", "Infinite"], a: "0", exp: "It is curved." },
+    { q: "Line dividing a shape into two identical halves is ________.", options: ["Line of Symmetry", "Diagonal", "Chord", "Ray"], a: "Line of Symmetry", exp: "Mirror line." },
+    { q: "Does the letter 'A' have symmetry?", options: ["Yes", "No", "Maybe", "Unsure"], a: "Yes", exp: "Vertical symmetry." },
+    { q: "Does the letter 'F' have symmetry?", options: ["Yes", "No", "Vertical", "Horizontal"], a: "No", exp: "Cannot fold it to match." },
+    { q: "How many lines of symmetry in a Square?", options: ["2", "4", "1", "0"], a: "4", exp: "Vertical, horizontal, 2 diagonals." },
+    { q: "Half a circle is called ________.", options: ["Semicircle", "Chord", "Arc", "Ray"], a: "Semicircle", exp: "Semi means half." },
+    { q: "Radius is ________ of the diameter.", options: ["Double", "Half", "Equal", "Triple"], a: "Half", exp: "Diameter = 2 x Radius." },
+    { q: "Longest chord of a circle is ________.", options: ["Radius", "Arc", "Diameter", "Center"], a: "Diameter", exp: "Passes through the center." },
+
+    // 66-70: Thinking & Real Life
+    { q: "The angle of a laptop open slightly is ________.", options: ["Acute", "Reflex", "Straight", "Full"], a: "Acute", exp: "Usually less than 90°." },
+    { q: "A pizza slice is roughly a ________ shape.", options: ["Triangle", "Square", "Rectangle", "Line"], a: "Triangle", exp: "Triangular sector." },
+    { q: "Stop sign shape is usually an ________.", options: ["Octagon", "Hexagon", "Pentagon", "Square"], a: "Octagon", exp: "8 sides." },
+    { q: "Honeycomb cells are ________ shaped.", options: ["Hexagon", "Pentagon", "Square", "Circle"], a: "Hexagon", exp: "6 sides fit perfectly." },
+    { q: "Angle at the corner of a room is ________.", options: ["90°", "45°", "180°", "100°"], a: "90°", exp: "Perpendicular walls." }
+];
+
+/* ----------------------------------------------------------------
+   DATA: LONG QUESTIONS (10)
+---------------------------------------------------------------- */
+const longQuestions = [
+    {
+        id: "lq1",
+        q: "Explain the difference between a Line and a Line Segment.",
+        points: ["no end points", "two end points", "infinite", "fixed length"],
+        model: "A Line has no end points and goes on forever. A Line Segment has two end points and a fixed length."
+    },
+    {
+        id: "lq2",
+        q: "What are Parallel Lines? Give one real-life example.",
+        points: ["never meet", "same distance", "railway", "track", "ruler", "road"],
+        model: "Parallel lines never meet and stay the same distance apart. Example: Railway tracks."
+    },
+    {
+        id: "lq3",
+        q: "Why is an Equilateral Triangle also an Isosceles Triangle?",
+        points: ["all sides equal", "two sides equal", "condition", "satisfies"],
+        model: "An Isosceles triangle needs 2 equal sides. An Equilateral triangle has 3 equal sides, so it automatically has 2 equal sides."
+    },
+    {
+        id: "lq4",
+        q: "Define an Obtuse Angle and draw it in your mind. Is 179° obtuse?",
+        points: ["greater than 90", "less than 180", "yes", "wide"],
+        model: "An Obtuse angle is greater than 90° but less than 180°. Yes, 179° is obtuse."
+    },
+    {
+        id: "lq5",
+        q: "Write two properties of a Square.",
+        points: ["all sides equal", "90 degrees", "right angles", "diagonals equal"],
+        model: "1. All four sides are equal length. 2. All four corners are 90 degree angles."
+    },
+    {
+        id: "lq6",
+        q: "How do you measure an angle using a protractor? Steps.",
+        points: ["center on vertex", "base line", "read scale", "zero"],
+        model: "Place the center of the protractor on the vertex. Align the base line with one arm. Read the degree where the other arm points."
+    },
+    {
+        id: "lq7",
+        q: "What is the difference between Intersecting and Perpendicular lines?",
+        points: ["cross", "90 degrees", "right angle", "meet"],
+        model: "Intersecting lines just cross each other. Perpendicular lines cross exactly at 90 degrees."
+    },
+    {
+        id: "lq8",
+        q: "Explain Line of Symmetry with the example of a Butterfly.",
+        points: ["mirror", "half", "identical", "center"],
+        model: "A line of symmetry divides a shape into two identical mirror halves. A butterfly has one line down the middle matching its wings."
+    },
+    {
+        id: "lq9",
+        q: "Why can't a triangle have two Right Angles?",
+        points: ["sum", "180", "triangle", "third angle"],
+        model: "The sum of angles in a triangle is 180°. Two right angles (90+90) make 180°, leaving 0° for the third angle, which is impossible."
+    },
+    {
+        id: "lq10",
+        q: "Is a Rhombus a regular polygon? Why or why not?",
+        points: ["sides equal", "angles not equal", "no", "90 degrees"],
+        model: "No. A regular polygon must have equal sides AND equal angles. A rhombus has equal sides but its angles are not always 90°."
+    }
+];
+
+/* ----------------------------------------------------------------
+   APP LOGIC
+---------------------------------------------------------------- */
+const state = {
+    qIndex: 0,
+    score: { correct: 0, wrong: 0, marks: 0 },
+    answered: false
+};
+
+// --- INITIALIZATION ---
+document.addEventListener('DOMContentLoaded', () => {
+    initImportantQuestions();
+    initLongQuestions();
+    loadPracticeQuestion();
+});
+
+// --- IMP QUESTIONS RENDER ---
+function initImportantQuestions() {
+    const container = document.getElementById('imp-questions-container');
+    let html = '';
+    importantQuestions.forEach((item, i) => {
+        html += `
+        <div class="imp-q-card">
+            <div class="imp-q-q">Q${i+1}: ${item.q}</div>
+            <div class="imp-q-a">Ans: ${item.a}</div>
+            <div style="font-size:0.8rem; color:#666;">ℹ️ ${item.exp}</div>
+        </div>`;
+    });
+    container.innerHTML = html;
+}
+
+// --- LONG QUESTIONS RENDER ---
+function initLongQuestions() {
+    const container = document.getElementById('long-questions-container');
+    let html = '';
+    longQuestions.forEach((item, i) => {
+        html += `
+        <div class="long-q-card">
+            <div><strong>Q${i+1}: ${item.q}</strong></div>
+            <textarea id="lq-ans-${i}" placeholder="Type your answer here..."></textarea>
+            <button class="check-btn" onclick="checkLongAnswer(${i})">Check Answer</button>
+            <div id="lq-feed-${i}" class="long-feedback"></div>
+        </div>`;
+    });
+    container.innerHTML = html;
+}
+
+// --- REVISION TOGGLE ---
+function toggleRevision() {
+    const el = document.getElementById('revision-sheet');
+    el.style.display = el.style.display === 'block' ? 'none' : 'block';
+}
+
+// --- PRACTICE ENGINE ---
+function loadPracticeQuestion() {
+    if (state.qIndex >= practiceQuestions.length) {
+        document.getElementById('practice-container').innerHTML = `
+            <div class="question-box" style="text-align:center">
+                <h2>🎉 Practice Complete!</h2>
+                <p>Final Score: ${state.score.marks} / ${practiceQuestions.length + 10}</p>
+                <button onclick="location.reload()" class="nav-btn" style="display:inline-block">Restart</button>
+            </div>`;
+        return;
+    }
+
+    const q = practiceQuestions[state.qIndex];
+    state.answered = false;
+
+    // Shuffle options for display, keep track of real answer
+    let opts = [...q.options];
+    // Simple shuffle
+    opts.sort(() => Math.random() - 0.5);
+
+    document.getElementById('q-text').innerText = `Q${state.qIndex + 1}: ${q.q}`;
+    const optsContainer = document.getElementById('q-options');
+    optsContainer.innerHTML = '';
+
+    opts.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerText = opt;
+        btn.onclick = () => checkPracticeAnswer(btn, opt, q.a, q.exp);
+        optsContainer.appendChild(btn);
+    });
+
+    document.getElementById('q-feedback').className = 'feedback-box';
+    document.getElementById('q-feedback').style.display = 'none';
+    document.getElementById('next-btn').style.display = 'none';
+}
+
+function checkPracticeAnswer(btn, selected, correct, exp) {
+    if (state.answered) return;
+    state.answered = true;
+
+    const feedbackEl = document.getElementById('q-feedback');
+    const allBtns = document.querySelectorAll('.option-btn');
+    
+    // Disable all
+    allBtns.forEach(b => b.disabled = true);
+
+    if (selected === correct) {
+        btn.classList.add('correct');
+        feedbackEl.innerHTML = `<strong>Excellent! ⭐</strong><br>${exp}`;
+        feedbackEl.className = 'feedback-box feedback-correct show';
+        updateScore(true);
+    } else {
+        btn.classList.add('wrong');
+        // Highlight correct
+        allBtns.forEach(b => {
+            if(b.innerText === correct) b.classList.add('correct');
+        });
+        feedbackEl.innerHTML = `<strong>Try Again!</strong><br>Correct answer is: <u>${correct}</u>.<br>${exp}`;
+        feedbackEl.className = 'feedback-box feedback-wrong show';
+        updateScore(false);
+    }
+
+    // Show next button
+    const nextBtn = document.getElementById('next-btn');
+    nextBtn.style.display = 'block';
+    nextBtn.onclick = () => {
+        state.qIndex++;
+        loadPracticeQuestion();
+    };
+}
+
+// --- LONG ANSWER CHECKER ---
+function checkLongAnswer(index) {
+    const q = longQuestions[index];
+    const userAns = document.getElementById(`lq-ans-${index}`).value.toLowerCase();
+    const feedbackEl = document.getElementById(`lq-feed-${index}`);
+    
+    if (userAns.trim().length < 5) {
+        alert("Please write a proper answer.");
+        return;
+    }
+
+    let matchCount = 0;
+    q.points.forEach(p => {
+        if (userAns.includes(p)) matchCount++;
+    });
+
+    const isCorrect = matchCount >= 1; // Lenient checking for kids
+    
+    if (isCorrect) {
+        feedbackEl.innerHTML = `<span style="color:green">✔ Good Answer!</span><br><strong>Model Answer:</strong> ${q.model}`;
+        feedbackEl.style.borderLeft = "5px solid green";
+        // Only add score if not already checked (simple logic limit: one check per session per q for score)
+        if (!feedbackEl.dataset.scored) {
+            updateScore(true);
+            feedbackEl.dataset.scored = "true";
+        }
+    } else {
+        feedbackEl.innerHTML = `<span style="color:red">✘ Keep Trying.</span><br><strong>Key points missing.</strong><br><strong>Model Answer:</strong> ${q.model}`;
+        feedbackEl.style.borderLeft = "5px solid red";
+        if (!feedbackEl.dataset.scored) {
+            updateScore(false);
+            feedbackEl.dataset.scored = "true";
+        }
+    }
+    feedbackEl.style.display = "block";
+}
+
+// --- SCORE LOGIC ---
+function updateScore(isCorrect) {
+    if (isCorrect) {
+        state.score.correct++;
+        state.score.marks += 1; // 1 mark per Q
+    } else {
+        state.score.wrong++;
+    }
+    
+    document.getElementById('score-correct').innerText = state.score.correct;
+    document.getElementById('score-wrong').innerText = state.score.wrong;
+    document.getElementById('score-marks').innerText = state.score.marks;
+}
+
+</script>
+</body>
+</html>

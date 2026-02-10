@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Class 5 - Math - Ch 6: Measurement</title>
+<style>
+    :root {
+        --bg-color: #FFFBE6;
+        --primary-color: #FF6B6B;
+        --secondary-color: #4ECDC4;
+        --accent-color: #FFE66D;
+        --text-color: #2C3E50;
+        --border-color: #2C3E50;
+        --note-bg: #E8F8F5;
+        --correct: #27ae60;
+        --wrong: #c0392b;
+    }
+
+    * {
+        box-sizing: border-box;
+        font-weight: bold;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', 'Marker Felt', sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        line-height: 1.6;
+        font-size: 18px;
+    }
+
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        padding-bottom: 80px;
+    }
+
+    .section-title {
+        text-align: center;
+        background: var(--primary-color);
+        color: white;
+        padding: 15px;
+        border-radius: 15px;
+        margin-top: 40px;
+        margin-bottom: 20px;
+        border: 3px solid var(--border-color);
+        box-shadow: 4px 4px 0px var(--border-color);
+        text-transform: uppercase;
+        font-size: 1.5rem;
+    }
+
+    header {
+        text-align: center;
+        padding: 40px 20px;
+        background: var(--secondary-color);
+        border-bottom: 4px solid var(--border-color);
+    }
+    h1 { margin: 0; font-size: 2.5rem; text-shadow: 2px 2px 0 #fff; }
+    h2 { margin: 10px 0 0; font-size: 1.2rem; opacity: 0.9; }
+
+    #score-panel {
+        position: sticky;
+        top: 0;
+        background: #fff;
+        border-bottom: 3px solid var(--border-color);
+        padding: 10px;
+        z-index: 1000;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        font-size: 0.9rem;
+    }
+    .score-item span { color: var(--primary-color); font-size: 1.2rem; }
+
+    .topic-card {
+        background: #fff;
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 25px;
+        box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+    }
+    .topic-header {
+        font-size: 1.3rem;
+        color: var(--primary-color);
+        border-bottom: 2px dashed var(--border-color);
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+    }
+    .illustration-box {
+        background: var(--note-bg);
+        border: 2px solid var(--border-color);
+        height: 150px;
+        margin: 15px 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 8px;
+    }
+    svg { width: 100%; height: 100%; max-width: 300px; }
+    .memory-tip {
+        background: #FFF9C4;
+        padding: 10px;
+        border-radius: 8px;
+        border-left: 5px solid #FFC107;
+        margin-top: 10px;
+        font-size: 0.9rem;
+    }
+    .quick-check {
+        margin-top: 15px;
+        padding-top: 10px;
+        border-top: 1px solid #eee;
+        font-style: italic;
+        color: #555;
+    }
+
+    .imp-q-card {
+        background: white;
+        padding: 15px;
+        border: 2px solid #ccc;
+        margin-bottom: 15px;
+        border-radius: 8px;
+    }
+    .imp-q-q { color: var(--primary-color); margin-bottom: 5px; }
+    .imp-q-a { color: #27ae60; }
+
+    #practice-container { min-height: 400px; }
+    .question-box {
+        background: white;
+        border: 3px solid var(--border-color);
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    .q-text { font-size: 1.2rem; margin-bottom: 20px; }
+    .options-grid { display: grid; gap: 10px; }
+    .option-btn {
+        background: #f0f0f0;
+        border: 2px solid var(--border-color);
+        padding: 15px;
+        text-align: left;
+        cursor: pointer;
+        border-radius: 8px;
+        transition: 0.2s;
+        font-family: inherit;
+        font-size: 1rem;
+        font-weight: bold;
+    }
+    .option-btn:hover { background: #e0e0e0; }
+    .option-btn.correct { background: var(--correct); color: white; border-color: #1e8449; }
+    .option-btn.wrong { background: var(--wrong); color: white; border-color: #922b21; }
+    .option-btn:disabled { cursor: not-allowed; opacity: 0.8; }
+    
+    .feedback-box {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 8px;
+        display: none;
+    }
+    .feedback-box.show { display: block; }
+    .feedback-correct { background: #d4edda; border: 2px solid #c3e6cb; color: #155724; }
+    .feedback-wrong { background: #f8d7da; border: 2px solid #f5c6cb; color: #721c24; }
+    
+    .nav-btn {
+        background: var(--text-color);
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        font-size: 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        margin-top: 15px;
+        font-family: inherit;
+        font-weight: bold;
+        display: none;
+    }
+
+    .long-q-card {
+        background: white;
+        border: 2px solid var(--border-color);
+        padding: 20px;
+        margin-bottom: 30px;
+        border-radius: 10px;
+    }
+    textarea {
+        width: 100%;
+        height: 100px;
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        padding: 10px;
+        font-family: inherit;
+        font-weight: bold;
+        margin: 10px 0;
+        resize: vertical;
+    }
+    .check-btn {
+        background: var(--secondary-color);
+        border: 2px solid var(--border-color);
+        color: #000;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-family: inherit;
+        font-weight: bold;
+    }
+    .long-feedback {
+        margin-top: 15px;
+        padding: 10px;
+        border-radius: 5px;
+        background: #f9f9f9;
+        border: 1px solid #ddd;
+        display: none;
+    }
+
+    .revision-sheet {
+        background: #FFF9C4;
+        border: 4px solid var(--text-color);
+        padding: 20px;
+        display: none;
+    }
+    .rev-toggle {
+        width: 100%;
+        padding: 15px;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        font-size: 1.2rem;
+        border-radius: 10px;
+        cursor: pointer;
+        margin-bottom: 10px;
+    }
+
+    footer {
+        text-align: center;
+        padding: 30px;
+        background: #2C3E50;
+        color: white;
+        margin-top: 50px;
+    }
+
+    .svg-line { stroke: #2C3E50; stroke-width: 3; fill: none; stroke-linecap: round; }
+    .svg-fill { fill: #FF6B6B; stroke: #2C3E50; stroke-width: 3; }
+    .svg-text { font-family: 'Comic Sans MS'; font-size: 14px; fill: #000; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<header>
+    <h1>Class 5 Measurement</h1>
+    <h2>Chapter 6: Units, Time & Speed</h2>
+</header>
+
+<div id="score-panel">
+    <div class="score-item">Correct: <span id="score-correct">0</span></div>
+    <div class="score-item">Wrong: <span id="score-wrong">0</span></div>
+    <div class="score-item">Marks: <span id="score-marks">0</span></div>
+</div>
+
+<div class="container">
+
+    <div class="section-title">Class Notes 📏</div>
+    
+    <!-- 1. Basic Concept -->
+    <div class="topic-card">
+        <div class="topic-header">1. Measurement Basics</div>
+        <p>Measurement is finding a number that shows the size or amount of something. We use <strong>Standard Units</strong> so everyone gets the same result.</p>
+        <div class="illustration-box">
+            <svg viewBox="0 0 300 100">
+                <rect x="50" y="40" width="200" height="30" fill="#FFE082" stroke="black" stroke-width="2"/>
+                <line x1="50" y1="40" x2="50" y2="55" stroke="black" stroke-width="2"/>
+                <line x1="70" y1="40" x2="70" y2="50" stroke="black" stroke-width="1"/>
+                <line x1="90" y1="40" x2="90" y2="55" stroke="black" stroke-width="2"/>
+                <line x1="110" y1="40" x2="110" y2="50" stroke="black" stroke-width="1"/>
+                <line x1="130" y1="40" x2="130" y2="55" stroke="black" stroke-width="2"/>
+                <line x1="250" y1="40" x2="250" y2="55" stroke="black" stroke-width="2"/>
+                <text x="45" y="80" class="svg-text">0</text>
+                <text x="85" y="80" class="svg-text">1</text>
+                <text x="125" y="80" class="svg-text">2</text>
+                <text x="245" y="80" class="svg-text">10 cm</text>
+            </svg>
+        </div>
+        <div class="memory-tip">💡 TIP: Standard units prevent confusion!</div>
+        <div class="quick-check">Check: Is a 'handspan' a standard unit? (No)</div>
+    </div>
+
+    <!-- 2. Length -->
+    <div class="topic-card">
+        <div class="topic-header">2. Length (How long?)</div>
+        <p>We measure length in Metric Units:<br>
+        • <strong>Millimetre (mm):</strong> Very small (thickness of a coin).<br>
+        • <strong>Centimetre (cm):</strong> Small (width of a finger).<br>
+        • <strong>Metre (m):</strong> Medium (length of a saree).<br>
+        • <strong>Kilometre (km):</strong> Long distance (Home to School).</p>
+        <div class="illustration-box">
+            <svg viewBox="0 0 300 100">
+                <line x1="20" y1="50" x2="280" y2="50" class="svg-line" marker-end="url(#arrow)"/>
+                <rect x="50" y="30" width="10" height="40" fill="#FF6B6B" stroke="black"/>
+                <text x="40" y="90" class="svg-text">Pencil Tip (mm)</text>
+                <rect x="200" y="20" width="60" height="60" fill="#4ECDC4" stroke="black"/>
+                <text x="200" y="90" class="svg-text">Box (cm)</text>
+            </svg>
+        </div>
+        <div class="memory-tip">💡 TIP: 10 mm = 1 cm | 100 cm = 1 m | 1000 m = 1 km</div>
+    </div>
+
+    <!-- 3. Mass -->
+    <div class="topic-card">
+        <div class="topic-header">3. Mass (How heavy?)</div>
+        <p>Mass is the weight of an object.<br>
+        • <strong>Gram (g):</strong> Light things (Mustard seeds, gold).<br>
+        • <strong>Kilogram (kg):</strong> Heavy things (Rice bag, your weight).</p>
+        <div class="illustration-box">
+            <svg viewBox="0 0 300 100">
+                <line x1="50" y1="20" x2="250" y2="20" class="svg-line"/>
+                <polygon points="150,20 140,50 160,50" fill="black"/>
+                <rect x="50" y="20" width="50" height="50" fill="none" stroke="black"/>
+                <rect x="200" y="20" width="50" height="50" fill="none" stroke="black"/>
+                <circle cx="75" cy="55" r="10" fill="#FF6B6B"/>
+                <rect x="215" y="45" width="20" height="20" fill="#4ECDC4"/>
+            </svg>
+        </div>
+        <div class="memory-tip">💡 TIP: Kilo means 1000. So 1 kg = 1000 g.</div>
+    </div>
+
+    <!-- 4. Capacity -->
+    <div class="topic-card">
+        <div class="topic-header">4. Capacity (How much liquid?)</div>
+        <p>Capacity is the amount of liquid a container holds.<br>
+        • <strong>Millilitre (ml):</strong> Small drops (Medicine spoon).<br>
+        • <strong>Litre (l):</strong> Large amount (Milk packet, bucket).</p>
+        <div class="illustration-box">
+            <svg viewBox="0 0 300 100">
+                <path d="M120,20 L120,90 L180,90 L180,20" fill="none" stroke="black" stroke-width="3"/>
+                <rect x="120" y="50" width="60" height="40" fill="#4ECDC4" opacity="0.5"/>
+                <line x1="120" y1="50" x2="180" y2="50" stroke="blue" stroke-width="2"/>
+                <text x="190" y="55" class="svg-text">500ml</text>
+            </svg>
+        </div>
+        <div class="memory-tip">💡 TIP: 1 Litre = 1000 Millilitres.</div>
+    </div>
+
+    <!-- 5. Conversion -->
+    <div class="topic-card">
+        <div class="topic-header">5. Unit Conversions</div>
+        <p>Rule: <strong>Big to Small → Multiply (x)</strong><br>
+        Rule: <strong>Small to Big → Divide (÷)</strong><br>
+        Example: 5 m to cm → 5 x 100 = 500 cm.<br>
+        Example: 3000 g to kg → 3000 ÷ 1000 = 3 kg.</p>
+        <div class="illustration-box">
+            <svg viewBox="0 0 300 100">
+                <text x="20" y="50" class="svg-text" font-size="20">Big Unit</text>
+                <line x1="100" y1="45" x2="180" y2="45" stroke="black" stroke-width="2" marker-end="url(#arrow)"/>
+                <text x="120" y="40" class="svg-text">Multiply</text>
+                <text x="200" y="50" class="svg-text" font-size="20">Small Unit</text>
+            </svg>
+        </div>
+        <div class="quick-check">Check: 2 km = ? m (2000 m)</div>
+    </div>
+
+    <!-- 6. Mixed Units -->
+    <div class="topic-card">
+        <div class="topic-header">6. Mixed Unit Problems</div>
+        <p>When adding or subtracting different units, always group them.<br>
+        Example: 2m 40cm + 1m 50cm.<br>
+        Add cm: 40+50=90. Add m: 2+1=3. Result: 3m 90cm.</p>
+        <div class="illustration-box">
+            <svg viewBox="0 0 300 100">
+                <text x="50" y="40" class="svg-text">KG</text>
+                <text x="150" y="40" class="svg-text">G</text>
+                <line x1="40" y1="50" x2="200" y2="50" stroke="black"/>
+                <text x="50" y="70" class="svg-text">5</text>
+                <text x="150" y="70" class="svg-text">250</text>
+            </svg>
+        </div>
+        <div class="memory-tip">💡 TIP: If cm > 100, carry over to m!</div>
+    </div>
+
+    <!-- 7. Time -->
+    <div class="topic-card">
+        <div class="topic-header">7. Time (12h vs 24h)</div>
+        <p><strong>12-Hour Clock:</strong> Uses AM (Morning) and PM (Afternoon/Night).<br>
+        <strong>24-Hour Clock:</strong> Used in Railways. Add 12 to PM time.<br>
+        Ex: 1 PM = 13:00 Hours. 10 PM = 22:00 Hours.</p>
+        <div class="illustration-box">
+            <svg viewBox="0 0 300 100">
+                <circle cx="80" cy="50" r="40" fill="white" stroke="black" stroke-width="2"/>
+                <line x1="80" y1="50" x2="80" y2="20" stroke="black" stroke-width="2"/>
+                <line x1="80" y1="50" x2="100" y2="50" stroke="black" stroke-width="2"/>
+                <text x="140" y="55" class="svg-text">3:00 PM</text>
+                <text x="220" y="55" class="svg-text">= 15:00</text>
+            </svg>
+        </div>
+        <div class="memory-tip">💡 TIP: 00:00 is Midnight. 12:00 is Noon.</div>
+    </div>
+
+    <!-- 8. Calendar -->
+    <div class="topic-card">
+        <div class="topic-header">8. Calendar Calculations</div>
+        <p>1 Year = 365 Days (366 in Leap Year).<br>
+        Leap year happens every 4 years (divisible by 4).<br>
+        Months with 31 days: Jan, Mar, May, Jul, Aug, Oct, Dec.</p>
+        <div class="illustration-box">
+            <svg viewBox="0 0 300 100">
+                <rect x="100" y="20" width="100" height="70" fill="white" stroke="black"/>
+                <rect x="100" y="20" width="100" height="20" fill="red"/>
+                <text x="130" y="35" fill="white" font-family="Comic Sans MS" font-weight="bold">FEB</text>
+                <text x="125" y="70" class="svg-text" font-size="20">28/29</text>
+            </svg>
+        </div>
+        <div class="quick-check">Check: Is 2024 a leap year? (Yes)</div>
+    </div>
+
+    <!-- 9. Speed -->
+    <div class="topic-card">
+        <div class="topic-header">9. Speed</div>
+        <p>Speed tells how fast something moves.<br>
+        <strong>Formula: Speed = Distance ÷ Time</strong><br>
+        Unit: km/h or m/s.<br>
+        If a car travels 100km in 2 hours, Speed = 100 ÷ 2 = 50 km/h.</p>
+        <div class="illustration-box">
+            <svg viewBox="0 0 300 100">
+                <rect x="50" y="60" width="60" height="30" fill="#FF6B6B"/>
+                <circle cx="60" cy="90" r="10" fill="black"/>
+                <circle cx="100" cy="90" r="10" fill="black"/>
+                <line x1="120" y1="75" x2="180" y2="75" stroke="black" stroke-dasharray="5,5"/>
+                <text x="200" y="80" class="svg-text">60 km/h</text>
+            </svg>
+        </div>
+        <div class="memory-tip">💡 TIP: S = D / T</div>
+    </div>
+
+    <!-- 10. Word Problems -->
+    <div class="topic-card">
+        <div class="topic-header">10. Advanced Problems</div>
+        <p>Read the problem twice. Note down units. Convert to same unit before solving.<br>
+        Example: Add 500m to 2km.<br>
+        Step 1: Convert 2km to 2000m.<br>
+        Step 2: 2000 + 500 = 2500m.</p>
+        <div class="illustration-box">
+            <svg viewBox="0 0 300 100">
+                <text x="50" y="50" class="svg-text">Read ➜</text>
+                <text x="120" y="50" class="svg-text">Convert ➜</text>
+                <text x="210" y="50" class="svg-text">Solve</text>
+            </svg>
+        </div>
+    </div>
+
+    <div class="section-title">Important Questions 🌟</div>
+    <div id="imp-questions-container"></div>
+
+    <div class="section-title">Practice Quiz (70 Qs) 🎮</div>
+    <div id="practice-container">
+        <div id="question-area" class="question-box">
+            <div id="q-text" class="q-text">Loading...</div>
+            <div id="q-options" class="options-grid"></div>
+            <div id="q-feedback" class="feedback-box"></div>
+            <button id="next-btn" class="nav-btn">Next Question ➜</button>
+        </div>
+    </div>
+
+    <div class="section-title">Advanced Challenge 🧠</div>
+    <div id="long-questions-container"></div>
+
+    <div class="section-title">Quick Revision ⚡</div>
+    <button class="rev-toggle" onclick="toggleRevision()">Show/Hide Formulas</button>
+    <div id="revision-sheet" class="revision-sheet">
+        <ul>
+            <li>1 km = 1000 m</li>
+            <li>1 m = 100 cm</li>
+            <li>1 cm = 10 mm</li>
+            <li>1 kg = 1000 g</li>
+            <li>1 l = 1000 ml</li>
+            <li>Speed = Distance ÷ Time</li>
+            <li>1 Hour = 60 Minutes</li>
+            <li>1 Minute = 60 Seconds</li>
+            <li>Leap Year = 366 Days</li>
+            <li>12 PM is Noon, 12 AM is Midnight</li>
+        </ul>
+    </div>
+
+</div>
+
+<footer>
+    Designed & Created by SHRISHANT YADAV<br>
+    ShanEduHub
+</footer>
+
+<script>
+const importantQuestions = [
+    {q: "What is the standard unit of length?", a: "Metre (m)", exp: "Metre is the base unit for length in metric system."},
+    {q: "How many grams are in 1 kilogram?", a: "1000", exp: "Kilo means 1000."},
+    {q: "Which unit is used to measure liquid medicine?", a: "Millilitre (ml)", exp: "Small quantities of liquid use ml."},
+    {q: "Convert 5000m to km.", a: "5 km", exp: "5000 ÷ 1000 = 5."},
+    {q: "How many hours are in a day?", a: "24 hours", exp: "The earth completes one rotation in 24 hours."},
+    {q: "What time is 15:00 hours?", a: "3:00 PM", exp: "15 - 12 = 3 PM."},
+    {q: "Formula for Speed?", a: "Distance ÷ Time", exp: "Speed is distance covered per unit time."},
+    {q: "Days in a Leap Year?", a: "366", exp: "Feb has 29 days in a leap year."},
+    {q: "Add 2kg 500g and 1kg 500g.", a: "4 kg", exp: "500g+500g=1kg. 2+1+1=4kg."},
+    {q: "What is 12:00 at night called?", a: "Midnight", exp: "Start of a new day."},
+    {q: "How many cm in 1 metre?", a: "100", exp: "Centi means 1/100."},
+    {q: "Which is heavier: 1kg Cotton or 1kg Iron?", a: "Both equal", exp: "Both are exactly 1kg."},
+    {q: "Convert 2 minutes to seconds.", a: "120 seconds", exp: "2 x 60 = 120."},
+    {q: "Distance travelled in 1 hour is called?", a: "Speed", exp: "If time unit is hour."},
+    {q: "Unit to measure distance between cities?", a: "Kilometre", exp: "Large distances use km."},
+    {q: "Half a litre is how many ml?", a: "500 ml", exp: "1000 ÷ 2 = 500."},
+    {q: "12:00 in the day is called?", a: "Noon", exp: "Mid-day."},
+    {q: "Months with 30 days?", a: "Apr, Jun, Sep, Nov", exp: "Remember the knuckle trick."},
+    {q: "Is 2000 a leap year?", a: "Yes", exp: "Divisible by 400 (century rule)."},
+    {q: "Time from 10 AM to 2 PM?", a: "4 hours", exp: "10 to 12 is 2h, 12 to 2 is 2h. Total 4h."},
+    {q: "Convert 1.5 km to m.", a: "1500 m", exp: "1.5 x 1000 = 1500."},
+    {q: "Instrument to measure weight?", a: "Weighing Scale", exp: "Or Balance."},
+    {q: "Instrument to measure time?", a: "Clock / Watch", exp: "Tells hours, minutes, seconds."},
+    {q: "What represents 'AM'?", a: "Ante Meridiem", exp: "Before Noon."},
+    {q: "What represents 'PM'?", a: "Post Meridiem", exp: "After Noon."},
+    {q: "How many weeks in a year?", a: "52", exp: "365 ÷ 7 ≈ 52."},
+    {q: "Quarter of an hour is?", a: "15 minutes", exp: "60 ÷ 4 = 15."},
+    {q: "Speed 60km/h, Time 2h. Distance?", a: "120 km", exp: "Distance = Speed x Time (60x2)."},
+    {q: "Normal body temperature?", a: "37°C / 98.6°F", exp: "Standard measurement."},
+    {q: "Freezing point of water?", a: "0°C", exp: "Water turns to ice."}
+];
+
+const practiceQuestions = [
+    // BASIC UNITS (1-10)
+    {q: "Base unit of length?", options: ["Metre", "Litre", "Gram", "Second"], a: "Metre", exp: "Metre is standard for length."},
+    {q: "Base unit of mass?", options: ["Gram", "Metre", "Litre", "Hour"], a: "Gram", exp: "Gram is standard for mass."},
+    {q: "Base unit of capacity?", options: ["Litre", "Metre", "Gram", "Watt"], a: "Litre", exp: "Litre is standard for liquids."},
+    {q: "1 km = ___ m", options: ["1000", "100", "10", "10000"], a: "1000", exp: "Kilo means 1000."},
+    {q: "1 m = ___ cm", options: ["100", "10", "1000", "0.1"], a: "100", exp: "Standard conversion."},
+    {q: "1 cm = ___ mm", options: ["10", "100", "1000", "5"], a: "10", exp: "Look at a ruler."},
+    {q: "1 kg = ___ g", options: ["1000", "100", "500", "10"], a: "1000", exp: "Kilo is 1000."},
+    {q: "1 l = ___ ml", options: ["1000", "100", "50", "10"], a: "1000", exp: "Milli is 1/1000."},
+    {q: "Short form for Centimetre?", options: ["cm", "km", "m", "mm"], a: "cm", exp: "c for centi, m for metre."},
+    {q: "Short form for Millilitre?", options: ["ml", "l", "kl", "mg"], a: "ml", exp: "m for milli, l for litre."},
+
+    // CONVERSIONS (11-20)
+    {q: "3000 m = ___ km", options: ["3", "30", "300", "0.3"], a: "3", exp: "3000 ÷ 1000 = 3."},
+    {q: "5 kg = ___ g", options: ["5000", "500", "50", "0.5"], a: "5000", exp: "5 x 1000 = 5000."},
+    {q: "20 mm = ___ cm", options: ["2", "20", "200", "0.2"], a: "2", exp: "20 ÷ 10 = 2."},
+    {q: "7 l = ___ ml", options: ["7000", "700", "70", "0.7"], a: "7000", exp: "7 x 1000."},
+    {q: "500 cm = ___ m", options: ["5", "50", "0.5", "5000"], a: "5", exp: "500 ÷ 100 = 5."},
+    {q: "4500 g = ___ kg ___ g", options: ["4kg 500g", "45kg", "4kg 50g", "4.5g"], a: "4kg 500g", exp: "4000g is 4kg, 500g remains."},
+    {q: "Half a km is ___ m", options: ["500", "50", "250", "1000"], a: "500", exp: "1000 ÷ 2 = 500."},
+    {q: "Quarter litre is ___ ml", options: ["250", "500", "750", "100"], a: "250", exp: "1000 ÷ 4 = 250."},
+    {q: "10 km is ___ m", options: ["10000", "1000", "100", "100000"], a: "10000", exp: "10 x 1000."},
+    {q: "120 seconds = ___ min", options: ["2", "3", "1", "4"], a: "2", exp: "120 ÷ 60 = 2."},
+
+    // TIME & CALENDAR (21-40)
+    {q: "1 Hour = ___ minutes", options: ["60", "100", "24", "12"], a: "60", exp: "Standard time unit."},
+    {q: "1 Minute = ___ seconds", options: ["60", "100", "30", "10"], a: "60", exp: "Standard time unit."},
+    {q: "Quarter past 5 is?", options: ["5:15", "5:45", "5:30", "4:45"], a: "5:15", exp: "15 minutes after 5."},
+    {q: "Half past 3 is?", options: ["3:30", "3:15", "3:45", "2:30"], a: "3:30", exp: "30 minutes after 3."},
+    {q: "Quarter to 7 is?", options: ["6:45", "7:15", "7:45", "6:15"], a: "6:45", exp: "15 minutes before 7."},
+    {q: "2 PM in 24-hour clock?", options: ["14:00", "02:00", "12:00", "24:00"], a: "14:00", exp: "2 + 12 = 14."},
+    {q: "20:00 hours in 12-hour clock?", options: ["8 PM", "8 AM", "10 PM", "6 PM"], a: "8 PM", exp: "20 - 12 = 8."},
+    {q: "Days in August?", options: ["31", "30", "28", "29"], a: "31", exp: "Jan, Mar, May, Jul, Aug have 31."},
+    {q: "Days in September?", options: ["30", "31", "28", "29"], a: "30", exp: "Sep, Apr, Jun, Nov have 30."},
+    {q: "First month of year?", options: ["January", "March", "December", "June"], a: "January", exp: "Start of calendar."},
+    {q: "Leap year comes every ___ years", options: ["4", "2", "3", "5"], a: "4", exp: "Regular cycle."},
+    {q: "Smallest unit of time?", options: ["Second", "Minute", "Hour", "Day"], a: "Second", exp: "Smallest standard unit."},
+    {q: "10 AM to 1 PM is ___ hours", options: ["3", "2", "4", "5"], a: "3", exp: "10->11->12->1."},
+    {q: "Train leaves at 18:30. Time is?", options: ["6:30 PM", "6:30 AM", "8:30 PM", "4:30 PM"], a: "6:30 PM", exp: "18 - 12 = 6."},
+    {q: "Midnight is?", options: ["12:00 AM", "12:00 PM", "01:00 AM", "11:00 PM"], a: "12:00 AM", exp: "Start of day."},
+    {q: "Noon is?", options: ["12:00 PM", "12:00 AM", "01:00 PM", "11:00 AM"], a: "12:00 PM", exp: "Mid-day."},
+    {q: "5 minutes to 5?", options: ["4:55", "5:05", "5:50", "4:50"], a: "4:55", exp: "5 mins left for 5."},
+    {q: "Days in a normal year?", options: ["365", "366", "360", "364"], a: "365", exp: "Non-leap year."},
+    {q: "Weeks in a fortnight?", options: ["2", "1", "3", "4"], a: "2", exp: "14 days."},
+    {q: "Which year is a leap year?", options: ["2024", "2023", "2021", "2019"], a: "2024", exp: "Divisible by 4."},
+
+    // OPERATIONS & SPEED (41-60)
+    {q: "2kg 200g + 1kg 300g = ?", options: ["3kg 500g", "3kg 600g", "4kg 500g", "3kg 100g"], a: "3kg 500g", exp: "Add kg to kg, g to g."},
+    {q: "5m - 2m 50cm = ?", options: ["2m 50cm", "3m 50cm", "2m", "3m"], a: "2m 50cm", exp: "500cm - 250cm = 250cm."},
+    {q: "Distance 100km, Time 2h. Speed?", options: ["50 km/h", "200 km/h", "100 km/h", "20 km/h"], a: "50 km/h", exp: "100 ÷ 2 = 50."},
+    {q: "Speed 40 km/h, Time 3h. Distance?", options: ["120 km", "100 km", "140 km", "80 km"], a: "120 km", exp: "40 x 3 = 120."},
+    {q: "Distance 50km, Speed 25km/h. Time?", options: ["2 h", "3 h", "1 h", "4 h"], a: "2 h", exp: "50 ÷ 25 = 2."},
+    {q: "Which is faster? 60km/h or 40km/h?", options: ["60 km/h", "40 km/h", "Both same", "None"], a: "60 km/h", exp: "Higher number is faster."},
+    {q: "3 litres + 500 ml = ?", options: ["3500 ml", "3050 ml", "350 ml", "3005 ml"], a: "3500 ml", exp: "3000 + 500."},
+    {q: "Double of 2m 50cm?", options: ["5m", "4m 50cm", "4m 100cm", "5m 50cm"], a: "5m", exp: "4m + 100cm = 5m."},
+    {q: "Half of 1kg?", options: ["500g", "250g", "100g", "750g"], a: "500g", exp: "1000 ÷ 2."},
+    {q: "Convert 1 hour 20 mins to mins", options: ["80 mins", "90 mins", "100 mins", "120 mins"], a: "80 mins", exp: "60 + 20."},
+    {q: "Convert 90 mins to hours", options: ["1.5 hours", "1 hour", "2 hours", "1.2 hours"], a: "1.5 hours", exp: "60 + 30 mins."},
+    {q: "Add 15 min + 45 min", options: ["1 hour", "50 min", "55 min", "1 hour 10 min"], a: "1 hour", exp: "60 minutes = 1 hour."},
+    {q: "Speed of a walking human?", options: ["5 km/h", "50 km/h", "100 km/h", "500 km/h"], a: "5 km/h", exp: "Humans walk slowly."},
+    {q: "Speed of a Plane?", options: ["800 km/h", "50 km/h", "10 km/h", "5 km/h"], a: "800 km/h", exp: "Planes are very fast."},
+    {q: "How many months have 28 days?", options: ["All 12", "1", "0", "6"], a: "All 12", exp: "All months have at least 28 days."},
+    {q: "3:30 PM + 2 hours = ?", options: ["5:30 PM", "6:30 PM", "4:30 PM", "5:00 PM"], a: "5:30 PM", exp: "3 + 2 = 5."},
+    {q: "1000 ml - 200 ml = ?", options: ["800 ml", "800 l", "200 ml", "1200 ml"], a: "800 ml", exp: "Subtraction."},
+    {q: "Weight of a school bag?", options: ["4 kg", "4 g", "40 kg", "400 g"], a: "4 kg", exp: "4g is paper, 40kg is a person."},
+    {q: "Length of a new pencil?", options: ["15 cm", "15 m", "15 mm", "15 km"], a: "15 cm", exp: "Reasonable length."},
+    {q: "Water in a bucket?", options: ["10 l", "10 ml", "10 kl", "10 g"], a: "10 l", exp: "Bucket holds litres."},
+
+    // ADVANCED / THINKING (61-70)
+    {q: "10m cloth used for 5 shirts. Cloth per shirt?", options: ["2 m", "5 m", "1 m", "2.5 m"], a: "2 m", exp: "10 ÷ 5 = 2."},
+    {q: "Train A: 60km/h, Train B: 80km/h. Difference?", options: ["20 km/h", "140 km/h", "10 km/h", "30 km/h"], a: "20 km/h", exp: "80 - 60 = 20."},
+    {q: "Sun rises at 6 AM, sets at 6 PM. Day length?", options: ["12 hours", "10 hours", "24 hours", "6 hours"], a: "12 hours", exp: "6 to 6 is 12."},
+    {q: "How many 50g weights make 1kg?", options: ["20", "10", "50", "2"], a: "20", exp: "1000 ÷ 50 = 20."},
+    {q: "How many 250ml glasses fill a 1l bottle?", options: ["4", "2", "3", "5"], a: "4", exp: "250 x 4 = 1000."},
+    {q: "Cost of 1m ribbon is ₹10. Cost of 50cm?", options: ["₹5", "₹2", "₹10", "₹20"], a: "₹5", exp: "Half metre = Half price."},
+    {q: "Perimeter of square with side 2cm?", options: ["8 cm", "4 cm", "2 cm", "6 cm"], a: "8 cm", exp: "2 + 2 + 2 + 2."},
+    {q: "If today is Monday, day after tomorrow?", options: ["Wednesday", "Tuesday", "Thursday", "Sunday"], a: "Wednesday", exp: "Mon -> Tue -> Wed."},
+    {q: "Third day of the week?", options: ["Tuesday", "Wednesday", "Thursday", "Monday"], a: "Tuesday", exp: "Sun(1), Mon(2), Tue(3)."},
+    {q: "Which is a unit of Speed?", options: ["km/h", "km", "h", "kg"], a: "km/h", exp: "Distance over Time."}
+];
+
+const longQuestions = [
+    {
+        q: "Raju went to school at 7:30 AM and came back at 2:30 PM. How long was he away?",
+        points: ["7 hours", "7:30 to 12:30 is 5", "12:30 to 2:30 is 2", "5+2"],
+        model: "Raju was away for 7 hours. From 7:30 AM to 12:30 PM is 5 hours. From 12:30 PM to 2:30 PM is 2 hours. Total = 7 hours."
+    },
+    {
+        q: "A car travels 180 km in 3 hours. Calculate its speed.",
+        points: ["speed formula", "distance/time", "180/3", "60 km/h"],
+        model: "Speed = Distance ÷ Time. Speed = 180 km ÷ 3 hours = 60 km/h."
+    },
+    {
+        q: "Convert 5kg 250g into grams.",
+        points: ["5000", "5250", "multiply by 1000", "add 250"],
+        model: "1 kg = 1000 g. So, 5 kg = 5000 g. Total = 5000 + 250 = 5250 g."
+    },
+    {
+        q: "A movie started at 14:15 and ended at 16:45. How long was the movie?",
+        points: ["2 hours", "30 mins", "2.5 hours", "subtract"],
+        model: "Hours: 16 - 14 = 2 hours. Minutes: 45 - 15 = 30 mins. Total duration = 2 hours 30 minutes."
+    },
+    {
+        q: "Explain why we have Leap Years.",
+        points: ["365 days", "6 hours extra", "4 years", "add one day", "feb 29"],
+        model: "Earth takes 365 days and 6 hours to orbit Sun. We save these 6 hours for 4 years (6x4=24) to make 1 extra day. This day is added to February."
+    },
+    {
+        q: "A bucket holds 15 Litres. A jug holds 500 ml. How many jugs to fill the bucket?",
+        points: ["convert", "15000 ml", "divide", "30 jugs"],
+        model: "15 Litres = 15000 ml. Number of jugs = 15000 ÷ 500 = 30 jugs."
+    },
+    {
+        q: "Train leaves Delhi at 20:00 and reaches Mumbai at 08:00 next day. Travel time?",
+        points: ["12 hours", "20 to 24 is 4", "0 to 8 is 8", "4+8"],
+        model: "20:00 to Midnight (24:00) is 4 hours. Midnight to 08:00 is 8 hours. Total time = 4 + 8 = 12 hours."
+    },
+    {
+        q: "The distance between two poles is 1 km 500 m. There are 3 such gaps. Total distance?",
+        points: ["multiply", "3 times", "4 km", "500 m", "4500 m"],
+        model: "1 km 500 m = 1500 m. 1500 x 3 = 4500 m. Answer is 4 km 500 m."
+    },
+    {
+        q: "Ram runs at 10 km/h. Shyam runs at 8 km/h. How much faster is Ram?",
+        points: ["difference", "subtract", "2 km/h", "faster"],
+        model: "Difference in speed = 10 - 8 = 2 km/h. Ram is 2 km/h faster than Shyam."
+    },
+    {
+        q: "Add 3 hours 40 minutes and 1 hour 30 minutes.",
+        points: ["4 hours", "70 mins", "5 hours", "10 mins"],
+        model: "Hours: 3+1=4. Mins: 40+30=70. Since 70 mins = 1 hr 10 mins, add 1 hr to hours. Total = 5 hours 10 minutes."
+    }
+];
+
+// STATE
+let state = {
+    qIndex: 0,
+    score: { correct: 0, wrong: 0, marks: 0 },
+    answered: false
+};
+
+// INIT
+document.addEventListener('DOMContentLoaded', () => {
+    initImpQuestions();
+    initLongQuestions();
+    loadPracticeQuestion();
+});
+
+function initImpQuestions() {
+    const container = document.getElementById('imp-questions-container');
+    importantQuestions.forEach((item, i) => {
+        container.innerHTML += `
+        <div class="imp-q-card">
+            <div class="imp-q-q">Q${i+1}: ${item.q}</div>
+            <div class="imp-q-a">Ans: ${item.a}</div>
+            <div style="font-size:0.8rem; color:#666;">ℹ️ ${item.exp}</div>
+        </div>`;
+    });
+}
+
+function initLongQuestions() {
+    const container = document.getElementById('long-questions-container');
+    longQuestions.forEach((item, i) => {
+        container.innerHTML += `
+        <div class="long-q-card">
+            <div><strong>Q${i+1}: ${item.q}</strong></div>
+            <textarea id="lq-ans-${i}" placeholder="Type your answer here..."></textarea>
+            <button class="check-btn" onclick="checkLongAnswer(${i})">Check Answer</button>
+            <div id="lq-feed-${i}" class="long-feedback"></div>
+        </div>`;
+    });
+}
+
+function loadPracticeQuestion() {
+    if (state.qIndex >= practiceQuestions.length) {
+        document.getElementById('practice-container').innerHTML = `
+            <div class="question-box" style="text-align:center">
+                <h2>🎉 Practice Complete!</h2>
+                <p>Final Score: ${state.score.marks}</p>
+                <button onclick="location.reload()" class="nav-btn" style="display:inline-block">Restart</button>
+            </div>`;
+        return;
+    }
+
+    const q = practiceQuestions[state.qIndex];
+    state.answered = false;
+
+    // Shuffle options
+    let opts = [...q.options];
+    opts.sort(() => Math.random() - 0.5);
+
+    document.getElementById('q-text').innerText = `Q${state.qIndex + 1}: ${q.q}`;
+    const optsContainer = document.getElementById('q-options');
+    optsContainer.innerHTML = '';
+
+    opts.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerText = opt;
+        btn.onclick = () => checkPracticeAnswer(btn, opt, q.a, q.exp);
+        optsContainer.appendChild(btn);
+    });
+
+    document.getElementById('q-feedback').className = 'feedback-box';
+    document.getElementById('q-feedback').style.display = 'none';
+    document.getElementById('next-btn').style.display = 'none';
+}
+
+function checkPracticeAnswer(btn, selected, correct, exp) {
+    if (state.answered) return;
+    state.answered = true;
+
+    const feedbackEl = document.getElementById('q-feedback');
+    const allBtns = document.querySelectorAll('.option-btn');
+    
+    allBtns.forEach(b => b.disabled = true);
+
+    if (selected === correct) {
+        btn.classList.add('correct');
+        feedbackEl.innerHTML = `<strong>Excellent! ⭐</strong><br>${exp}`;
+        feedbackEl.className = 'feedback-box feedback-correct show';
+        updateScore(true);
+    } else {
+        btn.classList.add('wrong');
+        allBtns.forEach(b => {
+            if(b.innerText === correct) b.classList.add('correct');
+        });
+        feedbackEl.innerHTML = `<strong>Try Again!</strong><br>Correct answer: <u>${correct}</u>.<br>${exp}`;
+        feedbackEl.className = 'feedback-box feedback-wrong show';
+        updateScore(false);
+    }
+
+    const nextBtn = document.getElementById('next-btn');
+    nextBtn.style.display = 'block';
+    nextBtn.onclick = () => {
+        state.qIndex++;
+        loadPracticeQuestion();
+    };
+}
+
+function checkLongAnswer(index) {
+    const q = longQuestions[index];
+    const userAns = document.getElementById(`lq-ans-${index}`).value.toLowerCase();
+    const feedbackEl = document.getElementById(`lq-feed-${index}`);
+    
+    if (userAns.trim().length < 5) {
+        alert("Please write a proper answer.");
+        return;
+    }
+
+    let matchCount = 0;
+    q.points.forEach(p => {
+        if (userAns.includes(p)) matchCount++;
+    });
+
+    const isCorrect = matchCount >= 1; 
+    
+    if (isCorrect) {
+        feedbackEl.innerHTML = `<span style="color:green">✔ Good Answer!</span><br><strong>Model Answer:</strong> ${q.model}`;
+        feedbackEl.style.borderLeft = "5px solid green";
+        if (!feedbackEl.dataset.scored) {
+            updateScore(true);
+            feedbackEl.dataset.scored = "true";
+        }
+    } else {
+        feedbackEl.innerHTML = `<span style="color:red">✘ Keep Trying.</span><br><strong>Key points: ${q.points.join(", ")}</strong><br><strong>Model Answer:</strong> ${q.model}`;
+        feedbackEl.style.borderLeft = "5px solid red";
+        if (!feedbackEl.dataset.scored) {
+            updateScore(false);
+            feedbackEl.dataset.scored = "true";
+        }
+    }
+    feedbackEl.style.display = "block";
+}
+
+function updateScore(isCorrect) {
+    if (isCorrect) {
+        state.score.correct++;
+        state.score.marks += 1;
+    } else {
+        state.score.wrong++;
+    }
+    document.getElementById('score-correct').innerText = state.score.correct;
+    document.getElementById('score-wrong').innerText = state.score.wrong;
+    document.getElementById('score-marks').innerText = state.score.marks;
+}
+
+function toggleRevision() {
+    const el = document.getElementById('revision-sheet');
+    el.style.display = el.style.display === 'block' ? 'none' : 'block';
+}
+</script>
+</body>
+</html>

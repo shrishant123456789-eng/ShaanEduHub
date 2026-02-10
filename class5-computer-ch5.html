@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 5 Computer - Chapter 5: File Handling</title>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --paper-bg: #fdfbf7;
+            --line-color: #a2d2ff;
+            --ink-color: #2b2d42;
+            --accent-blue: #bde0fe;
+            --accent-pink: #ffc8dd;
+            --accent-green: #cdb4db;
+            --accent-yellow: #fff1e6;
+            --correct: #2d6a4f;
+            --wrong: #d00000;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Patrick Hand', cursive, sans-serif;
+            background-color: var(--paper-bg);
+            color: var(--ink-color);
+            margin: 0;
+            padding: 0;
+            font-size: 18px;
+            line-height: 1.5;
+            background-image: linear-gradient(var(--line-color) 1px, transparent 1px);
+            background-size: 100% 1.5rem;
+            background-attachment: local;
+        }
+
+        h1, h2, h3, h4, h5, h6, p, li, span, div, button, input, textarea {
+            font-weight: 700; /* GLOBAL BOLD RULE */
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            margin-top: 10px;
+            margin-bottom: 80px; /* Space for footer */
+        }
+
+        /* HERO HEADER */
+        header {
+            text-align: center;
+            padding: 30px 10px;
+            background: var(--accent-blue);
+            border-radius: 15px 15px 0 0;
+            border-bottom: 4px dashed var(--line-color);
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            color: var(--ink-color);
+            text-transform: uppercase;
+            text-shadow: 2px 2px 0px white;
+        }
+
+        header .subtitle {
+            font-size: 1.2rem;
+            background: var(--accent-pink);
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            margin-top: 10px;
+            transform: rotate(-2deg);
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* LIVE SCORE PANEL */
+        .score-panel {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: var(--ink-color);
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            font-size: 0.9rem;
+            border-bottom: 3px solid var(--accent-pink);
+        }
+
+        .score-item {
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .score-val {
+            font-size: 1.2rem;
+            color: var(--accent-yellow);
+        }
+
+        /* SECTIONS */
+        .section-title {
+            background: var(--accent-pink);
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: inline-block;
+            margin: 30px 0 20px;
+            transform: rotate(-1deg);
+            border: 2px solid var(--ink-color);
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+            font-size: 1.5rem;
+        }
+
+        /* NOTES */
+        .note-card {
+            background: #fff;
+            border: 2px solid var(--ink-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            position: relative;
+            box-shadow: 5px 5px 0px var(--line-color);
+        }
+
+        .note-card::before {
+            content: '📌';
+            position: absolute;
+            top: -15px;
+            right: -10px;
+            font-size: 1.5rem;
+            transform: rotate(15deg);
+        }
+
+        .note-badge {
+            background: var(--accent-yellow);
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid var(--ink-color);
+            font-size: 0.8rem;
+        }
+
+        .image-box {
+            background: #eee;
+            height: 100px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #aaa;
+            border-radius: 8px;
+            color: #666;
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .quick-check {
+            background: var(--accent-green);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        /* TABLE STYLES */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            background: white;
+        }
+        
+        th, td {
+            border: 2px solid var(--ink-color);
+            padding: 8px;
+            text-align: left;
+        }
+        
+        th {
+            background: var(--accent-blue);
+        }
+
+        /* IMPORTANT QUESTIONS */
+        .imp-q-card {
+            border-left: 5px solid var(--wrong);
+            background: #fff0f0;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 0 5px 5px 0;
+        }
+
+        /* PRACTICE QUESTIONS */
+        .question-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid var(--ink-color);
+            margin-bottom: 25px;
+            box-shadow: 0 4px 0 #ddd;
+        }
+
+        .q-text {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        @media (max-width: 500px) {
+            .options-grid { grid-template-columns: 1fr; }
+        }
+
+        .option-btn {
+            background: var(--paper-bg);
+            border: 2px solid var(--ink-color);
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+        .option-btn:hover {
+            background: var(--accent-blue);
+        }
+
+        .option-btn.correct {
+            background: #d4edda;
+            border-color: var(--correct);
+            color: var(--correct);
+        }
+
+        .option-btn.wrong {
+            background: #f8d7da;
+            border-color: var(--wrong);
+            color: var(--wrong);
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .feedback.show { display: block; }
+        
+        .feedback.correct { background: #d4edda; border: 1px solid var(--correct); }
+        .feedback.wrong { background: #f8d7da; border: 1px solid var(--wrong); }
+
+        /* LONG QUESTIONS */
+        .long-q-card {
+            background: #f0f7ff;
+            border: 2px solid var(--ink-color);
+            padding: 15px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        .check-btn {
+            background: var(--ink-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1rem;
+            box-shadow: 0 4px 0 #000;
+        }
+
+        .check-btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        .model-answer {
+            margin-top: 15px;
+            padding: 10px;
+            background: #fff;
+            border: 1px dashed var(--ink-color);
+            display: none;
+        }
+
+        /* REVISION */
+        .revision-box {
+            background: var(--accent-yellow);
+            padding: 20px;
+            border: 3px double var(--ink-color);
+            margin: 20px 0;
+            display: none;
+        }
+
+        .revision-toggle {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: var(--accent-pink);
+            border: 2px solid var(--ink-color);
+            font-family: inherit;
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: var(--ink-color);
+            color: white;
+            margin-top: 50px;
+            font-size: 0.9rem;
+        }
+
+        /* UTILS */
+        .hidden { display: none; }
+        .tag { font-size: 0.8em; color: #666; text-transform: uppercase; letter-spacing: 1px; }
+
+    </style>
+</head>
+<body>
+
+    <!-- SCORE PANEL -->
+    <div class="score-panel" id="scorePanel">
+        <div class="score-item">
+            <div class="score-val" id="scoreCorrect">0</div>
+            <div>Correct</div>
+        </div>
+        <div class="score-item">
+            <div class="score-val" id="scoreWrong">0</div>
+            <div>Wrong</div>
+        </div>
+        <div class="score-item">
+            <div class="score-val" id="scoreTotal">0</div>
+            <div>Attempted</div>
+        </div>
+        <div class="score-item">
+            <div class="score-val" id="scorePercent">0%</div>
+            <div>Score</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- HEADER -->
+        <header>
+            <h1>Computer<br>Advanced</h1>
+            <div class="subtitle">Chapter 5: File Handling & Data Organization</div>
+            <p style="margin-top: 10px;">Class 5 | ShanEduHub</p>
+        </header>
+
+        <!-- NOTES SECTION -->
+        <h2 class="section-title">📘 Chapter Notes</h2>
+
+        <!-- Topic 1 -->
+        <div class="note-card">
+            <h3>1. File vs. Folder</h3>
+            <p><span class="note-badge">Definition</span> <strong>File:</strong> The smallest unit of storage. It contains data like text, images, or music.<br>
+            <strong>Folder:</strong> A container that stores files and other folders (sub-folders).</p>
+            <p><strong>Basic → Advanced:</strong> Initially, we just save files. As experts, we organize them into folders to keep the computer tidy, just like a bookshelf.</p>
+            <p><strong>🇮🇳 Daily Life Example:</strong> Ideally, a <strong>File</strong> is like a single sheet of homework paper. A <strong>Folder</strong> is like your School Bag that holds many papers and books.</p>
+            <div class="image-box">[ 📄 File ] vs [ 📁 Folder ]</div>
+            <p><strong>💡 Memory Tip:</strong> Files have extensions (.txt), Folders do not!</p>
+            <div class="quick-check">❓ Check: Can a folder contain another folder? <strong>Yes!</strong></div>
+        </div>
+
+        <!-- Topic 2 -->
+        <div class="note-card">
+            <h3>2. File Extensions</h3>
+            <p><span class="note-badge">Concept</span> The part of the file name after the dot (.) is the extension. It tells the computer which app to open.</p>
+            <table>
+                <tr><th>Ext</th><th>Type</th><th>App</th></tr>
+                <tr><td>.docx</td><td>Document</td><td>MS Word</td></tr>
+                <tr><td>.xlsx</td><td>Spreadsheet</td><td>MS Excel</td></tr>
+                <tr><td>.pptx</td><td>Presentation</td><td>PowerPoint</td></tr>
+                <tr><td>.pdf</td><td>Fixed Doc</td><td>Adobe Reader</td></tr>
+                <tr><td>.exe</td><td>Executable</td><td>Program Installer</td></tr>
+            </table>
+            <div class="image-box">File Name: <strong>Project.docx</strong><br>(Name) . (Extension)</div>
+            <div class="quick-check">❓ Check: Which extension is for songs? (Typically .mp3)</div>
+        </div>
+
+        <!-- Topic 3 -->
+        <div class="note-card">
+            <h3>3. Folder Hierarchy</h3>
+            <p><span class="note-badge">Tree Structure</span> Files are organized in a tree-like structure. The main folder is the <strong>Root</strong> (usually Drive C:). Folders inside folders are called <strong>Sub-folders</strong>.</p>
+            <p><strong>Path:</strong> The address of a file. <br>Ex: <em>C:\Users\Student\Documents\Homework.docx</em></p>
+            <div class="image-box">🌳 Root → Parent Folder → Child Folder → File</div>
+            <div class="quick-check">❓ Check: The top-most folder is called? <strong>Root</strong></div>
+        </div>
+
+        <!-- Topic 4 -->
+        <div class="note-card">
+            <h3>4. File Properties</h3>
+            <p>Right-click a file and select <strong>Properties</strong> to see details.</p>
+            <ul>
+                <li><strong>Size:</strong> How much space it takes (KB, MB, GB).</li>
+                <li><strong>Type:</strong> What kind of file it is.</li>
+                <li><strong>Created:</strong> Date and time it was made.</li>
+                <li><strong>Location:</strong> Where it is stored.</li>
+            </ul>
+            <div class="image-box">Properties Window: [ Size: 2 MB | Created: Today ]</div>
+        </div>
+
+        <!-- Topic 5 -->
+        <div class="note-card">
+            <h3>5. Operations: Copy, Move, Delete</h3>
+            <p><strong>Copy (Ctrl + C):</strong> Makes a duplicate. Original stays.</p>
+            <p><strong>Cut/Move (Ctrl + X):</strong> Moves file to new place. Original is gone.</p>
+            <p><strong>Paste (Ctrl + V):</strong> Places the copied/cut file.</p>
+            <p><strong>Rename (F2):</strong> Changing the name of a file.</p>
+            <p><strong>Delete (Del):</strong> Sends file to Recycle Bin.</p>
+            <div class="quick-check">💡 Tip: Shift + Del deletes permanently!</div>
+        </div>
+
+        <!-- Topic 6 -->
+        <div class="note-card">
+            <h3>6. Compression (ZIP)</h3>
+            <p><span class="note-badge">Advanced</span> Compressing files means reducing their size without losing data. It's like squeezing clothes into a suitcase.</p>
+            <p><strong>Why?</strong> To save disk space and email files faster.</p>
+            <div class="image-box">📦 Large Files → [ ZIP Tool ] → 🤏 Small .zip File</div>
+        </div>
+
+        <!-- Topic 7 -->
+        <div class="note-card">
+            <h3>7. Backup & Restore</h3>
+            <p><strong>Backup:</strong> Making an extra copy of data on a Pen Drive or Cloud (Internet).</p>
+            <p><strong>Restore:</strong> Bringing data back from the backup if the original is lost.</p>
+            <p><strong>Reason:</strong> Protects against viruses, accidental deletion, or computer failure.</p>
+            <div class="image-box">💻 PC Data ➡️ ☁️ Cloud / 💾 Pendrive</div>
+        </div>
+
+        <!-- IMPORTANT QUESTIONS -->
+        <h2 class="section-title">❓ Important Questions</h2>
+        <div id="imp-questions-container">
+            <!-- Populated by JS -->
+        </div>
+
+        <!-- PRACTICE QUESTIONS -->
+        <h2 class="section-title">🧠 Practice Arena (70 Questions)</h2>
+        <div id="practice-container">
+            <!-- Populated by JS -->
+        </div>
+
+        <!-- ADVANCED LONG QUESTIONS -->
+        <h2 class="section-title">🧪 Advanced Lab (Long Answer)</h2>
+        <div id="long-container">
+            <!-- Populated by JS -->
+        </div>
+
+        <!-- REVISION -->
+        <h2 class="section-title">🔁 Revision</h2>
+        <button class="revision-toggle" id="revBtn">Show/Hide Revision Notes</button>
+        <div class="revision-box" id="revBox">
+            <ul>
+                <li><strong>File:</strong> Stores data. <strong>Folder:</strong> Stores files.</li>
+                <li><strong>Extension:</strong> Identifies file type (.docx, .jpg).</li>
+                <li><strong>Shortcut Keys:</strong> Ctrl+C (Copy), Ctrl+V (Paste), Ctrl+X (Cut).</li>
+                <li><strong>Hierarchy:</strong> Root > Parent > Child organization.</li>
+                <li><strong>Compression:</strong> Reduces size (.zip).</li>
+                <li><strong>Backup:</strong> Copy of data for safety.</li>
+                <li><strong>Unit:</strong> 1024 KB = 1 MB.</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>Designed & Created by SHRISHANT YADAV<br>ShanEduHub</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- STATE MANAGEMENT ---
+            const state = {
+                correct: 0,
+                wrong: 0,
+                total: 0
+            };
+
+            // --- DATA: IMPORTANT QUESTIONS (30) ---
+            const importantQuestions = [
+                { q: "What is a file?", a: "A collection of related information stored together." },
+                { q: "What is a folder?", a: "A container used to store files and other folders." },
+                { q: "What is a sub-folder?", a: "A folder inside another folder." },
+                { q: "Full form of PDF?", a: "Portable Document Format." },
+                { q: "Extension of Word file?", a: ".docx" },
+                { q: "Extension of Excel file?", a: ".xlsx" },
+                { q: "Extension of PowerPoint?", a: ".pptx" },
+                { q: "Shortcut to Copy?", a: "Ctrl + C" },
+                { q: "Shortcut to Paste?", a: "Ctrl + V" },
+                { q: "Shortcut to Cut?", a: "Ctrl + X" },
+                { q: "Shortcut to Rename?", a: "F2" },
+                { q: "What is the Root folder?", a: "The main folder that contains all other folders." },
+                { q: "What is File Compression?", a: "Reducing file size to save space." },
+                { q: "Common compression format?", a: ".zip or .rar" },
+                { q: "What is Backup?", a: "Copying data to a safe place." },
+                { q: "Where do deleted files go?", a: "Recycle Bin." },
+                { q: "Can we restore deleted files?", a: "Yes, from Recycle Bin." },
+                { q: "How to permanently delete?", a: "Shift + Delete." },
+                { q: "What is a file path?", a: "The complete address of a file." },
+                { q: "Unit of file size?", a: "KB, MB, GB, TB." },
+                { q: "1024 KB equals?", a: "1 MB (Megabyte)." },
+                { q: "1024 MB equals?", a: "1 GB (Gigabyte)." },
+                { q: "What does .exe mean?", a: "Executable file (Program)." },
+                { q: "What is sorting?", a: "Arranging files by name, size, or date." },
+                { q: "Why use folders?", a: "To organize data efficiently." },
+                { q: "Can two files have same name?", a: "No, not in the same folder." },
+                { q: "What is Read-only?", a: "A property where file cannot be edited." },
+                { q: "What is a Hidden file?", a: "A file not visible in normal view." },
+                { q: "Icon for Folder?", a: "Usually yellow colored." },
+                { q: "App to view .html?", a: "Web Browser (Chrome/Edge)." }
+            ];
+
+            // --- DATA: PRACTICE QUESTIONS (70) ---
+            const practiceQuestions = [
+                // 1-10: Basic Definitions
+                { t: 'mcq', q: "A _______ contains data like text or images.", opts: ["Folder", "File", "Drive", "Monitor"], a: 1, exp: "Files store actual data." },
+                { t: 'mcq', q: "A folder inside a folder is called?", opts: ["Mini Folder", "Sub-folder", "File", "Zip"], a: 1, exp: "Hierarchy uses sub-folders." },
+                { t: 'tf', q: "A folder can contain files but not other folders.", a: false, exp: "Folders can contain both files and other folders." },
+                { t: 'mcq', q: "Which of these is NOT a file extension?", opts: [".txt", ".mp3", "Folder", ".jpg"], a: 2, exp: "Folder is a container, not an extension." },
+                { t: 'fill', q: "The main folder of a drive is called the _______ directory.", a: "root", exp: "Root is the start of the tree." },
+                { t: 'mcq', q: "We organize files to?", opts: ["Look cool", "Waste time", "Find them easily", "Increase size"], a: 2, exp: "Organization helps in retrieval." },
+                { t: 'tf', q: "File handling includes creating and deleting files.", a: true, exp: "Handling covers all operations." },
+                { t: 'mcq', q: "Ideally, a school bag represents a?", opts: ["File", "Folder", "Icon", "Cursor"], a: 1, exp: "Bag holds items, just like a folder." },
+                { t: 'fill', q: "A collection of related data is a _______.", a: "file", exp: "Definition of a file." },
+                { t: 'mcq', q: "Windows Explorer is used for?", opts: ["Painting", "File Management", "Typing", "Calculator"], a: 1, exp: "It is the file manager." },
+
+                // 11-20: Extensions
+                { t: 'mcq', q: "Extension for MS Word document?", opts: [".txt", ".bmp", ".docx", ".xls"], a: 2, exp: ".docx is for Word." },
+                { t: 'mcq', q: "Extension for an Image?", opts: [".mp3", ".jpg", ".doc", ".exe"], a: 1, exp: ".jpg is a picture format." },
+                { t: 'mcq', q: "Extension for a Program?", opts: [".exe", ".txt", ".mp4", ".zip"], a: 0, exp: ".exe means executable." },
+                { t: 'mcq', q: ".pdf stands for?", opts: ["Portable Data File", "Portable Document Format", "Public Doc File", "None"], a: 1, exp: "Standard fixed document format." },
+                { t: 'tf', q: "You can change file type by renaming extension.", a: false, exp: "Renaming extension corrupts the file usually." },
+                { t: 'fill', q: "PowerPoint files end with _______.", a: ".pptx", exp: "PPT extension." },
+                { t: 'mcq', q: "Which is a video file?", opts: [".mp3", ".wav", ".mp4", ".png"], a: 2, exp: ".mp4 is video." },
+                { t: 'mcq', q: "Which file opens in Excel?", opts: ["sheet.docx", "sheet.xlsx", "sheet.ppt", "sheet.txt"], a: 1, exp: "Excel uses .xlsx." },
+                { t: 'tf', q: ".html files open in a Web Browser.", a: true, exp: "HTML is for websites." },
+                { t: 'mcq', q: "What separates name and extension?", opts: ["Comma", "Dot", "Space", "Slash"], a: 1, exp: "Example: name.txt" },
+
+                // 21-30: Hierarchy & Properties
+                { t: 'mcq', q: "The address of a file is called its?", opts: ["Home", "Path", "Route", "Way"], a: 1, exp: "E.g., C:\\Users\\Doc..." },
+                { t: 'mcq', q: "Structure of folders looks like a?", opts: ["Circle", "Tree", "Square", "Line"], a: 1, exp: "Inverted tree structure." },
+                { t: 'mcq', q: "File size is usually measured in?", opts: ["KG", "MB", "KM", "Litre"], a: 1, exp: "Megabytes (MB)." },
+                { t: 'tf', q: "Date Modified tells when file was last changed.", a: true, exp: "Property of a file." },
+                { t: 'mcq', q: "1 GB = ?", opts: ["100 MB", "1024 MB", "1000 KB", "10 KB"], a: 1, exp: "Binary calculation." },
+                { t: 'mcq', q: "The top drive letter is usually?", opts: ["A:", "B:", "C:", "Z:"], a: 2, exp: "C: Drive is standard root." },
+                { t: 'fill', q: "Information about a file is called file _______.", a: "properties", exp: "Metadata." },
+                { t: 'mcq', q: "Which is LARGEST?", opts: ["1 KB", "1 GB", "1 MB", "1 TB"], a: 3, exp: "TB > GB > MB > KB." },
+                { t: 'tf', q: "Two files can have same name in different folders.", a: true, exp: "Paths are different." },
+                { t: 'mcq', q: "Parent of 'C:\\Games\\Mario' is?", opts: ["Mario", "Games", "C:", "None"], a: 1, exp: "Direct container." },
+
+                // 31-40: Operations
+                { t: 'mcq', q: "Shortcut for Copy?", opts: ["Ctrl+X", "Ctrl+V", "Ctrl+C", "Ctrl+Z"], a: 2, exp: "C for Copy." },
+                { t: 'mcq', q: "Shortcut for Paste?", opts: ["Ctrl+P", "Ctrl+V", "Ctrl+C", "Ctrl+X"], a: 1, exp: "V stands for Velcro/Paste." },
+                { t: 'mcq', q: "Moving a file means?", opts: ["Copy + Paste", "Cut + Paste", "Delete", "Rename"], a: 1, exp: "Cut removes from original." },
+                { t: 'mcq', q: "Key to rename a file?", opts: ["F1", "F2", "F5", "F12"], a: 1, exp: "F2 is standard." },
+                { t: 'tf', q: "Ctrl+A selects all files.", a: true, exp: "A for All." },
+                { t: 'mcq', q: "To remove a file permanently?", opts: ["Del", "Shift+Del", "Ctrl+Del", "Alt+Del"], a: 1, exp: "Bypasses Recycle Bin." },
+                { t: 'mcq', q: "Where do deleted files go?", opts: ["Trash Can", "Recycle Bin", "Dustbin", "Space"], a: 1, exp: "Windows term." },
+                { t: 'fill', q: "Ctrl + X is used to _______ a file.", a: "cut", exp: "Move operation." },
+                { t: 'mcq', q: "If you Copy and Paste, how many files exist?", opts: ["1", "2", "0", "3"], a: 1, exp: "Original + Duplicate." },
+                { t: 'tf', q: "You can rename a file while it is open.", a: false, exp: "System locks open files." },
+
+                // 41-50: Compression & Backup
+                { t: 'mcq', q: "File compression is used to?", opts: ["Increase size", "Reduce size", "Delete file", "Hide file"], a: 1, exp: "Save space." },
+                { t: 'mcq', q: "Common compressed file format?", opts: [".txt", ".zip", ".bmp", ".wav"], a: 1, exp: "ZIP archive." },
+                { t: 'tf', q: "Zipping a file makes it easier to email.", a: true, exp: "Smaller size = faster upload." },
+                { t: 'mcq', q: "Copying data for safety is called?", opts: ["Hacking", "Backup", "Format", "Loading"], a: 1, exp: "Safety copy." },
+                { t: 'mcq', q: "We can backup data on?", opts: ["Pen Drive", "Cloud", "Hard Disk", "All of these"], a: 3, exp: "All are storage media." },
+                { t: 'fill', q: "To bring back lost data is called _______.", a: "restore", exp: "Reverse of backup." },
+                { t: 'mcq', q: "Which allows combining multiple files into one?", opts: ["Folder", "Zip", "Both", "None"], a: 2, exp: "Both group files." },
+                { t: 'tf', q: "Compression deletes the original data.", a: false, exp: "It encodes it efficiently." },
+                { t: 'mcq', q: "Cloud backup requires?", opts: ["Printer", "Internet", "Scanner", "Speaker"], a: 1, exp: "Online storage." },
+                { t: 'mcq', q: "WinZip is a tool for?", opts: ["Drawing", "Music", "Compression", "Typing"], a: 2, exp: "Archiving tool." },
+
+                // 51-60: Scenarios & Reasoning
+                { t: 'mcq', q: "I want to send 50 photos. Best way?", opts: ["Send 50 emails", "Zip them", "Print them", "Rename them"], a: 1, exp: "Single attachment." },
+                { t: 'mcq', q: "Computer is running slow. What helps?", opts: ["Delete useless files", "Click refresh", "Scream", "Draw"], a: 0, exp: "Freeing space." },
+                { t: 'tf', q: "You should save all files on Desktop.", a: false, exp: "Slows down PC, disorganized." },
+                { t: 'mcq', q: "Best name for Math Homework file?", opts: ["File1.docx", "Math_HW_Ch5.docx", "A.docx", "Doc.docx"], a: 1, exp: "Descriptive naming." },
+                { t: 'mcq', q: "You deleted a file by mistake. First step?", opts: ["Cry", "Check Recycle Bin", "Buy new PC", "Restart"], a: 1, exp: "Restore possibility." },
+                { t: 'mcq', q: "Why sort files by Date?", opts: ["To see newest first", "To see biggest first", "To see A-Z", "For fun"], a: 0, exp: "Chronological order." },
+                { t: 'fill', q: "A file that opens a program is an _______ file.", a: "executable", exp: ".exe files." },
+                { t: 'mcq', q: "Can you rename a folder?", opts: ["Yes", "No", "Only on Sundays", "Never"], a: 0, exp: "Same as files." },
+                { t: 'tf', q: "Restoring keeps the file in Recycle Bin.", a: false, exp: "Moves it back to original place." },
+                { t: 'mcq', q: "Search bar helps to?", opts: ["Create files", "Find files", "Delete files", "Copy files"], a: 1, exp: "Locate data." },
+
+                // 61-70: Mixed Advanced
+                { t: 'mcq', q: "Ctrl + Z is used to?", opts: ["Redo", "Undo", "Zip", "Zoom"], a: 1, exp: "Reverses last action." },
+                { t: 'mcq', q: "Which character is NOT allowed in filenames?", opts: ["A", "1", "?", "-"], a: 2, exp: "Special chars like ? / \ : * are banned." },
+                { t: 'mcq', q: "Read-Only file means?", opts: ["Can only read", "Can edit", "Can delete", "Hidden"], a: 0, exp: "Modifications blocked." },
+                { t: 'tf', q: "A shortcut icon has a small arrow.", a: true, exp: "Visual indicator." },
+                { t: 'mcq', q: "To select non-adjacent files, hold?", opts: ["Shift", "Ctrl", "Alt", "Tab"], a: 1, exp: "Selective picking." },
+                { t: 'mcq', q: "To select a list of files, hold?", opts: ["Shift", "Ctrl", "Alt", "Tab"], a: 0, exp: "Range picking." },
+                { t: 'fill', q: "The _______ view shows file details like size.", a: "details", exp: "View option in Explorer." },
+                { t: 'mcq', q: "Default folder for downloads?", opts: ["Music", "Downloads", "Desktop", "Pictures"], a: 1, exp: "System default." },
+                { t: 'mcq', q: "Can you password protect a Zip file?", opts: ["Yes", "No", "Maybe", "Only text"], a: 0, exp: "Security feature." },
+                { t: 'mcq', q: "Pressing 'Enter' on a selected file usually?", opts: ["Deletes it", "Opens it", "Renames it", "Copies it"], a: 1, exp: "Execute command." }
+            ];
+
+            // --- DATA: LONG QUESTIONS (10) ---
+            const longQuestions = [
+                {
+                    id: 'l1',
+                    q: "Explain the difference between a File and a Folder with an example.",
+                    keywords: ["file stores data", "folder stores files", "container", "collection", "example", "bag", "book"],
+                    points: "File = Data storage unit. Folder = Container. Example: School bag (folder) holding books (files)."
+                },
+                {
+                    id: 'l2',
+                    q: "Write the steps to Rename a file on the Desktop.",
+                    keywords: ["right click", "rename", "type name", "enter", "f2", "select"],
+                    points: "1. Right click file (or Press F2). 2. Select Rename. 3. Type new name. 4. Press Enter."
+                },
+                {
+                    id: 'l3',
+                    q: "Why is File Compression (Zipping) useful? Give two reasons.",
+                    keywords: ["size", "space", "email", "transfer", "fast", "storage"],
+                    points: "1. Saves disk space. 2. Faster to send via email/internet."
+                },
+                {
+                    id: 'l4',
+                    q: "What is the difference between Copy and Move?",
+                    keywords: ["duplicate", "original stays", "original removed", "location", "ctrl c", "ctrl x"],
+                    points: "Copy creates a duplicate (Original stays). Move changes location (Original deleted from source)."
+                },
+                {
+                    id: 'l5',
+                    q: "Explain File Hierarchy or Tree Structure.",
+                    keywords: ["root", "parent", "child", "sub-folder", "branch", "tree"],
+                    points: "Organization starting from Root folder, branching into sub-folders (Parents and Children)."
+                },
+                {
+                    id: 'l6',
+                    q: "What is a File Extension? Why is it important?",
+                    keywords: ["type", "program", "app", "open", "format", "dot"],
+                    points: "Suffix after dot (e.g., .docx). Important because it tells the computer which app to use to open the file."
+                },
+                {
+                    id: 'l7',
+                    q: "Why should we Backup our data?",
+                    keywords: ["loss", "virus", "accident", "safe", "restore", "crash"],
+                    points: "To prevent data loss due to viruses, accidental deletion, or hardware failure."
+                },
+                {
+                    id: 'l8',
+                    q: "What happens when you delete a file? Can you get it back?",
+                    keywords: ["recycle bin", "restore", "shift delete", "permanent"],
+                    points: "It goes to Recycle Bin. Yes, it can be restored unless Shift+Delete was used."
+                },
+                {
+                    id: 'l9',
+                    q: "Explain how to search for a file if you forgot its location.",
+                    keywords: ["search box", "name", "extension", "explorer", "start menu"],
+                    points: "Use the Search Box in File Explorer or Start Menu. Type the name or extension."
+                },
+                {
+                    id: 'l10',
+                    q: "List three file properties you can see in the Properties window.",
+                    keywords: ["size", "date", "type", "location", "created", "modified"],
+                    points: "Size, Type of file, Date Created/Modified, Location."
+                }
+            ];
+
+            // --- LOGIC FUNCTIONS ---
+
+            function updateScore(isCorrect) {
+                if (isCorrect) state.correct++;
+                else state.wrong++;
+                
+                state.total = state.correct + state.wrong;
+                
+                document.getElementById('scoreCorrect').textContent = state.correct;
+                document.getElementById('scoreWrong').textContent = state.wrong;
+                document.getElementById('scoreTotal').textContent = state.total;
+                
+                const percent = Math.round((state.correct / state.total) * 100) || 0;
+                document.getElementById('scorePercent').textContent = percent + "%";
+            }
+
+            function renderImpQuestions() {
+                const container = document.getElementById('imp-questions-container');
+                importantQuestions.forEach((item, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'imp-q-card';
+                    div.innerHTML = `<strong>Q${index+1}: ${item.q}</strong><br><span style="color:var(--correct)">A: ${item.a}</span>`;
+                    container.appendChild(div);
+                });
+            }
+
+            function renderPracticeQuestions() {
+                const container = document.getElementById('practice-container');
+                
+                practiceQuestions.forEach((item, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'question-card';
+                    
+                    let inputHTML = '';
+                    
+                    if (item.t === 'mcq') {
+                        inputHTML = `<div class="options-grid">
+                            ${item.opts.map((opt, i) => `<button class="option-btn" onclick="checkMCQ(this, ${index}, ${i})">${opt}</button>`).join('')}
+                        </div>`;
+                    } else if (item.t === 'tf') {
+                        inputHTML = `<div class="options-grid">
+                            <button class="option-btn" onclick="checkTF(this, ${index}, true)">True</button>
+                            <button class="option-btn" onclick="checkTF(this, ${index}, false)">False</button>
+                        </div>`;
+                    } else if (item.t === 'fill') {
+                        inputHTML = `
+                            <input type="text" id="fill-${index}" placeholder="Type answer here..." style="width:70%; padding:10px; border:2px solid var(--ink-color); border-radius:5px;">
+                            <button class="check-btn" onclick="checkFill(${index})">Check</button>
+                        `;
+                    }
+
+                    card.innerHTML = `
+                        <div class="q-text"><span class="tag">[${item.t.toUpperCase()}]</span> ${index+1}. ${item.q}</div>
+                        ${inputHTML}
+                        <div class="feedback" id="feed-${index}"></div>
+                    `;
+                    container.appendChild(card);
+                });
+            }
+
+            // Global functions for inline onclick access
+            window.checkMCQ = (btn, qIndex, optIndex) => {
+                const q = practiceQuestions[qIndex];
+                const feedback = document.getElementById(`feed-${qIndex}`);
+                if (feedback.style.display === 'block') return; // Already answered
+
+                const allBtns = btn.parentElement.children;
+                for(let b of allBtns) b.disabled = true;
+
+                if (optIndex === q.a) {
+                    btn.classList.add('correct');
+                    feedback.className = "feedback show correct";
+                    feedback.innerHTML = `<strong>Excellent ⭐</strong><br>${q.exp}`;
+                    updateScore(true);
+                } else {
+                    btn.classList.add('wrong');
+                    allBtns[q.a].classList.add('correct'); // Show right answer
+                    feedback.className = "feedback show wrong";
+                    feedback.innerHTML = `<strong>Try Again!</strong><br>Correct: ${q.opts[q.a]}<br>Reason: ${q.exp}`;
+                    updateScore(false);
+                }
+            };
+
+            window.checkTF = (btn, qIndex, val) => {
+                const q = practiceQuestions[qIndex];
+                const feedback = document.getElementById(`feed-${qIndex}`);
+                if (feedback.style.display === 'block') return;
+
+                const allBtns = btn.parentElement.children;
+                for(let b of allBtns) b.disabled = true;
+
+                if (val === q.a) {
+                    btn.classList.add('correct');
+                    feedback.className = "feedback show correct";
+                    feedback.innerHTML = `<strong>Correct! ⭐</strong><br>${q.exp}`;
+                    updateScore(true);
+                } else {
+                    btn.classList.add('wrong');
+                    allBtns[q.a ? 0 : 1].classList.add('correct');
+                    feedback.className = "feedback show wrong";
+                    feedback.innerHTML = `<strong>Oops!</strong><br>Answer was ${q.a}<br>${q.exp}`;
+                    updateScore(false);
+                }
+            };
+
+            window.checkFill = (qIndex) => {
+                const q = practiceQuestions[qIndex];
+                const input = document.getElementById(`fill-${qIndex}`);
+                const feedback = document.getElementById(`feed-${qIndex}`);
+                if (feedback.style.display === 'block') return;
+
+                const userVal = input.value.trim().toLowerCase();
+                const correctVal = q.a.toLowerCase();
+
+                input.disabled = true;
+                
+                if (userVal === correctVal) {
+                    feedback.className = "feedback show correct";
+                    feedback.innerHTML = `<strong>Perfect! ⭐</strong><br>${q.exp}`;
+                    updateScore(true);
+                } else {
+                    feedback.className = "feedback show wrong";
+                    feedback.innerHTML = `<strong>Incorrect.</strong><br>Correct Answer: ${q.a}<br>${q.exp}`;
+                    updateScore(false);
+                }
+            };
+
+            function renderLongQuestions() {
+                const container = document.getElementById('long-container');
+                longQuestions.forEach((item, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'long-q-card';
+                    card.innerHTML = `
+                        <div class="q-text"><strong>Q${index+1}:</strong> ${item.q}</div>
+                        <textarea id="long-ans-${index}" placeholder="Type your detailed answer here..."></textarea>
+                        <button class="check-btn" onclick="checkLong(${index})">Check Answer</button>
+                        <div class="model-answer" id="long-model-${index}"></div>
+                        <div class="feedback" id="long-feed-${index}"></div>
+                    `;
+                    container.appendChild(card);
+                });
+            }
+
+            window.checkLong = (index) => {
+                const q = longQuestions[index];
+                const userText = document.getElementById(`long-ans-${index}`).value.toLowerCase();
+                const modelDiv = document.getElementById(`long-model-${index}`);
+                const feedDiv = document.getElementById(`long-feed-${index}`);
+                
+                if (modelDiv.style.display === 'block') return; // Prevent double check
+
+                // Keyword logic
+                let hitCount = 0;
+                let missing = [];
+                q.keywords.forEach(k => {
+                    if (userText.includes(k)) hitCount++;
+                    else missing.push(k);
+                });
+
+                const threshold = Math.ceil(q.keywords.length * 0.4); // Need 40% keywords
+                const passed = hitCount >= threshold;
+
+                modelDiv.style.display = 'block';
+                modelDiv.innerHTML = `<strong>📝 Key Points Required:</strong> ${q.points}<br><br><strong>🔍 Missing Keywords:</strong> ${missing.join(', ') || 'None!'}`;
+                
+                feedDiv.style.display = 'block';
+                if (passed) {
+                    feedDiv.className = "feedback show correct";
+                    feedDiv.innerHTML = `<strong>Good Attempt! ⭐</strong> You covered key concepts.`;
+                    updateScore(true);
+                } else {
+                    feedDiv.className = "feedback show wrong";
+                    feedDiv.innerHTML = `<strong>Needs Improvement.</strong> Your answer is too short or missing key terms.`;
+                    updateScore(false);
+                }
+            };
+
+            // --- INITIALIZATION ---
+            renderImpQuestions();
+            renderPracticeQuestions();
+            renderLongQuestions();
+
+            // Revision Toggle
+            document.getElementById('revBtn').addEventListener('click', () => {
+                const box = document.getElementById('revBox');
+                box.style.display = box.style.display === 'block' ? 'none' : 'block';
+            });
+
+        });
+    </script>
+</body>
+</html>

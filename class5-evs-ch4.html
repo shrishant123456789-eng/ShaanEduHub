@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 4: Human Body – Structure and Systems</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --paper-bg: #fffbf0;
+            --line-color: #a2c2e0;
+            --ink-color: #2c3e50;
+            --red-ink: #c0392b;
+            --green-ink: #27ae60;
+            --highlight: #f1c40f;
+            --paper-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Patrick Hand', cursive;
+            background-color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            color: var(--ink-color);
+            font-weight: bold;
+            font-size: 18px;
+            line-height: 1.4;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--paper-bg);
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        /* Paper Lines Effect */
+        .paper-lines {
+            background-image: linear-gradient(var(--line-color) 1px, transparent 1px);
+            background-size: 100% 1.8rem;
+            padding-bottom: 2rem;
+        }
+
+        /* Header */
+        header {
+            background-color: #34495e;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 4px solid var(--ink-color);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            color: var(--red-ink);
+            border-bottom: 2px dashed var(--ink-color);
+            padding-bottom: 0.5rem;
+            margin-top: 2rem;
+        }
+
+        h3 {
+            color: #d35400;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Sticky Score Panel */
+        #score-panel {
+            position: sticky;
+            top: 0;
+            background: #fff;
+            border-bottom: 3px solid var(--ink-color);
+            padding: 0.5rem;
+            z-index: 100;
+            display: flex;
+            justify-content: space-around;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            font-size: 1.1rem;
+        }
+
+        .score-item span {
+            color: var(--red-ink);
+            font-size: 1.2rem;
+        }
+
+        /* Sections */
+        .section {
+            padding: 1rem;
+            border-bottom: 2px solid var(--line-color);
+        }
+
+        /* Notes Styling */
+        .note-card {
+            background: rgba(255, 255, 255, 0.6);
+            border: 2px solid var(--ink-color);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+        }
+
+        .memory-tip {
+            background-color: #fffacd;
+            padding: 0.5rem;
+            border-radius: 5px;
+            margin-top: 0.5rem;
+            border: 1px dashed #f39c12;
+        }
+
+        .placeholder-img {
+            width: 100%;
+            height: 150px;
+            background-color: #ecf0f1;
+            border: 2px dashed #bdc3c7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #7f8c8d;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+
+        /* Question Styles */
+        .q-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 2px solid var(--ink-color);
+            margin-bottom: 1rem;
+        }
+
+        details {
+            margin-bottom: 1rem;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 0.5rem;
+        }
+
+        summary {
+            cursor: pointer;
+            color: var(--ink-color);
+            outline: none;
+        }
+
+        details[open] summary {
+            border-bottom: 1px solid #ccc;
+            margin-bottom: 0.5rem;
+            color: var(--red-ink);
+        }
+
+        /* Practice Quiz UI */
+        #quiz-container {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .option-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            background: white;
+            border: 2px solid var(--ink-color);
+            border-radius: 25px; /* Hand drawn circle feel */
+            font-family: inherit;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            text-align: left;
+            transition: transform 0.1s;
+        }
+
+        .option-btn:active {
+            transform: scale(0.98);
+        }
+
+        .option-btn.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .option-btn.wrong {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+
+        .feedback-msg {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .feedback-correct {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .feedback-wrong {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            font-family: inherit;
+            font-size: 1rem;
+            border: 2px solid var(--ink-color);
+            border-radius: 5px;
+            margin-top: 0.5rem;
+        }
+
+        /* Long Answer */
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            font-family: inherit;
+            font-size: 1rem;
+            border: 2px solid var(--ink-color);
+            border-radius: 5px;
+            resize: vertical;
+            background-image: linear-gradient(#f1f1f1 1px, transparent 1px);
+            background-size: 100% 1.5rem;
+            line-height: 1.5rem;
+        }
+
+        .check-btn {
+            background-color: var(--ink-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-family: inherit;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .check-btn:disabled {
+            background-color: #95a5a6;
+        }
+
+        .long-feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px dashed var(--ink-color);
+            background: #fff;
+            display: none;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .hidden { display: none; }
+        
+        .revision-toggle {
+            background: var(--red-ink);
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            border-radius: 5px;
+            font-family: inherit;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+        }
+
+        @media (min-width: 600px) {
+            .option-btn { width: 48%; display: inline-block; margin: 1%; }
+            .container { border-radius: 2px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container paper-lines">
+    <header>
+        <h1>Chapter 4</h1>
+        <div style="font-size: 0.8em; opacity: 0.9;">EVS - Science Class 5</div>
+        <div style="margin-top: 5px;">Human Body: Structure & Systems</div>
+    </header>
+
+    <div id="score-panel">
+        <div class="score-item">Correct: <span id="score-correct">0</span></div>
+        <div class="score-item">Wrong: <span id="score-wrong">0</span></div>
+        <div class="score-item">Score: <span id="score-percent">0%</span></div>
+    </div>
+
+    <!-- NOTES SECTION -->
+    <div class="section" id="notes-section">
+        <h2>📚 Class Notes</h2>
+        <p style="text-align: center; color: #7f8c8d;">(Read carefully before the quiz!)</p>
+
+        <!-- Topic 1 -->
+        <div class="note-card">
+            <h3>1. Human Body Organization</h3>
+            <p>Our body is like a building. Cells are the bricks.</p>
+            <ul>
+                <li><strong>Cells:</strong> Smallest unit of life.</li>
+                <li><strong>Tissue:</strong> Group of similar cells working together.</li>
+                <li><strong>Organ:</strong> Group of tissues (e.g., Heart, Stomach).</li>
+                <li><strong>Organ System:</strong> Group of organs doing one major job.</li>
+                <li><strong>Organism:</strong> The complete human body.</li>
+            </ul>
+            <div class="placeholder-img">[Image: Cell -> Tissue -> Organ -> System]</div>
+            <div class="memory-tip">💡 Tip: C-T-O-S-O (Cell, Tissue, Organ, System, Organism)</div>
+        </div>
+
+        <!-- Topic 2 -->
+        <div class="note-card">
+            <h3>2. Digestive System</h3>
+            <p>This system changes food into energy.</p>
+            <ul>
+                <li><strong>Mouth:</strong> Teeth chew, Saliva softens food.</li>
+                <li><strong>Oesophagus (Food Pipe):</strong> Pushes food to stomach.</li>
+                <li><strong>Stomach:</strong> A bag that churns food with acids.</li>
+                <li><strong>Small Intestine:</strong> Long tube where digestion completes.</li>
+                <li><strong>Large Intestine:</strong> Absorbs water.</li>
+                <li><strong>Anus:</strong> Removes solid waste.</li>
+            </ul>
+            <div class="placeholder-img">[Image: Digestive System Diagram]</div>
+            <div class="memory-tip">🍎 Example: Like a mixer grinder turning fruit into juice.</div>
+        </div>
+
+        <!-- Topic 3 -->
+        <div class="note-card">
+            <h3>3. Nutrients Absorption</h3>
+            <p>Digestion is useless if the body doesn't take the good parts!</p>
+            <ul>
+                <li>Happens in the <strong>Small Intestine</strong>.</li>
+                <li>Blood picks up nutrients from the walls of the intestine.</li>
+                <li>Blood carries these nutrients to every cell.</li>
+            </ul>
+        </div>
+
+        <!-- Topic 4 -->
+        <div class="note-card">
+            <h3>4. Respiratory System</h3>
+            <p>Helps us breathe.</p>
+            <ul>
+                <li><strong>Nose:</strong> Filters air with hair.</li>
+                <li><strong>Windpipe (Trachea):</strong> Tube for air.</li>
+                <li><strong>Lungs:</strong> Two balloons that fill with air.</li>
+                <li><strong>Diaphragm:</strong> Muscle below lungs that helps pumping.</li>
+                <li><strong>Inhale:</strong> Oxygen in. <strong>Exhale:</strong> Carbon Dioxide out.</li>
+            </ul>
+            <div class="placeholder-img">[Image: Lungs and Windpipe]</div>
+        </div>
+
+        <!-- Topic 5 & 6 -->
+        <div class="note-card">
+            <h3>5. Circulatory System & Blood</h3>
+            <p>The transport system of the body.</p>
+            <ul>
+                <li><strong>Heart:</strong> A muscular pump (size of your fist).</li>
+                <li><strong>Blood Vessels:</strong> Pipes (Arteries, Veins, Capillaries).</li>
+                <li><strong>Arteries:</strong> Carry pure blood (Oxygen-rich) FROM heart.</li>
+                <li><strong>Veins:</strong> Carry impure blood (CO2-rich) TO heart.</li>
+                <li><strong>Blood:</strong> Red liquid. Red Blood Cells (carry O2), White Blood Cells (fight germs), Platelets (stop bleeding).</li>
+            </ul>
+            <div class="memory-tip">🫀 Tip: A for Artery, A for Away (from heart).</div>
+        </div>
+
+        <!-- Topic 7 -->
+        <div class="note-card">
+            <h3>6. Nervous System</h3>
+            <p> The "Boss" of the body.</p>
+            <ul>
+                <li><strong>Brain:</strong> Controls everything.</li>
+                <li><strong>Cerebrum:</strong> Thinking part (Big brain).</li>
+                <li><strong>Cerebellum:</strong> Balance part (Small brain).</li>
+                <li><strong>Medulla:</strong> Automatic actions (Breathing, Heartbeat).</li>
+                <li><strong>Spinal Cord:</strong> Thick nerve cable in the back.</li>
+                <li><strong>Nerves:</strong> Wires connecting brain to body.</li>
+            </ul>
+            <div class="placeholder-img">[Image: Brain Parts]</div>
+        </div>
+
+        <!-- Topic 8 -->
+        <div class="note-card">
+            <h3>7. Sense Organs</h3>
+            <p>Windows to the world.</p>
+            <ul>
+                <li><strong>Eyes:</strong> Sight (Optic nerve).</li>
+                <li><strong>Ears:</strong> Hearing & Balance.</li>
+                <li><strong>Nose:</strong> Smell.</li>
+                <li><strong>Tongue:</strong> Taste (Sweet, Salty, Sour, Bitter).</li>
+                <li><strong>Skin:</strong> Touch (Feel heat, cold, pain).</li>
+            </ul>
+        </div>
+
+        <!-- Topic 9 -->
+        <div class="note-card">
+            <h3>8. Skeletal System</h3>
+            <p>The framework of bones.</p>
+            <ul>
+                <li>Adults have <strong>206 bones</strong>.</li>
+                <li><strong>Skull:</strong> Protects brain.</li>
+                <li><strong>Ribcage:</strong> Protects heart & lungs.</li>
+                <li><strong>Backbone (Spine):</strong> Protects spinal cord.</li>
+                <li><strong>Femur:</strong> Thigh bone (Longest bone).</li>
+                <li><strong>Joints:</strong> Where two bones meet (Elbow, Knee).</li>
+            </ul>
+            <div class="memory-tip">🦴 Fact: Babies have more bones than adults!</div>
+        </div>
+
+        <!-- Topic 10 -->
+        <div class="note-card">
+            <h3>9. Muscular System</h3>
+            <p>Helps in movement.</p>
+            <ul>
+                <li><strong>Voluntary Muscles:</strong> Under our control (Hands, Legs).</li>
+                <li><strong>Involuntary Muscles:</strong> Work automatically (Heart, Stomach).</li>
+                <li>Muscles work in pairs: One pulls, one relaxes.</li>
+            </ul>
+        </div>
+
+        <!-- Topic 11 & 12 -->
+        <div class="note-card">
+            <h3>10. Excretory & Urinary Systems</h3>
+            <p>Cleaning crew.</p>
+            <ul>
+                <li><strong>Kidneys:</strong> Bean-shaped. Filter blood to make urine.</li>
+                <li><strong>Skin:</strong> Removes sweat (salt & water).</li>
+                <li><strong>Lungs:</strong> Remove Carbon Dioxide.</li>
+                <li><strong>Ureters, Bladder, Urethra:</strong> Path of urine.</li>
+            </ul>
+        </div>
+        
+        <!-- Remaining Topics Summary -->
+        <div class="note-card">
+            <h3>11. Health & Care</h3>
+            <ul>
+                <li><strong>Posture:</strong> Sit straight to keep backbone healthy.</li>
+                <li><strong>Exercise:</strong> Makes heart and muscles strong.</li>
+                <li><strong>Rest:</strong> 8 hours sleep is needed for the brain.</li>
+                <li><strong>Balanced Diet:</strong> Eating all nutrients in right amount.</li>
+            </ul>
+            <div class="placeholder-img">[Image: Healthy Plate Pyramid]</div>
+        </div>
+    </div>
+
+    <!-- IMPORTANT QUESTIONS SECTION -->
+    <div class="section">
+        <h2>🎯 Important Questions (30)</h2>
+        <p>Tap to reveal answers. Memorize these!</p>
+        <div id="important-questions-container">
+            <!-- Populated via JS -->
+        </div>
+    </div>
+
+    <!-- PRACTICE QUESTIONS SECTION -->
+    <div class="section">
+        <h2>🧪 Practice Quiz (70+)</h2>
+        <div id="quiz-area">
+            <div style="text-align: right; font-size: 0.9em; margin-bottom: 10px;">
+                Question <span id="current-q-num">1</span> of <span id="total-q-num">70</span>
+            </div>
+            
+            <div id="question-card" class="q-card">
+                <div id="q-text" style="font-size: 1.2rem; margin-bottom: 1rem;">Loading...</div>
+                <div id="options-container"></div>
+                <div id="feedback" class="feedback-msg"></div>
+                <button id="next-btn" class="check-btn hidden" onclick="nextQuestion()">Next Question ➡️</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LONG QUESTIONS SECTION -->
+    <div class="section">
+        <h2>🧠 Advanced Long Questions</h2>
+        <p>Type your answer. Key points will be checked.</p>
+        <div id="long-questions-container">
+            <!-- Populated via JS -->
+        </div>
+    </div>
+
+    <!-- REVISION SECTION -->
+    <div class="section">
+        <h2>🔁 Rapid Revision</h2>
+        <button class="revision-toggle" onclick="toggleRevision()">Show/Hide Revision Points</button>
+        <div id="revision-content" class="hidden note-card" style="background: #fff;">
+            <ul>
+                <li>Cells form Tissues, Tissues form Organs, Organs form Systems.</li>
+                <li>Stomach churns food; Small Intestine absorbs nutrients.</li>
+                <li>Heart pumps blood; Arteries take it away, Veins bring it back.</li>
+                <li>Lungs exchange Oxygen and Carbon Dioxide.</li>
+                <li>Kidneys filter blood to make urine.</li>
+                <li>Brain has 3 parts: Cerebrum (think), Cerebellum (balance), Medulla (life).</li>
+                <li>206 bones in adult body. Femur is longest.</li>
+                <li>Muscles pull bones to move.</li>
+                <li>Skin is the largest sense organ.</li>
+                <li>Good posture and sleep keep systems healthy.</li>
+            </ul>
+        </div>
+    </div>
+
+    <footer>
+        <p>Designed & Created by SHRISHANT YADAV</p>
+        <p>ShanEduHub</p>
+    </footer>
+</div>
+
+<script>
+    /* ================= DATA STORAGE ================= */
+    
+    // IMPORTANT QUESTIONS (30)
+    const importantQs = [
+        { q: "What is the smallest unit of the human body?", a: "Cell", exp: "Cells are building blocks of life." },
+        { q: "How many bones are there in an adult human body?", a: "206", exp: "Babies have 300+, but they fuse together." },
+        { q: "Which organ pumps blood to all parts of the body?", a: "Heart", exp: "It works non-stop like a pump." },
+        { q: "What is the main function of the lungs?", a: "Breathing (Exchange of gases)", exp: "Takes in O2, removes CO2." },
+        { q: "Which gas do we breathe out?", a: "Carbon Dioxide", exp: "It is a waste gas produced by the body." },
+        { q: "Name the longest bone in the human body.", a: "Femur (Thigh bone)", exp: "It supports the weight of the body." },
+        { q: "Which part of the brain controls balance?", a: "Cerebellum", exp: "It helps you walk straight and not fall." },
+        { q: "What is the function of the kidneys?", a: "Filter blood to make urine", exp: "They remove liquid waste." },
+        { q: "Which blood cells fight against germs?", a: "White Blood Cells (WBC)", exp: "They are the soldiers of our body." },
+        { q: "Where does digestion begin?", a: "Mouth", exp: "Teeth and saliva start the process." },
+        { q: "Which organ stores urine?", a: "Urinary Bladder", exp: "It holds urine until we go to the toilet." },
+        { q: "What protects the brain?", a: "Skull", exp: "It is a hard bony box." },
+        { q: "Which pipe carries food from mouth to stomach?", a: "Oesophagus (Food Pipe)", exp: "Connects mouth to stomach." },
+        { q: "What is the heart beat rate of a normal adult?", a: "72 times per minute", exp: "It can go up when running." },
+        { q: "Which sense organ covers the whole body?", a: "Skin", exp: "It is the largest organ." },
+        { q: "What connects muscles to bones?", a: "Tendons", exp: "Strong cords helping movement." },
+        { q: "Which part of the brain controls breathing?", a: "Medulla (Brain stem)", exp: "Works even when we sleep." },
+        { q: "What is the hard outer layer of teeth called?", a: "Enamel", exp: "Hardest substance in the body." },
+        { q: "Which nutrient is absorbed by the large intestine?", a: "Water", exp: "Solid waste is left behind." },
+        { q: "Name the red pigment in blood.", a: "Haemoglobin", exp: "It carries oxygen." },
+        { q: "How many sense organs do we have?", a: "5", exp: "Eyes, Ears, Nose, Tongue, Skin." },
+        { q: "What connects bone to bone?", a: "Ligaments", exp: "They hold joints together." },
+        { q: "Which organ system helps produce babies?", a: "Reproductive System", exp: "Essential for life continuity." },
+        { q: "What is the function of the ribcage?", a: "Protect heart and lungs", exp: "Cage-like structure in chest." },
+        { q: "Which muscle pumps blood?", a: "Cardiac Muscle", exp: "Found only in the heart." },
+        { q: "Where is bile produced?", a: "Liver", exp: "Helps digest fats." },
+        { q: "What is the structural unit of the nervous system?", a: "Neuron", exp: "Transmits messages." },
+        { q: "Which joint is found in the knee?", a: "Hinge Joint", exp: "Moves only back and forth like a door." },
+        { q: "What carries messages from body to brain?", a: "Nerves", exp: "Like telephone wires." },
+        { q: "What gives shape to our body?", a: "Skeleton", exp: "Without it, we would be a lump of flesh." }
+    ];
+
+    // PRACTICE QUESTIONS (70)
+    // Types: mcq, fill, truefalse, one word
+    const practiceQs = [
+        // Level 1: Basic
+        { type: "mcq", q: "The standard number of bones in an adult is:", options: ["200", "206", "300", "250"], correct: 1, exp: "Adults have 206 bones." },
+        { type: "mcq", q: "Which organ is part of the nervous system?", options: ["Heart", "Brain", "Lung", "Stomach"], correct: 1, exp: "Brain is the control center." },
+        { type: "tf", q: "True or False: The heart is a muscle.", correct: "True", exp: "It is a hollow muscular organ." },
+        { type: "fill", q: "We have ___ sense organs.", correct: "5", exp: "Five sense organs." },
+        { type: "mcq", q: "Which system digests food?", options: ["Respiratory", "Digestive", "Circulatory", "Skeletal"], correct: 1, exp: "Digestive system breaks down food." },
+        { type: "mcq", q: "Air enters the body through the:", options: ["Ears", "Nose", "Eyes", "Skin"], correct: 1, exp: "Nose filters air." },
+        { type: "oneword", q: "What liquid is produced in the mouth?", correct: "Saliva", exp: "It helps soften food." },
+        { type: "mcq", q: "The thigh bone is called:", options: ["Radius", "Femur", "Rib", "Skull"], correct: 1, exp: "Femur is the thigh bone." },
+        { type: "tf", q: "True or False: Blood is blue.", correct: "False", exp: "Blood is red due to haemoglobin." },
+        { type: "mcq", q: "Which organ filters blood?", options: ["Heart", "Kidney", "Brain", "Stomach"], correct: 1, exp: "Kidneys filter waste." },
+        
+        // Level 2: Medium
+        { type: "mcq", q: "Which blood vessel carries blood AWAY from the heart?", options: ["Vein", "Artery", "Nerve", "Tube"], correct: 1, exp: "Artery = Away." },
+        { type: "mcq", q: "The largest part of the brain is:", options: ["Cerebellum", "Medulla", "Cerebrum", "Spine"], correct: 2, exp: "Cerebrum is the thinking part." },
+        { type: "fill", q: "The ___ protects the heart and lungs.", correct: "ribcage", exp: "Bony cage in chest." },
+        { type: "mcq", q: "Which is an involuntary muscle?", options: ["Arm muscle", "Leg muscle", "Heart muscle", "Neck muscle"], correct: 2, exp: "Heart works automatically." },
+        { type: "mcq", q: "Digestion is completed in the:", options: ["Stomach", "Large Intestine", "Small Intestine", "Mouth"], correct: 2, exp: "Small intestine absorbs nutrients." },
+        { type: "tf", q: "True or False: We should breathe through our mouth.", correct: "False", exp: "Nose hairs filter dust, mouth does not." },
+        { type: "mcq", q: "Which gas is needed by our body cells?", options: ["Nitrogen", "Oxygen", "Carbon Dioxide", "Helium"], correct: 1, exp: "Oxygen gives energy." },
+        { type: "oneword", q: "What is the pumping station of the body?", correct: "Heart", exp: "Pumps blood continuously." },
+        { type: "mcq", q: "Urine is stored in the:", options: ["Kidney", "Ureter", "Urinary Bladder", "Urethra"], correct: 2, exp: "Bladder holds it like a bag." },
+        { type: "mcq", q: "The joint in the shoulder is a:", options: ["Hinge joint", "Ball and Socket joint", "Pivot joint", "Fixed joint"], correct: 1, exp: "Allows rotation in all directions." },
+        
+        // Level 3: Advanced Concepts
+        { type: "mcq", q: "If the medulla is damaged, what stops?", options: ["Walking", "Thinking", "Breathing", "Hearing"], correct: 2, exp: "Medulla controls vital functions." },
+        { type: "fill", q: "Red blood cells carry ___.", correct: "oxygen", exp: "Haemoglobin binds to Oxygen." },
+        { type: "mcq", q: "Which of these is NOT a waste product?", options: ["Urine", "Sweat", "Carbon Dioxide", "Blood"], correct: 3, exp: "Blood is a vital fluid." },
+        { type: "mcq", q: "What connects the nose to the lungs?", options: ["Oesophagus", "Windpipe", "Food pipe", "Nerve"], correct: 1, exp: "Windpipe (Trachea)." },
+        { type: "tf", q: "True or False: The large intestine is longer than the small intestine.", correct: "False", exp: "Small intestine is longer but narrower." },
+        { type: "mcq", q: "Which part of the brain helps you ride a bicycle?", options: ["Cerebrum", "Cerebellum", "Medulla", "Skull"], correct: 1, exp: "Cerebellum maintains balance." },
+        { type: "oneword", q: "What is the framework of bones called?", correct: "Skeleton", exp: "Supports the body." },
+        { type: "mcq", q: "Tiny air sacs in the lungs are called:", options: ["Alveoli", "Bronchi", "Tubes", "Cells"], correct: 0, exp: "Exchange of gases happens here." },
+        { type: "mcq", q: "Which nutrient helps build muscles?", options: ["Fats", "Vitamins", "Proteins", "Water"], correct: 2, exp: "Proteins are body-building foods." },
+        { type: "mcq", q: "The liquid part of blood is called:", options: ["Plasma", "Water", "Red cells", "White cells"], correct: 0, exp: "Plasma carries cells." },
+
+        // Level 4: Application & Reasoning
+        { type: "mcq", q: "Why do we sweat?", options: ["To smell bad", "To cool the body", "To warm the body", "No reason"], correct: 1, exp: "Evaporation causes cooling." },
+        { type: "mcq", q: "What happens to the diaphragm when we inhale?", options: ["Moves up", "Moves down", "Stays same", "Disappears"], correct: 1, exp: "It moves down to make space." },
+        { type: "mcq", q: "Which food is bad for bones?", options: ["Milk", "Cheese", "Soda/Fizzy drinks", "Spinach"], correct: 2, exp: "Soda weakens bones." },
+        { type: "fill", q: "The spinal cord is protected by the ___.", correct: "backbone", exp: "Or vertebral column." },
+        { type: "mcq", q: "If you touch a hot pan, you pull back. This is:", options: ["Voluntary action", "Reflex action", "Slow action", "Thinking action"], correct: 1, exp: "Reflexes are instant and automatic." },
+        { type: "tf", q: "True or False: Arteries have thin walls.", correct: "False", exp: "Arteries have thick walls for high pressure." },
+        { type: "mcq", q: "Platelets help in:", options: ["Carrying Oxygen", "Fighting germs", "Clotting blood", "Digestion"], correct: 2, exp: "Stops bleeding." },
+        { type: "oneword", q: "The sense organ for taste.", correct: "Tongue", exp: "Has taste buds." },
+        { type: "mcq", q: "Which system works with the skeletal system for movement?", options: ["Digestive", "Muscular", "Excretory", "Respiratory"], correct: 1, exp: "Muscles pull bones." },
+        { type: "mcq", q: "A person has trouble seeing. Which vitamin is needed?", options: ["Vitamin A", "Vitamin C", "Vitamin D", "Vitamin K"], correct: 0, exp: "Vitamin A is good for eyes." },
+
+        // Level 5: More Mix
+        { type: "mcq", q: "The 'voice box' is located in the:", options: ["Throat", "Stomach", "Heart", "Brain"], correct: 0, exp: "In the neck area." },
+        { type: "mcq", q: "How many kidneys do we usually have?", options: ["1", "2", "3", "4"], correct: 1, exp: "A pair of kidneys." },
+        { type: "fill", q: "The ___ pumps blood.", correct: "heart", exp: "Central pump." },
+        { type: "mcq", q: "Which is a pivot joint?", options: ["Knee", "Elbow", "Neck", "Hip"], correct: 2, exp: "Neck helps head turn." },
+        { type: "tf", q: "True or False: Veins carry blood towards the heart.", correct: "True", exp: "Veins visit the heart." },
+        { type: "mcq", q: "The colored part of the eye is:", options: ["Pupil", "Iris", "Lens", "Retina"], correct: 1, exp: "Iris controls light." },
+        { type: "oneword", q: "What gas is waste for humans?", correct: "Carbon Dioxide", exp: "Exhaled out." },
+        { type: "mcq", q: "Which organ produces bile?", options: ["Liver", "Pancreas", "Stomach", "Kidney"], correct: 0, exp: "Liver makes bile." },
+        { type: "mcq", q: "Urine leaves the body through:", options: ["Ureter", "Urethra", "Bladder", "Kidney"], correct: 1, exp: "Urethra is the exit tube." },
+        { type: "mcq", q: "Which part of the tooth can you see?", options: ["Root", "Crown", "Gum", "Pulp"], correct: 1, exp: "Crown is the white part." },
+
+        // Level 6: Final Push
+        { type: "mcq", q: "A doctor uses a stethoscope to hear:", options: ["Brain waves", "Heartbeat", "Bone sound", "Muscle sound"], correct: 1, exp: "Lub-dub sound." },
+        { type: "mcq", q: "Which is the master computer of the body?", options: ["Heart", "Brain", "Spine", "Stomach"], correct: 1, exp: "Brain." },
+        { type: "fill", q: "Muscles are attached to bones by ___.", correct: "tendons", exp: "Tendons tie muscle to bone." },
+        { type: "mcq", q: "Saliva is produced by:", options: ["Liver", "Salivary glands", "Teeth", "Tongue"], correct: 1, exp: "Glands in mouth." },
+        { type: "tf", q: "True or False: We have 4 lungs.", correct: "False", exp: "We have 2 lungs." },
+        { type: "mcq", q: "Which mineral makes bones hard?", options: ["Iron", "Calcium", "Gold", "Silver"], correct: 1, exp: "Calcium and Phosphorus." },
+        { type: "oneword", q: "The longest cell in the body.", correct: "Neuron", exp: "Nerve cell." },
+        { type: "mcq", q: "What protects the spinal cord?", options: ["Ribcage", "Skull", "Vertebral Column", "Femur"], correct: 2, exp: "Backbone." },
+        { type: "mcq", q: "Which is NOT a type of blood vessel?", options: ["Artery", "Vein", "Nerve", "Capillary"], correct: 2, exp: "Nerve is nervous system." },
+        { type: "mcq", q: "The process of breaking down food is:", options: ["Respiration", "Digestion", "Excretion", "Circulation"], correct: 1, exp: "Digestion." },
+
+        // Level 7: Mastery
+        { type: "mcq", q: "Floating ribs are found in:", options: ["Skull", "Ribcage", "Hip", "Leg"], correct: 1, exp: "Lowest ribs not joined to breastbone." },
+        { type: "mcq", q: "Which organ churns food?", options: ["Mouth", "Stomach", "Liver", "Pancreas"], correct: 1, exp: "Stomach muscles mix food." },
+        { type: "fill", q: "The heart has ___ chambers.", correct: "4", exp: "Four chambers." },
+        { type: "mcq", q: "Which part of blood clots wounds?", options: ["RBC", "WBC", "Platelets", "Plasma"], correct: 2, exp: "Stops bleeding." },
+        { type: "tf", q: "True or False: Brain needs oxygen.", correct: "True", exp: "Brain needs lots of oxygen." },
+        { type: "mcq", q: "Nerves that carry orders FROM brain are:", options: ["Sensory", "Motor", "Mixed", "Slow"], correct: 1, exp: "Motor nerves move muscles." },
+        { type: "oneword", q: "Organ responsible for vision.", correct: "Eye", exp: "See the world." },
+        { type: "mcq", q: "Total number of milk teeth in children:", options: ["20", "32", "10", "28"], correct: 0, exp: "20 temporary teeth." },
+        { type: "mcq", q: "Which action helps keep lungs healthy?", options: ["Smoking", "Deep breathing", "Sleeping only", "Eating"], correct: 1, exp: "Pranayama / Exercise." },
+        { type: "mcq", q: "Final Question: The system that protects all others is:", options: ["Skeletal", "Nervous", "All of them", "Integumentary (Skin)"], correct: 2, exp: "All systems work together!" }
+    ];
+
+    // LONG QUESTIONS (10)
+    const longQs = [
+        { id: 1, q: "Explain the function of the Heart.", keys: ["pump", "blood", "oxygen", "body", "vessel"], model: "The heart acts as a pump. It pumps blood to all parts of the body through blood vessels. It sends oxygen-rich blood to the body and collects waste blood." },
+        { id: 2, q: "Describe the process of Digestion briefly.", keys: ["mouth", "stomach", "intestine", "break", "food", "energy"], model: "Digestion starts in the mouth (chewing). Food goes to the stomach through food pipe. Stomach churns it. Small intestine absorbs nutrients. Waste goes out." },
+        { id: 3, q: "What are the three main parts of the Brain and their functions?", keys: ["cerebrum", "cerebellum", "medulla", "think", "balance"], model: "1. Cerebrum: Thinking and memory. 2. Cerebellum: Balance and posture. 3. Medulla: Breathing and heartbeat." },
+        { id: 4, q: "How do we breathe? Explain Inhalation and Exhalation.", keys: ["nose", "lung", "diaphragm", "oxygen", "carbon"], model: "We take air in through nose (Inhale). Lungs fill up, diaphragm moves down. Oxygen is taken. We breathe out (Exhale) Carbon Dioxide." },
+        { id: 5, q: "Difference between Arteries and Veins.", keys: ["artery", "vein", "away", "heart", "oxygen", "pure"], model: "Arteries carry pure blood AWAY from the heart. Veins carry impure blood TO the heart. Arteries have thicker walls." },
+        { id: 6, q: "Functions of the Skeletal System.", keys: ["shape", "support", "protect", "move", "organ"], model: "1. Gives shape and support. 2. Protects organs (Brain, Heart). 3. Helps in movement with muscles." },
+        { id: 7, q: "What is a Reflex Action? Give an example.", keys: ["automatic", "quick", "think", "brain", "spinal"], model: "A very fast, automatic action controlled by the spinal cord, not the brain. Example: Pulling hand away from a hot cup." },
+        { id: 8, q: "How do kidneys help our body?", keys: ["filter", "blood", "urine", "waste", "water"], model: "Kidneys filter the blood to remove waste and extra water. They form urine which is stored in the bladder." },
+        { id: 9, q: "Why is correct posture important?", keys: ["backbone", "pain", "straight", "sit", "health"], model: "Correct posture keeps our backbone straight and healthy. It prevents back pain and helps organs work properly." },
+        { id: 10, q: "How do muscles and bones work together?", keys: ["pull", "contract", "relax", "joint", "move"], model: "Muscles are attached to bones. When a muscle contracts (shortens), it pulls the bone to move it. They work in pairs." }
+    ];
+
+    /* ================= LOGIC ================= */
+
+    let score = { correct: 0, wrong: 0, total: 0 };
+    let currentQIndex = 0;
+
+    // Initialize
+    document.addEventListener("DOMContentLoaded", () => {
+        initImportantQs();
+        loadPracticeQuestion();
+        initLongQs();
+    });
+
+    function updateScoreDisplay() {
+        document.getElementById('score-correct').textContent = score.correct;
+        document.getElementById('score-wrong').textContent = score.wrong;
+        let percent = score.total === 0 ? 0 : Math.round((score.correct / score.total) * 100);
+        document.getElementById('score-percent').textContent = percent + "%";
+    }
+
+    // --- Important Questions Logic ---
+    function initImportantQs() {
+        const container = document.getElementById('important-questions-container');
+        importantQs.forEach((item, index) => {
+            const details = document.createElement('details');
+            details.innerHTML = `
+                <summary><strong>Q${index + 1}:</strong> ${item.q}</summary>
+                <div style="margin-top: 10px; color: var(--green-ink);">
+                    <strong>Ans:</strong> ${item.a} <br>
+                    <small style="color: #555;">(${item.exp})</small>
+                </div>
+            `;
+            container.appendChild(details);
+        });
+    }
+
+    // --- Practice Questions Logic ---
+    function loadPracticeQuestion() {
+        const qData = practiceQs[currentQIndex];
+        const qCard = document.getElementById('question-card');
+        const qText = document.getElementById('q-text');
+        const optionsDiv = document.getElementById('options-container');
+        const feedbackDiv = document.getElementById('feedback');
+        const nextBtn = document.getElementById('next-btn');
+        const currentNum = document.getElementById('current-q-num');
+
+        // Reset UI
+        qText.textContent = qData.q;
+        optionsDiv.innerHTML = '';
+        feedbackDiv.style.display = 'none';
+        feedbackDiv.className = 'feedback-msg';
+        nextBtn.classList.add('hidden');
+        currentNum.textContent = currentQIndex + 1;
+
+        // Render based on type
+        if (qData.type === 'mcq') {
+            // Randomize options visually but keep track of correct index
+            // Create array of objects {text: "Opt", originalIndex: 0}
+            let opts = qData.options.map((opt, i) => ({ text: opt, originalIndex: i }));
+            // Shuffle
+            opts.sort(() => Math.random() - 0.5);
+
+            opts.forEach(optObj => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = optObj.text;
+                btn.onclick = () => checkMCQ(btn, optObj.originalIndex, qData.correct, qData.exp, qData.options[qData.correct]);
+                optionsDiv.appendChild(btn);
+            });
+        } else if (qData.type === 'tf') {
+            ['True', 'False'].forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = opt;
+                btn.onclick = () => checkTextAnswer(opt, qData.correct, qData.exp);
+                optionsDiv.appendChild(btn);
+            });
+        } else if (qData.type === 'fill' || qData.type === 'oneword') {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = "Type answer here...";
+            const subBtn = document.createElement('button');
+            subBtn.textContent = "Check";
+            subBtn.className = 'check-btn';
+            subBtn.style.width = '100%';
+            subBtn.onclick = () => checkTextAnswer(input.value, qData.correct, qData.exp);
+            
+            optionsDiv.appendChild(input);
+            optionsDiv.appendChild(subBtn);
+        }
+    }
+
+    function checkMCQ(btn, selectedIndex, correctIndex, exp, correctText) {
+        // Disable all buttons
+        const btns = document.querySelectorAll('.option-btn');
+        btns.forEach(b => b.disabled = true);
+
+        score.total++;
+        const feedbackDiv = document.getElementById('feedback');
+        feedbackDiv.style.display = 'block';
+
+        if (selectedIndex === correctIndex) {
+            score.correct++;
+            btn.classList.add('correct');
+            feedbackDiv.textContent = `Excellent ⭐ ${exp}`;
+            feedbackDiv.classList.add('feedback-correct');
+        } else {
+            score.wrong++;
+            btn.classList.add('wrong');
+            // Find visual correct button
+            // In random shuffle, we can't easily find correct btn by index, so relying on text logic or just showing text
+            feedbackDiv.innerHTML = `<strong>Try Again!</strong><br>Correct Answer: ${correctText}<br>${exp}`;
+            feedbackDiv.classList.add('feedback-wrong');
+        }
+        updateScoreDisplay();
+        document.getElementById('next-btn').classList.remove('hidden');
+    }
+
+    function checkTextAnswer(userVal, correctVal, exp) {
+        // Simple normalization
+        let u = userVal.trim().toLowerCase();
+        let c = correctVal.trim().toLowerCase();
+
+        score.total++;
+        const feedbackDiv = document.getElementById('feedback');
+        feedbackDiv.style.display = 'block';
+        
+        // Hide input/buttons
+        const optionsDiv = document.getElementById('options-container');
+        // optionsDiv.style.pointerEvents = 'none'; // Lock it
+
+        if (u === c) {
+            score.correct++;
+            feedbackDiv.textContent = `Excellent ⭐ ${exp}`;
+            feedbackDiv.classList.add('feedback-correct');
+        } else {
+            score.wrong++;
+            feedbackDiv.innerHTML = `<strong>Try Again!</strong><br>Correct Answer: ${correctVal}<br>${exp}`;
+            feedbackDiv.classList.add('feedback-wrong');
+        }
+        updateScoreDisplay();
+        document.getElementById('next-btn').classList.remove('hidden');
+    }
+
+    function nextQuestion() {
+        if (currentQIndex < practiceQs.length - 1) {
+            currentQIndex++;
+            loadPracticeQuestion();
+        } else {
+            document.getElementById('quiz-area').innerHTML = `
+                <h3>Quiz Complete! 🎉</h3>
+                <p>You scored ${score.correct} out of ${score.total}</p>
+                <p>${score.correct > 50 ? "Great job!" : "Keep practicing!"}</p>
+            `;
+        }
+    }
+
+    // --- Long Questions Logic ---
+    function initLongQs() {
+        const container = document.getElementById('long-questions-container');
+        longQs.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.className = 'q-card';
+            div.innerHTML = `
+                <p><strong>Q${index + 1}:</strong> ${item.q}</p>
+                <textarea id="long-ans-${index}" placeholder="Write your answer here..."></textarea>
+                <button class="check-btn" onclick="checkLongAnswer(${index})">Check Answer</button>
+                <div id="long-feed-${index}" class="long-feedback"></div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function checkLongAnswer(index) {
+        const input = document.getElementById(`long-ans-${index}`).value.toLowerCase();
+        const feedbackBox = document.getElementById(`long-feed-${index}`);
+        const data = longQs[index];
+        
+        if (input.trim().length < 5) {
+            alert("Please write a proper answer.");
+            return;
+        }
+
+        score.total++;
+        
+        // Keyword checking
+        let foundKeys = 0;
+        let missingKeys = [];
+        
+        data.keys.forEach(key => {
+            if (input.includes(key)) {
+                foundKeys++;
+            } else {
+                missingKeys.push(key);
+            }
+        });
+
+        const isGood = foundKeys >= Math.ceil(data.keys.length / 2);
+        
+        if (isGood) score.correct++;
+        else score.wrong++;
+
+        feedbackBox.style.display = 'block';
+        feedbackBox.innerHTML = `
+            <strong style="color: ${isGood ? 'green' : 'red'}">${isGood ? 'Well Done!' : 'Needs Improvement'}</strong>
+            <p><strong>Keywords found:</strong> ${foundKeys}/${data.keys.length}</p>
+            ${missingKeys.length > 0 ? `<p style="color:red">Missing concepts: ${missingKeys.join(", ")}</p>` : ''}
+            <div style="background:#eee; padding:5px; margin-top:5px; border-radius:4px;">
+                <strong>Model Answer:</strong> ${data.model}
+            </div>
+        `;
+        
+        updateScoreDisplay();
+    }
+
+    // --- Revision Toggle ---
+    function toggleRevision() {
+        const content = document.getElementById('revision-content');
+        if (content.classList.contains('hidden')) {
+            content.classList.remove('hidden');
+        } else {
+            content.classList.add('hidden');
+        }
+    }
+</script>
+
+</body>
+</html>

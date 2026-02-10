@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 4 Moral Values - Interactive Module</title>
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --bg-color: #fdf6e3;
+            --card-bg: #ffffff;
+            --text-color: #2d3436;
+            --correct: #00b894;
+            --wrong: #ff7675;
+            --pastel-blue: #dff9fb;
+            --pastel-pink: #ffeaa7;
+            --pastel-green: #55efc4;
+            --pastel-purple: #a29bfe;
+            --border-radius: 15px;
+            --font-stack: 'Comic Sans MS', 'Chalkboard SE', 'Patrick Hand', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-stack);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            padding-bottom: 60px; /* Footer space */
+            line-height: 1.6;
+        }
+
+        /* --- Sticky Header & Score --- */
+        header {
+            background: linear-gradient(135deg, #74b9ff, #a29bfe);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+        }
+
+        .score-panel {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(255, 255, 255, 0.9);
+            margin: 10px auto;
+            padding: 10px;
+            border-radius: 50px;
+            width: 95%;
+            max-width: 600px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .score-item span {
+            display: block;
+            font-size: 1.2em;
+            color: var(--primary);
+        }
+
+        /* --- Navigation --- */
+        .nav-tabs {
+            display: flex;
+            overflow-x: auto;
+            padding: 10px;
+            gap: 10px;
+            background: var(--pastel-blue);
+            white-space: nowrap;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .nav-tabs::-webkit-scrollbar { display: none; }
+
+        .tab-btn {
+            background: white;
+            border: 2px solid var(--secondary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-family: var(--font-stack);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        /* --- Main Content Areas --- */
+        .section-content {
+            display: none;
+            padding: 15px;
+            max-width: 800px;
+            margin: 0 auto;
+            animation: fadeIn 0.5s;
+        }
+
+        .section-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Notes Accordion --- */
+        .topic-card {
+            background: var(--card-bg);
+            margin-bottom: 15px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+            border: 2px solid transparent;
+        }
+
+        .topic-header {
+            background: #ffeaa7;
+            padding: 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: background 0.3s;
+        }
+
+        .topic-header:hover {
+            background: #fdcb6e;
+        }
+
+        .topic-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+            background: white;
+        }
+
+        .topic-content-inner {
+            padding: 20px;
+        }
+
+        .note-block {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-left: 5px solid var(--secondary);
+            border-radius: 5px;
+        }
+
+        .note-label {
+            color: var(--primary);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        /* --- Practice Questions --- */
+        .question-card {
+            background: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .q-text {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: #2d3436;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .option-btn {
+            padding: 12px;
+            border: 2px solid #dfe6e9;
+            background: white;
+            border-radius: 10px;
+            font-family: var(--font-stack);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .option-btn:hover { background: #f1f2f6; }
+        
+        .option-btn.correct {
+            background: var(--correct);
+            color: white;
+            border-color: var(--correct);
+        }
+
+        .option-btn.wrong {
+            background: var(--wrong);
+            color: white;
+            border-color: var(--wrong);
+        }
+
+        .feedback-area {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: bold;
+            min-height: 60px;
+        }
+
+        .nav-controls {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .action-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-family: var(--font-stack);
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #4834d4;
+        }
+
+        .action-btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        /* --- Long Answers --- */
+        .long-answer-card textarea {
+            width: 100%;
+            height: 120px;
+            padding: 10px;
+            border: 2px solid var(--secondary);
+            border-radius: 10px;
+            font-family: var(--font-stack);
+            font-size: 1rem;
+            margin-bottom: 10px;
+            resize: none;
+        }
+
+        .model-answer {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            text-align: left;
+            display: none;
+        }
+
+        .keyword-badge {
+            display: inline-block;
+            background: #ffeaa7;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.85em;
+            margin: 2px;
+            border: 1px solid #fdcb6e;
+        }
+
+        /* --- Revision --- */
+        .revision-item {
+            background: white;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            border: 1px solid #dfe6e9;
+        }
+
+        .rev-q {
+            padding: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+        
+        .rev-q::before {
+            content: '❓';
+            margin-right: 10px;
+        }
+
+        .rev-a {
+            display: none;
+            padding: 15px;
+            background: #f0fff4;
+            border-top: 1px dashed #b2bec3;
+            color: #2d3436;
+        }
+
+        /* --- Footer --- */
+        footer {
+            background: #2d3436;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            font-size: 0.9rem;
+            z-index: 999;
+        }
+
+        /* Utilities */
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
+        
+        @media (min-width: 600px) {
+            .options-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Class 4 Moral Values 🌟</h1>
+    </header>
+
+    <div class="score-panel">
+        <div class="score-item">Correct<span id="score-correct">0</span></div>
+        <div class="score-item">Wrong<span id="score-wrong">0</span></div>
+        <div class="score-item">Total<span id="score-total">0</span></div>
+        <div class="score-item">Marks<span id="score-percent">0%</span></div>
+    </div>
+
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('notes')">📖 Notes</button>
+        <button class="tab-btn" onclick="switchTab('practice')">📝 Practice (100)</button>
+        <button class="tab-btn" onclick="switchTab('long-qa')">✍️ Long Ans (20)</button>
+        <button class="tab-btn" onclick="switchTab('revision')">🧠 Revision (40)</button>
+    </div>
+
+    <!-- NOTES SECTION -->
+    <div id="notes" class="section-content active">
+        <!-- Content injected via JS -->
+    </div>
+
+    <!-- PRACTICE QUESTIONS SECTION -->
+    <div id="practice" class="section-content">
+        <div class="question-card">
+            <div style="margin-bottom: 10px; font-weight: bold; color: var(--primary);">Question <span id="q-num">1</span>/100</div>
+            <div id="p-question-text" class="q-text">Loading...</div>
+            <div id="p-options" class="options-grid">
+                <!-- Options injected via JS -->
+            </div>
+            <div id="p-feedback" class="feedback-area"></div>
+            <div class="nav-controls">
+                <button class="action-btn" id="btn-next-p" onclick="nextPracticeQ()" style="display:none; margin-left: auto;">Next ➡️</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LONG ANSWER SECTION -->
+    <div id="long-qa" class="section-content">
+        <div class="question-card long-answer-card">
+            <div style="margin-bottom: 10px; font-weight: bold; color: var(--primary);">Long Answer <span id="l-num">1</span>/20</div>
+            <div id="l-question-text" class="q-text">Loading...</div>
+            <textarea id="l-input" placeholder="Type your answer here..."></textarea>
+            <button class="action-btn" onclick="checkLongAnswer()" id="l-check-btn">Check Answer ✅</button>
+            
+            <div id="l-model" class="model-answer">
+                <h4>Evaluation:</h4>
+                <p id="l-feedback-text"></p>
+                <div style="margin-top:10px; padding-top:10px; border-top:1px solid #ccc;">
+                    <strong>Key Points required:</strong><br>
+                    <div id="l-keywords"></div>
+                </div>
+            </div>
+
+            <div class="nav-controls">
+                <button class="action-btn" id="btn-next-l" onclick="nextLongQ()" style="display:none; margin-left: auto;">Next ➡️</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- REVISION SECTION -->
+    <div id="revision" class="section-content">
+        <h2 class="text-center" style="color: var(--primary);">Important Questions</h2>
+        <div id="revision-container">
+            <!-- Injected via JS -->
+        </div>
+    </div>
+
+    <footer>
+        Created & Designed by SHRISHANT YADAV
+    </footer>
+
+<script>
+/* =========================================
+   DATASETS
+   ========================================= */
+
+const topics = [
+    {
+        title: "1. Honesty",
+        def: "Being truthful and not stealing or cheating.",
+        exp: "Honesty means telling the truth even when it is difficult. It builds trust.",
+        ex: "Raju found a 10 Rupee coin in class and gave it to the teacher instead of keeping it.",
+        tip: "Truth = Trust 🤝",
+        check: "Is hiding your bad marks from parents honest? (No)"
+    },
+    {
+        title: "2. Respect",
+        def: "Treating others with care and politeness.",
+        exp: "We show respect by listening, using polite words, and honoring elders.",
+        ex: "Touching the feet of grandparents during Diwali to seek blessings.",
+        tip: "Give Respect, Get Respect 🙏",
+        check: "Should we listen when others speak? (Yes)"
+    },
+    {
+        title: "3. Kindness",
+        def: "Being friendly, generous, and considerate.",
+        exp: "Kindness is helping others without expecting anything in return.",
+        ex: "Sharing your tiffin with a friend who forgot to bring theirs.",
+        tip: "Be a Rainbow in someone's cloud 🌈",
+        check: "Is hurting stray animals kind? (No)"
+    },
+    {
+        title: "4. Responsibility",
+        def: "Doing what you are supposed to do.",
+        exp: "Taking care of your duties and accepting the results of your actions.",
+        ex: "Packing your own school bag every night before sleeping.",
+        tip: "My duty, my job ✅",
+        check: "Who should clean your room? (You)"
+    },
+    {
+        title: "5. Discipline",
+        def: "Following rules and behaving well.",
+        exp: "Discipline helps us achieve our goals and keeps things orderly.",
+        ex: "Standing in a straight line during the school assembly.",
+        tip: "Self-control is power ⏰",
+        check: "Is talking loudly in the library disciplined? (No)"
+    },
+    {
+        title: "6. Teamwork",
+        def: "Working together to achieve a goal.",
+        exp: "Together Everyone Achieves More. It involves sharing ideas and help.",
+        ex: "Students decorating the classroom together for Independence Day.",
+        tip: "We > Me 🤝",
+        check: "Can a cricket team win if they fight? (No)"
+    },
+    {
+        title: "7. Fairness",
+        def: "Treating everyone equally and impartially.",
+        exp: "Playing by the rules and taking turns is fairness.",
+        ex: "Cutting the birthday cake so every friend gets an equal slice.",
+        tip: "Play fair, win fair ⚖️",
+        check: "Is cheating in a game fair? (No)"
+    },
+    {
+        title: "8. Courage",
+        def: "Being brave enough to do the right thing.",
+        exp: "Courage is not the absence of fear, but acting in spite of it.",
+        ex: "Admitting to the teacher that you broke the vase by mistake.",
+        tip: "Be your own hero 🦁",
+        check: "Is bullying others courageous? (No)"
+    },
+    {
+        title: "9. Gratitude",
+        def: "Being thankful for what you have.",
+        exp: "Saying thank you and appreciating the good things in life.",
+        ex: "Saying 'Thank You' to the bus driver when getting off.",
+        tip: "Count blessings, not problems 🙌",
+        check: "Should we thank our parents? (Yes)"
+    },
+    {
+        title: "10. Empathy",
+        def: "Understanding how others feel.",
+        exp: "Putting yourself in someone else's shoes to understand their pain or joy.",
+        ex: "Feeling sad when your friend loses their favorite toy and comforting them.",
+        tip: "Feel what they feel ❤️",
+        check: "Is laughing at someone falling empathetic? (No)"
+    }
+];
+
+// 100 Unique Practice Questions (10 per topic)
+// Types: mcq, tf (True/False), fill (Fill in blanks)
+const practiceQuestions = [];
+const qTypes = ['mcq', 'tf', 'fill'];
+
+const generateQuestions = () => {
+    // Helper to add Q
+    const addQ = (topic, type, text, options, correct, expl) => {
+        practiceQuestions.push({ topic, type, text, options, correct, expl });
+    };
+
+    // 1. Honesty
+    addQ("Honesty", "mcq", "You broke a glass. What should you do?", ["Hide pieces", "Tell parents", "Blame cat"], "Tell parents", "Honesty means admitting mistakes.");
+    addQ("Honesty", "tf", "True or False: Copying in an exam is okay if you don't get caught.", ["True", "False"], "False", "Cheating is dishonest regardless of getting caught.");
+    addQ("Honesty", "mcq", "You find a wallet in the park.", ["Keep it", "Give to Police/Adult", "Buy ice cream"], "Give to Police/Adult", "Returning lost items is honest.");
+    addQ("Honesty", "fill", "Honesty is the best ______.", ["Policy", "Game", "Trick"], "Policy", "A famous proverb.");
+    addQ("Honesty", "mcq", "Who trusted the shepherd boy in the end?", ["Everyone", "No one", "His mom"], "No one", "Liars are not believed even when truthful.");
+    addQ("Honesty", "tf", "Lying to save a friend from punishment is good.", ["True", "False"], "False", "Lying complicates things; truth helps correct behavior.");
+    addQ("Honesty", "mcq", "A shopkeeper gives you extra change.", ["Return it", "Keep it", "Drop it"], "Return it", "Keeping money that isn't yours is stealing.");
+    addQ("Honesty", "fill", "A person who lies is called a ______.", ["Hero", "Liar", "King"], "Liar", "Someone who tells untruths.");
+    addQ("Honesty", "tf", "Being honest makes you trustworthy.", ["True", "False"], "True", "People trust those who speak truth.");
+    addQ("Honesty", "mcq", "Honesty requires:", ["Courage", "Fear", "Speed"], "Courage", "It takes bravery to tell the truth.");
+
+    // 2. Respect
+    addQ("Respect", "mcq", "How do we greet elders in India?", ["Say 'Hi'", "Touch feet/Namaste", "Ignore them"], "Touch feet/Namaste", "A sign of respect in Indian culture.");
+    addQ("Respect", "tf", "We should only respect rich people.", ["True", "False"], "False", "Everyone deserves respect.");
+    addQ("Respect", "mcq", "Your teacher enters the class. You should:", ["Stand up", "Keep talking", "Sleep"], "Stand up", "Standing shows respect for the teacher.");
+    addQ("Respect", "fill", "Using words like 'Please' and '______' shows respect.", ["Get out", "Thank You", "Move"], "Thank You", "Polite words show respect.");
+    addQ("Respect", "mcq", "Respecting nature means:", ["Cutting trees", "Planting trees", "Littering"], "Planting trees", "Caring for the environment is respect.");
+    addQ("Respect", "tf", "Interrupting someone while speaking is respectful.", ["True", "False"], "False", "We should listen first.");
+    addQ("Respect", "mcq", "Respecting national symbols includes:", ["Talking during anthem", "Standing for anthem", "Sitting"], "Standing for anthem", "We honor our country.");
+    addQ("Respect", "fill", "Treat others how you want to be ______.", ["Treated", "Beaten", "Scolded"], "Treated", "The Golden Rule.");
+    addQ("Respect", "tf", "Making fun of someone's clothes is disrespectful.", ["True", "False"], "True", "We should not mock others.");
+    addQ("Respect", "mcq", "Who deserves respect?", ["Parents", "Teachers", "Helpers", "All of them"], "All of them", "Every human has dignity.");
+
+    // 3. Kindness
+    addQ("Kindness", "mcq", "A dog is hungry outside your gate.", ["Throw stones", "Give food/water", "Shout"], "Give food/water", "Kindness to animals.");
+    addQ("Kindness", "tf", "Helping a blind person cross the road is kind.", ["True", "False"], "True", "Helping those in need is kindness.");
+    addQ("Kindness", "mcq", "Your friend is crying.", ["Laugh", "Ask what happened", "Walk away"], "Ask what happened", "Comforting friends is kind.");
+    addQ("Kindness", "fill", "Kindness is a language the deaf can hear and the blind can ______.", ["See", "Smell", "Taste"], "See", "Quote by Mark Twain.");
+    addQ("Kindness", "mcq", "Sharing your umbrella in rain is:", ["Silly", "Kind", "Bad"], "Kind", "Sharing is caring.");
+    addQ("Kindness", "tf", "Bullying is a form of kindness.", ["True", "False"], "False", "Bullying is cruel.");
+    addQ("Kindness", "mcq", "Donating old clothes to the poor.", ["Waste of time", "Act of Kindness", "Boring"], "Act of Kindness", "Charity is kindness.");
+    addQ("Kindness", "fill", "Kind words are like ______.", ["Honey", "Vinegar", "Stones"], "Honey", "Sweet and soothing.");
+    addQ("Kindness", "tf", "We should only be kind to our friends.", ["True", "False"], "False", "Be kind to everyone.");
+    addQ("Kindness", "mcq", "Helping mom in the kitchen.", ["Kindness", "Punishment", "Useless"], "Kindness", "Helping family is kind.");
+
+    // 4. Responsibility
+    addQ("Responsibility", "mcq", "You finished playing with toys.", ["Leave them", "Put them back", "Kick them"], "Put them back", "Cleaning up is your responsibility.");
+    addQ("Responsibility", "tf", "It is the teacher's job to do your homework.", ["True", "False"], "False", "Homework is the student's duty.");
+    addQ("Responsibility", "mcq", "You spilled water on the floor.", ["Walk away", "Wipe it", "Call mom"], "Wipe it", "Fix your own mistakes.");
+    addQ("Responsibility", "fill", "A responsible student finishes work on ______.", ["Time", "Sunday", "Holiday"], "Time", "Punctuality is responsibility.");
+    addQ("Responsibility", "mcq", "Who is responsible for your hygiene?", ["Doctor", "You", "Teacher"], "You", "Brushing and bathing is your job.");
+    addQ("Responsibility", "tf", "Blaming others for your mistake is responsible.", ["True", "False"], "False", "Accepting errors is responsible.");
+    addQ("Responsibility", "mcq", "Turning off lights when leaving a room.", ["Saves energy", "Is boring", "Is dark"], "Saves energy", "Responsibility towards earth.");
+    addQ("Responsibility", "fill", "We must take care of our school ______.", ["Property", "Games", "Sleep"], "Property", "Don't damage desks/walls.");
+    addQ("Responsibility", "tf", "Feeding your pet is your responsibility.", ["True", "False"], "True", "Pets depend on us.");
+    addQ("Responsibility", "mcq", "Reaching school on time.", ["Optional", "Responsible", "Unnecessary"], "Responsible", "Punctuality matters.");
+
+    // 5. Discipline
+    addQ("Discipline", "mcq", "Walking in a corridor.", ["Run fast", "Walk in line", "Jump"], "Walk in line", "Maintains order and safety.");
+    addQ("Discipline", "tf", "Waking up late every day is discipline.", ["True", "False"], "False", "Early to rise is a good habit.");
+    addQ("Discipline", "mcq", "Where should we throw wrapper?", ["Floor", "Dustbin", "Window"], "Dustbin", "Cleanliness is discipline.");
+    addQ("Discipline", "fill", "Discipline is the bridge between goals and ______.", ["Accomplishment", "Failure", "Sleep"], "Accomplishment", "Discipline leads to success.");
+    addQ("Discipline", "mcq", "Talking while the teacher is teaching.", ["Okay", "Indiscipline", "Fun"], "Indiscipline", "Disrupts learning.");
+    addQ("Discipline", "tf", "Wearing a clean uniform is part of discipline.", ["True", "False"], "True", "Shows respect for school rules.");
+    addQ("Discipline", "mcq", "Following traffic lights.", ["Safety", "Silly", "Optional"], "Safety", "Civic discipline.");
+    addQ("Discipline", "fill", "Self-______ is the best discipline.", ["Control", "Love", "Hate"], "Control", "Controlling your own impulses.");
+    addQ("Discipline", "tf", "Eating junk food daily is a disciplined diet.", ["True", "False"], "False", "Healthy eating requires discipline.");
+    addQ("Discipline", "mcq", "Completing work before playing.", ["Discipline", "Laziness", "Boring"], "Discipline", "Work first, play later.");
+
+    // 6. Teamwork
+    addQ("Teamwork", "mcq", "Tug of war is a game of:", ["Solo power", "Teamwork", "Luck"], "Teamwork", "Pulling together wins.");
+    addQ("Teamwork", "tf", "In a team, only one person should do everything.", ["True", "False"], "False", "Everyone contributes.");
+    addQ("Teamwork", "mcq", "If your teammate falls:", ["Laugh", "Help them up", "Ignore"], "Help them up", "Support your team.");
+    addQ("Teamwork", "fill", "Together Everyone Achieves ______.", ["More", "Less", "Nothing"], "More", "Acronym for TEAM.");
+    addQ("Teamwork", "mcq", "Ants carrying food together.", ["Teamwork", "Fighting", "Playing"], "Teamwork", "Nature's example.");
+    addQ("Teamwork", "tf", "Listening to others' ideas helps the team.", ["True", "False"], "True", "Diverse ideas work better.");
+    addQ("Teamwork", "mcq", "Project work in class.", ["Do alone", "Share work", "Copy"], "Share work", "Collaboration.");
+    addQ("Teamwork", "fill", "There is no 'I' in ______.", ["Team", "Group", "Class"], "Team", "Focus on 'We'.");
+    addQ("Teamwork", "tf", "Blaming a teammate for losing is good.", ["True", "False"], "False", "Win together, lose together.");
+    addQ("Teamwork", "mcq", "A cricket team has 11 players working for:", ["Own scores", "Team victory", "Opponent"], "Team victory", "Common goal.");
+
+    // 7. Fairness
+    addQ("Fairness", "mcq", "Two friends want the same swing.", ["Fight", "Take turns", "Push"], "Take turns", "Sharing is fair.");
+    addQ("Fairness", "tf", "Rules should be different for your best friend.", ["True", "False"], "False", "Rules apply to everyone equally.");
+    addQ("Fairness", "mcq", "The umpire in cricket must be:", ["Biased", "Fair", "Blind"], "Fair", "Impartial judgment.");
+    addQ("Fairness", "fill", "Fairness means treating everyone ______.", ["Equally", "Badly", "Differently"], "Equally", "Equality is key.");
+    addQ("Fairness", "mcq", "Cutting a cake.", ["Big piece for me", "Equal pieces", "No pieces"], "Equal pieces", "Fair distribution.");
+    addQ("Fairness", "tf", "Cheating to win makes you a winner.", ["True", "False"], "False", "Unfair wins don't count.");
+    addQ("Fairness", "mcq", "If you break a rule:", ["Accept penalty", "Argue", "Cry"], "Accept penalty", "Accepting consequences.");
+    addQ("Fairness", "fill", "Don't play ______ favorites.", ["With", "Against", "No"], "With", "Favoritism is unfair.");
+    addQ("Fairness", "tf", "Listening to both sides of a story is fair.", ["True", "False"], "True", "Justice requires hearing all.");
+    addQ("Fairness", "mcq", "Sharing household chores.", ["Only mom works", "Everyone helps", "Only dad works"], "Everyone helps", "Fair load sharing.");
+
+    // 8. Courage
+    addQ("Courage", "mcq", "You see a big boy bullying a small kid.", ["Run away", "Tell a teacher", "Join him"], "Tell a teacher", "Reporting wrong is brave.");
+    addQ("Courage", "tf", "Courage means never being scared.", ["True", "False"], "False", "Courage is acting despite fear.");
+    addQ("Courage", "mcq", "Admitting you lied requires:", ["Cowardice", "Courage", "Magic"], "Courage", "Truth takes bravery.");
+    addQ("Courage", "fill", "Fortune favors the ______.", ["Brave", "Weak", "Lazy"], "Brave", "Proverb.");
+    addQ("Courage", "mcq", "Learning to ride a bicycle without support.", ["Scary but brave", "Impossible", "Bad"], "Scary but brave", "Overcoming fear.");
+    addQ("Courage", "tf", "Saying 'No' to bad habits takes courage.", ["True", "False"], "True", "Peer pressure is hard to resist.");
+    addQ("Courage", "mcq", "Performing on stage for the first time.", ["Stage fright", "Courageous act", "Mistake"], "Courageous act", "Public speaking is brave.");
+    addQ("Courage", "fill", "A lion is a symbol of ______.", ["Courage", "Sleep", "Food"], "Courage", "King of the jungle.");
+    addQ("Courage", "tf", "Hiding behind mom when guests come is courage.", ["True", "False"], "False", "That is shyness/fear.");
+    addQ("Courage", "mcq", "Soldiers protecting the border.", ["Job", "Review", "Extreme Courage"], "Extreme Courage", "Risking life for others.");
+
+    // 9. Gratitude
+    addQ("Gratitude", "mcq", "Someone gives you a gift.", ["Throw it", "Say Thanks", "Ask for more"], "Say Thanks", "Show appreciation.");
+    addQ("Gratitude", "tf", "We should only thank people who give us money.", ["True", "False"], "False", "Thank everyone who helps.");
+    addQ("Gratitude", "mcq", "Before eating dinner.", ["Complain", "Pray/Give thanks", "Sleep"], "Pray/Give thanks", "Gratitude for food.");
+    addQ("Gratitude", "fill", "Gratitude turns what we have into ______.", ["Enough", "Less", "Nothing"], "Enough", "Contentment.");
+    addQ("Gratitude", "mcq", "Your mom cooks food for you.", ["It's her job", "Appreciate her", "Ignore"], "Appreciate her", "Value her effort.");
+    addQ("Gratitude", "tf", "Complaining all the time shows gratitude.", ["True", "False"], "False", "It shows ungratefulness.");
+    addQ("Gratitude", "mcq", "Writing a Thank You card.", ["Old fashion", "Good habit", "Bad"], "Good habit", "Expressing thanks.");
+    addQ("Gratitude", "fill", "Count your ______.", ["Blessings", "Toys", "Fingers"], "Blessings", "Focus on the positive.");
+    addQ("Gratitude", "tf", "Being healthy is something to be grateful for.", ["True", "False"], "True", "Health is wealth.");
+    addQ("Gratitude", "mcq", "The bus driver drops you safely.", ["Ignore him", "Thank him", "Shout"], "Thank him", "Dignity of labor.");
+
+    // 10. Empathy
+    addQ("Empathy", "mcq", "Your friend fell and scraped a knee.", ["Laugh", "Feel sad & help", "Take photo"], "Feel sad & help", "Sharing their pain.");
+    addQ("Empathy", "tf", "Empathy means feeling sorry for yourself.", ["True", "False"], "False", "It's feeling for *others*.");
+    addQ("Empathy", "mcq", "A new student is sitting alone.", ["Ignore", "Invite to play", "Tease"], "Invite to play", "Understanding loneliness.");
+    addQ("Empathy", "fill", "Put yourself in their ______.", ["Shoes", "Hat", "Bag"], "Shoes", "Idiom for empathy.");
+    addQ("Empathy", "mcq", "Seeing a beggar in cold without a blanket.", ["Feel cold for them", "Don't care", "Laugh"], "Feel cold for them", "Sensing their struggle.");
+    addQ("Empathy", "tf", "Listening to a sad friend helps them.", ["True", "False"], "True", "Sharing burden.");
+    addQ("Empathy", "mcq", "Empathy leads to:", ["Fighting", "Kindness", "Sleeping"], "Kindness", "Understanding leads to action.");
+    addQ("Empathy", "fill", "Understand before you ______.", ["Judge", "Eat", "Run"], "Judge", "Don't judge quickly.");
+    addQ("Empathy", "tf", "Robots have empathy.", ["True", "False"], "False", "It's a human emotion.");
+    addQ("Empathy", "mcq", "Your mom looks tired.", ["Ask to play", "Offer water/rest", "Make noise"], "Offer water/rest", "Sensing her fatigue.");
+};
+
+generateQuestions();
+
+// 20 Long Answer Questions
+const longAnswers = [
+    { q: "Why is honesty considered the best policy?", keywords: ["trust", "truth", "belief", "respect"], model: "Honesty is the best policy because it builds **trust** between people. When we tell the **truth**, people **believe** us and **respect** us. Lies lead to trouble." },
+    { q: "How can you show respect to your teachers?", keywords: ["listen", "greet", "obey", "polite"], model: "We can show respect by **greeting** them, **listening** carefully in class, **obeying** their instructions, and using **polite** words." },
+    { q: "Describe a time you were kind to someone.", keywords: ["help", "share", "care", "friend"], model: "I was kind when I **shared** my lunch with a **friend**. I also **helped** an old lady cross the road. Showing **care** makes everyone happy." },
+    { q: "What are your responsibilities as a student?", keywords: ["study", "homework", "uniform", "time"], model: "As a student, I must **study** regularly, finish **homework**, wear a clean **uniform**, and reach school on **time**." },
+    { q: "Why is discipline important in school?", keywords: ["rules", "order", "learn", "focus"], model: "Discipline follows **rules** to keep **order**. It helps us **learn** better and stay **focused** without disturbing others." },
+    { q: "How does teamwork help in sports?", keywords: ["win", "support", "together", "goal"], model: "Teamwork helps us **win** because we work **together**. Players **support** each other to reach the common **goal**." },
+    { q: "Give an example of fairness in the classroom.", keywords: ["turn", "equal", "chance", "bias"], model: "Fairness is when every student gets an **equal** **chance** to answer. The teacher should not show **bias** and everyone waits for their **turn**." },
+    { q: "Why do we need courage to tell the truth?", keywords: ["fear", "scared", "brave", "punishment"], model: "We need courage because we might be **scared** of **punishment**. Being **brave** helps us overcome **fear** and do the right thing." },
+    { q: "Who are you grateful to and why?", keywords: ["parents", "teachers", "love", "care"], model: "I am grateful to my **parents** for their **love** and **care**. I thank my **teachers** for teaching me good things." },
+    { q: "How is empathy different from sympathy?", keywords: ["feel", "shoe", "understand", "pity"], model: "Sympathy is just **pity**. Empathy is when you **understand** and **feel** the other person's pain as if you were in their **shoes**." },
+    { q: "What happens if we are not disciplined?", keywords: ["chaos", "fail", "mess", "trouble"], model: "Without discipline, there will be **chaos** and **mess**. We might **fail** in our tasks and get into **trouble**." },
+    { q: "How can you help your parents at home?", keywords: ["clean", "water", "fold", "dishes"], model: "I can **clean** my room, fill **water** bottles, **fold** clothes, and help with **dishes** to show responsibility." },
+    { q: "Why should we not cheat in exams?", keywords: ["learn", "wrong", "fake", "bad"], model: "Cheating is **wrong** because we don't **learn** anything. Marks from cheating are **fake** and it forms a **bad** habit." },
+    { q: "What will you do if you find a lost book?", keywords: ["return", "name", "owner", "teacher"], model: "I will check the **name** on it and **return** it to the **owner**. If no name, I will give it to the **teacher**." },
+    { q: "How does fighting affect a team?", keywords: ["lose", "weak", "sad", "break"], model: "Fighting makes the team **weak** and they might **lose**. It breaks friendship and makes everyone **sad**." },
+    { q: "Why is it important to listen to others?", keywords: ["respect", "learn", "feelings", "rude"], model: "Listening shows **respect** for their **feelings**. We can **learn** from them. Not listening is **rude**." },
+    { q: "How do you feel when someone says 'Thank You'?", keywords: ["happy", "good", "valued", "nice"], model: "I feel **happy** and **good**. It makes me feel **valued** and that I did something **nice**." },
+    { q: "Is it okay to cry when you are sad? Why?", keywords: ["yes", "feeling", "human", "okay"], model: " **Yes**, it is **okay**. Crying expresses our **feelings**. It is **human** to feel sad and let it out." },
+    { q: "What does 'Unity is Strength' mean?", keywords: ["together", "power", "strong", "divide"], model: "It means when we are **together**, we are **strong** and have **power**. If we **divide**, we become weak." },
+    { q: "Why should we respect national symbols?", keywords: ["pride", "country", "honor", "identity"], model: "They represent our **country** and **identity**. Respecting them shows **honor** and **pride** for our nation." }
+];
+
+// 40 Revision Questions
+const revisionData = [
+    { q: "What is the golden rule of respect?", a: "Treat others how you want to be treated." },
+    { q: "Does honesty only mean not lying?", a: "No, it also means not stealing or cheating." },
+    { q: "Why should we stand in a queue?", a: "To maintain discipline and order so everyone gets a turn quickly." },
+    { q: "What is a 'white lie'?", a: "A small lie often told to be polite, but truth is always better." },
+    { q: "How can we show gratitude to nature?", a: "By not littering, planting trees, and saving water." },
+    { q: "Is fear the opposite of courage?", a: "No, cowardice is. Courage is acting despite fear." },
+    { q: "What is the best way to resolve a fight?", a: "Talk calmly, listen, and say sorry." },
+    { q: "Why is punctuality a responsibility?", a: "Because it shows we value our time and others' time." },
+    { q: "Can we be kind without money?", a: "Yes! A smile, helping hand, or kind word costs nothing." },
+    { q: "What does 'Namaste' mean?", a: "I bow to the divinity in you. It is a respectful Indian greeting." },
+    { q: "Why do we have school uniforms?", a: "To show equality and discipline among all students." },
+    { q: "What is the meaning of 'Sorry'?", a: "It means I accept my mistake and will try not to repeat it." },
+    { q: "How does empathy stop bullying?", a: "If you feel the victim's pain, you will not want to hurt them." },
+    { q: "Why is teamwork needed in a family?", a: "To share chores so one person doesn't get tired." },
+    { q: "Is taking credit for others' work honest?", a: "No, that is a form of stealing credit." },
+    { q: "What is civic sense?", a: "Social ethics like keeping roads clean and following laws." },
+    { q: "Why should we respect different religions?", a: "Because India is diverse and everyone has a right to their faith." },
+    { q: "What is self-discipline?", a: "Controlling yourself without someone else telling you what to do." },
+    { q: "How to handle anger responsibly?", a: "Count to 10, take deep breaths, don't hit or shout." },
+    { q: "What is the reward of kindness?", a: "Happiness and inner peace." },
+    { q: "Does courage mean fighting?", a: "No, it means standing up for what is right peacefully." },
+    { q: "Why is 'Please' a magic word?", a: "It turns an order into a request and shows respect." },
+    { q: "What is 'Integrity'?", a: "Doing the right thing even when no one is watching." },
+    { q: "Why share toys?", a: "To build friendship, practice fairness, and be kind." },
+    { q: "How to show respect to a guest?", a: "Offer water/seat, talk politely, and don't ignore them." },
+    { q: "Is admitting a mistake a weakness?", a: "No, it is a sign of great courage and honesty." },
+    { q: "What is 'Sportsman Spirit'?", a: "Playing fair, respecting the opponent, and accepting defeat gracefully." },
+    { q: "Why save water?", a: "It is a precious resource and saving it is our responsibility." },
+    { q: "How to help a blind person?", a: "Ask if they need help, then offer your elbow to guide them." },
+    { q: "What is gratitude journaling?", a: "Writing down 3 things you are thankful for every day." },
+    { q: "Why obey traffic rules?", a: "For the safety of ourselves and others (Discipline)." },
+    { q: "What is 'Compassion'?", a: "Deep awareness of others' suffering and wanting to help (Empathy)." },
+    { q: "Is copying homework teamwork?", a: "No, that is cheating. Teamwork is explaining, not copying." },
+    { q: "Why return borrowed items?", a: "To maintain trust and show responsibility." },
+    { q: "What if you find money in school?", a: "Give it to the 'Lost and Found' or teacher (Honesty)." },
+    { q: "How to respect maids/helpers?", a: "Call them 'Didi/Bhaiya', speak politely, and thank them." },
+    { q: "What is a 'Good Samaritan'?", a: "Someone who helps a stranger in trouble." },
+    { q: "Why wait for your turn?", a: "To be fair to those who came before you." },
+    { q: "What to do if you see garbage on the floor?", a: "Pick it up and throw it in the bin (Responsibility)." },
+    { q: "Does kindness make you weak?", a: "No, kindness requires strength of character." }
+];
+
+/* =========================================
+   LOGIC & STATE
+   ========================================= */
+
+const state = {
+    practiceIndex: 0,
+    longIndex: 0,
+    score: {
+        correct: 0,
+        wrong: 0,
+        total: 120 // 100 practice + 20 long
+    }
+};
+
+// --- Initialization ---
+document.addEventListener('DOMContentLoaded', () => {
+    renderNotes();
+    loadPracticeQuestion();
+    loadLongQuestion();
+    renderRevision();
+    updateScoreBoard();
+});
+
+// --- Tab Switching ---
+function switchTab(tabId) {
+    document.querySelectorAll('.section-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    
+    document.getElementById(tabId).classList.add('active');
+    // Find the button with the matching onclick and set active
+    const buttons = document.querySelectorAll('.tab-btn');
+    buttons.forEach(btn => {
+        if(btn.getAttribute('onclick').includes(tabId)) {
+            btn.classList.add('active');
+        }
+    });
+}
+
+// --- Render Notes ---
+function renderNotes() {
+    const container = document.getElementById('notes');
+    let html = '';
+    topics.forEach((t, i) => {
+        html += `
+        <div class="topic-card">
+            <div class="topic-header" onclick="toggleNote(${i})">
+                ${t.title}
+                <span>🔽</span>
+            </div>
+            <div class="topic-body" id="note-body-${i}">
+                <div class="topic-content-inner">
+                    <div class="note-block"><span class="note-label">Definition</span>${t.def}</div>
+                    <div class="note-block"><span class="note-label">Explanation</span>${t.exp}</div>
+                    <div class="note-block" style="background:#e8f5e9;"><span class="note-label">Example 🇮🇳</span>${t.ex}</div>
+                    <div class="note-block" style="background:#fff3e0;"><span class="note-label">Memory Tip</span>${t.tip}</div>
+                    <div class="note-block" style="background:#e3f2fd; font-weight:bold;">❓ Quick Check: ${t.check}</div>
+                </div>
+            </div>
+        </div>`;
+    });
+    container.innerHTML = html;
+}
+
+function toggleNote(index) {
+    const allBodies = document.querySelectorAll('.topic-body');
+    const target = document.getElementById(`note-body-${index}`);
+    
+    // Auto collapse others
+    allBodies.forEach(b => {
+        if (b !== target) b.style.maxHeight = null;
+    });
+
+    if (target.style.maxHeight) {
+        target.style.maxHeight = null;
+    } else {
+        target.style.maxHeight = target.scrollHeight + "px";
+    }
+}
+
+// --- Practice Questions Logic ---
+function loadPracticeQuestion() {
+    if (state.practiceIndex >= practiceQuestions.length) {
+        document.getElementById('practice').innerHTML = `
+            <div class="question-card">
+                <h2>Practice Complete! 🎉</h2>
+                <p>You have finished all 100 questions.</p>
+                <button class="action-btn" onclick="switchTab('long-qa')">Go to Long Answers ➡️</button>
+            </div>`;
+        return;
+    }
+
+    const q = practiceQuestions[state.practiceIndex];
+    document.getElementById('q-num').innerText = state.practiceIndex + 1;
+    document.getElementById('p-question-text').innerText = q.text;
+    
+    // Reset UI
+    document.getElementById('p-feedback').innerHTML = '';
+    document.getElementById('p-feedback').className = 'feedback-area';
+    document.getElementById('btn-next-p').style.display = 'none';
+
+    // Render Options
+    const optContainer = document.getElementById('p-options');
+    optContainer.innerHTML = '';
+    
+    q.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerText = opt;
+        btn.onclick = () => checkPracticeAnswer(btn, opt, q.correct, q.expl);
+        optContainer.appendChild(btn);
+    });
+}
+
+function checkPracticeAnswer(btn, selected, correct, expl) {
+    // Disable all buttons
+    const allBtns = document.querySelectorAll('.option-btn');
+    allBtns.forEach(b => b.disabled = true);
+
+    const feedback = document.getElementById('p-feedback');
+
+    if (selected === correct) {
+        btn.classList.add('correct');
+        feedback.innerHTML = `<span style="color:green">Excellent! ⭐</span><br>${expl}`;
+        feedback.style.backgroundColor = '#d4edda';
+        updateScore(true);
+    } else {
+        btn.classList.add('wrong');
+        // Highlight correct one
+        allBtns.forEach(b => {
+            if (b.innerText === correct) b.classList.add('correct');
+        });
+        feedback.innerHTML = `<span style="color:red">Try Again ❌</span><br>Correct Answer: ${correct}<br>${expl}`;
+        feedback.style.backgroundColor = '#f8d7da';
+        updateScore(false);
+    }
+
+    document.getElementById('btn-next-p').style.display = 'block';
+}
+
+function nextPracticeQ() {
+    state.practiceIndex++;
+    loadPracticeQuestion();
+}
+
+// --- Long Answer Logic ---
+function loadLongQuestion() {
+    if (state.longIndex >= longAnswers.length) {
+        document.getElementById('long-qa').innerHTML = `
+            <div class="question-card">
+                <h2>All Done! 🏆</h2>
+                <p>You have completed the entire module.</p>
+            </div>`;
+        return;
+    }
+
+    const q = longAnswers[state.longIndex];
+    document.getElementById('l-num').innerText = state.longIndex + 1;
+    document.getElementById('l-question-text').innerText = q.q;
+    document.getElementById('l-input').value = '';
+    document.getElementById('l-model').style.display = 'none';
+    document.getElementById('l-check-btn').style.display = 'inline-block';
+    document.getElementById('btn-next-l').style.display = 'none';
+}
+
+function checkLongAnswer() {
+    const userText = document.getElementById('l-input').value.toLowerCase();
+    const q = longAnswers[state.longIndex];
+    const keywords = q.keywords;
+    
+    if (userText.trim().length < 5) {
+        alert("Please write a longer answer.");
+        return;
+    }
+
+    let hitCount = 0;
+    let missing = [];
+
+    keywords.forEach(k => {
+        if (userText.includes(k.toLowerCase())) {
+            hitCount++;
+        } else {
+            missing.push(k);
+        }
+    });
+
+    const isCorrect = hitCount >= 2; // Pass criteria: at least 2 keywords
+    updateScore(isCorrect);
+
+    // Show Model Answer
+    document.getElementById('l-model').style.display = 'block';
+    document.getElementById('l-check-btn').style.display = 'none';
+    document.getElementById('btn-next-l').style.display = 'inline-block';
+
+    const feedbackText = document.getElementById('l-feedback-text');
+    if (isCorrect) {
+        feedbackText.innerHTML = `<strong style="color:green">Good Attempt! ⭐</strong> You covered key points.`;
+    } else {
+        feedbackText.innerHTML = `<strong style="color:red">Needs Improvement.</strong> Try to include more specific words.`;
+    }
+
+    // Render Keywords highlight
+    const kwContainer = document.getElementById('l-keywords');
+    kwContainer.innerHTML = '';
+    keywords.forEach(k => {
+        const span = document.createElement('span');
+        span.className = 'keyword-badge';
+        if (userText.includes(k.toLowerCase())) {
+            span.style.background = '#81ecec'; // bright cyan for hit
+            span.innerText = k + " ✓";
+        } else {
+            span.style.background = '#fab1a0'; // red/orange for miss
+            span.innerText = k + " ✗";
+        }
+        kwContainer.appendChild(span);
+    });
+}
+
+function nextLongQ() {
+    state.longIndex++;
+    loadLongQuestion();
+}
+
+// --- Revision Logic ---
+function renderRevision() {
+    const container = document.getElementById('revision-container');
+    let html = '';
+    revisionData.forEach((item, i) => {
+        html += `
+        <div class="revision-item">
+            <div class="rev-q" onclick="toggleRev(${i})">${item.q}</div>
+            <div class="rev-a" id="rev-a-${i}">💡 ${item.a}</div>
+        </div>`;
+    });
+    container.innerHTML = html;
+}
+
+function toggleRev(i) {
+    const el = document.getElementById(`rev-a-${i}`);
+    if (el.style.display === 'block') {
+        el.style.display = 'none';
+    } else {
+        el.style.display = 'block';
+    }
+}
+
+// --- Score Logic ---
+function updateScore(isCorrect) {
+    if (isCorrect) state.score.correct++;
+    else state.score.wrong++;
+    updateScoreBoard();
+}
+
+function updateScoreBoard() {
+    const totalAttempted = state.score.correct + state.score.wrong;
+    document.getElementById('score-correct').innerText = state.score.correct;
+    document.getElementById('score-wrong').innerText = state.score.wrong;
+    document.getElementById('score-total').innerText = state.score.total;
+    
+    let pct = 0;
+    if (totalAttempted > 0) {
+        pct = Math.round((state.score.correct / totalAttempted) * 100);
+    }
+    document.getElementById('score-percent').innerText = pct + "%";
+}
+
+</script>
+</body>
+</html>

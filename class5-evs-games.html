@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 5 EVS: Advanced Science Explorer</title>
+    <style>
+        :root {
+            --primary: #FF9F1C;   /* Orange */
+            --secondary: #2EC4B6; /* Teal */
+            --accent: #E71D36;    /* Red/Pink */
+            --light: #FDFFFC;     /* White */
+            --dark: #011627;      /* Dark Blue */
+            --correct: #4CAF50;
+            --wrong: #FF5252;
+            --font-main: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 0;
+            color: var(--dark);
+            padding-bottom: 60px; /* Footer space */
+        }
+
+        /* --- STICKY SCOREBOARD --- */
+        #scoreboard {
+            position: sticky;
+            top: 0;
+            background: var(--dark);
+            color: white;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            font-size: 0.9rem;
+        }
+
+        .score-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .score-val {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: var(--primary);
+        }
+
+        /* --- MAIN CONTAINER --- */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: var(--secondary);
+            margin: 10px 0;
+        }
+
+        /* --- MENU GRID --- */
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 0 var(--secondary);
+            border: 2px solid var(--secondary);
+            cursor: pointer;
+            transition: transform 0.1s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 140px;
+        }
+
+        .game-card:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        .game-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .game-title {
+            font-size: 0.9rem;
+            font-weight: bold;
+            line-height: 1.2;
+        }
+
+        /* --- GAME PLAY AREA --- */
+        #game-area {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* MCQ Styles */
+        .options-grid {
+            display: grid;
+            gap: 10px;
+        }
+
+        .option-btn {
+            background: #f0f0f0;
+            border: 2px solid #ddd;
+            padding: 12px;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 1rem;
+            cursor: pointer;
+            text-align: left;
+            transition: background 0.2s;
+        }
+
+        .option-btn:hover {
+            background: #e8e8e8;
+        }
+
+        .option-btn.correct {
+            background: var(--correct);
+            color: white;
+            border-color: var(--correct);
+        }
+
+        .option-btn.wrong {
+            background: var(--wrong);
+            color: white;
+            border-color: var(--wrong);
+        }
+
+        /* Sort/Match Styles */
+        .sort-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .sort-item {
+            background: var(--primary);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .sort-item.selected {
+            border-color: var(--dark);
+            transform: scale(1.1);
+        }
+
+        .sort-buckets {
+            display: flex;
+            justify-content: space-around;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .bucket {
+            border: 2px dashed var(--secondary);
+            border-radius: 10px;
+            padding: 10px;
+            min-height: 100px;
+            width: 45%;
+            text-align: center;
+        }
+
+        /* Feedback & Controls */
+        #feedback-area {
+            margin-top: 20px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            min-height: 30px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .btn {
+            background: var(--dark);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 3px 0 #000;
+        }
+
+        .btn:active {
+            transform: translateY(3px);
+            box-shadow: none;
+        }
+
+        .btn-home { background: var(--secondary); box-shadow: 0 3px 0 #208b81; }
+        .btn-next { background: var(--primary); box-shadow: 0 3px 0 #c97b10; }
+
+        /* --- FOOTER --- */
+        footer {
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            font-size: 0.8rem;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- STICKY SCOREBOARD -->
+    <div idscoreboard id="scoreboard">
+        <div class="score-item">
+            <span>Tasks</span>
+            <span class="score-val" id="score-total">0</span>
+        </div>
+        <div class="score-item">
+            <span>Score</span>
+            <span class="score-val" id="score-points">0</span>
+        </div>
+        <div class="score-item">
+            <span>Accuracy</span>
+            <span class="score-val" id="score-percent">0%</span>
+        </div>
+    </div>
+
+    <!-- MAIN APP CONTAINER -->
+    <div class="container">
+        
+        <!-- DASHBOARD / MENU -->
+        <div id="menu-screen">
+            <h1>Class 5 Science Explorer 🚀</h1>
+            <p style="text-align:center;">Select a Game Module to Start!</p>
+            <div class="game-grid" id="game-grid">
+                <!-- Grid Items Injected via JS -->
+            </div>
+        </div>
+
+        <!-- GAME PLAY SCREEN -->
+        <div id="game-area">
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                <span id="game-title-display" style="font-weight:bold; color:var(--secondary);">Game Title</span>
+                <span id="question-progress">1/15</span>
+            </div>
+            
+            <div id="question-container">
+                <!-- Question Content Injected Here -->
+            </div>
+
+            <div id="feedback-area"></div>
+
+            <div class="controls">
+                <button class="btn btn-home" onclick="goHome()">🏠 Home</button>
+                <button class="btn btn-next" id="next-btn" onclick="nextQuestion()" style="display:none;">Next ➡</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        Designed & Created by SHRISHANT YADAV, ShanEduHub
+    </footer>
+
+    <!-- JAVASCRIPT ENGINE -->
+    <script>
+        // --- DATA: 20 GAMES x ~15 Questions Each ---
+        const allGames = [
+            {
+                id: 1, title: "Life Explorer", icon: "🌱",
+                questions: [
+                    { t: 'mcq', q: "Which of these is a characteristic ONLY of living things?", opts: ["Growth from inside", "Getting wet", "Breaking into pieces"], a: 0 },
+                    { t: 'mcq', q: "Plants are different from animals because plants...", opts: ["Cannot move place to place", "Cannot breathe", "Do not grow"], a: 0 },
+                    { t: 'tf', q: "A car moving on the road is a living thing.", a: false },
+                    { t: 'mcq', q: "What is the life span?", opts: ["Time from birth to death", "Time spent sleeping", "Time spent eating"], a: 0 },
+                    { t: 'mcq', q: "Which of these excretes waste?", opts: ["A stone", "A plastic bag", "A human"], a: 2 },
+                    { t: 'mcq', q: "Sensitivity in organisms means...", opts: ["Responding to stimuli", "Eating food", "Sleeping"], a: 0 },
+                    { t: 'mcq', q: "Plants breathe through tiny pores called...", opts: ["Stomata", "Gills", "Lungs"], a: 0 },
+                    { t: 'tf', q: "All living things reproduce.", a: true },
+                    { t: 'mcq', q: "Non-living things can be...", opts: ["Natural or Man-made", "Only Man-made", "Only Natural"], a: 0 },
+                    { t: 'mcq', q: "What do all living things need to survive?", opts: ["Toys", "Energy/Food", "Internet"], a: 1 },
+                    { t: 'mcq', q: "A seed growing into a plant is an example of...", opts: ["Growth", "Movement", "Excretion"], a: 0 },
+                    { t: 'tf', q: "Rocks grow in size by eating food.", a: false },
+                    { t: 'mcq', q: "Which process removes waste from the body?", opts: ["Excretion", "Digestion", "Respiration"], a: 0 },
+                    { t: 'mcq', q: "Animals depend on plants for...", opts: ["Oxygen & Food", "Plastic", "Electricity"], a: 0 },
+                    { t: 'mcq', q: "Mimosa (Touch-me-not) plant shows...", opts: ["Sensitivity", "Locomotion", "Digestion"], a: 0 }
+                ]
+            },
+            {
+                id: 2, title: "Classification Lab", icon: "🔬",
+                questions: [
+                    { t: 'mcq', q: "Which of these is an Invertebrate?", opts: ["Snake", "Earthworm", "Dog"], a: 1 },
+                    { t: 'mcq', q: "Animals with a backbone are called...", opts: ["Vertebrates", "Invertebrates", "Insects"], a: 0 },
+                    { t: 'mcq', q: "Which of these is a shrub?", opts: ["Rose", "Mango", "Pumpkin"], a: 0 },
+                    { t: 'mcq', q: "Climbers need support because...", opts: ["They have weak stems", "They have no roots", "They are heavy"], a: 0 },
+                    { t: 'mcq', q: "Which is a mammal?", opts: ["Shark", "Whale", "Crocodile"], a: 1 },
+                    { t: 'tf', q: "Mushrooms are green plants.", a: false },
+                    { t: 'mcq', q: "Birds are unique because they have...", opts: ["Feathers", "Legs", "Eyes"], a: 0 },
+                    { t: 'mcq', q: "Amphibians can live...", opts: ["Only in water", "Only on land", "Both land and water"], a: 2 },
+                    { t: 'mcq', q: "Which is a herb?", opts: ["Mint", "Banyan", "Coconut"], a: 0 },
+                    { t: 'mcq', q: "Insects typically have ___ legs.", opts: ["6", "4", "8"], a: 0 },
+                    { t: 'mcq', q: "A bat is a...", opts: ["Bird", "Mammal", "Reptile"], a: 1 },
+                    { t: 'tf', q: "Spiders are insects.", a: false },
+                    { t: 'mcq', q: "Which is a creeper?", opts: ["Watermelon", "Hibiscus", "Neem"], a: 0 },
+                    { t: 'mcq', q: "Reptiles usually have...", opts: ["Scales", "Fur", "Feathers"], a: 0 },
+                    { t: 'mcq', q: "Fish breathe using...", opts: ["Gills", "Lungs", "Skin"], a: 0 }
+                ]
+            },
+            {
+                id: 3, title: "Plant Process Sim", icon: "🌿",
+                questions: [
+                    { t: 'mcq', q: "The process of making food in plants is...", opts: ["Photosynthesis", "Respiration", "Digestion"], a: 0 },
+                    { t: 'mcq', q: "Green pigment in leaves is called...", opts: ["Chlorophyll", "Hemoglobin", "Melanin"], a: 0 },
+                    { t: 'mcq', q: "Gas taken IN during photosynthesis:", opts: ["Carbon Dioxide", "Oxygen", "Nitrogen"], a: 0 },
+                    { t: 'mcq', q: "Gas given OUT during photosynthesis:", opts: ["Oxygen", "Carbon Dioxide", "Methane"], a: 0 },
+                    { t: 'mcq', q: "Food is transported by...", opts: ["Phloem", "Xylem", "Roots"], a: 0 },
+                    { t: 'mcq', q: "Water is transported by...", opts: ["Xylem", "Phloem", "Leaves"], a: 0 },
+                    { t: 'mcq', q: "Loss of water from leaves is called...", opts: ["Transpiration", "Evaporation", "Condensation"], a: 0 },
+                    { t: 'tf', q: "Photosynthesis occurs mostly at night.", a: false },
+                    { t: 'mcq', q: "Extra food in plants is stored as...", opts: ["Starch", "Fat", "Protein"], a: 0 },
+                    { t: 'mcq', q: "Tiny holes on leaves are...", opts: ["Stomata", "Pores", "Vents"], a: 0 },
+                    { t: 'mcq', q: "Roots absorb...", opts: ["Water & Minerals", "Sunlight", "Air"], a: 0 },
+                    { t: 'mcq', q: "The 'Kitchen of the Plant' is...", opts: ["Leaf", "Stem", "Root"], a: 0 },
+                    { t: 'tf', q: "Plants also need oxygen for respiration.", a: true },
+                    { t: 'mcq', q: "Transpiration helps in...", opts: ["Cooling the plant", "Making food", "Reproduction"], a: 0 },
+                    { t: 'mcq', q: "The product of photosynthesis is...", opts: ["Glucose/Sugar", "Salt", "Spices"], a: 0 }
+                ]
+            },
+            {
+                id: 4, title: "Seed Journey", icon: "🌻",
+                questions: [
+                    { t: 'mcq', q: "The first stage of germination is...", opts: ["Soaking water", "Growing leaves", "Flowering"], a: 0 },
+                    { t: 'mcq', q: "Seeds need these to germinate:", opts: ["Air, Water, Warmth", "Soil, Darkness, Cold", "Water only"], a: 0 },
+                    { t: 'mcq', q: "The baby plant inside a seed is...", opts: ["Embryo", "Cotyledon", "Seed Coat"], a: 0 },
+                    { t: 'mcq', q: "Seed dispersal by wind happens for...", opts: ["Dandelion (light seeds)", "Coconut (heavy)", "Mango"], a: 0 },
+                    { t: 'mcq', q: "Coconut seeds are dispersed by...", opts: ["Water", "Wind", "Explosion"], a: 0 },
+                    { t: 'mcq', q: "Cotyledons provide...", opts: ["Food for baby plant", "Protection", "Water"], a: 0 },
+                    { t: 'mcq', q: "Dispersal prevents...", opts: ["Overcrowding", "Growth", "Pollination"], a: 0 },
+                    { t: 'mcq', q: "Peas and beans disperse by...", opts: ["Explosion/Bursting", "Wind", "Animals"], a: 0 },
+                    { t: 'mcq', q: "Seeds with hooks (like Cocklebur) adhere to...", opts: ["Animal fur", "Water", "Air"], a: 0 },
+                    { t: 'tf', q: "All seeds grow into new plants.", a: false },
+                    { t: 'mcq', q: "The outer covering of a seed is...", opts: ["Seed Coat", "Skin", "Shell"], a: 0 },
+                    { t: 'mcq', q: "Pollination is the transfer of...", opts: ["Pollen", "Seeds", "Water"], a: 0 },
+                    { t: 'mcq', q: "Which part turns into fruit?", opts: ["Ovary", "Ovule", "Petal"], a: 0 },
+                    { t: 'mcq', q: "Which part turns into seed?", opts: ["Ovule", "Ovary", "Stigma"], a: 0 },
+                    { t: 'mcq', q: "A monocot seed has...", opts: ["One cotyledon", "Two cotyledons", "No cotyledons"], a: 0 }
+                ]
+            },
+            {
+                id: 5, title: "Adaptation Arena", icon: "🐪",
+                questions: [
+                    { t: 'mcq', q: "Camels have humps to store...", opts: ["Fat", "Water", "Food"], a: 0 },
+                    { t: 'mcq', q: "Fish have scales to...", opts: ["Protect body & swim", "Keep warm", "Fly"], a: 0 },
+                    { t: 'mcq', q: "Polar bears have thick fur for...", opts: ["Insulation from cold", "Looking good", "Swimming"], a: 0 },
+                    { t: 'mcq', q: "Cactus leaves are modified into...", opts: ["Spines", "Flowers", "Roots"], a: 0 },
+                    { t: 'mcq', q: "Aquatic plants have...", opts: ["Waxy coating", "Thick bark", "Deep roots"], a: 0 },
+                    { t: 'mcq', q: "Hibernation is...", opts: ["Winter sleep", "Summer sleep", "Hunting"], a: 0 },
+                    { t: 'mcq', q: "Birds have hollow bones to...", opts: ["Fly easily", "Swim", "Run fast"], a: 0 },
+                    { t: 'mcq', q: "Chameleons change color for...", opts: ["Camouflage", "Fashion", "Temperature"], a: 0 },
+                    { t: 'mcq', q: "Webbed feet help ducks...", opts: ["Swim", "Climb", "Fly"], a: 0 },
+                    { t: 'mcq', q: "Mountain trees are usually...", opts: ["Cone shaped", "Round", "Flat"], a: 0 },
+                    { t: 'mcq', q: "Breathing roots (Pneumatophores) are found in...", opts: ["Mangroves", "Deserts", "Plains"], a: 0 },
+                    { t: 'tf', q: "Penguins live in the desert.", a: false },
+                    { t: 'mcq', q: "Aestivation is...", opts: ["Summer sleep", "Winter sleep", "Daily sleep"], a: 0 },
+                    { t: 'mcq', q: "Thick skin in elephants helps...", opts: ["Protect from heat/sun", "Keep warm", "Swim"], a: 0 },
+                    { t: 'mcq', q: "Arboreal animals live on...", opts: ["Trees", "Water", "Underground"], a: 0 }
+                ]
+            },
+            {
+                id: 6, title: "Body Control Room", icon: "🧠",
+                questions: [
+                    { t: 'mcq', q: "The master organ of the body is...", opts: ["Brain", "Heart", "Stomach"], a: 0 },
+                    { t: 'mcq', q: "Blood is pumped by the...", opts: ["Heart", "Lungs", "Liver"], a: 0 },
+                    { t: 'mcq', q: "Oxygen enters blood in the...", opts: ["Lungs", "Stomach", "Kidneys"], a: 0 },
+                    { t: 'mcq', q: "Which organ filters blood?", opts: ["Kidneys", "Heart", "Brain"], a: 0 },
+                    { t: 'mcq', q: "Digestion begins in the...", opts: ["Mouth", "Stomach", "Intestine"], a: 0 },
+                    { t: 'mcq', q: "Bones are part of the...", opts: ["Skeletal System", "Nervous System", "Muscular System"], a: 0 },
+                    { t: 'mcq', q: "Nerves carry messages to the...", opts: ["Brain", "Heart", "Skin"], a: 0 },
+                    { t: 'mcq', q: "Food absorption happens in...", opts: ["Small Intestine", "Large Intestine", "Stomach"], a: 0 },
+                    { t: 'mcq', q: "The ribcage protects the...", opts: ["Heart and Lungs", "Brain", "Stomach"], a: 0 },
+                    { t: 'mcq', q: "Which is NOT a sense organ?", opts: ["Hair", "Skin", "Tongue"], a: 0 },
+                    { t: 'mcq', q: "Urine is stored in the...", opts: ["Urinary Bladder", "Kidney", "Liver"], a: 0 },
+                    { t: 'tf', q: "The heart is a muscle.", a: true },
+                    { t: 'mcq', q: "Bile is produced by the...", opts: ["Liver", "Stomach", "Pancreas"], a: 0 },
+                    { t: 'mcq', q: "Total bones in adult human:", opts: ["206", "300", "105"], a: 0 },
+                    { t: 'mcq', q: "Which blood cells fight germs?", opts: ["White Blood Cells", "Red Blood Cells", "Platelets"], a: 0 }
+                ]
+            },
+            {
+                id: 7, title: "Organ Match Pro", icon: "🫀",
+                questions: [
+                    { t: 'mcq', q: "System for breathing?", opts: ["Respiratory", "Circulatory", "Excretory"], a: 0 },
+                    { t: 'mcq', q: "System for movement?", opts: ["Muscular", "Nervous", "Digestive"], a: 0 },
+                    { t: 'mcq', q: "System for thinking?", opts: ["Nervous", "Skeletal", "Respiratory"], a: 0 },
+                    { t: 'mcq', q: "Windpipe is also called...", opts: ["Trachea", "Oesophagus", "Aorta"], a: 0 },
+                    { t: 'mcq', q: "Food pipe is also called...", opts: ["Oesophagus", "Trachea", "Intestine"], a: 0 },
+                    { t: 'mcq', q: "The skull protects the...", opts: ["Brain", "Eyes", "Teeth"], a: 0 },
+                    { t: 'mcq', q: "Largest sense organ?", opts: ["Skin", "Eye", "Ear"], a: 0 },
+                    { t: 'mcq', q: "Joint in the knee is...", opts: ["Hinge joint", "Ball and socket", "Pivot"], a: 0 },
+                    { t: 'mcq', q: "Joint in the shoulder is...", opts: ["Ball and socket", "Hinge", "Gliding"], a: 0 },
+                    { t: 'mcq', q: "The backbone protects the...", opts: ["Spinal Cord", "Food pipe", "Heart"], a: 0 },
+                    { t: 'mcq', q: "Reflex actions are controlled by...", opts: ["Spinal Cord", "Brain", "Nerves"], a: 0 },
+                    { t: 'mcq', q: "Saliva helps in digesting...", opts: ["Starch", "Protein", "Fat"], a: 0 },
+                    { t: 'mcq', q: "Villi are found in...", opts: ["Small Intestine", "Stomach", "Liver"], a: 0 },
+                    { t: 'mcq', q: "Diaphragm helps in...", opts: ["Breathing", "Digesting", "Thinking"], a: 0 },
+                    { t: 'mcq', q: "Platelets help in...", opts: ["Clotting blood", "Carrying Oxygen", "Fighting germs"], a: 0 }
+                ]
+            },
+            {
+                id: 8, title: "Nutrition Master", icon: "🍎",
+                questions: [
+                    { t: 'mcq', q: "Energy giving foods are rich in...", opts: ["Carbohydrates", "Vitamins", "Minerals"], a: 0 },
+                    { t: 'mcq', q: "Body building foods contain...", opts: ["Proteins", "Fats", "Water"], a: 0 },
+                    { t: 'mcq', q: "Protective foods contain...", opts: ["Vitamins & Minerals", "Fats", "Sugar"], a: 0 },
+                    { t: 'mcq', q: "Calcium is needed for...", opts: ["Strong bones", "Good eyesight", "Energy"], a: 0 },
+                    { t: 'mcq', q: "Iron is needed for...", opts: ["Blood formation", "Bones", "Skin"], a: 0 },
+                    { t: 'mcq', q: "Roughage helps in...", opts: ["Removing waste/Digestion", "Giving energy", "Building muscle"], a: 0 },
+                    { t: 'mcq', q: "Which is a source of Protein?", opts: ["Pulses/Dal", "Rice", "Oil"], a: 0 },
+                    { t: 'mcq', q: "Which is a source of Fat?", opts: ["Butter", "Apple", "Spinach"], a: 0 },
+                    { t: 'mcq', q: "Sugar is a type of...", opts: ["Carbohydrate", "Protein", "Vitamin"], a: 0 },
+                    { t: 'mcq', q: "Dehydration is loss of...", opts: ["Water", "Blood", "Fat"], a: 0 },
+                    { t: 'mcq', q: "Balanced diet contains...", opts: ["All nutrients in right amount", "Only fruits", "Only proteins"], a: 0 },
+                    { t: 'mcq', q: "Obesity is caused by excess...", opts: ["Fats and Carbs", "Vitamins", "Water"], a: 0 },
+                    { t: 'mcq', q: "Sprouting increases...", opts: ["Nutritional value", "Fat content", "Sugar"], a: 0 },
+                    { t: 'mcq', q: "Milk is often called...", opts: ["Complete food", "Energy drink", "Junk food"], a: 0 },
+                    { t: 'mcq', q: "Iodine prevents...", opts: ["Goitre", "Anemia", "Rickets"], a: 0 }
+                ]
+            },
+            {
+                id: 9, title: "Deficiency Doctor", icon: "🩺",
+                questions: [
+                    { t: 'mcq', q: "Night blindness is caused by lack of...", opts: ["Vitamin A", "Vitamin C", "Iron"], a: 0 },
+                    { t: 'mcq', q: "Scurvy (bleeding gums) is due to lack of...", opts: ["Vitamin C", "Vitamin D", "Calcium"], a: 0 },
+                    { t: 'mcq', q: "Rickets (soft bones) is due to lack of...", opts: ["Vitamin D", "Vitamin A", "Vitamin B"], a: 0 },
+                    { t: 'mcq', q: "Anemia is caused by deficiency of...", opts: ["Iron", "Calcium", "Iodine"], a: 0 },
+                    { t: 'mcq', q: "Goitre (swollen neck) is lack of...", opts: ["Iodine", "Iron", "Salt"], a: 0 },
+                    { t: 'mcq', q: "Kwashiorkor is a deficiency of...", opts: ["Protein", "Fat", "Vitamin"], a: 0 },
+                    { t: 'mcq', q: "Beriberi is caused by lack of...", opts: ["Vitamin B1", "Vitamin A", "Vitamin K"], a: 0 },
+                    { t: 'mcq', q: "To prevent Scurvy, eat...", opts: ["Citrus fruits (Lemon/Orange)", "Bread", "Meat"], a: 0 },
+                    { t: 'mcq', q: "Sunlight helps body make...", opts: ["Vitamin D", "Vitamin C", "Vitamin E"], a: 0 },
+                    { t: 'mcq', q: "Pale skin and tiredness suggest...", opts: ["Anemia", "Obesity", "Malaria"], a: 0 },
+                    { t: 'mcq', q: "Communicable diseases spread by...", opts: ["Germs", "Deficiency", "Genes"], a: 0 },
+                    { t: 'mcq', q: "Malaria is spread by...", opts: ["Mosquitoes", "Flies", "Dogs"], a: 0 },
+                    { t: 'mcq', q: "Typhoid is caused by contaminated...", opts: ["Water/Food", "Air", "Touch"], a: 0 },
+                    { t: 'mcq', q: "Vaccines provide...", opts: ["Immunity", "Cure", "Energy"], a: 0 },
+                    { t: 'mcq', q: "Pasteurization kills germs in...", opts: ["Milk", "Water", "Meat"], a: 0 }
+                ]
+            },
+            {
+                id: 10, title: "Matter Mystery", icon: "🧊",
+                questions: [
+                    { t: 'mcq', q: "Matter is anything that has...", opts: ["Mass and occupies space", "Weight only", "Color"], a: 0 },
+                    { t: 'mcq', q: "Molecules are tightly packed in...", opts: ["Solids", "Liquids", "Gases"], a: 0 },
+                    { t: 'mcq', q: "Liquids have...", opts: ["Fixed volume, no fixed shape", "Fixed shape", "No fixed volume"], a: 0 },
+                    { t: 'mcq', q: "Gases have...", opts: ["No fixed shape or volume", "Fixed volume", "Fixed shape"], a: 0 },
+                    { t: 'mcq', q: "Ice melting into water is...", opts: ["Physical change", "Chemical change", "No change"], a: 0 },
+                    { t: 'mcq', q: "Burning of paper is...", opts: ["Chemical change", "Physical change", "Reversible"], a: 0 },
+                    { t: 'mcq', q: "Solute + Solvent = ...", opts: ["Solution", "Mixture", "Gas"], a: 0 },
+                    { t: 'mcq', q: "In sugar water, sugar is the...", opts: ["Solute", "Solvent", "Solution"], a: 0 },
+                    { t: 'mcq', q: "Water is called the...", opts: ["Universal Solvent", "Solute", "Gas"], a: 0 },
+                    { t: 'mcq', q: "Condensation is gas changing to...", opts: ["Liquid", "Solid", "Gas"], a: 0 },
+                    { t: 'mcq', q: "Sublimation is solid turning directly to...", opts: ["Gas", "Liquid", "Plasma"], a: 0 },
+                    { t: 'mcq', q: "Molecules move fastest in...", opts: ["Gas", "Liquid", "Solid"], a: 0 },
+                    { t: 'mcq', q: "Rusting of iron is...", opts: ["Irreversible change", "Reversible change", "Physical change"], a: 0 },
+                    { t: 'mcq', q: "Expansion happens on...", opts: ["Heating", "Cooling", "Freezing"], a: 0 },
+                    { t: 'mcq', q: "Immiscible liquids...", opts: ["Do not mix", "Mix well", "Dissolve"], a: 0 }
+                ]
+            },
+            {
+                id: 11, title: "Separation Sci", icon: "⚗️",
+                questions: [
+                    { t: 'mcq', q: "Separating stones from rice is done by...", opts: ["Handpicking", "Sieving", "Evaporation"], a: 0 },
+                    { t: 'mcq', q: "Separating tea leaves from tea is...", opts: ["Sieving/Filtration", "Decantation", "Winnowing"], a: 0 },
+                    { t: 'mcq', q: "Removing lighter husk from heavy grain by wind...", opts: ["Winnowing", "Threshing", "Sieving"], a: 0 },
+                    { t: 'mcq', q: "Separating salt from water...", opts: ["Evaporation", "Filtration", "Sedimentation"], a: 0 },
+                    { t: 'mcq', q: "Settling down of heavy impurities is...", opts: ["Sedimentation", "Decantation", "Loading"], a: 0 },
+                    { t: 'mcq', q: "Pouring out clear water after sedimentation...", opts: ["Decantation", "Filtration", "Distillation"], a: 0 },
+                    { t: 'mcq', q: "Purest form of water is obtained by...", opts: ["Distillation", "Boiling", "Filtering"], a: 0 },
+                    { t: 'mcq', q: "Separating iron filings from sand uses...", opts: ["Magnet", "Sieve", "Water"], a: 0 },
+                    { t: 'mcq', q: "Saturated solution means...", opts: ["No more solute can dissolve", "It is hot", "It is empty"], a: 0 },
+                    { t: 'mcq', q: "Loading (using alum) helps speed up...", opts: ["Sedimentation", "Evaporation", "Boiling"], a: 0 },
+                    { t: 'mcq', q: "Threshing separates grain from...", opts: ["Stalks", "Stones", "Water"], a: 0 },
+                    { t: 'mcq', q: "Insoluble impurities can be removed by...", opts: ["Filtration", "Evaporation", "Condensation"], a: 0 },
+                    { t: 'mcq', q: "Salt is obtained from sea water by...", opts: ["Evaporation", "Boiling", "Freezing"], a: 0 },
+                    { t: 'mcq', q: "A mixture of oil and water is separated by...", opts: ["Decantation/Funnel", "Sieving", "Evaporation"], a: 0 },
+                    { t: 'mcq', q: "Sieving is based on difference in...", opts: ["Size", "Weight", "Color"], a: 0 }
+                ]
+            },
+            {
+                id: 12, title: "Force & Energy", icon: "⚡",
+                questions: [
+                    { t: 'mcq', q: "A push or pull is called...", opts: ["Force", "Work", "Energy"], a: 0 },
+                    { t: 'mcq', q: "Force that opposes motion is...", opts: ["Friction", "Gravity", "Magnetic"], a: 0 },
+                    { t: 'mcq', q: "Force pulling objects to Earth is...", opts: ["Gravity", "Friction", "Elastic"], a: 0 },
+                    { t: 'mcq', q: "Smooth surfaces have ___ friction.", opts: ["Less", "More", "Zero"], a: 0 },
+                    { t: 'mcq', q: "Work is done when force causes...", opts: ["Movement/Displacement", "Thinking", "Standing"], a: 0 },
+                    { t: 'mcq', q: "Capacity to do work is...", opts: ["Energy", "Force", "Power"], a: 0 },
+                    { t: 'mcq', q: "Energy from the sun is...", opts: ["Solar Energy", "Wind Energy", "Hydro Energy"], a: 0 },
+                    { t: 'mcq', q: "Energy of moving water is...", opts: ["Hydro Energy", "Solar Energy", "Heat Energy"], a: 0 },
+                    { t: 'mcq', q: "A moving car has ___ energy.", opts: ["Mechanical (Kinetic)", "Chemical", "Solar"], a: 0 },
+                    { t: 'mcq', q: "Batteries store ___ energy.", opts: ["Chemical", "Electrical", "Mechanical"], a: 0 },
+                    { t: 'mcq', q: "Rough tyres increase...", opts: ["Friction/Grip", "Speed", "Sliding"], a: 0 },
+                    { t: 'mcq', q: "To reduce friction we use...", opts: ["Lubricants/Oil", "Sand", "Glue"], a: 0 },
+                    { t: 'mcq', q: "Magnetic force acts on...", opts: ["Iron", "Wood", "Plastic"], a: 0 },
+                    { t: 'mcq', q: "Ultimate source of energy on Earth:", opts: ["Sun", "Moon", "Petrol"], a: 0 },
+                    { t: 'mcq', q: "Windmills use ___ energy.", opts: ["Wind", "Solar", "Heat"], a: 0 }
+                ]
+            },
+            {
+                id: 13, title: "Energy Manager", icon: "🔋",
+                questions: [
+                    { t: 'mcq', q: "Renewable energy source:", opts: ["Sun", "Coal", "Petrol"], a: 0 },
+                    { t: 'mcq', q: "Non-renewable energy source:", opts: ["Coal", "Wind", "Water"], a: 0 },
+                    { t: 'mcq', q: "Fossil fuels include...", opts: ["Coal & Petroleum", "Wood & Solar", "Wind & Water"], a: 0 },
+                    { t: 'mcq', q: "We should conserve energy to...", opts: ["Save resources", "Spend money", "Increase pollution"], a: 0 },
+                    { t: 'mcq', q: "Solar panels convert solar energy to...", opts: ["Electricity", "Sound", "Wind"], a: 0 },
+                    { t: 'mcq', q: "Geothermal energy comes from...", opts: ["Earth's heat", "Sun", "Wind"], a: 0 },
+                    { t: 'mcq', q: "Dams produce electricity using...", opts: ["Water", "Coal", "Gas"], a: 0 },
+                    { t: 'mcq', q: "Burning coal causes...", opts: ["Air Pollution", "Clean air", "More oxygen"], a: 0 },
+                    { t: 'mcq', q: "LED bulbs use ___ electricity than old bulbs.", opts: ["Less", "More", "Same"], a: 0 },
+                    { t: 'mcq', q: "CNG is a cleaner fuel than...", opts: ["Diesel", "Solar", "Wind"], a: 0 },
+                    { t: 'mcq', q: "Bio-gas is made from...", opts: ["Animal waste", "Plastic", "Glass"], a: 0 },
+                    { t: 'mcq', q: "Petroleum is also called...", opts: ["Black Gold", "Yellow Stone", "Blue Water"], a: 0 },
+                    { t: 'mcq', q: "Exhaustible resources will...", opts: ["Finish one day", "Last forever", "Grow back"], a: 0 },
+                    { t: 'mcq', q: "Conservation means...", opts: ["Using wisely", "Not using", "Wasting"], a: 0 },
+                    { t: 'mcq', q: "Which is Eco-friendly?", opts: ["Solar Cooker", "Coal Stove", "Diesel Generator"], a: 0 }
+                ]
+            },
+            {
+                id: 14, title: "Water Cycle Cmd", icon: "🌧️",
+                questions: [
+                    { t: 'mcq', q: "Water changing to vapor is...", opts: ["Evaporation", "Condensation", "Precipitation"], a: 0 },
+                    { t: 'mcq', q: "Vapor changing to liquid is...", opts: ["Condensation", "Evaporation", "Melting"], a: 0 },
+                    { t: 'mcq', q: "Water falling from clouds is...", opts: ["Precipitation", "Transpiration", "Sublimation"], a: 0 },
+                    { t: 'mcq', q: "Sun's heat speeds up...", opts: ["Evaporation", "Condensation", "Freezing"], a: 0 },
+                    { t: 'mcq', q: "Clouds are formed by...", opts: ["Condensation", "Evaporation", "Filtration"], a: 0 },
+                    { t: 'mcq', q: "Groundwater is recharged by...", opts: ["Rain", "Factories", "Smoke"], a: 0 },
+                    { t: 'mcq', q: "Dew forms on cold nights due to...", opts: ["Condensation", "Evaporation", "Boiling"], a: 0 },
+                    { t: 'mcq', q: "Frozen precipitation is called...", opts: ["Snow/Hail", "Rain", "Fog"], a: 0 },
+                    { t: 'mcq', q: "Percentage of Earth covered by water:", opts: ["71%", "30%", "50%"], a: 0 },
+                    { t: 'mcq', q: "Percentage of freshwater available:", opts: ["~3%", "50%", "100%"], a: 0 },
+                    { t: 'mcq', q: "Transpiration adds water vapor to...", opts: ["Air", "Soil", "Rivers"], a: 0 },
+                    { t: 'mcq', q: "The water cycle is powered by...", opts: ["The Sun", " The Moon", "Electricity"], a: 0 },
+                    { t: 'mcq', q: "Fog is a cloud near the...", opts: ["Ground", "Sun", "Space"], a: 0 },
+                    { t: 'mcq', q: "Rainwater harvesting saves...", opts: ["Water", "Electricity", "Coal"], a: 0 },
+                    { t: 'mcq', q: "Potable water means...", opts: ["Drinkable water", "Dirty water", "Salty water"], a: 0 }
+                ]
+            },
+            {
+                id: 15, title: "Pollution Patrol", icon: "🏭",
+                questions: [
+                    { t: 'mcq', q: "Contamination of environment is...", opts: ["Pollution", "Conservation", "Rotation"], a: 0 },
+                    { t: 'mcq', q: "Smoke from cars causes...", opts: ["Air Pollution", "Soil Pollution", "Noise Pollution"], a: 0 },
+                    { t: 'mcq', q: "Throwing garbage in rivers causes...", opts: ["Water Pollution", "Air Pollution", "Sound Pollution"], a: 0 },
+                    { t: 'mcq', q: "Loudspeakers cause...", opts: ["Noise Pollution", "Water Pollution", "Air Pollution"], a: 0 },
+                    { t: 'mcq', q: "Plastic causes ___ pollution.", opts: ["Soil", "Noise", "Sound"], a: 0 },
+                    { t: 'mcq', q: "Acid rain is a result of...", opts: ["Air Pollution", "Water Pollution", "Noise"], a: 0 },
+                    { t: 'mcq', q: "Greenhouse gases cause...", opts: ["Global Warming", "Cooling", "Rain"], a: 0 },
+                    { t: 'mcq', q: "Main greenhouse gas:", opts: ["Carbon Dioxide", "Oxygen", "Nitrogen"], a: 0 },
+                    { t: 'mcq', q: "Using public transport reduces...", opts: ["Air Pollution", "Water Pollution", "Soil Pollution"], a: 0 },
+                    { t: 'mcq', q: "Fertilizers run-off causes...", opts: ["Water Pollution", "Noise Pollution", "Air Pollution"], a: 0 },
+                    { t: 'mcq', q: "Deforestation increases...", opts: ["CO2 levels", "Oxygen", "Rain"], a: 0 },
+                    { t: 'mcq', q: "Ozone layer protects us from...", opts: ["UV Rays", "Rain", "Cold"], a: 0 },
+                    { t: 'mcq', q: "Chlorofluorocarbons (CFCs) damage...", opts: ["Ozone Layer", "Soil", "Rivers"], a: 0 },
+                    { t: 'mcq', q: "Recycling paper saves...", opts: ["Trees", "Water", "Iron"], a: 0 },
+                    { t: 'mcq', q: "Biodegradable waste includes...", opts: ["Vegetable peels", "Plastic", "Glass"], a: 0 }
+                ]
+            },
+            {
+                id: 16, title: "Space Navigator", icon: "🪐",
+                questions: [
+                    { t: 'mcq', q: "Largest planet in solar system:", opts: ["Jupiter", "Mars", "Earth"], a: 0 },
+                    { t: 'mcq', q: "Red planet:", opts: ["Mars", "Venus", "Saturn"], a: 0 },
+                    { t: 'mcq', q: "Planet with rings:", opts: ["Saturn", "Mercury", "Mars"], a: 0 },
+                    { t: 'mcq', q: "Closest planet to Sun:", opts: ["Mercury", "Venus", "Earth"], a: 0 },
+                    { t: 'mcq', q: "Earth's natural satellite:", opts: ["Moon", "Sun", "Titan"], a: 0 },
+                    { t: 'mcq', q: "Earth spins on its axis causing...", opts: ["Day and Night", "Seasons", "Years"], a: 0 },
+                    { t: 'mcq', q: "Earth revolves around Sun causing...", opts: ["Seasons", "Day and Night", "Tides"], a: 0 },
+                    { t: 'mcq', q: "Model of the Earth:", opts: ["Globe", "Map", "Chart"], a: 0 },
+                    { t: 'mcq', q: "Imaginary line through Earth's center:", opts: ["Axis", "Equator", "Orbit"], a: 0 },
+                    { t: 'mcq', q: "Line dividing Earth into N/S hemispheres:", opts: ["Equator", "Axis", "Pole"], a: 0 },
+                    { t: 'mcq', q: "Time for one rotation:", opts: ["24 Hours", "365 Days", "1 Month"], a: 0 },
+                    { t: 'mcq', q: "Time for one revolution:", opts: ["365.25 Days", "24 Hours", "7 Days"], a: 0 },
+                    { t: 'mcq', q: "Hottest planet:", opts: ["Venus", "Mercury", "Mars"], a: 0 },
+                    { t: 'mcq', q: "Study of space is...", opts: ["Astronomy", "Geology", "Biology"], a: 0 },
+                    { t: 'mcq', q: "First person on Moon:", opts: ["Neil Armstrong", "Yuri Gagarin", "Einstein"], a: 0 }
+                ]
+            },
+            {
+                id: 17, title: "Disaster Safety", icon: "⛑️",
+                questions: [
+                    { t: 'mcq', q: "During an earthquake...", opts: ["Hide under a table", "Run to elevator", "Stand near window"], a: 0 },
+                    { t: 'mcq', q: "If clothes catch fire...", opts: ["Stop, Drop, Roll", "Run fast", "Blow on it"], a: 0 },
+                    { t: 'mcq', q: "Floods are caused by...", opts: ["Heavy Rain", "Wind", "Sun"], a: 0 },
+                    { t: 'mcq', q: "Number for emergency ambulance:", opts: ["102/108", "100", "101"], a: 0 },
+                    { t: 'mcq', q: "Tsunami is caused by...", opts: ["Undersea earthquake", "Wind", "Rain"], a: 0 },
+                    { t: 'mcq', q: "During a fire, use...", opts: ["Stairs", "Elevator", "Window jump"], a: 0 },
+                    { t: 'mcq', q: "Drought means...", opts: ["No rain/Water shortage", "Too much rain", "Cold"], a: 0 },
+                    { t: 'mcq', q: "Cyclones are strong...", opts: ["Winds", "Earthquakes", "Fires"], a: 0 },
+                    { t: 'mcq', q: "Emergency kit should have...", opts: ["Torch, Water, First Aid", "Toys", "Books"], a: 0 },
+                    { t: 'mcq', q: "Richter scale measures...", opts: ["Earthquake", "Flood", "Rain"], a: 0 },
+                    { t: 'mcq', q: "Don't touch electrical switches with...", opts: ["Wet hands", "Dry hands", "Gloves"], a: 0 },
+                    { t: 'mcq', q: "Zebra crossing is for...", opts: ["Pedestrians", "Cars", "Animals"], a: 0 },
+                    { t: 'mcq', q: "Green traffic light means...", opts: ["Go", "Stop", "Wait"], a: 0 },
+                    { t: 'mcq', q: "Red traffic light means...", opts: ["Stop", "Go", "Ready"], a: 0 },
+                    { t: 'mcq', q: "First thing to do in accident:", opts: ["Stay calm & call help", "Cry", "Run away"], a: 0 }
+                ]
+            },
+            {
+                id: 18, title: "First Aid Hero", icon: "🩹",
+                questions: [
+                    { t: 'mcq', q: "First aid is help given...", opts: ["Before doctor arrives", "After hospital", "At home only"], a: 0 },
+                    { t: 'mcq', q: "For minor burns, use...", opts: ["Cold water", "Butter", "Hot water"], a: 0 },
+                    { t: 'mcq', q: "For a nosebleed...", opts: ["Pinch nose & lean forward", "Lean back", "Lie down"], a: 0 },
+                    { t: 'mcq', q: "Antiseptic is used to...", opts: ["Kill germs", "Stop pain", "Color skin"], a: 0 },
+                    { t: 'mcq', q: "For a fracture...", opts: ["Do NOT move the part", "Massage it", "Pull it"], a: 0 },
+                    { t: 'mcq', q: "Sling is used for...", opts: ["Broken arm", "Leg pain", "Headache"], a: 0 },
+                    { t: 'mcq', q: "ORS is given for...", opts: ["Dehydration", "Fever", "Cough"], a: 0 },
+                    { t: 'mcq', q: "Rabies is caused by bite of...", opts: ["Dog/Monkey", "Mosquito", "Ant"], a: 0 },
+                    { t: 'mcq', q: "For bee sting, apply...", opts: ["Baking soda/Paste", "Hot water", "Salt"], a: 0 },
+                    { t: 'mcq', q: "Tetanus injection is for...", opts: ["Deep cuts/Rusty iron", "Cold", "Fever"], a: 0 },
+                    { t: 'mcq', q: "CPR is for...", opts: ["Stopped heart", "Broken bone", "Bleeding"], a: 0 },
+                    { t: 'mcq', q: "Band-aid is for...", opts: ["Small cuts", "Fractures", "Headache"], a: 0 },
+                    { t: 'mcq', q: "Thermometer measures...", opts: ["Body temperature", "Height", "Weight"], a: 0 },
+                    { t: 'mcq', q: "Normal body temp is approx...", opts: ["37°C / 98.6°F", "100°C", "0°C"], a: 0 },
+                    { t: 'mcq', q: "Ice pack helps reduce...", opts: ["Swelling", "Bleeding", "Fever"], a: 0 }
+                ]
+            },
+            {
+                id: 19, title: "Tech in Life", icon: "📱",
+                questions: [
+                    { t: 'mcq', q: "Internet helps us...", opts: ["Get information", "Make food", "Wash clothes"], a: 0 },
+                    { t: 'mcq', q: "A lever is a...", opts: ["Simple Machine", "Computer", "Fuel"], a: 0 },
+                    { t: 'mcq', q: "Scissors are an example of...", opts: ["Lever", "Pulley", "Wedge"], a: 0 },
+                    { t: 'mcq', q: "Pulley helps to...", opts: ["Lift heavy loads", "Cut paper", "Screw things"], a: 0 },
+                    { t: 'mcq', q: "Wheel and axle is used in...", opts: ["Cars", "Knives", "Needles"], a: 0 },
+                    { t: 'mcq', q: "Wedge is used to...", opts: ["Split objects (Axe)", "Lift", "Roll"], a: 0 },
+                    { t: 'mcq', q: "Screw holds things...", opts: ["Together", "Apart", "Up"], a: 0 },
+                    { t: 'mcq', q: "Inclined plane helps...", opts: ["Move things up", "Cut", "Hold"], a: 0 },
+                    { t: 'mcq', q: "Computer brain is...", opts: ["CPU", "Mouse", "Screen"], a: 0 },
+                    { t: 'mcq', q: "X-rays are used in...", opts: ["Medical field", "Farming", "Cooking"], a: 0 },
+                    { t: 'mcq', q: "Tractors are used in...", opts: ["Agriculture", "Hospitals", "Schools"], a: 0 },
+                    { t: 'mcq', q: "Microscope helps see...", opts: ["Tiny germs", "Stars", "Distant buildings"], a: 0 },
+                    { t: 'mcq', q: "Telescope helps see...", opts: ["Stars/Planets", "Bacteria", "Bones"], a: 0 },
+                    { t: 'mcq', q: "Satellite helps in...", opts: ["Communication/Weather", "Digestion", "Farming"], a: 0 },
+                    { t: 'mcq', q: "ATM is for...", opts: ["Money withdrawal", "Buying food", "Playing games"], a: 0 }
+                ]
+            },
+            {
+                id: 20, title: "Eco Balance", icon: "⚖️",
+                questions: [
+                    { t: 'mcq', q: "Food chain starts with...", opts: ["Producers (Plants)", "Consumers", "Decomposers"], a: 0 },
+                    { t: 'mcq', q: "Herbivores eat...", opts: ["Plants", "Meat", "Both"], a: 0 },
+                    { t: 'mcq', q: "Carnivores eat...", opts: ["Flesh/Meat", "Plants", "Air"], a: 0 },
+                    { t: 'mcq', q: "Omnivores eat...", opts: ["Plants & Meat", "Only Meat", "Only Plants"], a: 0 },
+                    { t: 'mcq', q: "Decomposers help...", opts: ["Clean nature (Rot)", "Kill animals", "Make food"], a: 0 },
+                    { t: 'mcq', q: "Scavengers eat...", opts: ["Dead animals", "Fresh grass", "Insects"], a: 0 },
+                    { t: 'mcq', q: "Balance in nature depends on...", opts: ["Food Chain", "Buildings", "Cars"], a: 0 },
+                    { t: 'mcq', q: "Cutting forests causes...", opts: ["Soil erosion", "More rain", "More oxygen"], a: 0 },
+                    { t: 'mcq', q: "Afforestation means...", opts: ["Planting trees", "Cutting trees", "Burning trees"], a: 0 },
+                    { t: 'mcq', q: "Endangered animal:", opts: ["Tiger", "Dog", "Cat"], a: 0 },
+                    { t: 'mcq', q: "Extinct animal:", opts: ["Dodo", "Lion", "Elephant"], a: 0 },
+                    { t: 'mcq', q: "3 Rs of waste management:", opts: ["Reduce, Reuse, Recycle", "Run, Read, Rest", "Rain, River, Road"], a: 0 },
+                    { t: 'mcq', q: "Compost is made from...", opts: ["Kitchen waste", "Plastic", "Glass"], a: 0 },
+                    { t: 'mcq', q: "Biotic factors are...", opts: ["Living things", "Non-living things", "Rocks"], a: 0 },
+                    { t: 'mcq', q: "Abiotic factors are...", opts: ["Air, Water, Soil", "Plants", "Animals"], a: 0 }
+                ]
+            }
+        ];
+
+        // --- STATE VARIABLES ---
+        let currentGameIndex = null;
+        let currentQuestionIndex = 0;
+        let totalScore = 0;
+        let totalTasks = 0;
+        let totalCorrect = 0;
+
+        // --- INIT ---
+        window.addEventListener('DOMContentLoaded', () => {
+            renderMenu();
+            updateScoreboard();
+        });
+
+        // --- MENU LOGIC ---
+        function renderMenu() {
+            const grid = document.getElementById('game-grid');
+            grid.innerHTML = '';
+            
+            allGames.forEach((game, index) => {
+                const card = document.createElement('div');
+                card.className = 'game-card';
+                card.onclick = () => loadGame(index);
+                card.innerHTML = `
+                    <div class="game-icon">${game.icon}</div>
+                    <div class="game-title">${game.title}</div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // --- GAME ENGINE ---
+        function loadGame(index) {
+            currentGameIndex = index;
+            currentQuestionIndex = 0;
+            
+            // UI Switch
+            document.getElementById('menu-screen').style.display = 'none';
+            document.getElementById('game-area').style.display = 'block';
+            document.getElementById('game-title-display').innerText = allGames[index].title;
+            
+            renderQuestion();
+        }
+
+        function goHome() {
+            document.getElementById('game-area').style.display = 'none';
+            document.getElementById('menu-screen').style.display = 'block';
+        }
+
+        function renderQuestion() {
+            const game = allGames[currentGameIndex];
+            const qData = game.questions[currentQuestionIndex];
+            const container = document.getElementById('question-container');
+            const nextBtn = document.getElementById('next-btn');
+            const feedback = document.getElementById('feedback-area');
+            
+            // Reset UI
+            container.innerHTML = '';
+            feedback.innerHTML = '';
+            nextBtn.style.display = 'none';
+            document.getElementById('question-progress').innerText = `${currentQuestionIndex + 1}/${game.questions.length}`;
+
+            // Render Title
+            const qTitle = document.createElement('div');
+            qTitle.className = 'question-text';
+            qTitle.innerText = qData.q;
+            container.appendChild(qTitle);
+
+            // Render Options (MCQ / TF)
+            if (qData.t === 'mcq' || qData.t === 'tf') {
+                const optsDiv = document.createElement('div');
+                optsDiv.className = 'options-grid';
+                
+                let options = qData.t === 'mcq' ? qData.opts : ["True", "False"];
+                
+                options.forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerText = opt;
+                    btn.onclick = () => checkAnswer(idx, btn, qData);
+                    optsDiv.appendChild(btn);
+                });
+                container.appendChild(optsDiv);
+            }
+        }
+
+        function checkAnswer(selectedIndex, btnElement, qData) {
+            // Prevent multiple clicks
+            const parent = btnElement.parentElement;
+            if (parent.classList.contains('answered')) return;
+            parent.classList.add('answered');
+
+            let isCorrect = false;
+
+            if (qData.t === 'mcq') {
+                isCorrect = (selectedIndex === qData.a);
+            } else if (qData.t === 'tf') {
+                // For TF: Index 0 is True, 1 is False
+                // Data.a is bool
+                const userBool = (selectedIndex === 0);
+                isCorrect = (userBool === qData.a);
+            }
+
+            // UI Feedback
+            if (isCorrect) {
+                btnElement.classList.add('correct');
+                document.getElementById('feedback-area').innerHTML = '<span style="color:var(--correct)">Excellent! ⭐</span>';
+                totalScore += 10;
+                totalCorrect++;
+            } else {
+                btnElement.classList.add('wrong');
+                document.getElementById('feedback-area').innerHTML = '<span style="color:var(--wrong)">Try Again! ❌</span>';
+                
+                // Highlight correct answer
+                const correctIdx = (qData.t === 'mcq') ? qData.a : (qData.a ? 0 : 1);
+                parent.children[correctIdx].classList.add('correct');
+            }
+
+            totalTasks++;
+            updateScoreboard();
+            document.getElementById('next-btn').style.display = 'block';
+        }
+
+        function nextQuestion() {
+            const game = allGames[currentGameIndex];
+            if (currentQuestionIndex < game.questions.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion();
+            } else {
+                // End of Game
+                document.getElementById('question-container').innerHTML = `
+                    <div style="text-align:center; padding:20px;">
+                        <h2>Module Complete! 🎉</h2>
+                        <p>You have finished ${game.title}.</p>
+                        <button class="btn btn-home" onclick="goHome()">Back to Menu</button>
+                    </div>
+                `;
+                document.getElementById('next-btn').style.display = 'none';
+                document.getElementById('feedback-area').innerHTML = '';
+            }
+        }
+
+        function updateScoreboard() {
+            document.getElementById('score-total').innerText = totalTasks;
+            document.getElementById('score-points').innerText = totalScore;
+            
+            const percent = totalTasks === 0 ? 0 : Math.round((totalCorrect / totalTasks) * 100);
+            document.getElementById('score-percent').innerText = percent + "%";
+        }
+
+    </script>
+</body>
+</html>

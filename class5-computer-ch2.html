@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 5 - Ch 2: CPU Deep Study</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --paper-bg: #fffdf0;
+            --line-color: #a2d5f2;
+            --ink-color: #2c3e50;
+            --red-ink: #c0392b;
+            --green-ink: #27ae60;
+            --highlight: #fff3cd;
+            --sticky-bg: #fef9e7;
+            --shadow: 2px 2px 5px rgba(0,0,0,0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Patrick Hand', cursive, sans-serif;
+            background-color: #f0f0f0;
+            color: var(--ink-color);
+            margin: 0;
+            padding: 0;
+            font-size: 18px;
+            font-weight: 700; /* Bold rule */
+            line-height: 1.6;
+        }
+
+        /* --- STICKY SCORE PANEL --- */
+        #score-panel {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: var(--sticky-bg);
+            border-bottom: 3px solid var(--ink-color);
+            padding: 8px 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            font-size: 0.9rem;
+        }
+
+        .score-item {
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .score-label {
+            font-size: 0.75rem;
+            color: #555;
+            display: block;
+        }
+
+        .score-val {
+            font-size: 1.2rem;
+            color: var(--red-ink);
+        }
+
+        .score-val.good { color: var(--green-ink); }
+
+        /* --- MAIN CONTAINER --- */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--paper-bg);
+            /* Notebook Lines Effect */
+            background-image: linear-gradient(var(--line-color) 1px, transparent 1px);
+            background-size: 100% 1.8rem;
+            padding: 20px;
+            min-height: 100vh;
+            border-left: 2px solid rgba(0,0,0,0.1);
+            border-right: 2px solid rgba(0,0,0,0.1);
+        }
+
+        h1, h2, h3 {
+            text-align: center;
+            color: var(--red-ink);
+            text-transform: uppercase;
+            margin-top: 1rem;
+            background: rgba(255,255,255,0.8);
+            display: inline-block;
+            width: 100%;
+            border-radius: 5px;
+        }
+
+        h1 { font-size: 2rem; border-bottom: 4px double var(--ink-color); padding: 10px; }
+        h2 { font-size: 1.6rem; margin-top: 40px; border-bottom: 2px dashed var(--ink-color); }
+        h3 { font-size: 1.3rem; color: #d35400; text-align: left; margin-left: 10px; }
+
+        /* --- NOTES SECTION --- */
+        .topic-card {
+            background: white;
+            border: 2px solid var(--ink-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            transform: rotate(-1deg);
+        }
+        
+        .topic-card:nth-child(even) { transform: rotate(1deg); }
+
+        .definition { background: #e8f8f5; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        .explanation { margin: 10px 0; }
+        .indian-example { background: #fcf3cf; padding: 10px; border-left: 5px solid #f1c40f; margin: 10px 0; }
+        .memory-tip { background: #fdedec; padding: 10px; border: 2px dashed #e74c3c; border-radius: 15px; text-align: center; }
+        .static-image-box {
+            width: 100%;
+            height: 120px;
+            background: #eee;
+            border: 2px solid #aaa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #777;
+            font-style: italic;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        /* --- IMPORTANT QUESTIONS --- */
+        .imp-q-card {
+            background: #fff;
+            border-bottom: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 5px;
+        }
+        .imp-q { color: var(--red-ink); }
+        .imp-a { color: var(--green-ink); margin-left: 15px; }
+
+        /* --- PRACTICE AREA --- */
+        #practice-area {
+            background: white;
+            border: 3px solid var(--ink-color);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        .question-text { font-size: 1.4rem; margin-bottom: 20px; color: var(--ink-color); }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .option-btn {
+            background: #fff;
+            border: 2px solid var(--ink-color);
+            padding: 12px;
+            font-family: inherit;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+
+        .option-btn:hover { background: #f0f0f0; }
+        .option-btn.correct { background: #d4efdf; border-color: #27ae60; color: #27ae60; }
+        .option-btn.wrong { background: #fadbd8; border-color: #c0392b; color: #c0392b; }
+
+        .feedback-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none; /* Hidden by default */
+        }
+        
+        .feedback-correct { background: #d4efdf; border: 2px solid #27ae60; }
+        .feedback-wrong { background: #fadbd8; border: 2px solid #c0392b; }
+
+        .next-btn {
+            background: var(--ink-color);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            font-family: inherit;
+            font-size: 1.2rem;
+            margin-top: 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none; /* Hidden initially */
+        }
+
+        /* --- ADVANCED LONG QUESTIONS --- */
+        .long-q-card {
+            background: #fff;
+            border: 2px solid var(--ink-color);
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-top: 10px;
+            padding: 10px;
+            font-family: inherit;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .check-btn {
+            background: #e67e22;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            font-family: inherit;
+            font-weight: bold;
+            margin-top: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .long-feedback {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f9f9;
+            border-left: 4px solid #999;
+            display: none;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            background: var(--ink-color);
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        /* --- REVISION --- */
+        #revision-content { display: none; }
+        .revision-toggle { 
+            width: 100%; 
+            padding: 15px; 
+            background: #8e44ad; 
+            color: white; 
+            border: none; 
+            font-family: inherit; 
+            font-size: 1.2rem; 
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        /* --- UTILS --- */
+        .hidden { display: none; }
+        .star { color: gold; text-shadow: 1px 1px 0 #000; }
+
+        @media (min-width: 600px) {
+            .options-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SCORE PANEL -->
+    <div id="score-panel">
+        <div class="score-item">
+            <span class="score-label">Correct</span>
+            <span class="score-val good" id="score-correct">0</span>
+        </div>
+        <div class="score-item">
+            <span class="score-label">Wrong</span>
+            <span class="score-val" id="score-wrong">0</span>
+        </div>
+        <div class="score-item">
+            <span class="score-label">Total</span>
+            <span class="score-val" id="score-total">0</span>
+        </div>
+        <div class="score-item">
+            <span class="score-label">Marks</span>
+            <span class="score-val" id="score-percent">0%</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- HEADER -->
+        <header>
+            <h1>Class 5 Computer<br><span style="font-size: 0.7em; color: #555;">Chapter 2: CPU – Deep Study</span></h1>
+        </header>
+
+        <!-- NOTES SECTION -->
+        <section id="notes">
+            <h2>📘 My Class Notes</h2>
+
+            <!-- TOPIC 1: ALU -->
+            <div class="topic-card">
+                <h3>1. Arithmetic Logic Unit (ALU)</h3>
+                <div class="static-image-box">[ DIAGRAM: A cartoon brain doing math ]</div>
+                <div class="definition">
+                    <strong>Definition:</strong> The part of the CPU that does all the calculations and makes decisions.
+                </div>
+                <div class="explanation">
+                    <strong>Basic:</strong> It's the calculator inside the computer.<br>
+                    <strong>Advanced:</strong> It has two parts - Arithmetic (Maths: +, -, *, /) and Logic (Decisions: Is A > B? Yes/No).
+                </div>
+                <div class="indian-example">
+                    🇮🇳 <strong>Daily Life Example:</strong> Like the shopkeeper at the Kirana store who quickly totals your bill (Maths) and decides if he has enough change (Logic).
+                </div>
+                <div class="memory-tip">
+                    🧠 Tip: ALU = "All Logic Used" or "Arithmetic & Logic Unit".
+                </div>
+            </div>
+
+            <!-- TOPIC 2: CU -->
+            <div class="topic-card">
+                <h3>2. Control Unit (CU)</h3>
+                <div class="static-image-box">[ DIAGRAM: A traffic police officer ]</div>
+                <div class="definition">
+                    <strong>Definition:</strong> The manager of the CPU that directs the flow of data.
+                </div>
+                <div class="explanation">
+                    <strong>Basic:</strong> It tells other parts what to do.<br>
+                    <strong>Advanced:</strong> It fetches instructions from memory, decodes them, and tells the ALU or Memory what action to take. It does not calculate; it commands.
+                </div>
+                <div class="indian-example">
+                    🇮🇳 <strong>Daily Life Example:</strong> Like the Traffic Police Havaldar at a busy chowk. He doesn't drive the cars, but he tells them when to stop and when to go.
+                </div>
+                <div class="memory-tip">
+                    🧠 Tip: CU = "Commander Unit".
+                </div>
+            </div>
+
+            <!-- TOPIC 3: Registers -->
+            <div class="topic-card">
+                <h3>3. Registers</h3>
+                <div class="static-image-box">[ DIAGRAM: Sticky notes near CPU ]</div>
+                <div class="definition">
+                    <strong>Definition:</strong> Tiny, super-fast memory locations inside the CPU.
+                </div>
+                <div class="explanation">
+                    <strong>Basic:</strong> Scratchpad for the CPU.<br>
+                    <strong>Advanced:</strong> They hold data temporarily that the CPU is working on *right now*. They are much faster than RAM but store very little data.
+                </div>
+                <div class="indian-example">
+                    🇮🇳 <strong>Daily Life Example:</strong> Holding money in your hand (Register) vs keeping it in the bank (Hard Disk). Hand is faster!
+                </div>
+            </div>
+
+            <!-- TOPIC 4: Multitasking -->
+            <div class="topic-card">
+                <h3>4. Role of CPU in Multitasking</h3>
+                <div class="static-image-box">[ DIAGRAM: Juggler juggling balls ]</div>
+                <div class="explanation">
+                    <strong>Concept:</strong> CPU switches between tasks so fast it looks like they are happening at the same time.
+                    <br><strong>How:</strong> It spends a tiny fraction of a second on Music, then Game, then Download, then back to Music.
+                </div>
+                <div class="indian-example">
+                    🇮🇳 <strong>Daily Life Example:</strong> Like your mother cooking roti, checking your homework, and talking on the phone. She switches attention quickly!
+                </div>
+            </div>
+
+            <!-- TOPIC 5: Clock Speed -->
+            <div class="topic-card">
+                <h3>5. Clock Speed</h3>
+                <div class="static-image-box">[ DIAGRAM: A clock ticking fast ]</div>
+                <div class="definition">
+                    <strong>Definition:</strong> The speed at which a CPU works. Measured in Hertz (Hz) or Gigahertz (GHz).
+                </div>
+                <div class="explanation">
+                    Higher GHz = Faster Computer. 3.0 GHz means 3 billion cycles per second!
+                </div>
+            </div>
+
+            <!-- TOPIC 6: CPU vs Processor -->
+            <div class="topic-card">
+                <h3>6. CPU vs Processor</h3>
+                <div class="definition">
+                    Usually used for the same thing.
+                </div>
+                <div class="explanation">
+                    <strong>Strictly:</strong> CPU is the logical unit (brain function). Processor is the physical chip (hardware).
+                    <br><strong>Note:</strong> In Class 5, we treat them as the same!
+                </div>
+            </div>
+
+            <!-- TOPIC 7: Importance -->
+            <div class="topic-card">
+                <h3>7. Importance of CPU</h3>
+                <div class="explanation">
+                    The CPU determines the <strong>Performance</strong> of the computer. A weak CPU makes a slow computer, no matter how much RAM you have.
+                </div>
+            </div>
+        </section>
+
+        <!-- IMPORTANT QUESTIONS -->
+        <section id="important-questions">
+            <h2>❓ Important Questions (Read Only)</h2>
+            <div id="imp-q-container">
+                <!-- JS will populate 30 questions here -->
+            </div>
+        </section>
+
+        <!-- PRACTICE QUESTIONS -->
+        <section id="practice-section">
+            <h2>🧠 Practice Arena (70 Qs)</h2>
+            <div id="practice-area">
+                <div id="q-counter" style="font-size: 0.9rem; color: #777; margin-bottom: 10px;">Question 1 / 70</div>
+                <div id="question-text" class="question-text">Loading...</div>
+                <div id="options-container" class="options-grid"></div>
+                
+                <div id="feedback" class="feedback-box">
+                    <h4 id="feedback-title"></h4>
+                    <p id="feedback-text"></p>
+                </div>
+                <button id="next-btn" class="next-btn">Next Question ➡</button>
+            </div>
+        </section>
+
+        <!-- ADVANCED LONG QUESTIONS -->
+        <section id="advanced-section">
+            <h2>🧪 Advanced Long Questions (10 Qs)</h2>
+            <div style="background: #fff3cd; padding: 10px; margin-bottom: 20px; border: 1px solid #e1c40f;">
+                📝 <strong>Instructions:</strong> Type your answer in detail. The system will check for key concepts!
+            </div>
+            <div id="long-q-container">
+                <!-- JS Populates this -->
+            </div>
+        </section>
+
+        <!-- REVISION -->
+        <section id="revision">
+            <h2>🔁 Quick Revision</h2>
+            <button class="revision-toggle" onclick="toggleRevision()">Tap to Revise Fast</button>
+            <div id="revision-content">
+                <ul>
+                    <li><strong>ALU:</strong> Does Maths & Logic.</li>
+                    <li><strong>CU:</strong> Traffic Police (Controls flow).</li>
+                    <li><strong>Registers:</strong> Super fast temporary memory.</li>
+                    <li><strong>Clock Speed:</strong> Measured in GHz (Speed).</li>
+                    <li><strong>Multitasking:</strong> Rapid switching between tasks.</li>
+                    <li><strong>CPU:</strong> The Brain of the Computer.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer>
+            Designed & Created by SHRISHANT YADAV<br>
+            ShanEduHub
+        </footer>
+    </div>
+
+    <script>
+        // --- DATA: IMPORTANT QUESTIONS (30) ---
+        const importantQuestions = [
+            {q: "What does CPU stand for?", a: "Central Processing Unit."},
+            {q: "Name the two main components of CPU.", a: "ALU (Arithmetic Logic Unit) and CU (Control Unit)."},
+            {q: "Which unit performs addition?", a: "ALU."},
+            {q: "What is the unit of CPU speed?", a: "Hertz (Hz) or Gigahertz (GHz)."},
+            {q: "What does CU stand for?", a: "Control Unit."},
+            {q: "Which part of CPU acts like a traffic police?", a: "Control Unit (CU)."},
+            {q: "What are CPU Registers?", a: "Small, high-speed memory units inside the CPU."},
+            {q: "Is Hard Disk faster than Registers?", a: "No, Registers are much faster."},
+            {q: "What is multitasking?", a: "Performing multiple tasks at the same time."},
+            {q: "Full form of ALU?", a: "Arithmetic Logic Unit."},
+            {q: "Which is the brain of the computer?", a: "CPU."},
+            {q: "Does the CU perform calculations?", a: "No, it only controls data flow."},
+            {q: "What is 1 GHz?", a: "1 Gigahertz = 1 Billion cycles per second."},
+            {q: "Which is faster: RAM or Registers?", a: "Registers."},
+            {q: "What handles logic operations like > or < ?", a: "ALU."},
+            {q: "Can a computer run without a CPU?", a: "No, it is essential."},
+            {q: "What does the CPU decode?", a: "Instructions from memory."},
+            {q: "Where does CPU store temporary data while calculating?", a: "Registers."},
+            {q: "Who directs the ALU to add numbers?", a: "The Control Unit (CU)."},
+            {q: "Does a higher clock speed mean a faster computer?", a: "Yes, generally."},
+            {q: "What is a Processor?", a: "The physical chip that functions as the CPU."},
+            {q: "Name a logical operation.", a: "Comparing two numbers (Greater than/Less than)."},
+            {q: "Name an arithmetic operation.", a: "Addition, Subtraction, Multiplication, Division."},
+            {q: "What happens if CPU overheats?", a: "The computer slows down or shuts off."},
+            {q: "What is the 'heart' of the CPU?", a: "The Clock (generating pulses)."},
+            {q: "What does 'Giga' mean in GHz?", a: "Billion."},
+            {q: "Which comes first: Fetch or Execute?", a: "Fetch."},
+            {q: "Is the Monitor part of the CPU?", a: "No, it is an output device."},
+            {q: "Is the Mouse part of the CPU?", a: "No, it is an input device."},
+            {q: "Why is CPU placed under a fan?", a: "To keep it cool as it gets hot."}
+        ];
+
+        // --- DATA: PRACTICE QUESTIONS (70) ---
+        // Mixed: MCQ, True/False, Fill in Blanks (as MCQ format for mobile ease)
+        const practiceQuestions = [
+            // BASIC (1-20)
+            { type: "MCQ", q: "Full form of CPU is:", options: ["Central Processing Unit", "Control Power Unit", "Central Power Unit", "Computer Power Unit"], ans: 0, exp: "CPU is the Central Processing Unit." },
+            { type: "MCQ", q: "The brain of the computer is:", options: ["Mouse", "Monitor", "CPU", "Keyboard"], ans: 2, exp: "CPU controls everything." },
+            { type: "TF", q: "ALU stands for Arithmetic Logic Unit.", options: ["True", "False"], ans: 0, exp: "Correct definition." },
+            { type: "MCQ", q: "Which part does calculations?", options: ["CU", "ALU", "Monitor", "Mouse"], ans: 1, exp: "ALU handles math." },
+            { type: "MCQ", q: "Which part controls traffic?", options: ["ALU", "Registers", "CU", "Wire"], ans: 2, exp: "CU is the Control Unit." },
+            { type: "TF", q: "Registers are slower than Hard Disk.", options: ["True", "False"], ans: 1, exp: "Registers are the fastest memory." },
+            { type: "MCQ", q: "CPU speed is measured in:", options: ["Kg", "Liters", "Hertz (Hz)", "Meters"], ans: 2, exp: "Hz or GHz is used for frequency." },
+            { type: "MCQ", q: "Who manages data flow?", options: ["User", "CU", "ALU", "Screen"], ans: 1, exp: "Control Unit manages flow." },
+            { type: "TF", q: "A computer can work without a CPU.", options: ["True", "False"], ans: 1, exp: "CPU is mandatory." },
+            { type: "MCQ", q: "2 + 2 is calculated by:", options: ["CU", "ALU", "Register", "Fan"], ans: 1, exp: "Addition is Arithmetic." },
+            { type: "MCQ", q: "Comparing 10 > 5 is done by:", options: ["ALU", "CU", "Ram", "Rom"], ans: 0, exp: "Comparison is Logic." },
+            { type: "Fill", q: "The ____ fetches instructions.", options: ["ALU", "CU", "Register", "Box"], ans: 1, exp: "CU fetches and decodes." },
+            { type: "TF", q: "Multitasking means doing one thing at a time.", options: ["True", "False"], ans: 1, exp: "It means multiple tasks." },
+            { type: "MCQ", q: "Tiny memory inside CPU is:", options: ["CD", "Pendrive", "Registers", "Cloud"], ans: 2, exp: "Registers are internal." },
+            { type: "MCQ", q: "GHz stands for:", options: ["GigaHertz", "GramHertz", "GoogleHertz", "GrandHertz"], ans: 0, exp: "Standard unit." },
+            { type: "MCQ", q: "If CPU is the brain, CU is the:", options: ["Hands", "Legs", "Manager", "Calculator"], ans: 2, exp: "Manager/Traffic Police." },
+            { type: "TF", q: "The CPU is a chip.", options: ["True", "False"], ans: 0, exp: "It is a silicon chip." },
+            { type: "MCQ", q: "Which is NOT a CPU part?", options: ["ALU", "CU", "Mouse", "Registers"], ans: 2, exp: "Mouse is external." },
+            { type: "MCQ", q: "Where does CPU store numbers while adding?", options: ["Hard Disk", "Registers", "Screen", "Keyboard"], ans: 1, exp: "Registers are for immediate data." },
+            { type: "TF", q: "CU does the math.", options: ["True", "False"], ans: 1, exp: "ALU does the math." },
+            
+            // MEDIUM (21-45)
+            { type: "MCQ", q: "What does the 'L' in ALU stand for?", options: ["Light", "Logic", "Long", "Load"], ans: 1, exp: "Arithmetic LOGIC Unit." },
+            { type: "MCQ", q: "The traffic police of computer is:", options: ["ALU", "CU", "RAM", "ROM"], ans: 1, exp: "Analogy for Control Unit." },
+            { type: "Fill", q: "CPU performs the ____ cycle.", options: ["Wash", "Spin", "Fetch-Decode-Execute", "Sleep"], ans: 2, exp: "Standard CPU cycle." },
+            { type: "MCQ", q: "Which allows listening to music while typing?", options: ["Single-tasking", "Multitasking", "Sleeping", "Eating"], ans: 1, exp: "Multitasking capability." },
+            { type: "TF", q: "A 3GHz CPU is faster than a 1GHz CPU.", options: ["True", "False"], ans: 0, exp: "Higher clock speed is faster." },
+            { type: "Reasoning", q: "Why are Registers small?", options: ["To save money", "Because they are super fast & expensive", "They are useless", "They are broken"], ans: 1, exp: "Speed requires small size and proximity." },
+            { type: "MCQ", q: "The physical equipment is called:", options: ["Processor", "Pro", "Program", "Python"], ans: 0, exp: "Processor is the hardware." },
+            { type: "MCQ", q: "Which operation is 'Is A equal to B'?", options: ["Arithmetic", "Logic", "Control", "Storage"], ans: 1, exp: "Equality check is Logic." },
+            { type: "Fill", q: "ALU and CU are connected by ____.", options: ["Ropes", "Buses (Wires)", "Wifi", "Bluetooth"], ans: 1, exp: "Internal electronic buses." },
+            { type: "MCQ", q: "If the CU stops working:", options: ["Only math fails", "Computer hangs/stops", "Music plays", "Mouse works"], ans: 1, exp: "CU controls everything." },
+            { type: "TF", q: "Registers lose data when power goes off.", options: ["True", "False"], ans: 0, exp: "They are volatile." },
+            { type: "MCQ", q: "Which is closest to the CPU?", options: ["Hard Disk", "RAM", "Cache/Registers", "USB"], ans: 2, exp: "Inside the chip." },
+            { type: "MCQ", q: "The speed of CPU depends on:", options: ["Color", "Weight", "Clock Speed", "Size"], ans: 2, exp: "Clock speed determines performance." },
+            { type: "Fill", q: "1 Gigahertz is ____ cycles per second.", options: ["1 Million", "1 Billion", "1 Thousand", "1 Hundred"], ans: 1, exp: "Giga = Billion." },
+            { type: "Picture", q: "Identify the 'Calculator' component:", options: ["CU", "ALU", "Register", "Bus"], ans: 1, exp: "ALU is the calculator." },
+            { type: "Reasoning", q: "Why is CPU called Central?", options: ["It is in the middle", "It is important", "It processes everything", "It is round"], ans: 2, exp: "Everything goes through it." },
+            { type: "MCQ", q: "Division is done by:", options: ["CU", "Registers", "ALU", "Clock"], ans: 2, exp: "Division is arithmetic." },
+            { type: "TF", q: "CPU can process data without Memory.", options: ["True", "False"], ans: 1, exp: "It needs data to process." },
+            { type: "MCQ", q: "Which is a Logic operation?", options: ["5 + 5", "10 - 2", "5 > 2", "3 * 3"], ans: 2, exp: "Greater than is logic." },
+            { type: "Fill", q: "The ____ directs signal flow.", options: ["ALU", "CU", "RAM", "HDD"], ans: 1, exp: "CU directs." },
+            { type: "MCQ", q: "Processor and CPU are:", options: ["Opposites", "Same", "Enemies", "Different machines"], ans: 1, exp: "Used interchangeably." },
+            { type: "TF", q: "Clock speed is measured in Meters.", options: ["True", "False"], ans: 1, exp: "Measured in Hz." },
+            { type: "MCQ", q: "Who helps CPU multitask?", options: ["Operating System", "Mouse", "Printer", "Scanner"], ans: 0, exp: "OS manages CPU time." },
+            { type: "MCQ", q: "Modern CPUs have multiple:", options: ["Cores", "Screens", "Mice", "Keyboards"], ans: 0, exp: "Dual Core, Quad Core etc." },
+            { type: "Fill", q: "Registers are like ____ notes.", options: ["Sticky", "Book", "Library", "Wall"], ans: 0, exp: "Small, temporary sticky notes." },
+
+            // ADVANCED (46-70)
+            { type: "MCQ", q: "If A=5, B=10. Who checks if A < B?", options: ["CU", "ALU", "Memory", "Input"], ans: 1, exp: "ALU does comparison." },
+            { type: "Reasoning", q: "Why do we need a fan on CPU?", options: ["It gets cold", "It gets hot", "It likes wind", "For style"], ans: 1, exp: "Electronic speed creates heat." },
+            { type: "MCQ", q: "The sequence of CPU work is:", options: ["Process-Input-Output", "Fetch-Decode-Execute", "Sleep-Wake-Work", "Eat-Sleep-Repeat"], ans: 1, exp: "Standard FDE cycle." },
+            { type: "Fill", q: "Hertz (Hz) means cycles per ____.", options: ["Minute", "Hour", "Second", "Day"], ans: 2, exp: "Frequency definition." },
+            { type: "TF", q: "A computer can have more than one CPU core.", options: ["True", "False"], ans: 0, exp: "Multi-core processors." },
+            { type: "MCQ", q: "Which is the most expensive memory?", options: ["Hard Disk", "CD", "Registers", "Floppy"], ans: 2, exp: "Fastest = Most expensive per byte." },
+            { type: "MCQ", q: "Which component decodes instructions?", options: ["ALU", "CU", "Register", "Bus"], ans: 1, exp: "CU fetches and DECODES." },
+            { type: "Reasoning", q: "Can ALU store data permanently?", options: ["Yes", "No", "Maybe", "Sometimes"], ans: 1, exp: "ALU processes, doesn't store." },
+            { type: "MCQ", q: "During multitasking, CPU switches:", options: ["Slowly", "Very Fast", "Once a day", "Never"], ans: 1, exp: "Microsecond switching." },
+            { type: "MCQ", q: "Data moves between RAM and CPU via:", options: ["Air", "Buses", "Water", "Light"], ans: 1, exp: "System buses." },
+            { type: "Fill", q: "CPU is made of ____ material.", options: ["Wood", "Plastic", "Silicon", "Iron"], ans: 2, exp: "Semiconductor silicon." },
+            { type: "MCQ", q: "Logical operations result in:", options: ["Numbers", "True/False", "Images", "Sound"], ans: 1, exp: "Logic is Yes/No." },
+            { type: "TF", q: "The CU calculates 100 * 200.", options: ["True", "False"], ans: 1, exp: "CU sends it to ALU." },
+            { type: "MCQ", q: "What does 'Decode' mean?", options: ["Run", "Understand", "Fetch", "Stop"], ans: 1, exp: "Understanding the instruction." },
+            { type: "MCQ", q: "A 4-core CPU can do ____ things at once (technically).", options: ["1", "4", "100", "0"], ans: 1, exp: "Simultaneous processing." },
+            { type: "Reasoning", q: "Why is Register faster than RAM?", options: ["It is bigger", "It is inside CPU", "It is blue", "It is new"], ans: 1, exp: "Proximity reduces travel time." },
+            { type: "MCQ", q: "The 'pulse' of the system is the:", options: ["Clock", "Wire", "Mouse", "Screen"], ans: 0, exp: "System Clock." },
+            { type: "Fill", q: "ALU performs arithmetic and ____ operations.", options: ["Magic", "Logic", "Music", "Video"], ans: 1, exp: "Arithmetic & Logic." },
+            { type: "MCQ", q: "If CPU load is 100%, computer becomes:", options: ["Faster", "Slow/Laggy", "Colorful", "Silent"], ans: 1, exp: "Bottleneck reached." },
+            { type: "TF", q: "You can upgrade CPU in a desktop.", options: ["True", "False"], ans: 0, exp: "Usually possible." },
+            { type: "MCQ", q: "Which is NOT a unit of speed?", options: ["MHz", "GHz", "GB", "Hz"], ans: 2, exp: "GB is storage." },
+            { type: "MCQ", q: "The instruction 'ADD A, B' goes to:", options: ["ALU", "Monitor", "Printer", "Speaker"], ans: 0, exp: "Addition instruction." },
+            { type: "Reasoning", q: "Does a faster CPU make internet faster?", options: ["Yes directly", "No, that's modem/ISP", "Maybe", "CPU is internet"], ans: 1, exp: "Internet speed is bandwidth." },
+            { type: "MCQ", q: "Final processed data goes to:", options: ["Input", "Output/Memory", "ALU", "CU"], ans: 1, exp: "Result storage/display." },
+            { type: "OneWord", q: "The main chip inside computer.", options: ["CPU", "UPS", "USB", "PDF"], ans: 0, exp: "Central Processing Unit." }
+        ];
+
+        // --- DATA: ADVANCED LONG QUESTIONS (10) ---
+        const longQuestions = [
+            {
+                id: "lq1",
+                q: "Explain the main function of ALU with an example.",
+                keywords: ["arithmetic", "logic", "math", "decision", "calculation", "add", "compare"],
+                model: "ALU stands for Arithmetic Logic Unit. It performs mathematical calculations (like addition) and logical decisions (like comparing numbers). Example: Calculating total marks."
+            },
+            {
+                id: "lq2",
+                q: "How is the Control Unit (CU) different from ALU?",
+                keywords: ["control", "direct", "manage", "traffic", "calculate", "math"],
+                model: "CU manages the flow of data like a traffic police and does not calculate. ALU performs the actual calculations and logic."
+            },
+            {
+                id: "lq3",
+                q: "What are Registers and why are they important?",
+                keywords: ["memory", "fast", "speed", "temporary", "inside", "storage"],
+                model: "Registers are tiny, high-speed memory units inside the CPU. They store data temporarily for immediate processing, making the CPU faster."
+            },
+            {
+                id: "lq4",
+                q: "Explain 'Clock Speed' in simple terms.",
+                keywords: ["speed", "hertz", "hz", "ghz", "cycles", "fast", "second"],
+                model: "Clock speed is the speed at which a CPU works. It is measured in Hertz (Hz) or Gigahertz (GHz). Higher speed means more instructions per second."
+            },
+            {
+                id: "lq5",
+                q: "How does a CPU perform multitasking?",
+                keywords: ["switch", "time", "rapid", "fast", "turn", "share"],
+                model: "The CPU switches between tasks very rapidly. It gives a tiny slice of time to each task, making it look like everything is happening at once."
+            },
+            {
+                id: "lq6",
+                q: "Why is the CPU called the 'Brain' of the computer?",
+                keywords: ["control", "think", "decision", "process", "everything", "command"],
+                model: "Just like a human brain controls the body and makes decisions, the CPU controls all other parts of the computer and processes data."
+            },
+            {
+                id: "lq7",
+                q: "What is the Fetch-Decode-Execute cycle?",
+                keywords: ["fetch", "decode", "execute", "instruction", "memory", "understand", "run"],
+                model: "1. Fetch: Get instruction. 2. Decode: Understand it. 3. Execute: Do the action."
+            },
+            {
+                id: "lq8",
+                q: "Difference between CPU and Processor.",
+                keywords: ["chip", "hardware", "same", "physical", "logic"],
+                model: "They are often used to mean the same thing. Strictly, CPU is the function (brain) and Processor is the physical silicon chip."
+            },
+            {
+                id: "lq9",
+                q: "Why does a computer need a fan on the CPU?",
+                keywords: ["heat", "hot", "cool", "temperature", "burn", "damage"],
+                model: "The CPU works very fast and generates a lot of heat. The fan cools it down so it doesn't overheat or get damaged."
+            },
+            {
+                id: "lq10",
+                q: "Can a computer work without a Control Unit? Why?",
+                keywords: ["no", "traffic", "flow", "crash", "manage", "impossible"],
+                model: "No. Without the CU, data would not know where to go. It's like a busy road without traffic lights - total chaos!"
+            }
+        ];
+
+        // --- STATE MANAGEMENT ---
+        const quizState = {
+            correct: 0,
+            wrong: 0,
+            totalAttempted: 0,
+            currentQIndex: 0
+        };
+
+        // --- DOM ELEMENTS ---
+        const dom = {
+            scoreCorrect: document.getElementById('score-correct'),
+            scoreWrong: document.getElementById('score-wrong'),
+            scoreTotal: document.getElementById('score-total'),
+            scorePercent: document.getElementById('score-percent'),
+            impContainer: document.getElementById('imp-q-container'),
+            pracText: document.getElementById('question-text'),
+            pracOptions: document.getElementById('options-container'),
+            pracFeedback: document.getElementById('feedback'),
+            pracFeedbackTitle: document.getElementById('feedback-title'),
+            pracFeedbackText: document.getElementById('feedback-text'),
+            nextBtn: document.getElementById('next-btn'),
+            qCounter: document.getElementById('q-counter'),
+            longContainer: document.getElementById('long-q-container')
+        };
+
+        // --- INIT ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderImportantQuestions();
+            renderPracticeQuestion(0);
+            renderLongQuestions();
+        });
+
+        // --- FUNCTIONS ---
+
+        function updateScore(isCorrect) {
+            quizState.totalAttempted++;
+            if(isCorrect) quizState.correct++;
+            else quizState.wrong++;
+
+            dom.scoreCorrect.textContent = quizState.correct;
+            dom.scoreWrong.textContent = quizState.wrong;
+            dom.scoreTotal.textContent = quizState.totalAttempted;
+            
+            const pct = Math.round((quizState.correct / quizState.totalAttempted) * 100);
+            dom.scorePercent.textContent = pct + "%";
+        }
+
+        function renderImportantQuestions() {
+            let html = "";
+            importantQuestions.forEach((item, index) => {
+                html += `
+                <div class="imp-q-card">
+                    <div class="imp-q"><strong>Q${index+1}:</strong> ${item.q}</div>
+                    <div class="imp-a">👉 ${item.a}</div>
+                </div>`;
+            });
+            dom.impContainer.innerHTML = html;
+        }
+
+        function renderPracticeQuestion(index) {
+            if (index >= practiceQuestions.length) {
+                dom.pracText.textContent = "🎉 Excellent! You completed all questions!";
+                dom.pracOptions.innerHTML = "";
+                dom.nextBtn.style.display = "none";
+                return;
+            }
+
+            const q = practiceQuestions[index];
+            dom.qCounter.textContent = `Question ${index + 1} / ${practiceQuestions.length}`;
+            dom.pracText.textContent = q.q;
+            dom.pracFeedback.style.display = 'none';
+            dom.nextBtn.style.display = 'none';
+            
+            let html = "";
+            q.options.forEach((opt, i) => {
+                html += `<button class="option-btn" onclick="checkAnswer(${index}, ${i}, this)">${opt}</button>`;
+            });
+            dom.pracOptions.innerHTML = html;
+        }
+
+        function checkAnswer(qIndex, selectedOptIndex, btnElement) {
+            // Disable all buttons
+            const buttons = dom.pracOptions.querySelectorAll('.option-btn');
+            buttons.forEach(b => b.disabled = true);
+
+            const q = practiceQuestions[qIndex];
+            const isCorrect = (selectedOptIndex === q.ans);
+
+            // Update UI
+            if (isCorrect) {
+                btnElement.classList.add('correct');
+                showFeedback(true, "Excellent ⭐", q.exp);
+            } else {
+                btnElement.classList.add('wrong');
+                // Highlight correct
+                buttons[q.ans].classList.add('correct');
+                showFeedback(false, "Try Again", `Correct: ${q.options[q.ans]} <br> Reason: ${q.exp}`);
+            }
+
+            updateScore(isCorrect);
+            dom.nextBtn.style.display = 'inline-block';
+            
+            // Set next button action
+            dom.nextBtn.onclick = () => {
+                quizState.currentQIndex++;
+                renderPracticeQuestion(quizState.currentQIndex);
+            };
+        }
+
+        function showFeedback(isCorrect, title, text) {
+            dom.pracFeedback.className = "feedback-box " + (isCorrect ? "feedback-correct" : "feedback-wrong");
+            dom.pracFeedbackTitle.textContent = title;
+            dom.pracFeedbackText.innerHTML = text;
+            dom.pracFeedback.style.display = "block";
+        }
+
+        // --- LONG ANSWER LOGIC ---
+        function renderLongQuestions() {
+            let html = "";
+            longQuestions.forEach((q, i) => {
+                html += `
+                <div class="long-q-card" id="lq-card-${i}">
+                    <strong>Q${i+1}: ${q.q}</strong>
+                    <textarea id="lq-input-${i}" placeholder="Type your answer here..."></textarea>
+                    <button class="check-btn" onclick="checkLongAnswer(${i})">Check Answer</button>
+                    <div class="long-feedback" id="lq-feed-${i}"></div>
+                </div>`;
+            });
+            dom.longContainer.innerHTML = html;
+        }
+
+        function checkLongAnswer(index) {
+            const inputVal = document.getElementById(`lq-input-${index}`).value.toLowerCase();
+            const feedbackBox = document.getElementById(`lq-feed-${index}`);
+            const q = longQuestions[index];
+            
+            if (inputVal.length < 5) {
+                alert("Please type a longer answer.");
+                return;
+            }
+
+            // Keyword Matching
+            let foundCount = 0;
+            const missingKeywords = [];
+            
+            q.keywords.forEach(key => {
+                if(inputVal.includes(key)) foundCount++;
+                else missingKeywords.push(key);
+            });
+
+            // Scoring Logic: Need at least 1 keyword
+            const isCorrect = foundCount >= 1;
+            
+            updateScore(isCorrect);
+
+            let html = "";
+            if (isCorrect) {
+                html += `<div style="color: #27ae60;"><strong>✅ Correct!</strong> (Matches ${foundCount} keywords)</div>`;
+            } else {
+                html += `<div style="color: #c0392b;"><strong>❌ Needs Improvement</strong></div>`;
+            }
+
+            html += `<div style="margin-top:5px; font-size: 0.9em;"><strong>Model Answer:</strong> ${q.model}</div>`;
+            
+            feedbackBox.innerHTML = html;
+            feedbackBox.style.display = 'block';
+            
+            // Disable button
+            const btn = document.querySelector(`#lq-card-${index} .check-btn`);
+            btn.disabled = true;
+            btn.style.opacity = "0.5";
+            btn.textContent = "Checked";
+        }
+
+        function toggleRevision() {
+            const rev = document.getElementById('revision-content');
+            if(rev.style.display === 'block') {
+                rev.style.display = 'none';
+            } else {
+                rev.style.display = 'block';
+                rev.scrollIntoView({behavior: 'smooth'});
+            }
+        }
+    </script>
+</body>
+</html>

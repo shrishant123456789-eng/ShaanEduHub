@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 5 GK - Ch 2: India National Awareness</title>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --paper-bg: #fdfbf7;
+            --line-color: #a2d2ff;
+            --text-color: #2d3436;
+            --accent-green: #55efc4;
+            --accent-red: #ff7675;
+            --accent-yellow: #ffeaa7;
+            --board-color: #2d3436;
+            --chalk-color: #dfe6e9;
+            --primary-font: 'Patrick Hand', cursive, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: var(--primary-font);
+            background-color: var(--paper-bg);
+            color: var(--text-color);
+            font-size: 18px;
+            font-weight: 600; /* Bold rule */
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- Layout & Utility --- */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background: #fff;
+            border: 2px solid #000;
+            border-radius: 10px;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+        }
+
+        h1, h2, h3 {
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 0;
+        }
+
+        h1 { font-size: 2.2rem; text-align: center; color: #d63031; }
+        h2 { font-size: 1.8rem; border-bottom: 3px dashed #000; padding-bottom: 10px; }
+        h3 { font-size: 1.4rem; color: #0984e3; }
+
+        .btn {
+            display: inline-block;
+            background: var(--accent-yellow);
+            border: 2px solid #000;
+            padding: 10px 20px;
+            font-family: var(--primary-font);
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+            transition: transform 0.1s;
+            margin: 5px;
+        }
+
+        .btn:active { transform: scale(0.95); }
+        .btn-primary { background: var(--accent-green); }
+        .btn-danger { background: var(--accent-red); color: white; }
+
+        .hidden { display: none !important; }
+
+        /* --- Header --- */
+        header {
+            background-color: var(--accent-yellow);
+            padding: 20px 0;
+            text-align: center;
+            border-bottom: 3px solid #000;
+            margin-bottom: 20px;
+        }
+
+        /* --- Live Score Panel --- */
+        #score-panel {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: var(--board-color);
+            color: var(--chalk-color);
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-bottom: 3px solid #000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            font-size: 1rem;
+        }
+        .score-item span { color: var(--accent-green); font-size: 1.2rem; }
+
+        /* --- Notes Section --- */
+        .note-card {
+            background-color: #eef9bf; /* Pastel yellow/green */
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 5px solid #ff7675;
+            border-radius: 5px;
+        }
+        .note-img-box {
+            width: 100%;
+            height: 150px;
+            background: #dfe6e9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #636e72;
+            margin: 10px 0;
+            color: #636e72;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+        .memory-tip {
+            background: #fff;
+            border: 1px solid #000;
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            margin-top: 5px;
+            display: inline-block;
+        }
+
+        /* --- Important Questions --- */
+        .imp-q-item {
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+        }
+        .imp-q-ans { color: #00b894; }
+
+        /* --- Practice Questions (Quiz Mode) --- */
+        #practice-container {
+            text-align: center;
+            min-height: 400px;
+        }
+        .question-box {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+        }
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        @media (min-width: 600px) {
+            .options-grid { grid-template-columns: 1fr 1fr; }
+        }
+        .option-btn {
+            background: #fff;
+            border: 2px solid #000;
+            padding: 15px;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 8px;
+            position: relative;
+        }
+        .option-btn:hover { background: #f1f2f6; }
+        .option-btn.correct { background: #55efc4; border-color: #00b894; }
+        .option-btn.wrong { background: #ff7675; border-color: #d63031; color: white; }
+        
+        .feedback-box {
+            margin-top: 20px;
+            padding: 15px;
+            border: 2px solid #000;
+            background: #ffeaa7;
+            display: none;
+            text-align: left;
+        }
+
+        .nav-controls {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* --- Long Questions --- */
+        .long-q-card {
+            background: #dfe6e9;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 2px solid #2d3436;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            margin: 10px 0;
+            font-family: var(--primary-font);
+            font-size: 1rem;
+            border: 2px solid #b2bec3;
+            border-radius: 5px;
+        }
+        .model-answer {
+            background: #fff;
+            padding: 10px;
+            border: 1px solid #000;
+            margin-top: 10px;
+            display: none;
+        }
+        .model-answer ul { padding-left: 20px; }
+
+        /* --- Footer --- */
+        footer {
+            background: var(--board-color);
+            color: white;
+            text-align: center;
+            padding: 30px 10px;
+            margin-top: 50px;
+        }
+        .brand { color: var(--accent-yellow); font-size: 1.2rem; }
+
+        /* Input styling for fill-blanks */
+        .blank-input {
+            border: none;
+            border-bottom: 2px dashed #000;
+            background: transparent;
+            font-family: inherit;
+            font-size: inherit;
+            width: 150px;
+            text-align: center;
+            color: #0984e3;
+        }
+        .blank-input:focus { outline: none; border-bottom: 2px solid #0984e3; }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <h1>Class 5 - General Knowledge</h1>
+            <h3>Chapter 2: India – National Awareness</h3>
+        </div>
+    </header>
+
+    <!-- LIVE SCORE PANEL -->
+    <div id="score-panel">
+        <div class="score-item">Correct: <span id="score-correct">0</span></div>
+        <div class="score-item">Wrong: <span id="score-wrong">0</span></div>
+        <div class="score-item">Marks: <span id="score-marks">0</span></div>
+    </div>
+
+    <div class="container">
+
+        <!-- 1. NOTES SECTION -->
+        <div class="section" id="notes-section">
+            <h2>📝 Smart Notes</h2>
+            
+            <!-- Topic 1 -->
+            <div class="note-card">
+                <h3>1. India: Location & Neighbors</h3>
+                <p><strong>Definition:</strong> India is a vast country located in the continent of <em>Asia</em> (Southern part).</p>
+                <p><strong>Basic:</strong> It is the 7th largest country in the world by area.</p>
+                <p><strong>Advanced:</strong> It lies entirely in the Northern Hemisphere. It has 9 neighbors: Pakistan, Afghanistan (NW), China, Nepal, Bhutan (N), Myanmar, Bangladesh (E), Sri Lanka, Maldives (S - Sea neighbors).</p>
+                <div class="note-img-box">[Map of India showing Neighbors]</div>
+                <div class="memory-tip">💡 Tip: "My Neighbor Likes Mangoes" can help remember neighbors!</div>
+                <p><strong>Daily Life:</strong> When we look at a world map, India looks like a kite flying below China.</p>
+            </div>
+
+            <!-- Topic 2 -->
+            <div class="note-card">
+                <h3>2. States & Union Territories</h3>
+                <p><strong>Fact:</strong> India has <strong>28 States</strong> and <strong>8 Union Territories (UTs)</strong>.</p>
+                <p><strong>Key Capitals:</strong> New Delhi (Capital of India), Mumbai (Maharashtra), Chennai (Tamil Nadu), Kolkata (West Bengal).</p>
+                <p><strong>Advanced:</strong> Rajasthan is the largest state. Goa is the smallest state. Ladakh is the largest UT.</p>
+                <div class="note-img-box">[Map showing States & UTs]</div>
+                <div class="memory-tip">💡 Tip: 28 + 8 = 36 entities to remember!</div>
+            </div>
+
+            <!-- Topic 3 -->
+            <div class="note-card">
+                <h3>3. Physical Features</h3>
+                <p><strong>Diversity:</strong> India has Mountains (Himalayas), Plains (Northern Plains), Deserts (Thar), Plateaus (Deccan), and Islands (Andaman & Nicobar, Lakshadweep).</p>
+                <div class="note-img-box">[Diagram of Mountains, Rivers, Desert]</div>
+                <p><strong>Daily Life:</strong> People in hills wear woolens; people near sea eat fish and rice.</p>
+            </div>
+
+            <!-- Topic 4 -->
+            <div class="note-card">
+                <h3>4. National Symbols</h3>
+                <ul>
+                    <li><strong>Animal:</strong> Royal Bengal Tiger (Strength)</li>
+                    <li><strong>Bird:</strong> Peacock (Grace)</li>
+                    <li><strong>Flower:</strong> Lotus (Purity)</li>
+                    <li><strong>Anthem:</strong> Jana Gana Mana (by Rabindranath Tagore)</li>
+                    <li><strong>Song:</strong> Vande Mataram (by Bankim Chandra Chatterjee)</li>
+                </ul>
+                <div class="note-img-box">[Collage of National Symbols]</div>
+            </div>
+
+            <!-- Topic 5 -->
+            <div class="note-card">
+                <h3>5. Important Dates</h3>
+                <p><strong>Independence Day:</strong> 15th August (1947)</p>
+                <p><strong>Republic Day:</strong> 26th January (1950 - Constitution started)</p>
+                <p><strong>Gandhi Jayanti:</strong> 2nd October</p>
+            </div>
+
+            <!-- Topic 6, 7, 8 Combined -->
+            <div class="note-card">
+                <h3>6. Civics: Constitution & Govt</h3>
+                <p><strong>Constitution:</strong> The supreme book of laws. Dr. B.R. Ambedkar is the Father of the Constitution.</p>
+                <p><strong>Rights & Duties:</strong> We have rights (freedom, equality) but also duties (respect flag, keep country clean).</p>
+                <p><strong>Government:</strong> Parliament makes laws. <strong>President</strong> is Head of State. <strong>Prime Minister</strong> is Head of Government.</p>
+            </div>
+        </div>
+
+        <!-- 2. IMPORTANT QUESTIONS (30) -->
+        <div class="section">
+            <h2>⭐ 30 Important Questions</h2>
+            <div id="important-questions-list">
+                <!-- JS will populate this -->
+            </div>
+        </div>
+
+        <!-- 3. PRACTICE QUESTIONS (70) -->
+        <div class="section">
+            <h2>🎮 Practice Quiz (70 Qs)</h2>
+            <div id="practice-container">
+                <div class="question-header">
+                    Question <span id="q-current">1</span> of 70
+                </div>
+                <div id="quiz-area">
+                    <!-- Question injected here -->
+                </div>
+                <div id="feedback-area" class="feedback-box">
+                    <h4 id="fb-title"></h4>
+                    <p id="fb-text"></p>
+                </div>
+                <div class="nav-controls">
+                    <button class="btn hidden" id="prev-btn" onclick="navQuestion(-1)">Previous</button>
+                    <button class="btn btn-primary" id="next-btn" onclick="navQuestion(1)">Next Question</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. ADVANCED LONG QUESTIONS (10) -->
+        <div class="section">
+            <h2>🧠 Advanced Thinking (10 Qs)</h2>
+            <p>Type your answer and check if you hit the key points!</p>
+            <div id="long-questions-list">
+                <!-- JS will populate -->
+            </div>
+        </div>
+
+        <!-- 5. REVISION -->
+        <div class="section">
+            <h2>🚀 Quick Revision</h2>
+            <button class="btn" onclick="toggleRevision()">Show/Hide Summary</button>
+            <div id="revision-content" class="hidden" style="margin-top: 15px; background: #ffeaa7; padding: 10px; border: 1px dashed #000;">
+                <ul>
+                    <li>India: 7th largest, Asia, N. Hemisphere.</li>
+                    <li>28 States, 8 UTs. New Delhi is Capital.</li>
+                    <li>Himalayas in North, Indian Ocean in South.</li>
+                    <li>Constitution: Supreme Law.</li>
+                    <li>Rights come with Duties.</li>
+                    <li>Unity in Diversity is our strength.</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <div class="brand">ShanEduHub</div>
+        <p>Designed & Created by SHRISHANT YADAV</p>
+        <p>Class 5 GK Module • Chapter 2</p>
+    </footer>
+
+    <script>
+        // --- DATA: Important Questions (30) ---
+        const importantQuestions = [
+            { q: "Which continent is India in?", a: "Asia" },
+            { q: "What is the capital of India?", a: "New Delhi" },
+            { q: "Total number of states in India?", a: "28" },
+            { q: "Total number of Union Territories?", a: "8" },
+            { q: "Which is the largest state by area?", a: "Rajasthan" },
+            { q: "Which is the smallest state by area?", a: "Goa" },
+            { q: "Name the National Animal of India.", a: "Royal Bengal Tiger" },
+            { q: "Name the National Bird of India.", a: "Peacock" },
+            { q: "Name the National Flower of India.", a: "Lotus" },
+            { q: "Who wrote the National Anthem?", a: "Rabindranath Tagore" },
+            { q: "What is the National Song of India?", a: "Vande Mataram" },
+            { q: "When is Independence Day celebrated?", a: "15th August" },
+            { q: "When is Republic Day celebrated?", a: "26th January" },
+            { q: "Who is known as the Father of the Constitution?", a: "Dr. B.R. Ambedkar" },
+            { q: "What is the southern tip of mainland India?", a: "Kanyakumari" },
+            { q: "Which ocean lies to the south of India?", a: "Indian Ocean" },
+            { q: "Which sea lies to the west of India?", a: "Arabian Sea" },
+            { q: "Which bay lies to the east of India?", a: "Bay of Bengal" },
+            { q: "Which is the highest mountain range in northern India?", a: "The Himalayas" },
+            { q: "What is the official currency of India?", a: "Indian Rupee (₹)" },
+            { q: "How many spokes are in the Ashoka Chakra?", a: "24" },
+            { q: "What color is the top band of the Indian Flag?", a: "Saffron" },
+            { q: "What does Saffron stand for?", a: "Strength and Courage" },
+            { q: "What does White stand for?", a: "Peace and Truth" },
+            { q: "What does Green stand for?", a: "Fertility and Growth" },
+            { q: "Who is the Head of the Country (State)?", a: "The President" },
+            { q: "Who is the Head of the Government?", a: "The Prime Minister" },
+            { q: "What is the name of the Indian Parliament house?", a: "Sansad Bhavan" },
+            { q: "Which neighboring country is an island?", a: "Sri Lanka" },
+            { q: "What is the National Heritage Animal?", a: "Elephant" }
+        ];
+
+        // --- DATA: Practice Questions (70) ---
+        // Types: mcq, fill, truefalse
+        const practiceQuestions = [
+            // 1-10: Location & Neighbors
+            { id: 1, type: 'mcq', q: "India is located in which hemisphere?", options: ["Northern", "Southern", "Western", "Eastern"], ans: 0, exp: "India lies entirely north of the equator." },
+            { id: 2, type: 'mcq', q: "Which country is NOT a neighbor of India?", options: ["Nepal", "China", "Thailand", "Pakistan"], ans: 2, exp: "Thailand does not share a border with India." },
+            { id: 3, type: 'mcq', q: "India is the ____ largest country in the world.", options: ["5th", "6th", "7th", "8th"], ans: 2, exp: "By area, India is the 7th largest." },
+            { id: 4, type: 'mcq', q: "Which country lies to the north of India?", options: ["Sri Lanka", "Bhutan", "Maldives", "Bangladesh"], ans: 1, exp: "Bhutan is a northern neighbor." },
+            { id: 5, type: 'mcq', q: "What separates India from Sri Lanka?", options: ["Palk Strait", "Bering Strait", "Cook Strait", "Malacca Strait"], ans: 0, exp: "The Palk Strait separates India and Sri Lanka." },
+            { id: 6, type: 'fill', q: "The capital of India is ____.", ans: ["new delhi", "delhi"], exp: "New Delhi is the national capital." },
+            { id: 7, type: 'truefalse', q: "India shares its longest border with China.", ans: false, exp: "False. The longest border is with Bangladesh." },
+            { id: 8, type: 'mcq', q: "Which island neighbor is famous for coral reefs?", options: ["Sri Lanka", "Maldives", "Andaman", "Lakshadweep"], ans: 1, exp: "Maldives is an island nation neighbor." },
+            { id: 9, type: 'mcq', q: "How many countries share land borders with India?", options: ["5", "6", "7", "8"], ans: 2, exp: "Pakistan, Afghanistan, China, Nepal, Bhutan, Myanmar, Bangladesh (7)." },
+            { id: 10, type: 'mcq', q: "The Tropic of Cancer passes through India.", options: ["True", "False"], ans: 0, exp: "It divides India roughly into two halves." },
+
+            // 11-20: States & UTs
+            { id: 11, type: 'mcq', q: "Capital of Maharashtra is ____.", options: ["Pune", "Nagpur", "Mumbai", "Nashik"], ans: 2, exp: "Mumbai is the capital." },
+            { id: 12, type: 'mcq', q: "Which is the newest state formed in 2014?", options: ["Jharkhand", "Telangana", "Uttarakhand", "Chhattisgarh"], ans: 1, exp: "Telangana was carved out of Andhra Pradesh." },
+            { id: 13, type: 'mcq', q: "Dispur is the capital of ____.", options: ["Assam", "Bihar", "Goa", "Sikkim"], ans: 0, exp: "Dispur is Assam's capital." },
+            { id: 14, type: 'fill', q: "The smallest state in India is ____.", ans: ["goa"], exp: "Goa has the smallest area." },
+            { id: 15, type: 'mcq', q: "Ladakh is a ____.", options: ["State", "Union Territory", "City", "Country"], ans: 1, exp: "Ladakh became a UT in 2019." },
+            { id: 16, type: 'mcq', q: "Capital of Tamil Nadu?", options: ["Bengaluru", "Kochi", "Chennai", "Hyderabad"], ans: 2, exp: "Chennai." },
+            { id: 17, type: 'truefalse', q: "Rajasthan is the largest state by population.", ans: false, exp: "False. UP is largest by population, Rajasthan by area." },
+            { id: 18, type: 'mcq', q: "How many states are there in India?", options: ["29", "28", "27", "30"], ans: 1, exp: "Currently there are 28 states." },
+            { id: 19, type: 'mcq', q: "Port Blair is the capital of ____.", options: ["Lakshadweep", "Andaman & Nicobar", "Goa", "Puducherry"], ans: 1, exp: "Capital of A&N Islands." },
+            { id: 20, type: 'fill', q: "____ is known as God's Own Country.", ans: ["kerala"], exp: "Kerala is famous by this name." },
+
+            // 21-30: Physical Features
+            { id: 21, type: 'mcq', q: "The Great Indian Desert is also called ____.", options: ["Sahara", "Gobi", "Thar", "Atacama"], ans: 2, exp: "The Thar Desert is in Rajasthan." },
+            { id: 22, type: 'mcq', q: "Which river is considered holy by Hindus?", options: ["Narmada", "Ganga", "Kaveri", "Krishna"], ans: 1, exp: "The Ganga is the holiest river." },
+            { id: 23, type: 'mcq', q: "The Southern Plateau is also called ____.", options: ["Deccan Plateau", "Tibetan Plateau", "Malwa Plateau", "Chota Nagpur"], ans: 0, exp: "The Deccan Plateau covers South India." },
+            { id: 24, type: 'truefalse', q: "The Himalayas are in the South of India.", ans: false, exp: "False. They are in the North." },
+            { id: 25, type: 'mcq', q: "Which islands are in the Arabian Sea?", options: ["Andaman", "Nicobar", "Lakshadweep", "Sri Lanka"], ans: 2, exp: "Lakshadweep lies in the Arabian Sea." },
+            { id: 26, type: 'fill', q: "The highest peak in the world is Mount ____.", ans: ["everest"], exp: "It is in the Himalayas (Nepal)." },
+            { id: 27, type: 'mcq', q: "The Northern Plains are rich in ____.", options: ["Sand", "Fertile Soil", "Rocks", "Snow"], ans: 1, exp: "Rivers make the soil very fertile for farming." },
+            { id: 28, type: 'mcq', q: "Which area receives very little rainfall?", options: ["Coastal Plains", "Himalayas", "Thar Desert", "North East"], ans: 2, exp: "Deserts have very low rainfall." },
+            { id: 29, type: 'mcq', q: "India is a peninsula because it is surrounded by water on ____ sides.", options: ["2", "3", "4", "5"], ans: 1, exp: "East, West, and South." },
+            { id: 30, type: 'truefalse', q: "Coastal plains are good for fishing.", ans: true, exp: "True, being near the sea." },
+
+            // 31-40: Symbols
+            { id: 31, type: 'mcq', q: "National Fruit of India?", options: ["Apple", "Banana", "Mango", "Orange"], ans: 2, exp: "Mango is the King of Fruits." },
+            { id: 32, type: 'mcq', q: "National Tree of India?", options: ["Neem", "Peepal", "Banyan", "Eucalyptus"], ans: 2, exp: "The Banyan tree represents immortality." },
+            { id: 33, type: 'mcq', q: "What is our National Motto?", options: ["Jai Hind", "Satyameva Jayate", "Vande Mataram", "Inquilab Zindabad"], ans: 1, exp: "It means 'Truth Alone Triumphs'." },
+            { id: 34, type: 'fill', q: "The National Anthem takes approx ____ seconds to sing.", ans: ["52"], exp: "52 seconds is the formal duration." },
+            { id: 35, type: 'mcq', q: "Which animal is on the National Emblem?", options: ["Tiger", "Lion", "Elephant", "Deer"], ans: 1, exp: "The Lion Capital of Ashoka features lions." },
+            { id: 36, type: 'mcq', q: "National Aquatic Animal?", options: ["Shark", "River Dolphin", "Whale", "Turtle"], ans: 1, exp: "The Ganges River Dolphin." },
+            { id: 37, type: 'truefalse', q: "The National Flag can be made of plastic.", ans: false, exp: "It should be Khadi or cotton/silk/polyester cloth, plastic is avoided." },
+            { id: 38, type: 'mcq', q: "National Reptile?", options: ["Cobra", "King Cobra", "Python", "Lizard"], ans: 1, exp: "King Cobra." },
+            { id: 39, type: 'mcq', q: "Currency symbol ₹ was designed by?", options: ["Udaya Kumar", "Ratan Tata", "Gandhi", "Ambedkar"], ans: 0, exp: "D. Udaya Kumar designed it." },
+            { id: 40, type: 'fill', q: "The wheel in the flag is called ____ Chakra.", ans: ["ashoka"], exp: "Ashoka Chakra (Wheel of Law)." },
+
+            // 41-50: Dates & History
+            { id: 41, type: 'mcq', q: "First Prime Minister of India?", options: ["Gandhi", "Nehru", "Patel", "Modi"], ans: 1, exp: "Jawaharlal Nehru." },
+            { id: 42, type: 'mcq', q: "First President of India?", options: ["Rajendra Prasad", "Radhakrishnan", "Kalam", "Pranab Mukherjee"], ans: 0, exp: "Dr. Rajendra Prasad." },
+            { id: 43, type: 'mcq', q: "Teachers' Day is birthday of?", options: ["Nehru", "S. Radhakrishnan", "Gandhi", "Bose"], ans: 1, exp: "5th September." },
+            { id: 44, type: 'mcq', q: "Children's Day date?", options: ["14 Nov", "2 Oct", "26 Jan", "15 Aug"], ans: 0, exp: "Birthday of Chacha Nehru." },
+            { id: 45, type: 'mcq', q: "India became a Republic in which year?", options: ["1947", "1950", "1952", "1948"], ans: 1, exp: "1950." },
+            { id: 46, type: 'fill', q: "Iron Man of India was Sardar ____.", ans: ["patel", "vallabhbhai patel"], exp: "Sardar Vallabhbhai Patel." },
+            { id: 47, type: 'truefalse', q: "Mahatma Gandhi is the Father of the Nation.", ans: true, exp: "Yes, Bapu." },
+            { id: 48, type: 'mcq', q: "Constitution Day is on?", options: ["26 Nov", "26 Jan", "15 Aug", "2 Oct"], ans: 0, exp: "Adopted on 26 Nov 1949." },
+            { id: 49, type: 'mcq', q: "Martyrs' Day?", options: ["30 Jan", "14 Feb", "1 May", "5 Sep"], ans: 0, exp: "Death anniversary of Gandhi ji." },
+            { id: 50, type: 'mcq', q: "National Science Day honors?", options: ["CV Raman", "Ramanujan", "Kalam", "Bhabha"], ans: 0, exp: "Raman Effect discovery." },
+
+            // 51-60: Constitution & Civics
+            { id: 51, type: 'mcq', q: "The Constitution is a book of ____.", options: ["Stories", "Maps", "Laws", "Songs"], ans: 2, exp: "It contains laws and rules for the country." },
+            { id: 52, type: 'mcq', q: "How many Fundamental Rights do we have?", options: ["5", "6", "7", "10"], ans: 1, exp: "Currently 6 fundamental rights." },
+            { id: 53, type: 'mcq', q: "Right to Equality means?", options: ["Everyone is rich", "Everyone is same", "Equal before law", "Same job"], ans: 2, exp: "No discrimination." },
+            { id: 54, type: 'fill', q: "We must respect our National ____.", ans: ["flag", "anthem", "symbols"], exp: "Flag, Anthem, etc." },
+            { id: 55, type: 'truefalse', q: "We can break public property.", ans: false, exp: "It is our duty to protect public property." },
+            { id: 56, type: 'mcq', q: "Which right allows us to speak freely?", options: ["Freedom", "Equality", "Education", "Religion"], ans: 0, exp: "Right to Freedom." },
+            { id: 57, type: 'mcq', q: "Minimum age to vote in India?", options: ["16", "18", "21", "25"], ans: 1, exp: "18 years." },
+            { id: 58, type: 'mcq', q: "Fundamental Duties are for?", options: ["Citizens", "Tourists", "Animals", "Trees"], ans: 0, exp: "For every citizen of India." },
+            { id: 59, type: 'mcq', q: "Right to Education is for ages?", options: ["6-14", "0-5", "15-20", "All"], ans: 0, exp: "Free education for 6-14 years." },
+            { id: 60, type: 'truefalse', q: "The Constitution is the longest written one in the world.", ans: true, exp: "Indian Constitution is very detailed." },
+
+            // 61-70: Government
+            { id: 61, type: 'mcq', q: "Who is the current Prime Minister (2025)?", options: ["Narendra Modi", "Rahul Gandhi", "Amit Shah", "Manmohan Singh"], ans: 0, exp: "Narendra Modi." },
+            { id: 62, type: 'mcq', q: "The President lives in?", options: ["Red Fort", "Parliament", "Rashtrapati Bhavan", "India Gate"], ans: 2, exp: "Rashtrapati Bhavan in Delhi." },
+            { id: 63, type: 'mcq', q: "Lok Sabha is also called?", options: ["Upper House", "Lower House", "White House", "Blue House"], ans: 1, exp: "Lower House of Parliament." },
+            { id: 64, type: 'mcq', q: "Rajya Sabha is also called?", options: ["Upper House", "Lower House", "Big House", "Small House"], ans: 0, exp: "Upper House or Council of States." },
+            { id: 65, type: 'fill', q: "The government of the whole country is ____ Govt.", ans: ["central", "union"], exp: "Central or Union Government." },
+            { id: 66, type: 'mcq', q: "Who appoints the Governor of a state?", options: ["CM", "PM", "President", "Judge"], ans: 2, exp: "President appoints Governors." },
+            { id: 67, type: 'mcq', q: "Term of Lok Sabha members?", options: ["4 years", "5 years", "6 years", "10 years"], ans: 1, exp: "5 years." },
+            { id: 68, type: 'truefalse', q: "India is a Democracy.", ans: true, exp: "People choose their leaders." },
+            { id: 69, type: 'mcq', q: "The Supreme Court is in?", options: ["Mumbai", "Kolkata", "Chennai", "New Delhi"], ans: 3, exp: "Highest court is in Delhi." },
+            { id: 70, type: 'mcq', q: "Who is the First Citizen of India?", options: ["PM", "President", "Chief Justice", "Army Chief"], ans: 1, exp: "The President." }
+        ];
+
+        // --- DATA: Long Questions (10) ---
+        const longQuestions = [
+            { id: 'l1', q: "Why is India called a land of diversity?", keywords: ["language", "religion", "culture", "food", "festival", "state", "many"], exp: "India has many languages, religions, cultures, foods, and festivals existing together." },
+            { id: 'l2', q: "Why are the Himalayas important for India?", keywords: ["protect", "rain", "river", "border", "enemy", "cold", "wind"], exp: "They protect borders, stop cold winds, and are sources of major rivers like Ganga." },
+            { id: 'l3', q: "What is the difference between a State and a Union Territory?", keywords: ["central", "government", "control", "governor", "power", "direct"], exp: "States have their own elected govt; UTs are directly controlled by the Central Govt." },
+            { id: 'l4', q: "Why do we have a Constitution?", keywords: ["rule", "law", "right", "run", "country", "guide", "order"], exp: "It provides rules and laws to run the country smoothly and protects citizens' rights." },
+            { id: 'l5', q: "What does the 'Ashoka Chakra' in our flag stand for?", keywords: ["progress", "move", "motion", "law", "dharma", "24", "hour"], exp: "It represents constant movement, progress, and the Wheel of Law (Dharma)." },
+            { id: 'l6', q: "Explain 'Unity in Diversity'.", keywords: ["one", "together", "united", "different", "harmony", "peace"], exp: "Even though we have different cultures and religions, we live together as one nation." },
+            { id: 'l7', q: "What are your duties as a student citizen?", keywords: ["study", "clean", "respect", "discipline", "flag", "property"], exp: "Respect the flag, keep school/surroundings clean, and study well to help the country." },
+            { id: 'l8', q: "Why is 26th January chosen as Republic Day?", keywords: ["constitution", "start", "force", "1950", "lahore", "poorna"], exp: "The Constitution came into force on this day in 1950." },
+            { id: 'l9', q: "Who elects the Government in India?", keywords: ["people", "citizen", "vote", "election", "voter", "adult"], exp: "The people of India (citizens above 18) elect the government through voting." },
+            { id: 'l10', q: "What happens if we don't follow traffic rules?", keywords: ["accident", "fine", "danger", "harm", "safe", "hurt"], exp: "It causes accidents, danger to life, and chaos on roads." }
+        ];
+
+        // --- STATE & DOM ---
+        let currentQIndex = 0;
+        let score = { correct: 0, wrong: 0, marks: 0 };
+        const scoreCorrectEl = document.getElementById('score-correct');
+        const scoreWrongEl = document.getElementById('score-wrong');
+        const scoreMarksEl = document.getElementById('score-marks');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderImportantQuestions();
+            loadQuestion(0);
+            renderLongQuestions();
+        });
+
+        // --- RENDER FUNCTIONS ---
+        function renderImportantQuestions() {
+            const list = document.getElementById('important-questions-list');
+            let html = '';
+            importantQuestions.forEach((item, index) => {
+                html += `<div class="imp-q-item">
+                    <strong>${index + 1}. ${item.q}</strong><br>
+                    <span class="imp-q-ans">Ans: ${item.a}</span>
+                </div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        // --- QUIZ LOGIC (PRACTICE) ---
+        function loadQuestion(index) {
+            currentQIndex = index;
+            const q = practiceQuestions[index];
+            const area = document.getElementById('quiz-area');
+            const feedback = document.getElementById('feedback-area');
+            const qCount = document.getElementById('q-current');
+            
+            // UI Reset
+            qCount.innerText = index + 1;
+            feedback.style.display = 'none';
+            document.getElementById('next-btn').classList.add('hidden'); // Hide next until answered
+
+            let content = `<div class="question-box">${index + 1}. ${q.q}</div>`;
+            
+            if (q.type === 'mcq') {
+                content += `<div class="options-grid">`;
+                q.options.forEach((opt, i) => {
+                    content += `<button class="option-btn" onclick="checkMCQ(${i}, ${q.ans})">${opt}</button>`;
+                });
+                content += `</div>`;
+            } else if (q.type === 'truefalse') {
+                content += `<div class="options-grid">`;
+                content += `<button class="option-btn" onclick="checkMCQ(true, ${q.ans})">True</button>`;
+                content += `<button class="option-btn" onclick="checkMCQ(false, ${q.ans})">False</button>`;
+                content += `</div>`;
+            } else if (q.type === 'fill') {
+                content += `<div>
+                    <input type="text" id="fill-ans" class="blank-input" placeholder="Type answer">
+                    <button class="btn btn-primary" onclick="checkFill('${q.ans.join(',')}')">Check</button>
+                </div>`;
+            }
+
+            area.innerHTML = content;
+            updateNavButtons();
+        }
+
+        function checkMCQ(selected, correct) {
+            if (document.querySelector('.option-btn.correct')) return; // Already answered
+
+            const btns = document.querySelectorAll('.option-btn');
+            let isCorrect = (selected === correct);
+            
+            // Visuals
+            if (isCorrect) {
+                btns.forEach((btn, i) => {
+                    // For True/False options are 0/1 index based on render order, but logic passes value
+                    // Handling pure value match for T/F or index match for MCQ
+                    if(typeof correct === 'boolean') {
+                        if(btn.innerText === (correct ? 'True' : 'False')) btn.classList.add('correct');
+                    } else {
+                        if(i === correct) btn.classList.add('correct');
+                    }
+                });
+                updateScore(true);
+                showFeedback(true, practiceQuestions[currentQIndex].exp);
+            } else {
+                // Find clicked button
+                // Simple logic: Highlight all. Correct one green, Selected (if wrong) red.
+                btns.forEach((btn, i) => {
+                     if(typeof correct === 'boolean') {
+                        if(btn.innerText === (selected ? 'True' : 'False')) btn.classList.add('wrong');
+                        if(btn.innerText === (correct ? 'True' : 'False')) btn.classList.add('correct');
+                    } else {
+                        if(i === selected) btn.classList.add('wrong');
+                        if(i === correct) btn.classList.add('correct');
+                    }
+                });
+                updateScore(false);
+                showFeedback(false, practiceQuestions[currentQIndex].exp);
+            }
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        function checkFill(correctAnswersStr) {
+            const input = document.getElementById('fill-ans');
+            const val = input.value.trim().toLowerCase();
+            if (!val) return;
+
+            const possible = correctAnswersStr.split(',');
+            const isCorrect = possible.includes(val);
+
+            if (isCorrect) {
+                input.style.borderBottom = "2px solid #00b894";
+                input.style.color = "#00b894";
+                updateScore(true);
+                showFeedback(true, practiceQuestions[currentQIndex].exp);
+            } else {
+                input.style.borderBottom = "2px solid #ff7675";
+                input.style.color = "#ff7675";
+                updateScore(false);
+                showFeedback(false, "Correct: " + possible[0].toUpperCase() + ". " + practiceQuestions[currentQIndex].exp);
+            }
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        function showFeedback(isCorrect, text) {
+            const fb = document.getElementById('feedback-area');
+            const title = document.getElementById('fb-title');
+            const txt = document.getElementById('fb-text');
+            
+            fb.style.display = 'block';
+            if (isCorrect) {
+                fb.style.backgroundColor = '#dff9fb';
+                fb.style.borderColor = '#00b894';
+                title.innerText = "Excellent ⭐";
+                title.style.color = '#00b894';
+            } else {
+                fb.style.backgroundColor = '#ffeaa7';
+                fb.style.borderColor = '#d63031';
+                title.innerText = "Try Again 😌";
+                title.style.color = '#d63031';
+            }
+            txt.innerText = text;
+        }
+
+        function navQuestion(dir) {
+            const newIndex = currentQIndex + dir;
+            if (newIndex >= 0 && newIndex < practiceQuestions.length) {
+                loadQuestion(newIndex);
+            }
+        }
+
+        function updateNavButtons() {
+            const prev = document.getElementById('prev-btn');
+            // const next = document.getElementById('next-btn'); 
+            // Next is handled by answer check to force answering
+            
+            if (currentQIndex === 0) prev.classList.add('hidden');
+            else prev.classList.remove('hidden');
+        }
+
+        function updateScore(isCorrect) {
+            if (isCorrect) {
+                score.correct++;
+                score.marks += 1;
+            } else {
+                score.wrong++;
+            }
+            scoreCorrectEl.innerText = score.correct;
+            scoreWrongEl.innerText = score.wrong;
+            scoreMarksEl.innerText = score.marks;
+        }
+
+        // --- LONG QUESTIONS LOGIC ---
+        function renderLongQuestions() {
+            const list = document.getElementById('long-questions-list');
+            let html = '';
+            longQuestions.forEach((item, index) => {
+                html += `<div class="long-q-card">
+                    <div><strong>Q${index + 1}:</strong> ${item.q}</div>
+                    <textarea id="long-in-${item.id}" placeholder="Type answer here..."></textarea>
+                    <button class="btn btn-primary" onclick="checkLong('${item.id}')">Check Answer</button>
+                    <div id="long-fb-${item.id}" class="model-answer"></div>
+                </div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function checkLong(id) {
+            const input = document.getElementById(`long-in-${id}`).value.toLowerCase();
+            const feedback = document.getElementById(`long-fb-${id}`);
+            const qData = longQuestions.find(q => q.id === id);
+            
+            // Keyword matching
+            let hits = 0;
+            qData.keywords.forEach(k => {
+                if (input.includes(k)) hits++;
+            });
+
+            feedback.style.display = 'block';
+            
+            // Loose criteria for kids: 1+ keyword is okay attempt, 2+ is good
+            if (hits >= 2) {
+                feedback.innerHTML = `<span style="color:green"><strong>Good Job!</strong></span><br>You covered key points.<br><strong>Model Answer:</strong> ${qData.exp}`;
+                // Avoid double scoring logic here for simplicity/stability or add flag
+                if (!feedback.dataset.scored) {
+                    score.marks += 5; // Long questions worth more
+                    score.correct++; // Count as correct
+                    scoreCorrectEl.innerText = score.correct;
+                    scoreMarksEl.innerText = score.marks;
+                    feedback.dataset.scored = "true";
+                }
+            } else {
+                feedback.innerHTML = `<span style="color:red"><strong>Keep Trying!</strong></span><br>Try to include words like: ${qData.keywords.slice(0,3).join(', ')}.<br><strong>Model Answer:</strong> ${qData.exp}`;
+                if (!feedback.dataset.scored) {
+                    score.wrong++;
+                    scoreWrongEl.innerText = score.wrong;
+                    feedback.dataset.scored = "true";
+                }
+            }
+        }
+
+        // --- REVISION TOGGLE ---
+        function toggleRevision() {
+            const el = document.getElementById('revision-content');
+            if (el.classList.contains('hidden')) {
+                el.classList.remove('hidden');
+            } else {
+                el.classList.add('hidden');
+            }
+        }
+
+    </script>
+</body>
+</html>

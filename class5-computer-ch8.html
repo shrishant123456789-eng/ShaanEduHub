@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 8: Cyber Security & Ethics | ShanEduHub</title>
+    <style>
+        :root {
+            --paper-bg: #fffdf0;
+            --line-color: #a3c2c2;
+            --text-color: #2c3e50;
+            --accent-blue: #3498db;
+            --accent-green: #27ae60;
+            --accent-red: #e74c3c;
+            --note-yellow: #f1c40f;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Comic Sans MS', sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            line-height: 1.6;
+            padding-bottom: 60px;
+        }
+
+        /* --- STICKY SCORE PANEL --- */
+        #score-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: #2c3e50;
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .score-item span {
+            color: #f1c40f;
+        }
+
+        /* --- CONTAINER --- */
+        .container {
+            max-width: 800px;
+            margin: 60px auto 20px; /* Top margin for sticky header */
+            padding: 15px;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border-bottom: 4px solid var(--accent-blue);
+        }
+
+        h1 { margin: 0; color: var(--accent-blue); font-size: 1.8rem; }
+        h2 { font-size: 1.4rem; border-bottom: 2px dashed var(--line-color); padding-bottom: 5px; margin-top: 30px; }
+        h3 { font-size: 1.2rem; color: #444; margin-bottom: 5px; }
+
+        /* --- NOTEBOOK STYLE CARDS --- */
+        .topic-card {
+            background: var(--paper-bg);
+            border: 1px solid #ddd;
+            border-left: 5px solid var(--accent-blue);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.05);
+            position: relative;
+        }
+
+        .exam-tip {
+            background: #e8f8f5;
+            border: 1px dashed var(--accent-green);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .exam-tip::before {
+            content: "📌 EXAM TIP: ";
+            color: var(--accent-green);
+        }
+
+        .warning-box {
+            background: #fdedec;
+            border: 1px solid var(--accent-red);
+            padding: 10px;
+            border-radius: 5px;
+            color: var(--accent-red);
+            font-size: 0.9rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 0.9rem;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        th { background-color: #eee; }
+
+        /* --- QUIZ SECTIONS --- */
+        .quiz-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .question-card {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .question-text {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+
+        .option-btn {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            padding: 10px 15px;
+            text-align: left;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+
+        .option-btn:hover { background: #e2e6ea; }
+
+        .option-btn.correct {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+
+        .option-btn.wrong {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        .feedback {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            padding: 8px;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .feedback.show { display: block; }
+
+        /* --- LONG ANSWER --- */
+        textarea {
+            width: 100%;
+            height: 80px;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-family: inherit;
+        }
+
+        .check-btn {
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 5px;
+            font-weight: bold;
+        }
+
+        .model-answer {
+            background: #fff3cd;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #2c3e50;
+            color: white;
+            margin-top: 40px;
+            font-size: 0.9rem;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (min-width: 600px) {
+            .options-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SCORE PANEL -->
+    <div id="score-panel">
+        <div class="score-item">Correct: <span id="score-correct">0</span></div>
+        <div class="score-item">Wrong: <span id="score-wrong">0</span></div>
+        <div class="score-item">Score: <span id="score-percent">0%</span></div>
+    </div>
+
+    <div class="container">
+        <!-- HERO -->
+        <div class="hero">
+            <h1>Chapter 8: Cyber Security and Ethics</h1>
+            <p>Class 5-8 Level | Exam Oriented Module</p>
+        </div>
+
+        <!-- 1. CYBER CRIME -->
+        <div class="topic-card">
+            <h2>1. Cyber Crime Types</h2>
+            <p><strong>Definition:</strong> Any illegal activity done using a computer and the internet is called Cyber Crime.</p>
+            <ul>
+                <li><strong>Phishing:</strong> Tricking people into giving passwords via fake emails.</li>
+                <li><strong>Identity Theft:</strong> Stealing someone's personal details to pretend to be them.</li>
+                <li><strong>Cyber Bullying:</strong> Sending mean or threatening messages online.</li>
+            </ul>
+            <div class="exam-tip">Exam Tip: "Phishing" sounds like "Fishing" - catching a victim with bait (fake email).</div>
+        </div>
+
+        <!-- 2. HACKING -->
+        <div class="topic-card">
+            <h2>2. Hacking (Ethical Overview)</h2>
+            <p><strong>Hacking:</strong> Finding weaknesses in a computer system.</p>
+            <p><strong>Ethical Hacking (White Hat):</strong> Done with permission to fix security holes and protect systems.</p>
+            <p><strong>Unethical Hacking (Black Hat):</strong> Done without permission to steal or destroy data.</p>
+            <div class="warning-box">⚠️ WARNING: Hacking without permission is a serious crime punishable by law. Never try it.</div>
+            <div class="exam-tip">Difference: Ethical hackers help companies; Criminal hackers harm them.</div>
+        </div>
+
+        <!-- 3. MALWARE -->
+        <div class="topic-card">
+            <h2>3. Malware</h2>
+            <p><strong>Malware (Malicious Software):</strong> Software designed to damage computers.</p>
+            <table>
+                <tr>
+                    <th>Type</th>
+                    <th>How it works</th>
+                </tr>
+                <tr>
+                    <td><strong>Virus</strong></td>
+                    <td>Attaches to a file/program. Spreads when you open that file.</td>
+                </tr>
+                <tr>
+                    <td><strong>Worm</strong></td>
+                    <td>Self-replicating. Travels across networks without human help.</td>
+                </tr>
+                <tr>
+                    <td><strong>Trojan Horse</strong></td>
+                    <td>Looks like a useful program (e.g., a game) but has a virus hidden inside.</td>
+                </tr>
+            </table>
+            <div class="exam-tip">Exam Tip: Trojan Horses do NOT replicate themselves.</div>
+        </div>
+
+        <!-- 4. ANTIVIRUS -->
+        <div class="topic-card">
+            <h2>4. Antivirus Working</h2>
+            <p><strong>Definition:</strong> Software used to prevent, detect, and remove malware.</p>
+            <p><strong>Steps:</strong> Scan ➝ Detect ➝ Quarantine/Delete.</p>
+            <p><strong>Examples:</strong> Norton, McAfee, QuickHeal, Windows Defender.</p>
+            <div class="exam-tip">Always keep your Antivirus UPDATED to catch new viruses.</div>
+        </div>
+
+        <!-- 5. FIREWALL -->
+        <div class="topic-card">
+            <h2>5. Firewall</h2>
+            <p><strong>Concept:</strong> A security guard between your computer and the Internet.</p>
+            <p>It checks incoming and outgoing network traffic and blocks unauthorized access.</p>
+            <div class="exam-tip">Analogy: Firewall is like a Gatekeeper at your school gate.</div>
+        </div>
+
+        <!-- 6. CYBER LAWS -->
+        <div class="topic-card">
+            <h2>6. Cyber Laws</h2>
+            <p>Laws created to punish cyber criminals and protect citizens.</p>
+            <p><strong>IT Act 2000 (India):</strong> The primary law in India dealing with cyber crime and electronic commerce.</p>
+            <p><strong>Why needed?</strong> To stop online fraud, hacking, and stealing data.</p>
+        </div>
+
+        <!-- 7. DIGITAL FOOTPRINT -->
+        <div class="topic-card">
+            <h2>7. Digital Footprint</h2>
+            <p>The trail of data you leave behind when you use the internet.</p>
+            <ul>
+                <li><strong>Active:</strong> Things you post intentionally (Photos on FB, Tweets).</li>
+                <li><strong>Passive:</strong> Data collected without you knowing (IP address, search history).</li>
+            </ul>
+            <div class="exam-tip">"Think before you post" because footprints are permanent.</div>
+        </div>
+
+        <!-- 8. ONLINE SAFETY -->
+        <div class="topic-card">
+            <h2>8. Online Privacy & Safety</h2>
+            <ul>
+                <li><strong>Passwords:</strong> Use Strong passwords (Mix of Uppercase, Lowercase, Numbers, Symbols). Never share them.</li>
+                <li><strong>Privacy:</strong> Keep social media accounts 'Private'.</li>
+                <li><strong>Stranger Danger:</strong> Do not accept friend requests from strangers.</li>
+                <li><strong>https://</strong> Look for the 'S' and the padlock symbol 🔒 before entering details.</li>
+            </ul>
+        </div>
+
+        <hr style="border: 0; border-top: 3px solid #2c3e50; margin: 40px 0;">
+
+        <!-- PRACTICE QUESTIONS -->
+        <div class="quiz-section">
+            <h2 style="color: var(--accent-blue); text-align: center;">🎯 70 Practice Questions</h2>
+            <p style="text-align: center; font-size: 0.9rem; color: #666;">Mix of MCQ, True/False, and Fill in the Blanks</p>
+            <div id="practice-container">
+                <!-- Questions injected by JS -->
+            </div>
+        </div>
+
+        <!-- ADVANCED LONG QUESTIONS -->
+        <div class="quiz-section">
+            <h2 style="color: var(--accent-red); text-align: center;">🧠 Advanced Subjective Questions</h2>
+            <p style="text-align: center; font-size: 0.9rem; color: #666;">Type your answer and click Check. The system looks for keywords.</p>
+            <div id="long-answer-container">
+                <!-- Questions injected by JS -->
+            </div>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>Designed & Created by SHRISHANT YADAV</p>
+        <p>ShanEduHub</p>
+    </footer>
+
+    <script>
+        // --- DATA: 70 PRACTICE QUESTIONS ---
+        const practiceData = [
+            // Cyber Crime Basics
+            { q: "What is a crime committed using a computer and internet called?", options: ["Street Crime", "Cyber Crime", "Network Crime", "Soft Crime"], a: 1, why: "Illegal activities online are defined as Cyber Crime." },
+            { q: "Which of these is a Cyber Crime?", options: ["Playing offline games", "Phishing", "Typing a document", "Drawing in Paint"], a: 1, why: "Phishing is an attempt to steal sensitive info." },
+            { q: "Sending threatening messages online is called:", options: ["Cyber Bullying", "Cyber Chatting", "Spamming", "Phishing"], a: 0, why: "Bullying via digital devices is Cyber Bullying." },
+            { q: "Stealing someone's personal information to pretend to be them is:", options: ["Identity Theft", "Data Theft", "Hacking", "Piracy"], a: 0, why: "This is the definition of Identity Theft." },
+            { q: "Phishing usually comes in the form of:", options: ["A gift", "A fake email/SMS", "A virus", "A hardware"], a: 1, why: "Phishing uses fake communications to trick users." },
+            { q: "Software Piracy means:", options: ["Creating software", "Buying software", "Illegal copying of software", "Deleting software"], a: 2, why: "Piracy is the unauthorized use or reproduction of material." },
+            { q: "Which is NOT a cyber crime?", options: ["Hacking", "Phishing", "Online Shopping", "Identity Theft"], a: 2, why: "Online shopping is a legitimate activity." },
+            { q: "Spam refers to:", options: ["Tasty food", "Unwanted bulk emails", "A type of virus", "A firewall"], a: 1, why: "Spam is electronic junk mail." },
+            { q: "Cyber Stalking involves:", options: ["Walking fast", "Following someone online to harass them", "Playing games", "Coding"], a: 1, why: "Stalking online is harassment." },
+            { q: "Salami Attack is a type of:", options: ["Financial Cyber Crime", "Food recipe", "Virus", "Hardware"], a: 0, why: "It involves stealing small amounts of money repeatedly." },
+
+            // Malware (Virus, Worm, Trojan)
+            { q: "Malware stands for:", options: ["Malicious Ware", "Malicious Software", "Male Software", "Malfunctioning Ware"], a: 1, why: "Mal = Bad, Ware = Software." },
+            { q: "A program that attaches itself to files to spread is:", options: ["Worm", "Virus", "Trojan", "Spyware"], a: 1, why: "Viruses need a host file to attach to." },
+            { q: "Which malware can travel across networks without human help?", options: ["Virus", "Trojan", "Worm", "Adware"], a: 2, why: "Worms are self-replicating and independent." },
+            { q: "A Trojan Horse looks like:", options: ["A scary monster", "A useful program", "An email", "A wire"], a: 1, why: "Trojans disguise themselves as legitimate software." },
+            { q: "Does a Trojan Horse replicate itself?", options: ["Yes", "No", "Sometimes", "Only on Sundays"], a: 1, why: "Trojans do not self-replicate; they must be installed." },
+            { q: "Spyware is used to:", options: ["Speed up PC", "Spy on user activity", "Kill viruses", "Play music"], a: 1, why: "Spyware collects data without consent." },
+            { q: "Ransomware does what?", options: ["Steals passwords", "Locks files and demands money", "Deletes windows", "Shows ads"], a: 1, why: "It holds data hostage for a ransom." },
+            { q: "Adware primarily:", options: ["Displays unwanted ads", "Deletes files", "Steals money", "Slows internet"], a: 0, why: "Adware generates revenue via ads." },
+            { q: "The first computer virus was named:", options: ["Creeper", "Reaper", "Sleeper", "Jeepers"], a: 0, why: "Creeper was detected on ARPANET." },
+            { q: "Which of these is a symptom of malware?", options: ["Computer runs fast", "Pop-ups and slow speed", "Screen is bright", "Keyboard works well"], a: 1, why: "Slowness and pop-ups are classic signs." },
+
+            // Hacking
+            { q: "Who breaks into computers to steal or destroy?", options: ["White Hat Hacker", "Black Hat Hacker", "Grey Hat Hacker", "Red Hat Hacker"], a: 1, why: "Black Hats have malicious intent." },
+            { q: "Ethical Hackers are also known as:", options: ["White Hat Hackers", "Black Hat Hackers", "Script Kiddies", "Crackers"], a: 0, why: "White Hats hack to improve security." },
+            { q: "Hacking done with permission is:", options: ["Legal", "Illegal", "Fun", "Dangerous"], a: 0, why: "Permission makes it ethical and legal." },
+            { q: "A 'Cracker' is another name for:", options: ["Ethical Hacker", "Malicious Hacker", "Programmer", "Gamer"], a: 1, why: "Crackers break security for malicious reasons." },
+            { q: "Hacktivism means:", options: ["Hacking for a political cause", "Hacking for fun", "Hacking for money", "Hacking games"], a: 0, why: "Activism + Hacking." },
+
+            // Antivirus & Firewall
+            { q: "What software protects against viruses?", options: ["MS Word", "Antivirus", "Excel", "Paint"], a: 1, why: "Antivirus detects and removes threats." },
+            { q: "Which is an example of Antivirus?", options: ["Chrome", "Norton", "Photoshop", "Windows"], a: 1, why: "Norton is a security software." },
+            { q: "What does Quarantine mean in Antivirus?", options: ["Delete file", "Isolate file", "Repair file", "Open file"], a: 1, why: "Isolating the file prevents infection spread." },
+            { q: "A Firewall can be:", options: ["Hardware only", "Software only", "Both Hardware and Software", "None"], a: 2, why: "Firewalls exist as router boxes (HW) or programs (SW)." },
+            { q: "Firewall acts as a:", options: ["Gatekeeper", "Chef", "Driver", "Teacher"], a: 0, why: "It controls entry and exit of network traffic." },
+            { q: "To stay safe, you should update Antivirus:", options: ["Never", "Once a year", "Regularly", "When bored"], a: 2, why: "Updates contain new virus definitions." },
+            { q: "Windows Defender is:", options: ["A game", "Built-in Antivirus", "A browser", "A virus"], a: 1, why: "It comes pre-installed with Windows." },
+            { q: "Does a firewall block ALL traffic?", options: ["Yes", "No, only unauthorized", "No, only videos", "Yes, only emails"], a: 1, why: "It allows safe traffic and blocks unsafe traffic." },
+            { q: "A virus signature is:", options: ["A code pattern identifying a virus", "A hackers autograph", "A document", "A password"], a: 0, why: "Signatures help antivirus recognize threats." },
+            { q: "Can a virus damage hardware?", options: ["Yes, physically melts it", "No, usually software only", "Yes, explodes monitor", "No"], a: 1, why: "Most viruses damage data/software, though some rare firmware attacks exist." },
+
+            // Digital Footprint & Cyber Laws
+            { q: "Digital Footprint is:", options: ["A shoe print", "Data trail left online", "A finger print", "A scanner"], a: 1, why: "It's the record of your online activity." },
+            { q: "Posting a photo on Instagram creates a:", options: ["Passive Footprint", "Active Footprint", "Invisible Footprint", "None"], a: 1, why: "You intentionally created the data." },
+            { q: "Websites tracking your IP address is:", options: ["Active Footprint", "Passive Footprint", "Magic", "Illegal"], a: 1, why: "It happens without you explicitly doing it." },
+            { q: "Can digital footprints be deleted easily?", options: ["Yes, instantly", "No, they are permanent", "Yes, by turning off PC", "Yes, by deleting history"], a: 1, why: "Data is often backed up on servers forever." },
+            { q: "The law governing cyber crime in India is:", options: ["IPC 1860", "IT Act 2000", "Cyber Act 1999", "Internet Law"], a: 1, why: "Information Technology Act, 2000." },
+            { q: "Section 66A (Scrapped) was related to:", options: ["Offensive messages", "Stealing hardware", "Breaking monitors", "Buying phones"], a: 0, why: "It dealt with sending offensive content." },
+            { q: "Which symbol shows a secure website?", options: ["Open Lock", "Closed Padlock", "Key", "Shield"], a: 1, why: "Padlock indicates SSL/HTTPS encryption." },
+            { q: "HTTPS stands for:", options: ["Hyper Text Transfer Protocol Secure", "Hyper Transfer Text", "High Tech Protocol", "None"], a: 0, why: "The 'S' stands for Secure." },
+            { q: "Plagiarism is:", options: ["Stealing ideas/text", "A virus", "A firewall", "Hacking"], a: 0, why: "Presenting someone else's work as your own." },
+            { q: "Copyright protects:", options: ["Ideas", "Creative work", "Hardware", "Internet speed"], a: 1, why: "It protects original creations." },
+
+            // Online Safety & Passwords
+            { q: "A strong password should have:", options: ["Only numbers", "Only letters", "Mix of chars, numbers, symbols", "Your name"], a: 2, why: "Complexity makes it harder to guess." },
+            { q: "Is '123456' a strong password?", options: ["Yes", "No", "Maybe", "Very strong"], a: 1, why: "It is one of the most common/weak passwords." },
+            { q: "Two-Factor Authentication (2FA) adds:", options: ["Extra layer of security", "More viruses", "Slower speed", "Nothing"], a: 0, why: "It requires a second code (like SMS) to login." },
+            { q: "If you receive a suspicious link:", options: ["Click it", "Forward it", "Delete and ignore", "Reply to it"], a: 2, why: "Never interact with suspicious links." },
+            { q: "Incognito mode stops:", options: ["ISP tracking", "Browser history saving", "Virus attacks", "Wifi connection"], a: 1, why: "It only stops the browser from saving history locally." },
+            { q: "Meeting an online stranger in real life is:", options: ["Safe", "Recommended", "Dangerous", "Fun"], a: 2, why: "Strangers may not be who they say they are." },
+            { q: "What should you do if cyberbullied?", options: ["Fight back", "Keep quiet", "Report to adult/teacher", "Delete account"], a: 2, why: "Always seek help from a trusted adult." },
+            { q: "Encryption makes data:", options: ["Readable", "Unreadable to hackers", "Deleted", "Public"], a: 1, why: "It scrambles data into a code." },
+            { q: "OTP stands for:", options: ["One Time Password", "On The Phone", "One True Protocol", "Only Two People"], a: 0, why: "Used for 2FA verification." },
+            { q: "Cookies in a browser are:", options: ["Biscuits", "Small text files", "Viruses", "Antivirus"], a: 1, why: "They store site preferences and login status." },
+
+            // Mixed/Scenario
+            { q: "True or False: Deleting a photo deletes it from the internet forever.", options: ["True", "False"], a: 1, why: "Copies may exist on servers or screenshots." },
+            { q: "True or False: Ethical hacking is legal.", options: ["True", "False"], a: 0, why: "It is done with permission." },
+            { q: "True or False: A worm needs a host file.", options: ["True", "False"], a: 1, why: "Worms are independent; Viruses need hosts." },
+            { q: "Fill in blank: ______ is the padlock protocol.", options: ["HTTP", "HTML", "HTTPS", "FTP"], a: 2, why: "HTTPS is secure." },
+            { q: "True or False: You should share your password with your best friend.", options: ["True", "False"], a: 1, why: "Never share passwords with anyone." },
+            { q: "True or False: Antivirus can fix a broken screen.", options: ["True", "False"], a: 1, why: "Antivirus is for software only." },
+            { q: "Which is safer?", options: ["Public Wifi", "Home Wifi with Password"], a: 1, why: "Public Wifi is often unencrypted." },
+            { q: "True or False: Cyber crime only happens to rich people.", options: ["True", "False"], a: 1, why: "It can happen to anyone." },
+            { q: "Keyloggers are used to:", options: ["Record keystrokes", "Lock keys", "Open doors", "Play piano"], a: 0, why: "They steal passwords by recording typing." },
+            { q: "True or False: Firewall protects against fire.", options: ["True", "False"], a: 1, why: "It protects against network threats, not physical fire." },
+            { q: "Logic Bomb acts when:", options: ["A condition is met", "Immediately", "Never", "Randomly"], a: 0, why: "It triggers at a specific time or event." },
+            { q: "Sweeping refers to:", options: ["Cleaning floor", "Scanning for signals", "Deleting virus", "Hacking"], a: 1, why: "War driving/sweeping looks for wifi networks." },
+            { q: "Botnet is a network of:", options: ["Robots", "Infected computers", "Boats", "Servers"], a: 1, why: "Zombies/Bots controlled by a hacker." },
+            { q: "True or False: You should logout after using a public computer.", options: ["True", "False"], a: 0, why: "Always logout to prevent unauthorized access." },
+            { q: "Cyber Ethics means:", options: ["Moral code of conduct online", "Hacking rules", "Computer speed", "Coding style"], a: 0, why: "Doing the right thing online." },
+            { q: "Intellectual Property Rights protect:", options: ["Physical Property", "Mental Creations", "Land", "Cars"], a: 1, why: "Inventions, art, literary work." },
+            { q: "True or False: Downloading pirated movies is legal.", options: ["True", "False"], a: 1, why: "It violates copyright laws." },
+            { q: "Netiquette is:", options: ["Network Etiquette", "Net Quality", "Net Speed", "Net Question"], a: 0, why: "Good manners on the internet." },
+            { q: "Which represents a shouting tone in chat?", options: ["All Lowercase", "ALL CAPS", "Mixed Case", "Italics"], a: 1, why: "Typing in ALL CAPS is considered shouting." },
+            { q: "True or False: You can say anything anonymously.", options: ["True", "False"], a: 1, why: "You are still accountable and traceable." }
+        ];
+
+        // --- DATA: 10 LONG ANSWER QUESTIONS ---
+        const longData = [
+            {
+                q: "1. Explain the difference between a Virus and a Worm.",
+                keywords: ["attach", "host", "file", "self", "replicat", "independent", "network"],
+                model: "Virus attaches to a host file and needs human action to spread. Worm is self-replicating and travels through networks independently."
+            },
+            {
+                q: "2. Why is a Firewall compared to a security guard?",
+                keywords: ["monitor", "check", "traffic", "incoming", "outgoing", "block", "unauthorized", "permit"],
+                model: "Like a guard, a firewall checks all incoming and outgoing data traffic and blocks unauthorized or dangerous access."
+            },
+            {
+                q: "3. What is Phishing? Give an example.",
+                keywords: ["email", "fake", "trick", "password", "bank", "sensitive", "information", "link"],
+                model: "Phishing is sending fake emails that look real to trick users into giving passwords. Example: A fake email from a bank asking to update details."
+            },
+            {
+                q: "4. List three rules for creating a strong password.",
+                keywords: ["mix", "upper", "lower", "number", "symbol", "length", "guess", "unique"],
+                model: "1. Use mix of uppercase/lowercase. 2. Include numbers and symbols. 3. Make it at least 8-12 characters long. 4. Avoid common words."
+            },
+            {
+                q: "5. What is the difference between Active and Passive digital footprints?",
+                keywords: ["intentional", "post", "share", "unintentional", "track", "background", "ip", "search"],
+                model: "Active: Data you intentionally share (posts, comments). Passive: Data collected without you knowing (IP address, location, history)."
+            },
+            {
+                q: "6. Why is Ethical Hacking considered 'Good'?",
+                keywords: ["permission", "secure", "fix", "vulnerability", "protect", "company", "legal"],
+                model: "Ethical hacking is done with permission to find security flaws and fix them before criminals can exploit them. It protects systems."
+            },
+            {
+                q: "7. How does a Trojan Horse attack a computer?",
+                keywords: ["disguise", "useful", "game", "hidden", "download", "fake", "backdoor"],
+                model: "It disguises itself as a useful program (like a game). When the user installs it, the hidden malware activates and steals data."
+            },
+            {
+                q: "8. What is Cyber Bullying and what should you do if it happens?",
+                keywords: ["threat", "mean", "harass", "report", "adult", "teacher", "block", "parent"],
+                model: "Cyber bullying is harassing someone online. You should not respond, take screenshots, block the bully, and tell a trusted adult."
+            },
+            {
+                q: "9. Explain Identity Theft.",
+                keywords: ["steal", "personal", "name", "pretend", "fraud", "credit", "financial"],
+                model: "It is stealing someone's personal details (Name, DOB, Credit Card) to pretend to be them for financial gain or crimes."
+            },
+            {
+                q: "10. Why is software piracy bad?",
+                keywords: ["illegal", "copy", "steal", "copyright", "loss", "developer", "unauthorized"],
+                model: "It is the illegal copying of software. It causes financial loss to developers and is a punishable crime under copyright laws."
+            }
+        ];
+
+        // --- STATE VARIABLES ---
+        let correctCount = 0;
+        let wrongCount = 0;
+        let totalAttempted = 0;
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderPracticeQuestions();
+            renderLongQuestions();
+        });
+
+        // --- RENDER PRACTICE QUESTIONS ---
+        function renderPracticeQuestions() {
+            const container = document.getElementById('practice-container');
+            practiceData.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.innerHTML = `
+                    <div class="question-text">Q${index + 1}. ${item.q}</div>
+                    <div class="options-grid">
+                        ${item.options.map((opt, i) => `
+                            <button class="option-btn" onclick="checkPractice(this, ${index}, ${i})">${opt}</button>
+                        `).join('')}
+                    </div>
+                    <div class="feedback" id="feedback-${index}"></div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // --- CHECK PRACTICE ANSWER ---
+        function checkPractice(btn, qIndex, optIndex) {
+            // Prevent multiple clicks
+            const parentGrid = btn.parentElement;
+            if (parentGrid.classList.contains('answered')) return;
+            parentGrid.classList.add('answered');
+
+            const question = practiceData[qIndex];
+            const feedbackEl = document.getElementById(`feedback-${qIndex}`);
+
+            // Disable all buttons
+            const allBtns = parentGrid.querySelectorAll('.option-btn');
+            allBtns.forEach(b => b.style.cursor = 'default');
+
+            if (optIndex === question.a) {
+                // Correct
+                btn.classList.add('correct');
+                feedbackEl.innerHTML = `<strong>Excellent ⭐</strong> ${question.why}`;
+                feedbackEl.style.color = '#155724';
+                feedbackEl.style.backgroundColor = '#d4edda';
+                correctCount++;
+            } else {
+                // Wrong
+                btn.classList.add('wrong');
+                // Highlight correct answer
+                allBtns[question.a].classList.add('correct');
+                feedbackEl.innerHTML = `<strong>Try Again.</strong> The correct answer is <em>${question.options[question.a]}</em>. <br> ${question.why}`;
+                feedbackEl.style.color = '#721c24';
+                feedbackEl.style.backgroundColor = '#f8d7da';
+                wrongCount++;
+            }
+
+            feedbackEl.classList.add('show');
+            totalAttempted++;
+            updateScore();
+        }
+
+        // --- RENDER LONG QUESTIONS ---
+        function renderLongQuestions() {
+            const container = document.getElementById('long-answer-container');
+            longData.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.innerHTML = `
+                    <div class="question-text">${item.q}</div>
+                    <textarea id="long-ans-${index}" placeholder="Type your answer here..."></textarea>
+                    <br>
+                    <button class="check-btn" onclick="checkLongAnswer(${index})">Check Answer</button>
+                    <div class="model-answer" id="model-${index}"></div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // --- CHECK LONG ANSWER (KEYWORD LOGIC) ---
+        function checkLongAnswer(index) {
+            const input = document.getElementById(`long-ans-${index}`);
+            const modelDiv = document.getElementById(`model-${index}`);
+            const btn = input.nextElementSibling.nextElementSibling; // The button
+            
+            if (btn.disabled) return; // Already checked
+
+            const userText = input.value.toLowerCase();
+            if (userText.length < 5) {
+                alert("Please write a complete answer.");
+                return;
+            }
+
+            const keywords = longData[index].keywords;
+            let matchCount = 0;
+
+            keywords.forEach(word => {
+                if (userText.includes(word)) matchCount++;
+            });
+
+            // Simple logic: If user hits at least 2 keywords, mark correct-ish
+            const isCorrect = matchCount >= 2;
+
+            modelDiv.style.display = 'block';
+            
+            if (isCorrect) {
+                modelDiv.innerHTML = `<strong style="color:green">Well Attempted! ✅</strong><br>Matches found: ${matchCount} keywords.<br><strong>Model Answer:</strong> ${longData[index].model}`;
+                correctCount++;
+            } else {
+                modelDiv.innerHTML = `<strong style="color:red">Needs Improvement ❌</strong><br>Try to include words like: ${keywords.slice(0,4).join(", ")}.<br><strong>Model Answer:</strong> ${longData[index].model}`;
+                wrongCount++;
+            }
+
+            input.disabled = true;
+            btn.disabled = true;
+            btn.style.opacity = "0.6";
+            
+            totalAttempted++;
+            updateScore();
+        }
+
+        // --- SCOREBOARD LOGIC ---
+        function updateScore() {
+            document.getElementById('score-correct').innerText = correctCount;
+            document.getElementById('score-wrong').innerText = wrongCount;
+            
+            let percent = 0;
+            if (totalAttempted > 0) {
+                percent = Math.round((correctCount / totalAttempted) * 100);
+            }
+            document.getElementById('score-percent').innerText = percent + "%";
+        }
+
+    </script>
+</body>
+</html>

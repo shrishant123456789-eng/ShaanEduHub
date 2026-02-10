@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 5 – Mathematics – Chapter 3: Fractions</title>
+    <style>
+        :root {
+            --paper-bg: #fffdf0;
+            --ink-color: #2c3e50;
+            --accent-blue: #e3f2fd;
+            --accent-pink: #fce4ec;
+            --accent-yellow: #fff9c4;
+            --accent-green: #e8f5e9;
+            --border-color: #cfd8dc;
+            --btn-color: #ff9800;
+            --btn-text: #fff;
+            --correct: #4caf50;
+            --wrong: #f44336;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-weight: bold !important;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', cursive, sans-serif;
+            background-color: var(--paper-bg);
+            color: var(--ink-color);
+            line-height: 1.6;
+            font-size: 16px;
+        }
+
+        /* HEADER */
+        header {
+            text-align: center;
+            padding: 20px;
+            background: #fff;
+            border-bottom: 3px dashed var(--border-color);
+            margin-bottom: 60px;
+        }
+
+        h1 { margin: 5px 0; font-size: 1.6rem; color: #d84315; }
+        h2 { margin: 0; font-size: 1.1rem; color: #546e7a; }
+
+        /* STICKY SCORE PANEL */
+        #score-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            padding: 8px 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            font-size: 0.85rem;
+            border-bottom: 3px solid var(--btn-color);
+        }
+
+        .score-item { display: flex; flex-direction: column; align-items: center; }
+        .score-val { font-size: 1.1rem; color: #d84315; }
+        .score-label { font-size: 0.65rem; text-transform: uppercase; color: #78909c; }
+
+        /* CONTAINER */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        /* SECTION STYLES */
+        section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.05);
+            border: 2px solid var(--border-color);
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            color: #1976d2;
+            border-bottom: 3px solid var(--accent-yellow);
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        /* NOTES TOPICS */
+        .topic-card {
+            background: var(--accent-blue);
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            border-left: 6px solid #2196f3;
+        }
+        .topic-card:nth-child(even) { background: var(--accent-pink); border-left-color: #e91e63; }
+        
+        .topic-title { font-size: 1.2rem; margin-bottom: 8px; display: block; color: #333; text-decoration: underline; }
+        .topic-content { font-size: 0.95rem; margin-bottom: 10px; }
+        .example-box { background: rgba(255,255,255,0.7); padding: 8px; border-radius: 5px; margin: 10px 0; border: 1px dashed #aaa; }
+        .tip-box { color: #d84315; margin-top: 5px; background: #fff3e0; padding: 5px; border-radius: 4px; }
+        
+        .img-placeholder {
+            width: 100%;
+            height: 80px;
+            background: #eee;
+            border: 2px dashed #bbb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #777;
+            margin: 10px 0;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.8rem;
+            font-style: italic;
+        }
+
+        /* IMPORTANT QUESTIONS */
+        .imp-q-card {
+            border-bottom: 1px solid #eee;
+            padding: 12px 0;
+        }
+        .imp-q-text { color: #37474f; margin-bottom: 5px; }
+        .imp-a-text { color: #2e7d32; font-size: 0.9rem; background: #e8f5e9; padding: 2px 6px; border-radius: 4px; display: inline-block;}
+        
+        /* PRACTICE ENGINE */
+        #practice-area {
+            background: var(--accent-green);
+            min-height: 350px;
+            position: relative;
+        }
+        
+        .q-container { display: none; }
+        .q-container.active { display: block; animation: slideIn 0.3s ease-out; }
+        
+        @keyframes slideIn { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
+
+        .question-text { font-size: 1.2rem; margin-bottom: 20px; color: #212121; }
+        
+        .options-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+        @media (min-width: 600px) { .options-grid { grid-template-columns: 1fr 1fr; } }
+
+        .option-btn {
+            padding: 15px;
+            background: #fff;
+            border: 3px solid #ddd;
+            border-radius: 12px;
+            text-align: left;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .option-btn:hover { background: #f9f9f9; transform: translateY(-2px); }
+        .option-btn.selected { background: #e3f2fd; border-color: #2196f3; }
+        .option-btn.correct { background: #c8e6c9; border-color: #4caf50; color: #1b5e20; }
+        .option-btn.wrong { background: #ffcdd2; border-color: #f44336; color: #b71c1c; }
+
+        .input-field {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            border: 3px solid #ccc;
+            border-radius: 10px;
+            font-family: inherit;
+            margin-bottom: 15px;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+            border: 2px solid transparent;
+        }
+        .feedback.show { display: block; }
+        .feedback.success { background: #e8f5e9; color: #2e7d32; border-color: #a5d6a7; }
+        .feedback.error { background: #ffebee; color: #c62828; border-color: #ef9a9a; }
+
+        .controls {
+            margin-top: 25px;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .action-btn {
+            background: var(--btn-color);
+            color: var(--btn-text);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #e65100;
+            font-family: inherit;
+            flex: 1;
+        }
+        .action-btn:active { transform: translateY(4px); box-shadow: none; }
+        .action-btn:disabled { background: #bdbdbd; box-shadow: none; cursor: not-allowed; opacity: 0.7; }
+
+        /* LONG ANSWER */
+        .long-q-card { 
+            margin-bottom: 30px; 
+            border: 2px dashed #90a4ae; 
+            padding: 15px; 
+            border-radius: 10px;
+            background: #fafafa;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border: 2px solid #b0bec5;
+            border-radius: 8px;
+            font-family: inherit;
+            resize: none;
+            margin: 10px 0;
+            background: #fff;
+            font-size: 1rem;
+        }
+        .evaluation-box { 
+            margin-top: 10px; padding: 10px; background: #fff8e1; 
+            border: 1px solid #ffe082; border-radius: 5px; display: none; 
+        }
+
+        /* REVISION */
+        .revision-box { padding: 10px; border-bottom: 1px solid #ddd; }
+        .revision-box:last-child { border-bottom: none; }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 40px;
+            background: #37474f;
+            color: #fff;
+            font-size: 0.9rem;
+            margin-top: 50px;
+            border-top: 5px solid #ff9800;
+        }
+
+        @media (max-width: 400px) {
+            .controls { flex-direction: column; }
+            h1 { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- STICKY SCORE PANEL -->
+<div id="score-panel">
+    <div class="score-item">
+        <span class="score-val" id="score-correct">0</span>
+        <span class="score-label">Right</span>
+    </div>
+    <div class="score-item">
+        <span class="score-val" id="score-wrong">0</span>
+        <span class="score-label">Wrong</span>
+    </div>
+    <div class="score-item">
+        <span class="score-val" id="score-attempted">0</span>
+        <span class="score-label">Done</span>
+    </div>
+    <div class="score-item">
+        <span class="score-val" id="score-percent">0%</span>
+        <span class="score-label">Score</span>
+    </div>
+</div>
+
+<header>
+    <h1>Class 5 Mathematics</h1>
+    <h2>Chapter 3: Fractions</h2>
+</header>
+
+<div class="container">
+
+    <!-- NOTES SECTION -->
+    <section id="notes">
+        <div class="section-title">📚 Chapter Notes</div>
+        
+        <!-- Topic 1 -->
+        <div class="topic-card">
+            <span class="topic-title">1. Meaning of Fractions</span>
+            <div class="topic-content">
+                A fraction is a part of a whole. It has two parts: Numerator (top) and Denominator (bottom).
+                <br>Numerator = Parts taken. Denominator = Total parts.
+            </div>
+            <div class="example-box">Example: In 3/4, 3 is Numerator, 4 is Denominator.</div>
+            <div class="img-placeholder">[Image: Circle divided into 4 parts, 3 shaded]</div>
+            <div class="tip-box">💡 Tip: Down = Denominator (Both start with D).</div>
+        </div>
+
+        <!-- Topic 2 -->
+        <div class="topic-card">
+            <span class="topic-title">2. Types of Fractions</span>
+            <div class="topic-content">
+                <strong>Proper:</strong> Numerator < Denominator (Small head). e.g., 2/5.<br>
+                <strong>Improper:</strong> Numerator > Denominator (Big head). e.g., 7/4.<br>
+                <strong>Mixed:</strong> Whole Number + Fraction. e.g., 1 1/2.
+            </div>
+            <div class="img-placeholder">[Image: Chart showing 1/2, 5/2, 2 1/2]</div>
+            <div class="tip-box">💡 Tip: Improper is "Top Heavy".</div>
+        </div>
+
+        <!-- Topic 3 -->
+        <div class="topic-card">
+            <span class="topic-title">3. Equivalent Fractions</span>
+            <div class="topic-content">
+                Fractions that have the same value even if they look different.
+                <br>Multiply or divide top and bottom by the same number.
+            </div>
+            <div class="example-box">1/2 = 2/4 = 3/6 = 50/100</div>
+            <div class="img-placeholder">[Image: 1/2 pizza vs 2/4 pizza]</div>
+        </div>
+
+        <!-- Topic 4 -->
+        <div class="topic-card">
+            <span class="topic-title">4. Simplest Form</span>
+            <div class="topic-content">
+                When the numerator and denominator have no common factor other than 1.
+                <br>Divide both by HCF.
+            </div>
+            <div class="example-box">4/8 -> Divide by 4 -> 1/2</div>
+            <div class="img-placeholder">[Image: Cutting numbers down]</div>
+        </div>
+
+        <!-- Topic 5 -->
+        <div class="topic-card">
+            <span class="topic-title">5. Comparing Fractions</span>
+            <div class="topic-content">
+                <strong>Same Denominator:</strong> Bigger numerator is bigger.<br>
+                <strong>Same Numerator:</strong> Smaller denominator is bigger.<br>
+                <strong>Unlike:</strong> Cross multiply or use LCM.
+            </div>
+            <div class="img-placeholder">[Image: Comparing 1/3 and 1/5]</div>
+            <div class="tip-box">💡 Tip: Cross Multiply to check winner.</div>
+        </div>
+
+        <!-- Topic 6 -->
+        <div class="topic-card">
+            <span class="topic-title">6. Addition of Fractions</span>
+            <div class="topic-content">
+                <strong>Like Fractions:</strong> Add numerators, keep denominator same.<br>
+                <strong>Unlike Fractions:</strong> Find LCM, make denominators same, then add.
+            </div>
+            <div class="example-box">1/5 + 2/5 = 3/5</div>
+            <div class="img-placeholder">[Image: Adding shaded parts]</div>
+        </div>
+
+        <!-- Topic 7 -->
+        <div class="topic-card">
+            <span class="topic-title">7. Subtraction of Fractions</span>
+            <div class="topic-content">
+                Same rule as addition. For unlike fractions, find LCM first.
+            </div>
+            <div class="example-box">4/7 - 1/7 = 3/7</div>
+            <div class="img-placeholder">[Image: Removing slices]</div>
+        </div>
+
+        <!-- Topic 8 -->
+        <div class="topic-card">
+            <span class="topic-title">8. Like & Unlike Fractions</span>
+            <div class="topic-content">
+                <strong>Like:</strong> Same denominators (1/7, 3/7, 5/7).<br>
+                <strong>Unlike:</strong> Different denominators (1/2, 1/3, 1/4).
+            </div>
+            <div class="img-placeholder">[Image: Group of fractions]</div>
+        </div>
+
+        <!-- Topic 9 -->
+        <div class="topic-card">
+            <span class="topic-title">9. Operations on Mixed Fractions</span>
+            <div class="topic-content">
+                First convert Mixed to Improper. Then solve. Then convert back to Mixed if needed.
+            </div>
+            <div class="example-box">1 1/2 + 2 1/2 = 3/2 + 5/2 = 8/2 = 4</div>
+            <div class="img-placeholder">[Image: Steps: Multiply, Add, Keep Denominator]</div>
+        </div>
+
+        <!-- Topic 10 -->
+        <div class="topic-card">
+            <span class="topic-title">10. Fraction of a Number</span>
+            <div class="topic-content">
+                "Of" means Multiply.<br>
+                Divide by denominator, multiply by numerator.
+            </div>
+            <div class="example-box">3/4 of 20 -> (20 ÷ 4) x 3 = 5 x 3 = 15</div>
+            <div class="img-placeholder">[Image: 20 stars, circling 15]</div>
+        </div>
+
+        <!-- Topic 11 -->
+        <div class="topic-card">
+            <span class="topic-title">11. Word Problems</span>
+            <div class="topic-content">
+                Read carefully. Check for keywords: "Left" (-), "Total" (+), "Of" (x).
+            </div>
+            <div class="example-box">Rohan ate 1/2. Sister ate 1/4. Total = 3/4.</div>
+            <div class="img-placeholder">[Image: Boy eating cake]</div>
+        </div>
+
+        <!-- Topic 12 -->
+        <div class="topic-card">
+            <span class="topic-title">12. Advanced Reasoning</span>
+            <div class="topic-content">
+                Problems involving time, money, and multi-step logic with fractions.
+            </div>
+            <div class="img-placeholder">[Image: Clock showing quarter past]</div>
+        </div>
+    </section>
+
+    <!-- IMPORTANT QUESTIONS -->
+    <section>
+        <div class="section-title">⭐ Important Questions</div>
+        <div id="imp-questions-list"></div>
+    </section>
+
+    <!-- PRACTICE QUESTIONS -->
+    <section id="practice-area">
+        <div class="section-title">🎯 Practice Zone (70 Qs)</div>
+        <div id="quiz-container"></div>
+        
+        <div class="feedback" id="feedback-display"></div>
+
+        <div class="controls">
+            <button class="action-btn" id="submit-btn">Check Answer</button>
+            <button class="action-btn" id="next-btn" disabled>Next ➡</button>
+        </div>
+        <p style="text-align:center; font-size:0.8rem; margin-top:15px;">Question <span id="q-current">1</span> of 70</p>
+    </section>
+
+    <!-- ADVANCED LONG QUESTIONS -->
+    <section>
+        <div class="section-title">🧠 Advanced Challenges</div>
+        <div style="margin-bottom:15px; font-size:0.9rem; text-align:center; color:#555;">Answer fully. Keywords checked automatically!</div>
+        <div id="long-questions-list"></div>
+    </section>
+
+    <!-- REVISION -->
+    <section>
+        <div class="section-title">⚡ Fast Revision</div>
+        <div id="revision-content">
+            <div class="revision-box">✅ Proper Fraction: Num < Denom</div>
+            <div class="revision-box">✅ Improper Fraction: Num > Denom</div>
+            <div class="revision-box">✅ Mixed Fraction: Whole + Proper</div>
+            <div class="revision-box">✅ To Add/Sub: Denominators MUST be same</div>
+            <div class="revision-box">✅ 'Of' means Multiply</div>
+            <div class="revision-box">✅ Reciprocal of a/b is b/a</div>
+        </div>
+    </section>
+
+</div>
+
+<footer>
+    Designed & Created by SHRISHANT YADAV<br>
+    ShanEduHub
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    // --- DATA: IMPORTANT QUESTIONS (30) ---
+    const impQs = [
+        {q: "What is a fraction?", a: "A part of a whole.", exp: "It represents equal parts of a whole thing."},
+        {q: "Top number in a fraction?", a: "Numerator", exp: "Shows how many parts we have."},
+        {q: "Bottom number in a fraction?", a: "Denominator", exp: "Shows total equal parts."},
+        {q: "Is 3/2 a proper fraction?", a: "No", exp: "It is improper because 3 > 2."},
+        {q: "Convert 1 1/2 to improper.", a: "3/2", exp: "1x2 + 1 = 3."},
+        {q: "Equivalent of 1/2?", a: "2/4", exp: "Multiply top and bottom by 2."},
+        {q: "Simplest form of 5/10?", a: "1/2", exp: "Divide both by 5."},
+        {q: "Which is greater: 1/5 or 1/10?", a: "1/5", exp: "Smaller denominator means bigger pieces."},
+        {q: "Reciprocal of 3/4?", a: "4/3", exp: "Flip the fraction."},
+        {q: "Sum of 1/5 + 2/5?", a: "3/5", exp: "Add numerators: 1+2=3."},
+        {q: "Difference 5/7 - 2/7?", a: "3/7", exp: "Subtract numerators: 5-2=3."},
+        {q: "1/2 of 10?", a: "5", exp: "10 divided by 2 is 5."},
+        {q: "Are 2/3 and 4/6 equivalent?", a: "Yes", exp: "2x2=4, 3x2=6."},
+        {q: "Mixed fraction for 5/2?", a: "2 1/2", exp: "5 divided by 2 is 2 remainder 1."},
+        {q: "Is 7/7 a proper fraction?", a: "No", exp: "It is an improper fraction (equal to 1)."},
+        {q: "Symbol for 'quarter'?", a: "1/4", exp: "One part out of four."},
+        {q: "Symbol for 'half'?", a: "1/2", exp: "One part out of two."},
+        {q: "3/4 is called?", a: "Three quarters", exp: "Three parts of four."},
+        {q: "Unlike fractions have?", a: "Different denominators", exp: "e.g., 1/2 and 1/3."},
+        {q: "Like fractions have?", a: "Same denominators", exp: "e.g., 1/5 and 2/5."},
+        {q: "To compare unlike fractions?", a: "Find LCM", exp: "Make denominators same."},
+        {q: "Reciprocal of 7?", a: "1/7", exp: "7 is 7/1."},
+        {q: "1 whole = ? halves", a: "2", exp: "2/2 equals 1."},
+        {q: "1/3 of 12?", a: "4", exp: "12 divided by 3."},
+        {q: "Fraction with numerator 1 is called?", a: "Unit Fraction", exp: "e.g., 1/2, 1/5."},
+        {q: "Which is smaller: 2/5 or 4/5?", a: "2/5", exp: "Numerators: 2 < 4."},
+        {q: "Can we add 1/2 + 1/3 directly?", a: "No", exp: "Need LCM first."},
+        {q: "LCM of 2 and 3?", a: "6", exp: "Smallest multiple of both."},
+        {q: "Value of 0/5?", a: "0", exp: "Zero parts of 5."},
+        {q: "Value of 5/0?", a: "Undefined", exp: "Cannot divide by zero."}
+    ];
+
+    // --- DATA: PRACTICE QUESTIONS (70) ---
+    // Types: mcq, input. 
+    // Difficulty spread: 1-20 Basic, 21-50 Medium, 51-70 Advanced
+    const practiceQs = [
+        // BASICS
+        {type: 'mcq', q: "The number above the line in a fraction is called?", opts: ['Denominator', 'Numerator', 'Product', 'Sum'], ans: 'B', exp: "Top is Numerator."},
+        {type: 'mcq', q: "Which of these is a Proper fraction?", opts: ['3/2', '5/4', '1/2', '7/3'], ans: 'C', exp: "Numerator (1) < Denominator (2)."},
+        {type: 'mcq', q: "Which is an Improper fraction?", opts: ['2/3', '1/4', '5/6', '4/3'], ans: 'D', exp: "Numerator (4) > Denominator (3)."},
+        {type: 'input', q: "Write the fraction for 'half'. (e.g., x/y)", ans: "1/2", exp: "1 part of 2."},
+        {type: 'mcq', q: "Fractions with same denominator are called?", opts: ['Like', 'Unlike', 'Proper', 'Mixed'], ans: 'A', exp: "Same bottom number = Like."},
+        {type: 'mcq', q: "In 3/5, the denominator is?", opts: ['3', '5', '8', '2'], ans: 'B', exp: "Bottom number is 5."},
+        {type: 'mcq', q: "A fraction with numerator 1 is a?", opts: ['Proper', 'Unit', 'Improper', 'Mixed'], ans: 'B', exp: "Unit fractions always have 1 on top."},
+        {type: 'mcq', q: "Which represents a whole?", opts: ['1/2', '2/3', '4/4', '3/4'], ans: 'C', exp: "Num = Denom means 1 Whole."},
+        {type: 'input', q: "How many quarters make a whole?", ans: "4", exp: "4/4 = 1."},
+        {type: 'mcq', q: "Identify the Mixed fraction:", opts: ['3/2', '1 1/2', '5/6', '7/8'], ans: 'B', exp: "Has a whole number and a fraction."},
+        // CONVERSIONS & EQUIVALENT
+        {type: 'mcq', q: "Convert 1 1/2 to improper fraction.", opts: ['3/2', '2/3', '1/2', '4/2'], ans: 'A', exp: "1x2+1 = 3. So 3/2."},
+        {type: 'mcq', q: "Convert 5/2 to mixed fraction.", opts: ['1 1/2', '2 1/2', '2 1/5', '5 1/2'], ans: 'B', exp: "5÷2 = 2 Remainder 1."},
+        {type: 'mcq', q: "Which is equivalent to 1/2?", opts: ['2/3', '3/6', '1/3', '4/5'], ans: 'B', exp: "3 is half of 6."},
+        {type: 'input', q: "Fill blank: 2/5 = ?/10", ans: "4", exp: "5x2=10, so 2x2=4."},
+        {type: 'mcq', q: "Simplest form of 8/10?", opts: ['4/5', '2/5', '3/5', '1/5'], ans: 'A', exp: "Divide both by 2."},
+        {type: 'mcq', q: "Are 3/4 and 9/12 equivalent?", opts: ['Yes', 'No', 'Maybe', 'Unknown'], ans: 'A', exp: "Multiply 3/4 by 3/3 to get 9/12."},
+        {type: 'input', q: "Simplest form of 5/15 is 1/?", ans: "3", exp: "Divide by 5."},
+        {type: 'mcq', q: "Which is NOT equivalent to 2/3?", opts: ['4/6', '6/9', '8/12', '5/6'], ans: 'D', exp: "5/6 is different."},
+        {type: 'mcq', q: "To make equivalent fractions, we ___?", opts: ['Add', 'Subtract', 'Multiply/Divide', 'None'], ans: 'C', exp: "Multiply/Divide by same number."},
+        {type: 'input', q: "Lowest term of 10/20?", ans: "1/2", exp: "Divide by 10."},
+        // COMPARING
+        {type: 'mcq', q: "Which is greater: 1/7 or 1/9?", opts: ['1/9', '1/7', 'Equal', 'None'], ans: 'B', exp: "Smaller denominator = bigger part."},
+        {type: 'mcq', q: "Compare: 3/5 ___ 4/5", opts: ['>', '<', '=', 'None'], ans: 'B', exp: "3 is less than 4."},
+        {type: 'mcq', q: "Which is smallest?", opts: ['1/2', '1/3', '1/4', '1/5'], ans: 'D', exp: "1/5 is the smallest piece."},
+        {type: 'mcq', q: "Compare 2/3 and 1/3.", opts: ['2/3 > 1/3', '2/3 < 1/3', 'Equal', 'Unknown'], ans: 'A', exp: "2 parts are more than 1."},
+        {type: 'input', q: "Is 5/8 greater than 3/8? (Yes/No)", ans: "Yes", exp: "5 > 3."},
+        {type: 'mcq', q: "Which is largest?", opts: ['2/10', '5/10', '9/10', '1/10'], ans: 'C', exp: "9 is the biggest numerator."},
+        {type: 'mcq', q: "To compare 1/2 and 1/3, we use?", opts: ['LCM', 'Adding', 'Subtracting', 'Nothing'], ans: 'A', exp: "Find common denominator."},
+        {type: 'mcq', q: "Which sign fits: 1/2 ___ 1/4?", opts: ['<', '=', '>', '/'], ans: 'C', exp: "Half is more than a quarter."},
+        {type: 'input', q: "Write >, <, or = for: 3/3 ___ 1", ans: "=", exp: "3/3 is 1 whole."},
+        {type: 'mcq', q: "Arrange in ascending: 1/5, 3/5, 2/5", opts: ['1/5, 2/5, 3/5', '3/5, 2/5, 1/5', '2/5, 1/5, 3/5', 'None'], ans: 'A', exp: "1 < 2 < 3."},
+        // OPERATIONS
+        {type: 'mcq', q: "1/5 + 2/5 = ?", opts: ['3/10', '3/5', '2/5', '1/5'], ans: 'B', exp: "Add numerators, keep denom same."},
+        {type: 'mcq', q: "4/7 - 2/7 = ?", opts: ['2/7', '6/7', '2/0', '2/14'], ans: 'A', exp: "4 - 2 = 2."},
+        {type: 'mcq', q: "Sum of 1/2 + 1/2?", opts: ['1/4', '2/4', '1', '2'], ans: 'C', exp: "2/2 = 1."},
+        {type: 'mcq', q: "Subtract: 1 - 1/2", opts: ['0', '1/2', '1', '2'], ans: 'B', exp: "1 is 2/2. 2/2 - 1/2 = 1/2."},
+        {type: 'input', q: "Add: 3/8 + 1/8 = ?/8", ans: "4", exp: "3+1=4."},
+        {type: 'mcq', q: "What is 1/3 of 9?", opts: ['1', '2', '3', '4'], ans: 'C', exp: "9 ÷ 3 = 3."},
+        {type: 'mcq', q: "What is 1/2 of 50?", opts: ['20', '25', '30', '40'], ans: 'B', exp: "Half of 50 is 25."},
+        {type: 'mcq', q: "LCM of 3 and 4?", opts: ['7', '1', '12', '10'], ans: 'C', exp: "3 x 4 = 12."},
+        {type: 'mcq', q: "Solve: 1/2 + 1/4", opts: ['2/6', '3/4', '2/4', '1/6'], ans: 'B', exp: "1/2 is 2/4. 2/4 + 1/4 = 3/4."},
+        {type: 'mcq', q: "Solve: 1/3 + 1/3 + 1/3", opts: ['1', '3/9', '0', '3'], ans: 'A', exp: "3/3 = 1."},
+        {type: 'input', q: "3/4 of 12?", ans: "9", exp: "(12÷4)x3 = 9."},
+        {type: 'mcq', q: "5/9 - 2/9 = ?", opts: ['3/18', '3/9', '7/9', '1'], ans: 'B', exp: "5-2=3. Answer 3/9 (or 1/3)."},
+        {type: 'mcq', q: "1/4 + 1/4 = ?", opts: ['1/2', '1/8', '2/8', 'Both A and C'], ans: 'D', exp: "2/8 simplifies to 1/2."},
+        {type: 'mcq', q: "What is 2/5 of 10?", opts: ['2', '4', '5', '10'], ans: 'B', exp: "(10÷5)x2 = 4."},
+        {type: 'input', q: "Reciprocal of 5?", ans: "1/5", exp: "Flip 5/1."},
+        // ADVANCED / WORD PROBLEMS
+        {type: 'mcq', q: "Rohan ate 1/2 pizza. How much is left?", opts: ['1/4', '1/2', '0', '1'], ans: 'B', exp: "1 - 1/2 = 1/2."},
+        {type: 'mcq', q: "A week has 7 days. What fraction is 1 day?", opts: ['1/7', '7/1', '1/6', '1/30'], ans: 'A', exp: "1 out of 7."},
+        {type: 'mcq', q: "What fraction of a rupee is 50 paise?", opts: ['1/4', '1/3', '1/2', '1/10'], ans: 'C', exp: "50/100 = 1/2."},
+        {type: 'mcq', q: "1/4 of an hour is ___ mins?", opts: ['10', '15', '20', '30'], ans: 'B', exp: "60 mins ÷ 4 = 15."},
+        {type: 'input', q: "If 1/3 of a number is 5, what is the number?", ans: "15", exp: "5 x 3 = 15."},
+        {type: 'mcq', q: "Add 1 1/2 + 2 1/2", opts: ['3', '4', '3 1/2', '5'], ans: 'B', exp: "1+2=3, half+half=1. Total 4."},
+        {type: 'mcq', q: "Which is closest to 1?", opts: ['1/10', '9/10', '1/2', '1/100'], ans: 'B', exp: "9/10 is 0.9."},
+        {type: 'mcq', q: "Fraction of vowels in APPLE?", opts: ['1/5', '2/5', '3/5', '4/5'], ans: 'B', exp: "A and E. 2 vowels out of 5."},
+        {type: 'mcq', q: "Fraction of even numbers in 1,2,3,4?", opts: ['1/2', '1/4', '3/4', '0'], ans: 'A', exp: "2 and 4. 2/4 = 1/2."},
+        {type: 'input', q: "How many 1/8s are in 1/2?", ans: "4", exp: "1/2 = 4/8."},
+        {type: 'mcq', q: "Value of 5/5?", opts: ['5', '0', '1', '25'], ans: 'C', exp: "One whole."},
+        {type: 'mcq', q: "3/4 + ? = 1", opts: ['1/4', '1/2', '3/4', '0'], ans: 'A', exp: "Need 1/4 to complete the whole."},
+        {type: 'mcq', q: "Half of a Half is?", opts: ['1', '1/2', '1/4', '0'], ans: 'C', exp: "1/2 x 1/2 = 1/4."},
+        {type: 'mcq', q: "Double of 1/4?", opts: ['1/8', '2/8', '1/2', 'Both B and C'], ans: 'D', exp: "2/8 simplifies to 1/2."},
+        {type: 'input', q: "Numerator of 7/9?", ans: "7", exp: "Top number."},
+        {type: 'mcq', q: "Which is a unit fraction?", opts: ['2/3', '5/7', '1/9', '8/9'], ans: 'C', exp: "Numerator is 1."},
+        {type: 'mcq', q: "100 paise = 1 Rupee. 25 paise = ?", opts: ['1/4', '1/2', '1/5', '1/10'], ans: 'A', exp: "Quarter rupee."},
+        {type: 'mcq', q: "If I eat 3/8 of a cake, remaining?", opts: ['5/8', '3/8', '1/8', '0'], ans: 'A', exp: "8/8 - 3/8 = 5/8."},
+        {type: 'mcq', q: "Which is correct?", opts: ['1/2 = 0.5', '1/2 = 0.2', '1/2 = 1.2', '1/2 = 5'], ans: 'A', exp: "Decimal value."},
+        {type: 'input', q: "Simplify 12/24", ans: "1/2", exp: "Divide by 12."}
+    ];
+
+    // --- DATA: LONG QUESTIONS (10) ---
+    const longQs = [
+        {id: 1, q: "Explain the difference between Proper and Improper fractions with examples.", k: ['numerator', 'denominator', 'smaller', 'greater', 'less', 'proper', 'improper'], pts: 5},
+        {id: 2, q: "How do you add two fractions with different denominators? Explain steps.", k: ['lcm', 'equivalent', 'same', 'denominator', 'add', 'numerator'], pts: 5},
+        {id: 3, q: "Rohan has 20 pens. He gave 1/4 to his sister and 1/5 to his friend. How many pens does he have left?", k: ['20', '5', '4', '9', '11', 'left'], pts: 5},
+        {id: 4, q: "Explain Equivalent Fractions. How can you find the equivalent fraction of 2/3?", k: ['multiply', 'divide', 'same', 'numerator', 'denominator', 'value'], pts: 5},
+        {id: 5, q: "Convert 15/4 into a mixed fraction and explain the method.", k: ['divide', 'quotient', 'remainder', '3', '3/4'], pts: 5},
+        {id: 6, q: "Why is 1/2 greater than 1/4? Explain using a real-life example.", k: ['parts', 'pizza', 'cake', 'smaller', 'denominator', 'share'], pts: 5},
+        {id: 7, q: "A bottle holds 1 litre. Rahul drank 1/2 litre and Raj drank 1/4 litre. How much is left?", k: ['1/4', '0.25', '250', 'remaining', 'left'], pts: 5},
+        {id: 8, q: "What is Simplest Form? Reduce 16/20 to simplest form.", k: ['divide', 'common', 'factor', 'hcf', '4/5'], pts: 5},
+        {id: 9, q: "Arrange 1/2, 1/5, and 1/3 in ascending order and explain why.", k: ['1/5', '1/3', '1/2', 'denominator', 'smaller'], pts: 5},
+        {id: 10, q: "Find the sum of 1 1/2 and 2 1/4.", k: ['mixed', 'improper', 'lcm', '3 3/4', '15/4'], pts: 5}
+    ];
+
+    // --- RENDERERS ---
+    
+    // Important Questions
+    const impList = document.getElementById('imp-questions-list');
+    impQs.forEach((item, i) => {
+        impList.innerHTML += `
+            <div class="imp-q-card">
+                <div class="imp-q-text"><strong>Q${i+1}.</strong> ${item.q}</div>
+                <div class="imp-a-text">Ans: ${item.a}</div>
+            </div>`;
+    });
+
+    // Practice Questions
+    let currentQ = 0;
+    let scoreC = 0, scoreW = 0, scoreA = 0;
+    
+    const quizContainer = document.getElementById('quiz-container');
+    const qCountSpan = document.getElementById('q-current');
+    const submitBtn = document.getElementById('submit-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const feedbackBox = document.getElementById('feedback-display');
+    const scoreCorrect = document.getElementById('score-correct');
+    const scoreWrong = document.getElementById('score-wrong');
+    const scoreAttempted = document.getElementById('score-attempted');
+    const scorePercent = document.getElementById('score-percent');
+
+    function renderQuestion(index) {
+        const q = practiceQs[index];
+        qCountSpan.innerText = index + 1;
+        feedbackBox.className = 'feedback';
+        feedbackBox.innerHTML = '';
+        submitBtn.disabled = false;
+        nextBtn.disabled = true;
+        
+        let html = `<div class="q-container active">
+            <div class="question-text"><strong>Q${index+1}.</strong> ${q.q}</div>`;
+        
+        if (q.type === 'mcq') {
+            html += `<div class="options-grid">`;
+            q.opts.forEach((opt, i) => {
+                const char = String.fromCharCode(65+i);
+                html += `<button class="option-btn" onclick="selectOpt(this, '${char}')" data-val="${char}">
+                    <strong>${char}.</strong> ${opt}
+                </button>`;
+            });
+            html += `</div>`;
+        } else {
+            html += `<input type="text" class="input-field" id="text-ans" placeholder="Your Answer..." autocomplete="off">`;
+        }
+        html += `</div>`;
+        quizContainer.innerHTML = html;
+    }
+
+    window.selectOpt = function(btn, val) {
+        if(submitBtn.disabled) return;
+        document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+    };
+
+    submitBtn.addEventListener('click', () => {
+        const q = practiceQs[currentQ];
+        let userAns = '';
+        let isCorrect = false;
+
+        if (q.type === 'mcq') {
+            const selected = document.querySelector('.option-btn.selected');
+            if (!selected) { alert('Please select an option.'); return; }
+            userAns = selected.getAttribute('data-val');
+            isCorrect = (userAns === q.ans);
+        } else {
+            const inp = document.getElementById('text-ans');
+            if (!inp.value.trim()) { alert('Please type an answer.'); return; }
+            userAns = inp.value.trim();
+            // Fuzzy match for text
+            isCorrect = (userAns.toLowerCase() === q.ans.toLowerCase());
+        }
+
+        // Logic
+        scoreA++;
+        if (isCorrect) {
+            scoreC++;
+            feedbackBox.innerHTML = `<strong>Excellent ⭐</strong><br>${q.exp}`;
+            feedbackBox.classList.add('show', 'success');
+            if(q.type === 'mcq') document.querySelector('.option-btn.selected').classList.add('correct');
+        } else {
+            scoreW++;
+            feedbackBox.innerHTML = `<strong>Try Again</strong><br>Correct: ${q.ans}<br>Reason: ${q.exp}`;
+            feedbackBox.classList.add('show', 'error');
+            if(q.type === 'mcq') {
+                document.querySelector('.option-btn.selected').classList.add('wrong');
+                document.querySelector(`.option-btn[data-val="${q.ans}"]`).classList.add('correct');
+            }
+        }
+
+        updateScore();
+        submitBtn.disabled = true;
+        nextBtn.disabled = false;
+        
+        if (q.type === 'input') document.getElementById('text-ans').disabled = true;
+    });
+
+    nextBtn.addEventListener('click', () => {
+        if (currentQ < practiceQs.length - 1) {
+            currentQ++;
+            renderQuestion(currentQ);
+        } else {
+            alert("Practice Completed! Check Advanced Questions below.");
+        }
+    });
+
+    function updateScore() {
+        scoreCorrect.innerText = scoreC;
+        scoreWrong.innerText = scoreW;
+        scoreAttempted.innerText = scoreA;
+        const pct = scoreA === 0 ? 0 : Math.round((scoreC / scoreA) * 100);
+        scorePercent.innerText = pct + '%';
+    }
+
+    // Long Questions
+    const longList = document.getElementById('long-questions-list');
+    longQs.forEach(q => {
+        const div = document.createElement('div');
+        div.className = 'long-q-card';
+        div.innerHTML = `
+            <div><strong>Q${q.id}.</strong> ${q.q}</div>
+            <textarea id="long-ans-${q.id}" placeholder="Type detailed answer..."></textarea>
+            <button class="action-btn" onclick="checkLong(${q.id})">Check Answer</button>
+            <div class="evaluation-box" id="eval-${q.id}"></div>
+        `;
+        longList.appendChild(div);
+    });
+
+    window.checkLong = function(id) {
+        const q = longQs.find(x => x.id === id);
+        const txt = document.getElementById(`long-ans-${id}`).value.toLowerCase();
+        const box = document.getElementById(`eval-${id}`);
+        
+        if(txt.length < 5) { alert("Please write a bit more."); return; }
+        
+        // Keyword Check
+        const matched = q.k.filter(word => txt.includes(word));
+        const missing = q.k.filter(word => !txt.includes(word));
+        const score = Math.min(5, matched.length); // capped at 5 logic loosely
+        
+        // UI
+        box.style.display = 'block';
+        if (score >= 3) {
+            box.style.background = '#e8f5e9';
+            box.style.borderColor = '#a5d6a7';
+            box.innerHTML = `<strong>Good Answer!</strong><br>Found key points: ${matched.join(', ')}.<br>Score: ${score}/5`;
+            scoreC++; // Bonus for long answer
+        } else {
+            box.style.background = '#fff3e0';
+            box.style.borderColor = '#ffe082';
+            box.innerHTML = `<strong>Needs Improvement.</strong><br>Try to include: ${missing.slice(0,3).join(', ')}.<br>Found: ${matched.length > 0 ? matched.join(', ') : 'None'}.`;
+            scoreW++;
+        }
+        scoreA++;
+        updateScore();
+    };
+
+    // Initial Render
+    renderQuestion(0);
+
+});
+</script>
+</body>
+</html>

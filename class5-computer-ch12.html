@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 5 - Ch 12: Logical Thinking & Computer Aptitude</title>
+    <style>
+        /* GLOBAL RESET & TYPOGRAPHY */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Comic Neue', sans-serif; /* Child-friendly handwriting style */
+        }
+
+        body {
+            background-color: #fdf6e3; /* Paper color */
+            color: #2c3e50;
+            line-height: 1.6;
+            padding-bottom: 60px;
+        }
+
+        h1, h2, h3, h4, p, li, span, div {
+            font-weight: bold; /* STRICT RULE: ALL TEXT BOLD */
+        }
+
+        /* UTILITIES */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 1.5rem;
+            margin: 20px 0;
+            color: #d35400;
+            text-decoration: underline wavy #27ae60;
+            text-transform: uppercase;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            border: 2px solid #2980b9;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 5px;
+            touch-action: manipulation;
+            user-select: none;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-check { background: #27ae60; border-color: #2ecc71; }
+        .btn-next { background: #f39c12; border-color: #e67e22; display: none; } /* Hidden by default */
+        .btn-toggle { background: #9b59b6; border-color: #8e44ad; width: 100%; }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            border: 2px dashed #95a5a6;
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            resize: vertical;
+            background: #fff;
+        }
+
+        /* HEADER & SCORE PANEL */
+        header {
+            background: #ffecb3;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 3px solid #f1c40f;
+        }
+
+        .score-panel {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: #2c3e50;
+            color: white;
+            padding: 8px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .score-item span {
+            color: #f1c40f;
+        }
+
+        /* NOTES SECTION */
+        .note-card {
+            background: #fff;
+            border: 2px solid #bdc3c7;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 3px 3px 0px #ecf0f1;
+        }
+
+        .note-topic { color: #8e44ad; font-size: 1.2rem; margin-bottom: 10px; border-bottom: 2px dotted #bdc3c7; }
+        .note-example { background: #e8f8f5; padding: 10px; border-radius: 8px; margin: 10px 0; color: #16a085; }
+        .note-tip { background: #fef9e7; padding: 10px; border-radius: 8px; border-left: 5px solid #f1c40f; }
+        .img-placeholder {
+            width: 100%;
+            height: 120px;
+            background: #ecf0f1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #bdc3c7;
+            margin: 10px 0;
+            color: #7f8c8d;
+            font-size: 0.8rem;
+        }
+
+        /* QUESTION STYLES */
+        .question-box {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            border: 3px solid #34495e;
+            margin-bottom: 20px;
+        }
+
+        .q-text { font-size: 1.1rem; margin-bottom: 15px; }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .option-btn {
+            background: #ecf0f1;
+            padding: 12px;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .option-btn.selected { background: #d6eaf8; border-color: #3498db; }
+        .option-btn.correct { background: #d5f5e3; border-color: #27ae60; }
+        .option-btn.wrong { background: #fadbd8; border-color: #c0392b; }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+        }
+        .feedback.show { display: block; }
+        .feedback.good { background: #d5f5e3; color: #27ae60; border: 1px solid #2ecc71; }
+        .feedback.bad { background: #fadbd8; color: #c0392b; border: 1px solid #e74c3c; }
+
+        /* IMPORTANT QUESTIONS LIST */
+        .imp-q-item {
+            background: #fff8e1;
+            border-bottom: 2px solid #ffe0b2;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        /* REVISION TOGGLE */
+        #revision-content { display: none; }
+        .revision-point { margin-bottom: 8px; list-style-type: none; }
+        .revision-point::before { content: "✅ "; }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #34495e;
+            color: #ecf0f1;
+            margin-top: 40px;
+            font-size: 0.8rem;
+        }
+
+        /* PRACTICE MODE CONTAINER */
+        #practice-container {
+            min-height: 400px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- HERO HEADER -->
+    <header>
+        <h1>🖥️ Class 5 Computer</h1>
+        <h2>Chapter 12: Logical Thinking & Computer Aptitude</h2>
+        <p>Advanced Level | Exam Prep | CBT Ready</p>
+    </header>
+
+    <!-- LIVE SCORE PANEL -->
+    <div class="score-panel">
+        <div class="score-item">✅ <span id="score-correct">0</span></div>
+        <div class="score-item">❌ <span id="score-wrong">0</span></div>
+        <div class="score-item">📊 <span id="score-percent">0%</span></div>
+        <div class="score-item">Total: <span id="score-total">0</span></div>
+    </div>
+
+    <div class="container">
+
+        <!-- NOTES SECTION -->
+        <h2 class="section-title">📘 Quick Notes</h2>
+        <div id="notes-container">
+            <!-- Dynamic Notes Injected Here -->
+        </div>
+
+        <!-- IMPORTANT QUESTIONS (STUDY MODE) -->
+        <h2 class="section-title">⭐ Important Questions (Study)</h2>
+        <div id="important-questions-list">
+            <!-- Dynamic List Injected Here -->
+        </div>
+
+        <!-- PRACTICE QUESTIONS (INTERACTIVE) -->
+        <h2 class="section-title">🎯 Practice Quiz (70 Qs)</h2>
+        <div id="practice-container">
+            <div id="quiz-area" class="question-box">
+                <p id="quiz-progress" style="color: #7f8c8d; font-size: 0.9rem; margin-bottom: 10px;">Question 1 of 70</p>
+                <p id="quiz-question" class="q-text">Loading...</p>
+                <div id="quiz-options" class="options-grid"></div>
+                <div id="quiz-feedback" class="feedback"></div>
+                <button id="quiz-next-btn" class="btn btn-next" onclick="nextPracticeQuestion()">Next Question ➡️</button>
+            </div>
+        </div>
+
+        <!-- ADVANCED LONG QUESTIONS -->
+        <h2 class="section-title">🧠 Advanced Long Questions</h2>
+        <div id="long-questions-container">
+            <!-- Dynamic Long Qs Injected Here -->
+        </div>
+
+        <!-- REVISION SECTION -->
+        <h2 class="section-title">🔁 Revision</h2>
+        <button class="btn btn-toggle" onclick="toggleRevision()">Show/Hide Revision Points</button>
+        <div id="revision-content" class="note-card" style="margin-top: 10px;">
+            <ul id="revision-list"></ul>
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>Designed & Created by SHRISHANT YADAV</p>
+        <p>ShanEduHub</p>
+    </footer>
+
+    <script>
+        // ==========================================
+        // DATA STORE
+        // ==========================================
+
+        const topics = [
+            {
+                title: "1. Computer-Based Reasoning",
+                def: "Using logic to solve problems like a computer does.",
+                example: "Identifying a pattern: Red, Blue, Red, Blue, ...? (Next is Red).",
+                tip: "🧠 Think: What comes next? Look for the rule.",
+                check: "Complete: 2, 4, 6, __? (Ans: 8)"
+            },
+            {
+                title: "2. Flowchart Basics",
+                def: "A diagram that shows steps of a process using symbols.",
+                example: "Oval = Start/Stop. Rectangle = Process. Diamond = Decision.",
+                tip: "🧠 Oval is the bun (Start/End), Rectangle is the patty (Work).",
+                check: "Shape for 'Input'? (Ans: Parallelogram)"
+            },
+            {
+                title: "3. Algorithm Concept",
+                def: "A step-by-step set of instructions to complete a task.",
+                example: "Recipe to make Maggi: Boil water -> Add Maggi -> Add Masala -> Eat.",
+                tip: "🧠 Algorithms are just recipes for computers.",
+                check: "First step of any algorithm? (Ans: Start)"
+            },
+            {
+                title: "4. Step-by-Step Execution",
+                def: "Following instructions one by one without skipping.",
+                example: "Robot Logic: Move Forward 2 steps -> Turn Left -> Move 1 step.",
+                tip: "🧠 Don't jump ahead! Computers read line by line.",
+                check: "If A=5, A=A+1. What is A? (Ans: 6)"
+            },
+            {
+                title: "5. Logical Sequence",
+                def: "Arranging steps in the correct order to make sense.",
+                example: "Morning Routine: Wake up -> Brush -> Bath -> Uniform.",
+                tip: "🧠 Can you wear shoes before socks? No! Order matters.",
+                check: "Order: Eat, Cook, Buy Veggies. (Ans: Buy -> Cook -> Eat)"
+            },
+            {
+                title: "6. Computer Aptitude",
+                def: "Skills to understand how computers work and handle data.",
+                example: "Understanding that 'Save' keeps your work safe.",
+                tip: "🧠 Aptitude = Common Sense + Computer Knowledge.",
+                check: "CTRL+C does what? (Ans: Copy)"
+            },
+            {
+                title: "7. CBT (Computer Based Test) Patterns",
+                def: "Answering questions on a screen using mouse clicks.",
+                example: "Selecting a radio button (circle) for one correct answer.",
+                tip: "🧠 Read the screen carefully. Click 'Save & Next'.",
+                check: "Green button usually means? (Ans: Go/Submit)"
+            }
+        ];
+
+        const importantQs = [
+            { q: "What is an algorithm?", a: "Step-by-step instructions to solve a problem.", exp: "Like a recipe." },
+            { q: "Which shape represents 'Start' in a flowchart?", a: "Oval", exp: "Used at the beginning and end." },
+            { q: "What is the output of: 5 + 3 * 2?", a: "11", exp: "Multiplication happens before addition (BODMAS)." },
+            { q: "Which box is used for decision making?", a: "Diamond", exp: "It has Yes/No paths." },
+            { q: "What is a bug?", a: "An error in a program.", exp: "It stops the code from working correctly." },
+            { q: "Arrange: Input, Process, Output.", a: "Input -> Process -> Output", exp: "IPO cycle." },
+            { q: "What does a rectangle represent?", a: "Process / Action", exp: "Calculations or assigning values." },
+            { q: "What connects flowchart symbols?", a: "Arrows (Flowlines)", exp: "Shows the direction of flow." },
+            { q: "Logical thinking means?", a: "Thinking step-by-step correctly.", exp: "Without guessing." },
+            { q: "If A=10 and B=5, is A > B?", a: "True", exp: "10 is bigger than 5." },
+            { q: "Complete: 10, 20, 30, ...", a: "40", exp: "Adding 10 each time." },
+            { q: "First step to solve a problem?", a: "Understand the problem.", exp: "Before writing code." },
+            { q: "Symbol for Input/Output?", a: "Parallelogram", exp: "Slanted rectangle." },
+            { q: "Correct order: Bread, Toast, Butter.", a: "Bread -> Toast -> Butter", exp: "Cannot butter toast before toasting." },
+            { q: "What is a 'variable'?", a: "A storage container for data.", exp: "Like a box labeled 'Score'." },
+            { q: "In CBT, what does 'Mark for Review' mean?", a: "Come back to the question later.", exp: "Purple color usually." },
+            { q: "Does a computer have a brain?", a: "No", exp: "It only follows instructions (CPU)." },
+            { q: "Pattern: A1, B2, C3, ...", a: "D4", exp: "Alphabet + Number sequence." },
+            { q: "Step: 'Turn off computer' comes when?", a: "At the very end.", exp: "Last step." },
+            { q: "Can a flowchart have two Start boxes?", a: "No", exp: "Only one Start point." },
+            { q: "Logic: If Raining = True, then?", a: "Take Umbrella.", exp: "Simple Condition." },
+            { q: "Identify: Triangle, Square, Pentagon, ...", a: "Hexagon", exp: "3, 4, 5, 6 sides." },
+            { q: "Code: A=2, B=3, C=A+B. C is?", a: "5", exp: "2 + 3 = 5." },
+            { q: "Why use flowcharts?", a: "To visualize logic.", exp: "Easier to understand than text." },
+            { q: "Opposite of Input?", a: "Output", exp: "Result displayed." },
+            { q: "Find odd one: Keyboard, Mouse, Monitor, Joystick.", a: "Monitor", exp: "Monitor is Output, others Input." },
+            { q: "Debugging means?", a: "Finding and fixing errors.", exp: "Removing bugs." },
+            { q: "Sequence: Open Bag -> Take Book -> Read.", a: "Correct", exp: "Logical flow." },
+            { q: "Is 'Clicking' an input?", a: "Yes", exp: "Action by user." },
+            { q: "CBT stands for?", a: "Computer Based Test", exp: "Online exams." }
+        ];
+
+        // 70 PRACTICE QUESTIONS (MIXED TYPES: MCQ, T/F, LOGIC)
+        // Distribution: A, B, C, D roughly equal.
+        const practiceData = [
+            // BATCH 1: Basics & Symbols
+            { id: 1, type: "mcq", q: "Which shape is used for START in a flowchart?", options: ["Square", "Oval", "Diamond", "Circle"], ans: "Oval", exp: "Oval represents Start and Stop." },
+            { id: 2, type: "mcq", q: "What comes after Input in the IPO cycle?", options: ["Output", "Process", "Storage", "Stop"], ans: "Process", exp: "Input -> Process -> Output." },
+            { id: 3, type: "mcq", q: "A parallelogram represents which action?", options: ["Start", "Process", "Input/Output", "Decision"], ans: "Input/Output", exp: "Used for reading data or printing results." },
+            { id: 4, type: "mcq", q: "Which symbol checks a condition (Yes/No)?", options: ["Rectangle", "Circle", "Diamond", "Arrow"], ans: "Diamond", exp: "Decision box checks conditions." },
+            { id: 5, type: "mcq", q: "Arrows in a flowchart are called?", options: ["Lines", "Flowlines", "Connectors", "Pointers"], ans: "Flowlines", exp: "They show the direction of flow." },
+
+            // BATCH 2: Logical Sequences
+            { id: 6, type: "mcq", q: "Arrange: 1. Wear Shoes, 2. Wear Socks.", options: ["1 then 2", "2 then 1", "Any order", "None"], ans: "2 then 1", exp: "Socks go inside shoes." },
+            { id: 7, type: "mcq", q: "Which step comes first?", options: ["Print Document", "Type Document", "Save Document", "Close Word"], ans: "Type Document", exp: "You must create content first." },
+            { id: 8, type: "mcq", q: "Logical order to plant a tree:", options: ["Water -> Seed -> Dig", "Dig -> Seed -> Water", "Seed -> Water -> Dig", "Dig -> Water -> Seed"], ans: "Dig -> Seed -> Water", exp: "Dig hole, put seed, then water." },
+            { id: 9, type: "mcq", q: "To restart a computer:", options: ["Click Start -> Power -> Restart", "Pull plug", "Press Monitor button", "Type Exit"], ans: "Click Start -> Power -> Restart", exp: "Correct safe procedure." },
+            { id: 10, type: "mcq", q: "Before eating an apple, you should:", options: ["Eat it", "Wash it", "Cook it", "Throw it"], ans: "Wash it", exp: "Hygiene logic." },
+
+            // BATCH 3: Coding Logic & Values
+            { id: 11, type: "mcq", q: "If X = 10 and Y = 20, what is X + Y?", options: ["10", "20", "30", "1020"], ans: "30", exp: "Simple addition." },
+            { id: 12, type: "mcq", q: "Set Score = 0. Add 10. Subtract 5. New Score?", options: ["0", "10", "15", "5"], ans: "5", exp: "0 + 10 - 5 = 5." },
+            { id: 13, type: "mcq", q: "If Name = 'Rahul', what is Name?", options: ["Number", "Text String", "Image", "Sound"], ans: "Text String", exp: "Words are strings." },
+            { id: 14, type: "mcq", q: "A = 2, B = 2. Is A == B?", options: ["Yes", "No", "Maybe", "Error"], ans: "Yes", exp: "2 equals 2." },
+            { id: 15, type: "mcq", q: "Start -> X=5 -> Print X. Output is?", options: ["X", "5", "Start", "Print"], ans: "5", exp: "Prints the value." },
+
+            // BATCH 4: Patterns
+            { id: 16, type: "mcq", q: "Complete: 2, 4, 8, 16, ...", options: ["20", "24", "30", "32"], ans: "32", exp: "Doubling each time (x2)." },
+            { id: 17, type: "mcq", q: "Pattern: AB, BC, CD, ...", options: ["DE", "EF", "DA", "DD"], ans: "DE", exp: "Next consecutive letters." },
+            { id: 18, type: "mcq", q: "Find the odd one out:", options: ["Keyboard", "Mouse", "Scanner", "Printer"], ans: "Printer", exp: "Printer is Output, others are Input." },
+            { id: 19, type: "mcq", q: "Identify: 🔴 🔵 🔴 🔵 ...", options: ["🟢", "🔴", "🔵", "🟡"], ans: "🔴", exp: "Red follows Blue." },
+            { id: 20, type: "mcq", q: "Triangle : 3 sides :: Square : ?", options: ["2 sides", "3 sides", "4 sides", "5 sides"], ans: "4 sides", exp: "Geometric logic." },
+
+            // BATCH 5: Algorithms
+            { id: 21, type: "mcq", q: "An algorithm must have a:", options: ["Middle", "Start and End", "Loop", "Picture"], ans: "Start and End", exp: "Must begin and finish." },
+            { id: 22, type: "mcq", q: "Step-by-step problem solving is:", options: ["Guessing", "Algorithmic Thinking", "Dreaming", "Sleeping"], ans: "Algorithmic Thinking", exp: "Systematic approach." },
+            { id: 23, type: "mcq", q: "If an algorithm is wrong, the program will:", options: ["Work perfectly", "Explode", "Give wrong output", "Run faster"], ans: "Give wrong output", exp: "Logic errors cause wrong results." },
+            { id: 24, type: "mcq", q: "Which is NOT an algorithm?", options: ["Recipe", "Math Solution", "Random Drawing", "Driving Directions"], ans: "Random Drawing", exp: "No set steps." },
+            { id: 25, type: "mcq", q: "Efficiency means:", options: ["Taking more time", "Using fewer steps", "Making it complex", "Using more memory"], ans: "Using fewer steps", exp: "Doing it faster and better." },
+
+            // BATCH 6: CBT & Computer Knowledge
+            { id: 26, type: "mcq", q: "In an online test, 'Submit' means:", options: ["Start", "Delete", "Finish Exam", "Pause"], ans: "Finish Exam", exp: "Finalizes your answers." },
+            { id: 27, type: "mcq", q: "What device moves the cursor?", options: ["Speaker", "Mouse", "Printer", "CPU"], ans: "Mouse", exp: "Pointing device." },
+            { id: 28, type: "mcq", q: "Which key erases text to the left?", options: ["Delete", "Spacebar", "Backspace", "Enter"], ans: "Backspace", exp: "Standard editing key." },
+            { id: 29, type: "mcq", q: "Brain of the computer is:", options: ["Monitor", "UPS", "CPU", "Keyboard"], ans: "CPU", exp: "Central Processing Unit." },
+            { id: 30, type: "mcq", q: "To select an icon, you:", options: ["Right click", "Double click", "Single click", "Scroll"], ans: "Single click", exp: "Usually single click selects." },
+
+            // BATCH 7: Advanced Logic (Mix)
+            { id: 31, type: "mcq", q: "If TODAY is Monday, TOMORROW is?", options: ["Sunday", "Tuesday", "Wednesday", "Friday"], ans: "Tuesday", exp: "Sequence of days." },
+            { id: 32, type: "mcq", q: "Cat : Meow :: Dog : ?", options: ["Moo", "Roar", "Bark", "Chirp"], ans: "Bark", exp: "Animal sounds logic." },
+            { id: 33, type: "mcq", q: "Input: 5, 5. Process: Multiply. Output?", options: ["10", "25", "0", "55"], ans: "25", exp: "5 x 5 = 25." },
+            { id: 34, type: "mcq", q: "Is 'Thinking' an input or process?", options: ["Input", "Process", "Output", "None"], ans: "Process", exp: "Brain work is processing." },
+            { id: 35, type: "mcq", q: "If Red=1, Blue=2. What is Red+Blue?", options: ["12", "3", "Green", "RedBlue"], ans: "3", exp: "1 + 2 = 3." },
+            { id: 36, type: "mcq", q: "Arrange size: MB, KB, GB.", options: ["KB < MB < GB", "GB < MB < KB", "MB < KB < GB", "KB < GB < MB"], ans: "KB < MB < GB", exp: "Smallest to Largest." },
+            { id: 37, type: "mcq", q: "If A > B and B > C, then?", options: ["A < C", "A > C", "A = C", "None"], ans: "A > C", exp: "Transitive property." },
+            { id: 38, type: "mcq", q: "Which is a valid variable name?", options: ["123Name", "My Name", "score", "@Home"], ans: "score", exp: "No spaces or special chars at start." },
+            { id: 39, type: "mcq", q: "What stops an infinite loop?", options: ["It never stops", "Start button", "Condition", "Magic"], ans: "Condition", exp: "Exit condition is needed." },
+            { id: 40, type: "mcq", q: "Binary language consists of:", options: ["A, B, C", "1, 2, 3", "0 and 1", "English"], ans: "0 and 1", exp: "Machine code." },
+
+            // BATCH 8: Flowchart & Debugging
+            { id: 41, type: "mcq", q: "A loop in a flowchart uses which structure?", options: ["Straight line", "Arrow back to start", "Circle", "Stop box"], ans: "Arrow back to start", exp: "Repeats the process." },
+            { id: 42, type: "mcq", q: "Error in logic leads to:", options: ["Syntax Error", "Logical Error", "Hardware Failure", "Virus"], ans: "Logical Error", exp: "Code runs but answer is wrong." },
+            { id: 43, type: "mcq", q: "If Traffic Light = Red, Action?", options: ["Go", "Stop", "Wait", "Fly"], ans: "Stop", exp: "Traffic rules logic." },
+            { id: 44, type: "mcq", q: "To copy text, shortcut is:", options: ["Ctrl+V", "Ctrl+X", "Ctrl+C", "Ctrl+P"], ans: "Ctrl+C", exp: "Standard shortcut." },
+            { id: 45, type: "mcq", q: "GUI stands for?", options: ["Green User Interface", "Graphical User Interface", "Good Used Item", "General Unit"], ans: "Graphical User Interface", exp: "Icons and windows." },
+            { id: 46, type: "mcq", q: "Which is temporary memory?", options: ["Hard Disk", "ROM", "RAM", "CD"], ans: "RAM", exp: "Erased on restart." },
+            { id: 47, type: "mcq", q: "1 Byte = ?", options: ["4 Bits", "8 Bits", "16 Bits", "100 Bits"], ans: "8 Bits", exp: "Standard unit." },
+            { id: 48, type: "mcq", q: "Computer understands:", options: ["Human Voice", "Machine Code", "Thoughts", "Handwriting"], ans: "Machine Code", exp: "Binary." },
+            { id: 49, type: "mcq", q: "Rectangle with curved corners is?", options: ["Process", "Start/Stop", "Decision", "Input"], ans: "Start/Stop", exp: "Oval/Rounded Rectangle." },
+            { id: 50, type: "mcq", q: "Flow moves from:", options: ["Bottom to Top", "Top to Bottom", "Right to Left", "Random"], ans: "Top to Bottom", exp: "Standard flow." },
+
+            // BATCH 9: Critical Thinking
+            { id: 51, type: "mcq", q: "If you delete a file, where does it go?", options: ["Desktop", "Recycle Bin", "My Documents", "Vanishes"], ans: "Recycle Bin", exp: "Can be restored." },
+            { id: 52, type: "mcq", q: "Which password is strongest?", options: ["12345", "password", "A@3f$9z", "admin"], ans: "A@3f$9z", exp: "Complex mix of chars." },
+            { id: 53, type: "mcq", q: "Phishing is:", options: ["Fishing in a lake", "Online Scam", "A software", "A game"], ans: "Online Scam", exp: "Stealing data." },
+            { id: 54, type: "mcq", q: "Search Engine example:", options: ["Word", "Excel", "Google", "Paint"], ans: "Google", exp: "Finds info." },
+            { id: 55, type: "mcq", q: "Browser example:", options: ["Chrome", "Windows", "Mouse", "Keyboard"], ans: "Chrome", exp: "Surfs web." },
+            { id: 56, type: "mcq", q: "What is hardware?", options: ["Programs", "Physical Parts", "Games", "Websites"], ans: "Physical Parts", exp: "Things you can touch." },
+            { id: 57, type: "mcq", q: "What is software?", options: ["Monitor", "Cables", "Instructions/Code", "Chip"], ans: "Instructions/Code", exp: "Runs on hardware." },
+            { id: 58, type: "mcq", q: "File extension for image:", options: [".mp3", ".txt", ".jpg", ".exe"], ans: ".jpg", exp: "Joint Photographic Group." },
+            { id: 59, type: "mcq", q: "To capitalize all letters:", options: ["Ctrl", "Shift", "Caps Lock", "Alt"], ans: "Caps Lock", exp: "Toggles capital case." },
+            { id: 60, type: "mcq", q: "Home key moves cursor to:", options: ["End of line", "Start of line", "Top of page", "Bottom of page"], ans: "Start of line", exp: "Standard navigation." },
+
+            // BATCH 10: Final Aptitude
+            { id: 61, type: "mcq", q: "If Input is Dirty Clothes, Process is Washing, Output is?", options: ["Wet Clothes", "Clean Clothes", "Ironed Clothes", "Torn Clothes"], ans: "Clean Clothes", exp: "Goal of washing." },
+            { id: 62, type: "mcq", q: "Sequence: 10, 8, 6, ...", options: ["5", "4", "2", "0"], ans: "4", exp: "Minus 2 each time." },
+            { id: 63, type: "mcq", q: "Odd one: Google, Bing, Yahoo, Windows.", options: ["Google", "Bing", "Yahoo", "Windows"], ans: "Windows", exp: "Windows is OS, others Search Engines." },
+            { id: 64, type: "mcq", q: "Which is not an Output device?", options: ["Monitor", "Printer", "Speaker", "Scanner"], ans: "Scanner", exp: "Scanner is Input." },
+            { id: 65, type: "mcq", q: "If Key=A, Lock=B. Key+Lock?", options: ["Open", "AB", "Close", "Error"], ans: "AB", exp: "Concatenation." },
+            { id: 66, type: "mcq", q: "Logic: Ice is Cold. Fire is?", options: ["Blue", "Red", "Hot", "Wet"], ans: "Hot", exp: "Opposite property." },
+            { id: 67, type: "mcq", q: "Algorithm Step 1 usually is:", options: ["Process", "Input", "Start", "End"], ans: "Start", exp: "Beginning." },
+            { id: 68, type: "mcq", q: "Connector symbol is:", options: ["Square", "Circle", "Triangle", "Star"], ans: "Circle", exp: "Connects parts of flowchart." },
+            { id: 69, type: "mcq", q: "Is 'Printing' a process?", options: ["Yes", "No"], ans: "Yes", exp: "Action by printer." },
+            { id: 70, type: "mcq", q: "Last Question: 5 + 5 * 0 = ?", options: ["0", "5", "10", "50"], ans: "5", exp: "5*0=0, then 5+0=5. BODMAS." }
+        ];
+
+        const longQs = [
+            { id: "L1", q: "Write a simple algorithm to brush your teeth.", keywords: ["paste", "brush", "water", "rinse", "teeth"], points: 4 },
+            { id: "L2", q: "Explain the difference between Input and Output with an example.", keywords: ["input", "output", "enter", "result", "show"], points: 4 },
+            { id: "L3", q: "Draw (describe) a flowchart to check if a number is Even or Odd.", keywords: ["start", "input", "divide", "decision", "print", "stop"], points: 4 },
+            { id: "L4", q: "You have steps: Eat, Cook, Serve. Arrange them logically and explain why.", keywords: ["cook", "serve", "eat", "order"], points: 4 },
+            { id: "L5", q: "What is a 'Decision Box' in a flowchart? What shape is it?", keywords: ["diamond", "condition", "yes", "no", "check"], points: 4 },
+            { id: "L6", q: "Why is 'Start' and 'Stop' important in an algorithm?", keywords: ["begin", "end", "know", "infinite", "loop"], points: 4 },
+            { id: "L7", q: "If your computer does not turn on, list 3 logical steps to check.", keywords: ["power", "plug", "cable", "switch", "electricity"], points: 4 },
+            { id: "L8", q: "Explain the pattern: 5, 10, 15, 20. What is the rule?", keywords: ["add", "5", "five", "plus", "increase"], points: 4 },
+            { id: "L9", q: "What is the difference between a Human Brain and a CPU?", keywords: ["feeling", "emotion", "fast", "calculate", "instruction"], points: 4 },
+            { id: "L10", q: "Write an algorithm to make a glass of Lemonade.", keywords: ["water", "lemon", "sugar", "mix", "stir"], points: 4 }
+        ];
+
+        const revisionPoints = [
+            "Computers follow step-by-step instructions called Algorithms.",
+            "Flowcharts use shapes: Oval (Start/Stop), Rectangle (Process), Parallelogram (Input/Output), Diamond (Decision).",
+            "Input is data entering. Output is the result.",
+            "CPU is the brain. It processes data.",
+            "Logical Sequence means putting steps in the right order.",
+            "Debugging is fixing errors.",
+            "BODMAS rule applies to computer math (Multiply before Add).",
+            "CBT means Computer Based Test."
+        ];
+
+        // ==========================================
+        // STATE MANAGEMENT
+        // ==========================================
+        let currentPracticeIndex = 0;
+        let score = { correct: 0, wrong: 0, total: 0 };
+        let longAnswersAttempted = 0;
+
+        // ==========================================
+        // INIT FUNCTIONS
+        // ==========================================
+        window.addEventListener('DOMContentLoaded', () => {
+            renderNotes();
+            renderImportantQs();
+            loadPracticeQuestion();
+            renderLongQs();
+            renderRevision();
+        });
+
+        function updateScorePanel() {
+            document.getElementById('score-correct').innerText = score.correct;
+            document.getElementById('score-wrong').innerText = score.wrong;
+            document.getElementById('score-total').innerText = score.total;
+            const percent = score.total === 0 ? 0 : Math.round((score.correct / score.total) * 100);
+            document.getElementById('score-percent').innerText = percent + "%";
+        }
+
+        // ==========================================
+        // CONTENT RENDERING
+        // ==========================================
+        function renderNotes() {
+            const container = document.getElementById('notes-container');
+            topics.forEach(t => {
+                const div = document.createElement('div');
+                div.className = 'note-card';
+                div.innerHTML = `
+                    <div class="note-topic">${t.title}</div>
+                    <p><strong>Def:</strong> ${t.def}</p>
+                    <div class="img-placeholder">[ Image: ${t.title} Diagram ]</div>
+                    <div class="note-example">🇮🇳 <strong>Example:</strong> ${t.example}</div>
+                    <div class="note-tip">${t.tip}</div>
+                    <p style="margin-top:5px; font-size:0.9rem;">❓ <strong>Check:</strong> ${t.check}</p>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function renderImportantQs() {
+            const container = document.getElementById('important-questions-list');
+            importantQs.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'imp-q-item';
+                div.innerHTML = `
+                    <p><strong>Q${index + 1}:</strong> ${item.q}</p>
+                    <p style="color:#27ae60;"><strong>Ans:</strong> ${item.a}</p>
+                    <p style="font-size:0.85rem; color:#7f8c8d;"><em>Why? ${item.exp}</em></p>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function renderRevision() {
+            const list = document.getElementById('revision-list');
+            revisionPoints.forEach(p => {
+                const li = document.createElement('li');
+                li.className = 'revision-point';
+                li.innerText = p;
+                list.appendChild(li);
+            });
+        }
+
+        function toggleRevision() {
+            const el = document.getElementById('revision-content');
+            el.style.display = el.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // ==========================================
+        // PRACTICE QUIZ LOGIC
+        // ==========================================
+        function loadPracticeQuestion() {
+            if (currentPracticeIndex >= practiceData.length) {
+                document.getElementById('quiz-area').innerHTML = `
+                    <h3 style="text-align:center; color:#27ae60;">🎉 Quiz Completed!</h3>
+                    <p style="text-align:center;">Final Score: ${score.correct} / ${score.total}</p>
+                `;
+                return;
+            }
+
+            const qData = practiceData[currentPracticeIndex];
+            document.getElementById('quiz-progress').innerText = `Question ${currentPracticeIndex + 1} of ${practiceData.length}`;
+            document.getElementById('quiz-question').innerText = qData.q;
+            
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+            
+            // Reset UI
+            document.getElementById('quiz-feedback').className = 'feedback';
+            document.getElementById('quiz-feedback').style.display = 'none';
+            document.getElementById('quiz-next-btn').style.display = 'none';
+
+            // Create buttons
+            qData.options.forEach(opt => {
+                const btn = document.createElement('div');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(btn, opt, qData);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedBtn, selectedValue, qData) {
+            // Prevent multiple clicks
+            if (document.getElementById('quiz-next-btn').style.display === 'block') return;
+
+            const isCorrect = selectedValue === qData.ans;
+            const feedbackEl = document.getElementById('quiz-feedback');
+            
+            score.total++;
+            if (isCorrect) {
+                score.correct++;
+                selectedBtn.classList.add('correct');
+                feedbackEl.innerHTML = `<strong>Excellent ⭐</strong><br>${qData.exp}`;
+                feedbackEl.className = 'feedback show good';
+            } else {
+                score.wrong++;
+                selectedBtn.classList.add('wrong');
+                // Highlight correct
+                const buttons = document.getElementById('quiz-options').children;
+                for (let btn of buttons) {
+                    if (btn.innerText === qData.ans) btn.classList.add('correct');
+                }
+                feedbackEl.innerHTML = `<strong>Try Again!</strong><br>Correct Answer: ${qData.ans}<br><em>${qData.exp}</em>`;
+                feedbackEl.className = 'feedback show bad';
+            }
+
+            updateScorePanel();
+            document.getElementById('quiz-next-btn').style.display = 'inline-block';
+        }
+
+        function nextPracticeQuestion() {
+            currentPracticeIndex++;
+            loadPracticeQuestion();
+        }
+
+        // ==========================================
+        // LONG QUESTION LOGIC
+        // ==========================================
+        function renderLongQs() {
+            const container = document.getElementById('long-questions-container');
+            longQs.forEach((q, idx) => {
+                const div = document.createElement('div');
+                div.className = 'question-box';
+                div.innerHTML = `
+                    <p class="q-text"><strong>LQ ${idx+1}:</strong> ${q.q}</p>
+                    <textarea id="lq-ans-${idx}" placeholder="Type your answer here..."></textarea>
+                    <div id="lq-feedback-${idx}" class="feedback"></div>
+                    <button id="lq-btn-${idx}" class="btn btn-check" onclick="checkLongAnswer(${idx})">Check Answer</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function checkLongAnswer(index) {
+            const qData = longQs[index];
+            const userAns = document.getElementById(`lq-ans-${index}`).value.toLowerCase();
+            const feedbackEl = document.getElementById(`lq-feedback-${index}`);
+            const btn = document.getElementById(`lq-btn-${index}`);
+
+            if (userAns.trim().length < 5) {
+                alert("Please write a longer answer.");
+                return;
+            }
+
+            // Keyword matching logic
+            let matchCount = 0;
+            let missingKeywords = [];
+            
+            qData.keywords.forEach(k => {
+                if (userAns.includes(k)) {
+                    matchCount++;
+                } else {
+                    missingKeywords.push(k);
+                }
+            });
+
+            const passed = matchCount >= 2; // Pass if at least 2 keywords match
+
+            score.total++;
+            if (passed) {
+                score.correct++;
+                feedbackEl.innerHTML = `<strong>Well Done!</strong><br>You used key logical words.<br>Keywords found: ${matchCount}/${qData.keywords.length}`;
+                feedbackEl.className = 'feedback show good';
+            } else {
+                score.wrong++;
+                feedbackEl.innerHTML = `<strong>Needs Improvement</strong><br>Your logic is a bit weak.<br>Try to include words like: ${missingKeywords.join(", ")}`;
+                feedbackEl.className = 'feedback show bad';
+            }
+
+            btn.disabled = true;
+            btn.style.opacity = "0.5";
+            updateScorePanel();
+        }
+
+    </script>
+</body>
+</html>

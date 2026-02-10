@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Five - Learning Portal</title>
+    <!-- Google Font: Patrick Hand for the handwritten notebook feel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- CSS Variables for Theme Management --- */
+        :root {
+            --paper-bg: #fffdf0;
+            --line-color: #a2d5f2;
+            --margin-line: #ffab91;
+            --text-main: #2c3e50;
+            --shadow-soft: rgba(0,0,0,0.1);
+            --font-main: 'Patrick Hand', cursive, sans-serif;
+        }
+
+        /* --- Reset & Body Setup --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            /* Textured background representing a desk */
+            background-color: #f4f6f8;
+            background-image: radial-gradient(#e0e0e0 1px, transparent 1px);
+            background-size: 20px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text-main);
+        }
+
+        /* --- Main Notebook Container --- */
+        .notebook-container {
+            width: 100%;
+            max-width: 950px;
+            background-color: var(--paper-bg);
+            /* Complex shadow to look like a thick notebook */
+            box-shadow: 
+                0 1px 1px rgba(0,0,0,0.15), 
+                0 10px 0 -5px #eee, 
+                0 10px 1px -4px rgba(0,0,0,0.15), 
+                0 20px 0 -10px #eee, 
+                0 20px 1px -9px rgba(0,0,0,0.15);
+            border-radius: 10px 20px 20px 10px;
+            position: relative;
+            padding: 50px 40px;
+            /* The Lined Paper CSS Pattern */
+            background-image: linear-gradient(var(--line-color) 1px, transparent 1px);
+            background-size: 100% 35px; /* Line height */
+            overflow: hidden;
+        }
+
+        /* --- The Red Margin Line --- */
+        .notebook-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50px;
+            width: 2px;
+            background-color: var(--margin-line);
+            z-index: 1;
+        }
+
+        /* --- Header Section --- */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-left: 20px; /* Offset for margin */
+            position: relative;
+            z-index: 2;
+        }
+
+        .level-badge {
+            display: inline-block;
+            background: #ff6b6b;
+            color: white;
+            padding: 8px 25px;
+            border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px; /* Hand-drawn shape */
+            font-size: 1.6rem;
+            box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+            transform: rotate(-2deg);
+            margin-bottom: 15px;
+            border: 2px dashed #fff;
+        }
+
+        .highlight-number {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #fff;
+            background: rgba(0,0,0,0.1);
+            border-radius: 50%;
+            padding: 0 10px;
+            margin: 0 5px;
+        }
+
+        h1 {
+            font-size: 3.2rem;
+            color: #2d3436;
+            margin: 10px 0;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 0px #fff;
+        }
+
+        .quote-box {
+            background-color: #fff9c4; /* Sticky note yellow */
+            display: inline-block;
+            padding: 15px 30px;
+            transform: rotate(1deg);
+            box-shadow: 2px 4px 6px rgba(0,0,0,0.1);
+            border-radius: 2px;
+            max-width: 85%;
+            border: 1px solid #e6db74;
+            margin-top: 10px;
+        }
+
+        .quote-box p {
+            font-size: 1.4rem;
+            color: #444;
+            font-style: italic;
+        }
+
+        /* --- Buttons Grid System --- */
+        .subject-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 25px;
+            padding-left: 30px; /* Space for margin line */
+            position: relative;
+            z-index: 2;
+        }
+
+        /* --- Subject Button Base Styles --- */
+        .subject-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 130px;
+            text-decoration: none;
+            border-radius: 20px; /* Rounded Cards */
+            box-shadow: 0 6px 0 rgba(0,0,0,0.15), 0 10px 10px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid rgba(255,255,255,0.4);
+            cursor: pointer;
+            
+            /* Text Styling */
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        /* Hover Effects */
+        .subject-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 0 rgba(0,0,0,0.15), 0 20px 20px rgba(0,0,0,0.15);
+        }
+
+        /* Click/Active Effects */
+        .subject-card:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 rgba(0,0,0,0.15), 0 5px 5px rgba(0,0,0,0.1);
+        }
+
+        .icon {
+            font-size: 2.2rem;
+            margin-bottom: 5px;
+            display: block;
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1));
+        }
+
+        /* --- Individual Subject Colors & Themes --- */
+        
+        /* 1. Math */
+        .btn-math { 
+            background: linear-gradient(135deg, #FFC107 0%, #FF9800 100%); 
+        }
+
+        /* 2. English */
+        .btn-english { 
+            background: linear-gradient(135deg, #4FC3F7 0%, #039BE5 100%); 
+        }
+
+        /* 3. EVS */
+        .btn-evs { 
+            background: linear-gradient(135deg, #81C784 0%, #43A047 100%); 
+        }
+
+        /* 4. Hindi */
+        .btn-hindi { 
+            background: linear-gradient(135deg, #FF8A80 0%, #E53935 100%); 
+        }
+
+        /* 5. Computer */
+        .btn-computer { 
+            background: linear-gradient(135deg, #9575CD 0%, #5E35B1 100%); 
+        }
+
+        /* 6. GK */
+        .btn-gk { 
+            background: linear-gradient(135deg, #FFF176 0%, #FBC02D 100%);
+            color: #5d4037; /* Dark text for contrast on yellow */
+            text-shadow: none;
+        }
+
+        /* 7. Moral Values */
+        .btn-moral { 
+            background: linear-gradient(135deg, #4DB6AC 0%, #00897B 100%); 
+        }
+
+        /* 8. Art */
+        .btn-art { 
+            background: linear-gradient(45deg, #f3e5f5, #e1bee7, #ce93d8, #ba68c8);
+            color: #8E24AA;
+            text-shadow: none;
+            border: 3px solid #AB47BC;
+        }
+
+        /* 9. SPECIAL FUN BUTTON */
+        .btn-fun { 
+            grid-column: 1 / -1; /* Spans full width */
+            height: 150px;
+            background: linear-gradient(90deg, #FF5252, #FFAB40, #FFD740, #69F0AE, #40C4FF, #7C4DFF, #FF4081);
+            background-size: 300% 300%;
+            animation: rainbow-move 6s ease infinite;
+            font-size: 2.5rem;
+            margin-top: 10px;
+        }
+
+        @keyframes rainbow-move {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* --- Footer Section --- */
+        footer {
+            margin-top: 60px;
+            text-align: center;
+            padding-left: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .footer-sentence {
+            font-size: 1.5rem;
+            color: #555;
+            margin-bottom: 15px;
+            display: inline-block;
+            border-bottom: 2px dashed #aaa;
+            padding-bottom: 5px;
+        }
+
+        .credit-tag {
+            background: #2c3e50;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            display: inline-block;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        /* --- Mobile Responsiveness --- */
+        @media (max-width: 600px) {
+            .notebook-container {
+                padding: 30px 15px;
+                border-radius: 10px;
+            }
+            .notebook-container::before {
+                left: 25px; /* Adjust margin line for mobile */
+            }
+            header {
+                padding-left: 10px;
+            }
+            h1 {
+                font-size: 2.2rem;
+            }
+            .level-badge {
+                font-size: 1.2rem;
+            }
+            .subject-grid {
+                padding-left: 15px;
+                grid-template-columns: 1fr; /* Stack buttons */
+            }
+            .btn-fun {
+                font-size: 1.8rem;
+                height: 120px;
+            }
+            .quote-box {
+                width: 95%;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="notebook-container">
+        
+        <!-- Header Section -->
+        <header>
+            <div class="level-badge">
+                Class Five <span class="highlight-number">5️⃣</span> Level 5
+            </div>
+            
+            <h1>Class Five – All Subjects</h1>
+            
+            <div class="quote-box">
+                <p>"Curiosity is the wick in the candle of learning." 🕯️✨</p>
+            </div>
+        </header>
+
+        <!-- Main Navigation Grid -->
+        <nav class="subject-grid">
+            
+            <!-- 1. Mathematics -->
+            <a href="class-five-math.html" class="subject-card btn-math">
+                <span class="icon">📐</span>
+                Mathematics
+            </a>
+
+            <!-- 2. English -->
+            <a href="class-five-english.html" class="subject-card btn-english">
+                <span class="icon">📖</span>
+                English
+            </a>
+
+            <!-- 3. EVS -->
+            <a href="class-five-evs.html" class="subject-card btn-evs">
+                <span class="icon">🌿</span>
+                EVS
+            </a>
+
+            <!-- 4. Hindi -->
+            <a href="class-five-hindi.html" class="subject-card btn-hindi">
+                <span class="icon">🕉️</span>
+                Hindi
+            </a>
+
+            <!-- 5. Computer -->
+            <a href="class-five-computer.html" class="subject-card btn-computer">
+                <span class="icon">💻</span>
+                Computer
+            </a>
+
+            <!-- 6. GK -->
+            <a href="class-five-gk.html" class="subject-card btn-gk">
+                <span class="icon">🌍</span>
+                General Knowledge
+            </a>
+
+            <!-- 7. Moral Values -->
+            <a href="class-five-moral-values.html" class="subject-card btn-moral">
+                <span class="icon">🤝</span>
+                Moral Values
+            </a>
+
+            <!-- 8. Art -->
+            <a href="class-five-art.html" class="subject-card btn-art">
+                <span class="icon">🎨</span>
+                Art
+            </a>
+
+            <!-- 9. Fun With All Subjects (Special) -->
+            <a href="class-five-fun-with-all-subject.html" class="subject-card btn-fun">
+                <span class="icon">🎢</span>
+                Fun with All Subjects
+            </a>
+
+        </nav>
+
+        <!-- Footer Section -->
+        <footer>
+            <p class="footer-sentence">Believe in yourself and you are halfway there! 🌟</p>
+            <br>
+            <div class="credit-tag">Created by Shrishant Yadav</div>
+        </footer>
+
+    </div>
+
+    <script>
+        // Optional: Add simple console log to verify button clicks
+        // Navigation is handled via standard HTML href attributes for maximum reliability.
+        document.querySelectorAll('.subject-card').forEach(card => {
+            card.addEventListener('click', function() {
+                console.log('Navigating to: ' + this.getAttribute('href'));
+            });
+        });
+    </script>
+
+</body>
+</html>

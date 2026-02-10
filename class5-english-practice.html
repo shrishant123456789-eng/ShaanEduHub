@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 5 English - Advanced Syllabus Practice</title>
+    <style>
+        :root {
+            --primary: #4A90E2; /* Blue */
+            --secondary: #50E3C2; /* Teal */
+            --accent: #F5A623; /* Orange */
+            --danger: #FF5A5F; /* Red */
+            --success: #7ED321; /* Green */
+            --bg: #F9F9F9;
+            --card-bg: #FFFFFF;
+            --text: #333333;
+            --font-stack: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none; /* Prevent copying text easily */
+        }
+
+        body {
+            font-family: var(--font-stack);
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        /* --- Header & Score Panel --- */
+        header {
+            background: white;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 4px solid var(--primary);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            margin: 0;
+            color: var(--primary);
+            font-size: 1.5rem;
+            text-shadow: 1px 1px 0px #ddd;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        #score-panel {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: #fff;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-bottom: 2px solid #eee;
+            font-weight: bold;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .score-item {
+            text-align: center;
+        }
+
+        .score-val {
+            font-size: 1.2rem;
+            display: block;
+        }
+
+        .score-green { color: var(--success); }
+        .score-red { color: var(--danger); }
+        .score-blue { color: var(--primary); }
+
+        /* --- Set Selection --- */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        #set-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .set-btn {
+            background: var(--card-bg);
+            border: 2px solid var(--primary);
+            border-radius: 15px;
+            padding: 15px;
+            font-family: var(--font-stack);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            color: var(--primary);
+            box-shadow: 0 4px 0 var(--primary);
+        }
+
+        .set-btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        .set-btn.active-set {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 0 #2a6db0;
+        }
+
+        /* --- Question Card --- */
+        #question-area {
+            display: none; /* Hidden initially */
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            border: 3px solid #eee;
+            position: relative;
+            min-height: 400px;
+        }
+
+        .q-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            color: #2c3e50;
+        }
+
+        .question-image {
+            width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+            background: #f0f0f0;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: none; /* Only show if image exists */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #aaa;
+            font-size: 2rem;
+        }
+
+        /* --- Options & Inputs --- */
+        .options-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .option-btn {
+            width: 100%;
+            padding: 15px;
+            text-align: left;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: var(--font-stack);
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover:not(.disabled) {
+            border-color: var(--primary);
+            background: #f0f8ff;
+        }
+
+        .option-btn.correct {
+            background: #d4edda;
+            border-color: var(--success);
+            color: #155724;
+        }
+
+        .option-btn.wrong {
+            background: #f8d7da;
+            border-color: var(--danger);
+            color: #721c24;
+        }
+
+        .text-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            font-family: var(--font-stack);
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .long-input {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* --- Controls & Feedback --- */
+        .controls {
+            margin-top: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-family: var(--font-stack);
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 3px 0 #d68e1a;
+        }
+
+        .nav-btn:active {
+            transform: translateY(3px);
+            box-shadow: none;
+        }
+
+        .submit-btn {
+            background: var(--secondary);
+            color: #005c4b;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-family: var(--font-stack);
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #3cb398;
+        }
+
+        .submit-btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        .feedback-area {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+        }
+
+        .feedback-correct {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .feedback-wrong {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* --- Revision Section --- */
+        #revision-section {
+            background: white;
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px dashed var(--primary);
+        }
+
+        .rev-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        #rev-content {
+            display: none;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+
+        .rev-item {
+            margin-bottom: 10px;
+            padding-left: 15px;
+            border-left: 3px solid var(--accent);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            background: #333;
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            h1 { font-size: 1.2rem; }
+            .set-btn { font-size: 0.9rem; padding: 10px; }
+            .question-text { font-size: 1.1rem; }
+            .controls { flex-direction: column; gap: 10px; }
+            .nav-btn, .submit-btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>📘 Class 5 English Advanced</h1>
+        <div class="subtitle">Integrated Syllabus Practice</div>
+    </header>
+
+    <div id="score-panel">
+        <div class="score-item">
+            <span class="score-val score-green" id="score-correct">0</span>
+            <small>Correct</small>
+        </div>
+        <div class="score-item">
+            <span class="score-val score-red" id="score-wrong">0</span>
+            <small>Wrong</small>
+        </div>
+        <div class="score-item">
+            <span class="score-val score-blue" id="score-percent">0%</span>
+            <small>Score</small>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Set Selection -->
+        <h3 style="text-align:center; color: var(--primary);">Select a Practice Set 🎯</h3>
+        <div id="set-selection">
+            <!-- Generated by JS -->
+        </div>
+
+        <!-- Question Area -->
+        <div id="question-area">
+            <div class="q-header">
+                <span id="q-set-num">Set 1</span>
+                <span id="q-progress">Question 1/30</span>
+            </div>
+            
+            <div id="q-content">
+                <!-- Question text and inputs injected here -->
+            </div>
+
+            <div class="feedback-area" id="feedback-display"></div>
+
+            <div class="controls">
+                <button class="nav-btn" id="prev-btn">⬅ Prev</button>
+                <button class="submit-btn" id="submit-action-btn">Check Answer ✨</button>
+                <button class="nav-btn" id="next-btn">Next ➡</button>
+            </div>
+        </div>
+
+        <!-- Quick Revision -->
+        <div id="revision-section">
+            <div class="rev-header" onclick="toggleRevision()">
+                <h3 style="margin:0; color:var(--text)">💡 Quick Revision Notes</h3>
+                <span>▼</span>
+            </div>
+            <div id="rev-content">
+                <div class="rev-item"><strong>Sentence Structure:</strong> Subject (doer) + Verb (action) + Object (receiver).</div>
+                <div class="rev-item"><strong>Nouns:</strong> Abstract nouns name ideas/feelings (e.g., happiness, courage).</div>
+                <div class="rev-item"><strong>Tenses:</strong> V1 (Present), V2 (Past), V3 (Past Participle). Use V3 with has/have/had.</div>
+                <div class="rev-item"><strong>Adjectives:</strong> Order: Quantity -> Quality -> Size -> Age -> Color -> Origin -> Material.</div>
+                <div class="rev-item"><strong>Punctuation:</strong> Use commas for pauses, lists, and before coordinating conjunctions (FANBOYS).</div>
+                <div class="rev-item"><strong>Writing:</strong> A paragraph needs a topic sentence, supporting details, and a concluding sentence.</div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        Designed & Created by SHRISHANT YADAV, ShanEduHub
+    </footer>
+
+    <script>
+        // --- Data Generation ---
+        const totalSets = 10;
+        const questionsPerSet = 30; // 30 * 10 = 300 Questions
+        
+        // Syllabus Topics mapped to Chapter IDs
+        const topics = [
+            { id: 1, name: "Sentence Structure & Types" },
+            { id: 2, name: "Nouns & Pronouns" },
+            { id: 3, name: "Verbs & Tenses" },
+            { id: 4, name: "Adjectives & Adverbs" },
+            { id: 5, name: "Articles & Prepositions" },
+            { id: 6, name: "Conjunctions & Punctuation" },
+            { id: 7, name: "Literature & Reading" },
+            { id: 8, name: "Creative Writing" },
+            { id: 9, name: "Formal Writing" },
+            { id: 10, name: "Speaking & Listening" },
+            { id: 11, name: "Integrated Grammar" },
+            { id: 12, name: "Critical Thinking" }
+        ];
+
+        // Question Bank Generator
+        // We will generate 300 questions. 
+        // Logic: 10 Sets. Each set has a mix of syllabus chapters.
+        
+        const questionBank = [];
+
+        function generateQuestions() {
+            for (let i = 1; i <= totalSets; i++) {
+                let setQuestions = [];
+                // Create 30 questions per set based on the syllabus flow
+                
+                // --- CH 1: Foundations ---
+                setQuestions.push({
+                    type: 'mcq',
+                    q: `Set ${i}: Identify the type of sentence: "Please close the door."`,
+                    options: ["Assertive", "Interrogative", "Imperative", "Exclamatory"],
+                    a: 2 // Imperative
+                });
+                setQuestions.push({
+                    type: 'mcq',
+                    q: `Set ${i}: Which part of speech is the word 'quickly' in: "He ran quickly"?`,
+                    options: ["Noun", "Verb", "Adjective", "Adverb"],
+                    a: 3 // Adverb
+                });
+
+                // --- CH 2: Nouns ---
+                setQuestions.push({
+                    type: 'fill',
+                    q: `Set ${i}: The abstract noun for 'Wise' is ________.`,
+                    a: ["wisdom"]
+                });
+                setQuestions.push({
+                    type: 'mcq',
+                    q: `Set ${i}: Choose the collective noun: "A ______ of wolves."`,
+                    options: ["Herd", "Pack", "Flock", "Swarm"],
+                    a: 1 // Pack
+                });
+
+                // --- CH 3: Verbs ---
+                setQuestions.push({
+                    type: 'mcq',
+                    q: `Set ${i}: Select the correct tense: "She _______ (write) a letter now."`,
+                    options: ["wrote", "is writing", "written", "writes"],
+                    a: 1 
+                });
+                setQuestions.push({
+                    type: 'fill',
+                    q: `Set ${i}: V3 form of the verb 'Go' is ________.`,
+                    a: ["gone"]
+                });
+
+                // --- CH 4: Adjectives ---
+                setQuestions.push({
+                    type: 'mcq',
+                    q: `Set ${i}: Comparative degree of 'Good' is:`,
+                    options: ["Gooder", "Better", "Best", "More Good"],
+                    a: 1
+                });
+                
+                // --- CH 5: Articles/Prepositions ---
+                setQuestions.push({
+                    type: 'mcq',
+                    q: `Set ${i}: I saw ___ one-eyed man.`,
+                    options: ["a", "an", "the", "none"],
+                    a: 0 // 'a' because 'one' starts with 'w' sound
+                });
+                setQuestions.push({
+                    type: 'fill',
+                    q: `Set ${i}: The cat is hiding ________ the table. (Place)`,
+                    a: ["under", "beneath", "below"]
+                });
+
+                // --- CH 6: Conjunctions ---
+                setQuestions.push({
+                    type: 'mcq',
+                    q: `Set ${i}: I wanted to go, ______ it was raining.`,
+                    options: ["and", "but", "so", "or"],
+                    a: 1
+                });
+
+                // --- CH 7: Literature (Generic) ---
+                setQuestions.push({
+                    type: 'short',
+                    q: `Set ${i}: In a story, what do we call the person who fights against the hero?`,
+                    a: ["villain", "antagonist", "enemy"]
+                });
+                setQuestions.push({
+                    type: 'mcq',
+                    q: `Set ${i}: Which word rhymes with 'Bright'?`,
+                    options: ["Bread", "Light", "Great", "Wait"],
+                    a: 1
+                });
+
+                // --- CH 8: Writing ---
+                setQuestions.push({
+                    type: 'long',
+                    q: `Set ${i}: Write a short descriptive sentence about a 'Rainy Day'. Include words like: clouds, umbrella, wet.`,
+                    keywords: ["cloud", "umbrella", "wet", "rain", "water"]
+                });
+
+                // --- CH 9: Formal Writing ---
+                setQuestions.push({
+                    type: 'mcq',
+                    q: `Set ${i}: In a formal letter, where does the date go?`,
+                    options: ["After signature", "Before sender address", "After sender address", "At the bottom"],
+                    a: 2
+                });
+
+                // --- CH 10: Speaking ---
+                setQuestions.push({
+                    type: 'mcq',
+                    q: `Set ${i}: How should you politely ask for water?`,
+                    options: ["Give me water.", "I want water.", "May I have some water, please?", "Water now."],
+                    a: 2
+                });
+
+                // --- Mixed/Integrated ---
+                const extras = [
+                    { t: 'fill', q: `Set ${i}: Correct the error: "He don't like apples." -> "He ______ like apples."`, a: ["doesn't", "does not"] },
+                    { t: 'mcq', q: `Set ${i}: Identify the Subject: "The big red dog barked."`, o: ["The big red dog", "barked", "dog", "red"], a: 0 },
+                    { t: 'tf', q: `Set ${i}: True or False: Proper nouns always start with a capital letter.`, a: true },
+                    { t: 'one', q: `Set ${i}: One word for: "A person who writes poems."`, a: ["poet"] },
+                    { t: 'mcq', q: `Set ${i}: Choose the correctly spelled word.`, o: ["Recieve", "Receive", "Riceive", "Receeve"], a: 1 },
+                    { t: 'fill', q: `Set ${i}: Plural of 'Child' is ________.`, a: ["children"] },
+                    { t: 'mcq', q: `Set ${i}: Which is an interjection?`, o: ["Wow", "Run", "Slowly", "Table"], a: 0 },
+                    { t: 'short', q: `Set ${i}: Change to Future Tense: "I play football."`, a: ["i will play football", "i shall play football"] },
+                    { t: 'mcq', q: `Set ${i}: 'Honesty' is what kind of noun?`, o: ["Common", "Proper", "Abstract", "Collective"], a: 2 },
+                    { t: 'long', q: `Set ${i}: Explain why we use a 'Full Stop' at the end of a sentence.`, keywords: ["end", "stop", "finish", "complete"] },
+                    { t: 'fill', q: `Set ${i}: Homophone: "I can't ______ (sea/see) you."`, a: ["see"] },
+                    { t: 'mcq', q: `Set ${i}: Which is a compound sentence?`, o: ["I like tea.", "I like tea and he likes coffee.", "Because it rained, we stayed in.", "Running is fun."], a: 1 },
+                    { t: 'short', q: `Set ${i}: Write the opposite of 'Ancient'.`, a: ["modern", "new", "recent"] },
+                    { t: 'mcq', q: `Set ${i}: 'Myself' is a ________ pronoun.`, o: ["Personal", "Reflexive", "Relative", "Demonstrative"], a: 1 },
+                    { t: 'fill', q: `Set ${i}: Comparison: As busy as a ________.`, a: ["bee"] }
+                ];
+
+                extras.forEach(ex => {
+                   if(ex.t === 'mcq') setQuestions.push({ type: 'mcq', q: ex.q, options: ex.o, a: ex.a });
+                   else if(ex.t === 'tf') setQuestions.push({ type: 'mcq', q: ex.q, options: ["True", "False"], a: ex.a ? 0 : 1 });
+                   else if(ex.t === 'long') setQuestions.push({ type: 'long', q: ex.q, keywords: ex.keywords });
+                   else setQuestions.push({ type: ex.t, q: ex.q, a: ex.a });
+                });
+
+                questionBank.push(setQuestions);
+            }
+        }
+
+        generateQuestions();
+
+        // --- State Management ---
+        let currentSetIndex = 0;
+        let currentQuestionIndex = 0;
+        let stats = { correct: 0, wrong: 0, total: 0 };
+        let questionState = {}; // Store answered status per question ID (set-idx)
+
+        // --- DOM Elements ---
+        const setContainer = document.getElementById('set-selection');
+        const qArea = document.getElementById('question-area');
+        const qContent = document.getElementById('q-content');
+        const feedbackDiv = document.getElementById('feedback-display');
+        const scoreCorrect = document.getElementById('score-correct');
+        const scoreWrong = document.getElementById('score-wrong');
+        const scorePercent = document.getElementById('score-percent');
+        const qSetNum = document.getElementById('q-set-num');
+        const qProgress = document.getElementById('q-progress');
+        const nextBtn = document.getElementById('next-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const submitBtn = document.getElementById('submit-action-btn');
+
+        // --- Initialization ---
+        function init() {
+            renderSets();
+            updateScoreboard();
+        }
+
+        function renderSets() {
+            setContainer.innerHTML = '';
+            for(let i=0; i<totalSets; i++) {
+                const btn = document.createElement('button');
+                btn.className = `set-btn ${i === currentSetIndex ? 'active-set' : ''}`;
+                btn.innerText = `Set ${i+1}`;
+                btn.onclick = () => loadSet(i);
+                setContainer.appendChild(btn);
+            }
+        }
+
+        function loadSet(index) {
+            currentSetIndex = index;
+            currentQuestionIndex = 0;
+            renderSets(); // Update active class
+            qArea.style.display = 'block';
+            loadQuestion();
+            qArea.scrollIntoView({behavior: 'smooth'});
+        }
+
+        function loadQuestion() {
+            const q = questionBank[currentSetIndex][currentQuestionIndex];
+            const qId = `${currentSetIndex}-${currentQuestionIndex}`;
+            const isAnswered = questionState[qId] ? true : false;
+
+            // Header Info
+            qSetNum.innerText = `Set ${currentSetIndex + 1}`;
+            qProgress.innerText = `Question ${currentQuestionIndex + 1}/${questionsPerSet}`;
+            
+            // Reset UI
+            feedbackDiv.style.display = 'none';
+            feedbackDiv.className = 'feedback-area';
+            qContent.innerHTML = '';
+
+            // Render Question Text
+            const textEl = document.createElement('div');
+            textEl.className = 'question-text';
+            // Determine emoji based on type
+            let icon = '❓';
+            if(q.type === 'long') icon = '📝';
+            if(q.type === 'mcq') icon = '🤔';
+            textEl.innerHTML = `${icon} ${q.q}`;
+            qContent.appendChild(textEl);
+
+            // Render Inputs/Options
+            if (q.type === 'mcq') {
+                const grid = document.createElement('div');
+                grid.className = 'options-grid';
+                q.options.forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerText = opt;
+                    
+                    if (isAnswered) {
+                        btn.classList.add('disabled');
+                        btn.disabled = true;
+                        if (idx === q.a) btn.classList.add('correct');
+                        else if (idx === questionState[qId].userSelected) btn.classList.add('wrong');
+                    } else {
+                        btn.onclick = () => checkMCQ(idx, btn);
+                    }
+                    grid.appendChild(btn);
+                });
+                qContent.appendChild(grid);
+                submitBtn.style.display = 'none'; // Auto submit for MCQ
+            } else {
+                // Text Inputs
+                submitBtn.style.display = isAnswered ? 'none' : 'block';
+                const input = document.createElement(q.type === 'long' ? 'textarea' : 'input');
+                input.className = `text-input ${q.type === 'long' ? 'long-input' : ''}`;
+                input.placeholder = q.type === 'long' ? "Write your answer here..." : "Type your answer...";
+                
+                if (isAnswered) {
+                    input.value = questionState[qId].userText;
+                    input.disabled = true;
+                    showFeedback(questionState[qId].isCorrect, q);
+                }
+                
+                input.id = 'current-input';
+                qContent.appendChild(input);
+                
+                // Unbind old listener and bind new
+                submitBtn.onclick = () => checkTextAnswer(q);
+            }
+
+            // Navigation State
+            prevBtn.disabled = currentQuestionIndex === 0;
+            nextBtn.disabled = currentQuestionIndex === questionsPerSet - 1;
+            
+            // Opacity for disabled buttons
+            prevBtn.style.opacity = prevBtn.disabled ? 0.5 : 1;
+            nextBtn.style.opacity = nextBtn.disabled ? 0.5 : 1;
+        }
+
+        // --- Checking Logic ---
+
+        function checkMCQ(selectedIndex, btnElement) {
+            const q = questionBank[currentSetIndex][currentQuestionIndex];
+            const qId = `${currentSetIndex}-${currentQuestionIndex}`;
+            const isCorrect = selectedIndex === q.a;
+
+            // Update State
+            questionState[qId] = {
+                answered: true,
+                isCorrect: isCorrect,
+                userSelected: selectedIndex
+            };
+
+            // UI Update
+            const allBtns = document.querySelectorAll('.option-btn');
+            allBtns.forEach((btn, idx) => {
+                btn.classList.add('disabled');
+                btn.disabled = true;
+                if(idx === q.a) btn.classList.add('correct');
+                if(idx === selectedIndex && !isCorrect) btn.classList.add('wrong');
+            });
+
+            updateStats(isCorrect);
+            showFeedback(isCorrect, q);
+        }
+
+        function checkTextAnswer(q) {
+            const input = document.getElementById('current-input');
+            const userVal = input.value.trim().toLowerCase();
+            const qId = `${currentSetIndex}-${currentQuestionIndex}`;
+            
+            if(!userVal) return; // Don't submit empty
+
+            let isCorrect = false;
+
+            if (q.type === 'long') {
+                // Long Answer: Check for at least 2 keywords
+                let matchCount = 0;
+                q.keywords.forEach(kw => {
+                    if (userVal.includes(kw.toLowerCase())) matchCount++;
+                });
+                // Lenient check: if matches > 0 (for kids) or ratio
+                isCorrect = matchCount >= 1; 
+            } else {
+                // Fill/Short/One word: Exact match from array
+                isCorrect = q.a.some(ans => userVal === ans.toLowerCase());
+            }
+
+            // Update State
+            questionState[qId] = {
+                answered: true,
+                isCorrect: isCorrect,
+                userText: input.value
+            };
+
+            input.disabled = true;
+            submitBtn.style.display = 'none';
+            
+            updateStats(isCorrect);
+            showFeedback(isCorrect, q);
+        }
+
+        function updateStats(isCorrect) {
+            stats.total++;
+            if(isCorrect) stats.correct++;
+            else stats.wrong++;
+            updateScoreboard();
+        }
+
+        function updateScoreboard() {
+            scoreCorrect.innerText = stats.correct;
+            scoreWrong.innerText = stats.wrong;
+            const pct = stats.total === 0 ? 0 : Math.round((stats.correct / stats.total) * 100);
+            scorePercent.innerText = pct + "%";
+        }
+
+        function showFeedback(isCorrect, q) {
+            feedbackDiv.style.display = 'block';
+            if(isCorrect) {
+                feedbackDiv.className = 'feedback-area feedback-correct';
+                feedbackDiv.innerText = "बहुत बढ़िया ⭐ (Very Good!)";
+            } else {
+                feedbackDiv.className = 'feedback-area feedback-wrong';
+                let msg = "फिर से प्रयास करें (Try Again).";
+                if(q.type !== 'mcq' && q.type !== 'long') {
+                    msg += ` Correct answer: ${q.a[0]}`;
+                }
+                feedbackDiv.innerText = msg;
+            }
+        }
+
+        // --- Navigation Buttons ---
+        nextBtn.onclick = () => {
+            if(currentQuestionIndex < questionsPerSet - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            }
+        };
+
+        prevBtn.onclick = () => {
+            if(currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        };
+
+        // --- Helpers ---
+        function toggleRevision() {
+            const c = document.getElementById('rev-content');
+            c.style.display = c.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // Run
+        document.addEventListener('DOMContentLoaded', init);
+
+    </script>
+</body>
+</html>

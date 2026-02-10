@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Class 4 – Art | ShanEduHub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FFB7B2; /* Pastel Red */
+            --secondary: #B5EAD7; /* Pastel Green */
+            --accent: #C7CEEA; /* Pastel Purple */
+            --yellow: #FFDAC1; /* Pastel Orange/Yellow */
+            --dark: #4A4063; /* Text Color */
+            --white: #ffffff;
+            --success: #75D890;
+            --error: #FF8585;
+            --card-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Patrick Hand', cursive; /* Handwritten style */
+            background-color: #F9F7F2;
+            color: var(--dark);
+            margin: 0;
+            padding: 0;
+            font-size: 18px;
+            line-height: 1.5;
+        }
+
+        /* --- HEADER & HERO --- */
+        header {
+            background: var(--primary);
+            padding: 15px;
+            text-align: center;
+            border-bottom: 3px dashed var(--white);
+            position: relative;
+            z-index: 100;
+        }
+
+        h1 {
+            font-family: 'Fredoka', sans-serif;
+            margin: 0;
+            color: var(--white);
+            font-size: 2rem;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: var(--dark);
+            margin-top: 5px;
+            font-weight: bold;
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            background: var(--white);
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .nav-btn {
+            display: inline-block;
+            background: var(--accent);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            margin-right: 8px;
+            font-family: 'Patrick Hand', cursive;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--dark);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .nav-btn.active {
+            background: var(--primary);
+            color: var(--white);
+            transform: scale(1.05);
+        }
+
+        /* --- LIVE SCORE PANEL --- */
+        #score-panel {
+            position: sticky;
+            top: 0;
+            background: var(--dark);
+            color: var(--white);
+            padding: 8px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            z-index: 999;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .score-item span {
+            font-weight: bold;
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .score-good { color: var(--success); }
+        .score-bad { color: var(--error); }
+
+        /* --- MAIN CONTENT --- */
+        main {
+            padding: 15px;
+            max-width: 800px;
+            margin: 0 auto;
+            min-height: 80vh;
+        }
+
+        .section {
+            display: none; /* Hidden by default */
+            animation: fadeIn 0.5s;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+            border-bottom: 2px solid var(--secondary);
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+
+        /* --- CARDS & TASKS --- */
+        .task-card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
+            border: 2px solid var(--secondary);
+            position: relative;
+        }
+
+        .task-badge {
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            background: var(--yellow);
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border: 1px solid var(--dark);
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .memory-tip {
+            background: #FFF9C4;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            margin-top: 10px;
+            border-left: 4px solid #FBC02D;
+            display: none; /* Hidden until answered */
+        }
+
+        /* --- FORM ELEMENTS --- */
+        button.action-btn {
+            background: var(--secondary);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-family: 'Patrick Hand', cursive;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #00695C;
+            transition: background 0.3s;
+        }
+
+        button.action-btn:hover {
+            background: #80CBC4;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .option-btn {
+            background: #f0f0f0;
+            border: 2px solid #ddd;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Patrick Hand', cursive;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+
+        .option-btn.selected {
+            background: var(--secondary);
+            border-color: #00695C;
+        }
+
+        .option-btn.correct { background: var(--success); color: white; border-color: green; }
+        .option-btn.wrong { background: var(--error); color: white; border-color: red; }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid var(--accent);
+            border-radius: 8px;
+            font-family: 'Patrick Hand', cursive;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        /* --- CANVAS --- */
+        .canvas-container {
+            position: relative;
+            background: white;
+            border: 3px dashed var(--dark);
+            border-radius: 10px;
+            overflow: hidden;
+            touch-action: none;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 300px;
+            cursor: crosshair;
+        }
+        .controls {
+            display: flex;
+            gap: 5px;
+            margin-top: 5px;
+            flex-wrap: wrap;
+        }
+        .color-swatch {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            cursor: pointer;
+        }
+        .color-swatch.active { transform: scale(1.2); border-color: var(--dark); }
+
+        /* --- 3D / AR SIMULATION --- */
+        .object-3d {
+            width: 100px;
+            height: 100px;
+            margin: 20px auto;
+            background: var(--primary);
+            border: 3px solid var(--dark);
+            transition: transform 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            border-radius: 10px;
+        }
+
+        /* --- FEEDBACK POPUP --- */
+        .feedback-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            text-align: center;
+            animation: popIn 0.3s;
+        }
+        .feedback-correct { background: #E8F5E9; border: 1px solid var(--success); color: #2E7D32; }
+        .feedback-wrong { background: #FFEBEE; border: 1px solid var(--error); color: #C62828; }
+
+        @keyframes popIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: var(--accent);
+            color: var(--dark);
+            font-weight: bold;
+            margin-top: 30px;
+        }
+
+        /* --- REVISION CARDS --- */
+        .revision-card {
+            background: var(--white);
+            border-left: 5px solid var(--primary);
+            padding: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <h1>Class 4 – Art</h1>
+        <div class="subtitle">Creative, Fun & Interactive Art Learning</div>
+    </header>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <button class="nav-btn active" onclick="app.showSection('tutorials')">Drawing</button>
+        <button class="nav-btn" onclick="app.showSection('painting')">Stories</button>
+        <button class="nav-btn" onclick="app.showSection('crafts')">Crafts</button>
+        <button class="nav-btn" onclick="app.showSection('quizzes')">Challenges</button>
+        <button class="nav-btn" onclick="app.showSection('culture')">Global Art</button>
+        <button class="nav-btn" onclick="app.showSection('music')">Music & Art</button>
+        <button class="nav-btn" onclick="app.showSection('vocab')">Vocab</button>
+        <button class="nav-btn" onclick="app.showSection('ar')">3D Fun</button>
+        <button class="nav-btn" onclick="app.showSection('longq')">Advanced</button>
+        <button class="nav-btn" onclick="app.showSection('revision')">Revise</button>
+    </nav>
+
+    <!-- Score Panel -->
+    <div id="score-panel">
+        <div class="score-item">⭐ Score: <span id="score-val">0</span></div>
+        <div class="score-item">✅ <span id="correct-val" class="score-good">0</span></div>
+        <div class="score-item">❌ <span id="wrong-val" class="score-bad">0</span></div>
+        <div class="score-item">🎯 <span id="acc-val">0%</span></div>
+    </div>
+
+    <!-- Main Content -->
+    <main id="app-container">
+
+        <!-- 1. DRAWING TUTORIALS -->
+        <div id="tutorials" class="section active">
+            <div class="section-title">✏️ Interactive Drawing</div>
+            <div class="task-card">
+                <h3>Canvas Practice</h3>
+                <p>Use the canvas below to complete the tasks!</p>
+                <div class="canvas-container">
+                    <canvas id="artCanvas"></canvas>
+                </div>
+                <div class="controls">
+                    <div class="color-swatch" style="background:black" onclick="app.setColor('black')"></div>
+                    <div class="color-swatch" style="background:red" onclick="app.setColor('red')"></div>
+                    <div class="color-swatch" style="background:blue" onclick="app.setColor('blue')"></div>
+                    <div class="color-swatch" style="background:green" onclick="app.setColor('green')"></div>
+                    <div class="color-swatch" style="background:white; border: 2px solid #ccc" onclick="app.setColor('white')"></div>
+                    <button onclick="app.clearCanvas()" style="margin-left:auto; padding: 2px 10px;">Clear</button>
+                </div>
+            </div>
+            <div id="drawing-tasks-container"></div>
+        </div>
+
+        <!-- 3. STORY ART -->
+        <div id="painting" class="section">
+            <div class="section-title">🦁 Story-Based Art</div>
+            <p style="text-align:center">Read the mini-story and answer the art question!</p>
+            <div id="story-tasks-container"></div>
+        </div>
+
+        <!-- 4. CRAFTS -->
+        <div id="crafts" class="section">
+            <div class="section-title">✂️ DIY & Crafts</div>
+            <div id="craft-tasks-container"></div>
+        </div>
+
+        <!-- 5. QUIZZES -->
+        <div id="quizzes" class="section">
+            <div class="section-title">🏆 Challenges & Quizzes</div>
+            <div id="quiz-tasks-container"></div>
+        </div>
+
+        <!-- 6. CULTURE -->
+        <div id="culture" class="section">
+            <div class="section-title">🌍 Global Art Styles</div>
+            <div id="culture-tasks-container"></div>
+        </div>
+
+        <!-- 7. MUSIC -->
+        <div id="music" class="section">
+            <div class="section-title">🎵 Music & Art</div>
+            <div id="music-tasks-container"></div>
+        </div>
+
+        <!-- 8. VOCAB -->
+        <div id="vocab" class="section">
+            <div class="section-title">📖 Art Vocabulary</div>
+            <div id="vocab-tasks-container"></div>
+        </div>
+
+        <!-- 2. 3D & AR -->
+        <div id="ar" class="section">
+            <div class="section-title">🧊 3D Shapes & Views</div>
+            <div class="task-card">
+                <div style="text-align:center;">
+                    <div class="object-3d" id="cube">📦</div>
+                    <input type="range" min="0" max="360" value="0" oninput="document.getElementById('cube').style.transform = `rotateY(${this.value}deg) rotateX(10deg)`" style="width:80%">
+                    <p>Drag slider to rotate the Cube!</p>
+                </div>
+            </div>
+            <div id="ar-tasks-container"></div>
+        </div>
+
+        <!-- ADVANCED LONG Q -->
+        <div id="longq" class="section">
+            <div class="section-title">🧠 Advanced Questions</div>
+            <p style="text-align:center; font-size: 0.9rem;">Type your answer. Keywords matter!</p>
+            <div id="long-tasks-container"></div>
+        </div>
+
+        <!-- REVISION -->
+        <div id="revision" class="section">
+            <div class="section-title">⚡ Quick Revision</div>
+            <div id="revision-container"></div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        Created and Designed by SHRISHANT YADAV – ShanEduHub
+    </footer>
+
+    <script>
+        /* --- APPLICATION LOGIC --- */
+        const app = {
+            stats: { correct: 0, wrong: 0, total: 0, score: 0 },
+            
+            init: function() {
+                this.setupCanvas();
+                this.renderAllTasks();
+                this.generateRevision();
+            },
+
+            showSection: function(id) {
+                document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+                document.getElementById(id).classList.add('active');
+                
+                document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+                event.target.classList.add('active');
+                
+                window.scrollTo(0,0);
+            },
+
+            updateScore: function(isCorrect, points = 10) {
+                this.stats.total++;
+                if(isCorrect) {
+                    this.stats.correct++;
+                    this.stats.score += points;
+                } else {
+                    this.stats.wrong++;
+                }
+                
+                // Update DOM
+                document.getElementById('score-val').textContent = this.stats.score;
+                document.getElementById('correct-val').textContent = this.stats.correct;
+                document.getElementById('wrong-val').textContent = this.stats.wrong;
+                
+                const acc = Math.round((this.stats.correct / this.stats.total) * 100);
+                document.getElementById('acc-val').textContent = acc + "%";
+            },
+
+            // --- CANVAS LOGIC ---
+            setupCanvas: function() {
+                const canvas = document.getElementById('artCanvas');
+                const ctx = canvas.getContext('2d');
+                let painting = false;
+
+                // Set resolution
+                canvas.width = canvas.parentElement.offsetWidth;
+                canvas.height = 300;
+
+                ctx.lineWidth = 4;
+                ctx.lineCap = 'round';
+                ctx.strokeStyle = 'black';
+
+                function startPosition(e) {
+                    painting = true;
+                    draw(e);
+                }
+                function endPosition() {
+                    painting = false;
+                    ctx.beginPath();
+                }
+                function draw(e) {
+                    if (!painting) return;
+                    e.preventDefault(); // Prevent scrolling on touch
+                    const rect = canvas.getBoundingClientRect();
+                    const x = (e.clientX || e.touches[0].clientX) - rect.left;
+                    const y = (e.clientY || e.touches[0].clientY) - rect.top;
+
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                }
+
+                // Event Listeners
+                canvas.addEventListener('mousedown', startPosition);
+                canvas.addEventListener('mouseup', endPosition);
+                canvas.addEventListener('mousemove', draw);
+                
+                canvas.addEventListener('touchstart', startPosition, {passive: false});
+                canvas.addEventListener('touchend', endPosition);
+                canvas.addEventListener('touchmove', draw, {passive: false});
+
+                this.ctx = ctx;
+                this.canvas = canvas;
+            },
+
+            setColor: function(color) {
+                this.ctx.strokeStyle = color;
+                if(color === 'white') this.ctx.lineWidth = 15; // Eraser
+                else this.ctx.lineWidth = 4;
+            },
+
+            clearCanvas: function() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            },
+
+            // --- DATA & RENDERERS ---
+            
+            // 1. GENERATE TASKS
+            // Structure: { id, type: 'mcq'|'input'|'action', section, question, options[], answer, explanation, tip }
+            
+            renderAllTasks: function() {
+                // Drawing Tasks (Logic Check)
+                const drawingData = [
+                    { q: "Draw a circle. What feeling does a round shape usually give?", opts: ["Softness/Calm", "Anger/Sharpness"], ans: "Softness/Calm", exp: "Circles are curved and soft, often representing peace.", tip: "🔴 Think of a ball or sun!" },
+                    { q: "When drawing a landscape, things far away should be...", opts: ["Larger", "Smaller"], ans: "Smaller", exp: "Perspective makes distant objects look smaller.", tip: "⛰️ Look at mountains in distance." },
+                    { q: "To make a color lighter (Tint), which color do you mix?", opts: ["Black", "White"], ans: "White", exp: "White adds light to a color.", tip: "⚪ White = Light!" },
+                    { q: "Which tool helps you draw straight lines?", opts: ["Eraser", "Ruler"], ans: "Ruler", exp: "A ruler provides a straight edge.", tip: "📏 Measure it right." },
+                    { q: "What do we call a drawing of a person's face?", opts: ["Landscape", "Portrait"], ans: "Portrait", exp: "Portrait focuses on the face/expression.", tip: "👩 Think of a selfie!" }
+                ];
+                this.renderSection('drawing-tasks-container', drawingData, 'mcq');
+
+                // Story Tasks
+                const storyData = [
+                    { q: "In the story 'The Brave Lion', Leo needs a warm color for his mane. Which one?", opts: ["Blue", "Orange"], ans: "Orange", exp: "Orange is a warm, fiery color suitable for a lion.", tip: "🦁 Fire colors!" },
+                    { q: "To show a sad rainy day in a story, which color palette is best?", opts: ["Cool Blues/Greys", "Bright Yellows/Reds"], ans: "Cool Blues/Greys", exp: "Cool colors represent sadness or rain.", tip: "🌧️ Think of water." },
+                    { q: "Drawing 'movement' lines behind a running rabbit makes it look...", opts: ["Sleeping", "Fast"], ans: "Fast", exp: "Action lines show speed.", tip: "💨 Whoosh lines!" },
+                    { q: "If drawing a night scene story, what color paper is best to start?", opts: ["White", "Dark Blue/Black"], ans: "Dark Blue/Black", exp: "Dark backgrounds set the night mood immediately.", tip: "🌙 Night sky is dark." }
+                ];
+                this.renderSection('story-tasks-container', storyData, 'mcq');
+
+                // Craft Tasks
+                const craftData = [
+                    { q: "What is 'Origami'?", opts: ["Paper Folding", "Clay Modeling"], ans: "Paper Folding", exp: "Origami is the Japanese art of paper folding.", tip: "🦢 Paper Crane." },
+                    { q: "Which material is best for sticking heavy cardboard?", opts: ["Glue Stick", "Liquid Glue/Tape"], ans: "Liquid Glue/Tape", exp: "Heavy materials need stronger adhesive.", tip: "💧 Stronger bond." },
+                    { q: "What does 'Recycled Art' mean?", opts: ["Buying new art", "Using old waste materials"], ans: "Using old waste materials", exp: "It saves the environment by reusing items.", tip: "♻️ Trash to Treasure." },
+                    { q: "When working with clay, what tool cuts it easily?", opts: ["Wire/Thread", "Spoon"], ans: "Wire/Thread", exp: "Wire slices through clay cleanly.", tip: "🧵 Like slicing cheese." }
+                ];
+                this.renderSection('craft-tasks-container', craftData, 'mcq');
+
+                // Quiz Tasks
+                const quizData = [
+                    { q: "Which of these is a Secondary Color?", opts: ["Red", "Green", "Blue"], ans: "Green", exp: "Green is made by mixing Blue + Yellow.", tip: "🟢 Blue + Yellow = Green" },
+                    { q: "Who painted the 'Mona Lisa'?", opts: ["Picasso", "Da Vinci"], ans: "Da Vinci", exp: "Leonardo da Vinci painted it.", tip: "🖼️ Famous smile." },
+                    { q: "What is a 'Mosaic' made of?", opts: ["Small tiles/glass", "Large paper sheets"], ans: "Small tiles/glass", exp: "Mosaics are patterns of small pieces.", tip: "🧩 Puzzle pieces." },
+                    { q: "Abstract art looks exactly like real life. True or False?", opts: ["True", "False"], ans: "False", exp: "Abstract art uses shapes and colors, not realistic images.", tip: "🎨 Shapes and feelings." }
+                ];
+                this.renderSection('quiz-tasks-container', quizData, 'mcq');
+
+                // Culture Tasks
+                const cultureData = [
+                    { q: "Madhubani painting comes from which country?", opts: ["China", "India"], ans: "India", exp: "It is a folk art from Bihar, India.", tip: "🇮🇳 Traditional Indian Art." },
+                    { q: "Pointillism uses what to make pictures?", opts: ["Long lines", "Tiny dots"], ans: "Tiny dots", exp: "The image is made entirely of dots.", tip: "⚫⚫⚫ Dot Art." },
+                    { q: "Egyptian art often shows people looking...", opts: ["Sideways (Profile)", "Front"], ans: "Sideways (Profile)", exp: "Ancient Egyptian figures are drawn in profile.", tip: "👁️ Walk like an Egyptian." },
+                    { q: "African masks are often used for...", opts: ["Sleeping", "Ceremonies/Dance"], ans: "Ceremonies/Dance", exp: "Masks have spiritual and cultural meaning.", tip: "🎭 Cultural dance." }
+                ];
+                this.renderSection('culture-tasks-container', cultureData, 'mcq');
+
+                // Music Tasks
+                const musicData = [
+                    { q: "Fast, loud music inspires what kind of lines?", opts: ["Zig-zag/Jagged", "Smooth/Wavy"], ans: "Zig-zag/Jagged", exp: "Energy in music translates to sharp lines.", tip: "⚡ High energy!" },
+                    { q: "Which color fits a slow, sad lullaby?", opts: ["Bright Orange", "Soft Blue"], ans: "Soft Blue", exp: "Blue is calming and melancholic.", tip: "😴 Sleepy colors." },
+                    { q: "Rhythm in art means...", opts: ["Repetition of patterns", "Drawing once"], ans: "Repetition of patterns", exp: "Just like a beat in music, patterns repeat.", tip: "🥁 Repeat the beat." }
+                ];
+                this.renderSection('music-tasks-container', musicData, 'mcq');
+
+                // Vocab Tasks
+                const vocabData = [
+                    { q: "What is 'Texture'?", opts: ["How it feels/looks", "The size"], ans: "How it feels/looks", exp: "Rough, smooth, soft are textures.", tip: "🌵 Cactus is rough." },
+                    { q: "What is 'Hue'?", opts: ["A shape", "Another name for Color"], ans: "Another name for Color", exp: "Hue simply means color.", tip: "🌈 Hue = Color." },
+                    { q: "What is a 'Still Life'?", opts: ["Drawing moving cars", "Drawing non-moving objects"], ans: "Drawing non-moving objects", exp: "Fruit bowls or vases are still life.", tip: "🍎 Fruit bowl." }
+                ];
+                this.renderSection('vocab-tasks-container', vocabData, 'mcq');
+
+                // AR Tasks
+                const arData = [
+                    { q: "A cube has how many faces?", opts: ["4", "6"], ans: "6", exp: "Top, bottom, and 4 sides.", tip: "🎲 Like a dice." },
+                    { q: "Which shape is 3D?", opts: ["Square", "Sphere"], ans: "Sphere", exp: "A square is flat (2D), a sphere is round (3D).", tip: "⚽ Ball vs Paper." }
+                ];
+                this.renderSection('ar-tasks-container', arData, 'mcq');
+
+                // Long Questions (Advanced)
+                const longData = [
+                    { q: "How do you make the color Purple? (Name two colors)", keys: ["red", "blue"], exp: "Red mixed with Blue makes Purple." },
+                    { q: "Name three things you can find in a Landscape painting.", keys: ["tree", "sun", "mountain", "river", "sky", "cloud", "grass"], exp: "Nature elements like trees, sky, mountains." },
+                    { q: "Why do we use an eraser? Explain in one sentence.", keys: ["mistake", "remove", "fix", "rub"], exp: "To remove mistakes or clear pencil marks." }
+                ];
+                this.renderLongSection('long-tasks-container', longData);
+            },
+
+            // RENDER MCQ SECTION
+            renderSection: function(containerId, data, type) {
+                const container = document.getElementById(containerId);
+                data.forEach((item, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'task-card';
+                    card.innerHTML = `
+                        <div class="task-badge">Task ${index+1}</div>
+                        <div class="question-text">${item.q}</div>
+                        <div class="options-grid" id="${containerId}-opts-${index}"></div>
+                        <div class="memory-tip" id="${containerId}-tip-${index}">💡 Memory Tip: ${item.tip}<br><em>${item.exp}</em></div>
+                        <div class="feedback-box" id="${containerId}-feed-${index}"></div>
+                    `;
+
+                    const optsContainer = card.querySelector(`#${containerId}-opts-${index}`);
+                    item.opts.forEach(opt => {
+                        const btn = document.createElement('button');
+                        btn.className = 'option-btn';
+                        btn.textContent = opt;
+                        btn.onclick = () => this.checkMCQ(btn, opt, item.ans, `${containerId}-feed-${index}`, `${containerId}-tip-${index}`, optsContainer);
+                        optsContainer.appendChild(btn);
+                    });
+
+                    container.appendChild(card);
+                });
+            },
+
+            checkMCQ: function(btnElement, selected, correct, feedId, tipId, parent) {
+                // Disable all buttons in this card
+                const allBtns = parent.querySelectorAll('button');
+                allBtns.forEach(b => b.disabled = true);
+
+                const feedBox = document.getElementById(feedId);
+                const tipBox = document.getElementById(tipId);
+
+                if (selected === correct) {
+                    btnElement.classList.add('correct');
+                    feedBox.className = 'feedback-box feedback-correct';
+                    feedBox.innerHTML = `<strong>Excellent! ⭐</strong>`;
+                    this.updateScore(true);
+                } else {
+                    btnElement.classList.add('wrong');
+                    // Highlight correct one
+                    allBtns.forEach(b => {
+                        if(b.textContent === correct) b.classList.add('correct');
+                    });
+                    feedBox.className = 'feedback-box feedback-wrong';
+                    feedBox.innerHTML = `<strong>Try Again!</strong><br>Correct answer: ${correct}`;
+                    this.updateScore(false);
+                }
+                feedBox.style.display = 'block';
+                tipBox.style.display = 'block';
+            },
+
+            // RENDER LONG ANSWER SECTION
+            renderLongSection: function(containerId, data) {
+                const container = document.getElementById(containerId);
+                data.forEach((item, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'task-card';
+                    card.innerHTML = `
+                        <div class="task-badge">Adv Task ${index+1}</div>
+                        <div class="question-text">${item.q}</div>
+                        <textarea id="long-input-${index}" rows="3" placeholder="Type answer here..."></textarea>
+                        <button class="action-btn" onclick="app.checkLongAnswer(${index}, '${item.keys.join(',')}', '${item.exp}', this)">Check Answer</button>
+                        <div class="feedback-box" id="long-feed-${index}"></div>
+                    `;
+                    container.appendChild(card);
+                });
+            },
+
+            checkLongAnswer: function(index, keysString, explanation, btn) {
+                const input = document.getElementById(`long-input-${index}`).value.toLowerCase();
+                const feedBox = document.getElementById(`long-feed-${index}`);
+                const keys = keysString.split(',');
+                
+                // Logic: Must contain at least one keyword
+                const isCorrect = keys.some(key => input.includes(key));
+
+                if (isCorrect) {
+                    feedBox.className = 'feedback-box feedback-correct';
+                    feedBox.innerHTML = `<strong>Great Job! ⭐</strong><br>${explanation}`;
+                    this.updateScore(true, 20); // 20 points for long answers
+                } else {
+                    feedBox.className = 'feedback-box feedback-wrong';
+                    feedBox.innerHTML = `<strong>Not quite.</strong><br>Keywords needed: ${keys.join(' or ')}.<br>${explanation}`;
+                    this.updateScore(false);
+                }
+                feedBox.style.display = 'block';
+                btn.disabled = true;
+            },
+
+            // GENERATE REVISION CONTENT
+            generateRevision: function() {
+                const container = document.getElementById('revision-container');
+                const facts = [
+                    "🔴 Primary Colors: Red, Blue, Yellow",
+                    "🟢 Secondary Colors: Green, Orange, Purple",
+                    "⬜ Tint = Color + White",
+                    "⬛ Shade = Color + Black",
+                    "🇮🇳 Madhubani is Indian Folk Art",
+                    "🇯🇵 Origami is Japanese Paper Art",
+                    "🎨 Portrait = Face, Landscape = Nature",
+                    "🧊 Cube = 3D Square",
+                    "🎵 Fast Music = Sharp Lines"
+                ];
+
+                facts.forEach(fact => {
+                    const div = document.createElement('div');
+                    div.className = 'revision-card';
+                    div.innerHTML = `<strong>Reminder:</strong> ${fact}`;
+                    container.appendChild(div);
+                });
+            }
+        };
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            app.init();
+        });
+
+    </script>
+</body>
+</html>

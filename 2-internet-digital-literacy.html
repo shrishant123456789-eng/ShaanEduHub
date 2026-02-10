@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internet & Digital Literacy - ShanEduHub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #fffdf0;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
+            --primary-color: #6c5ce7;
+            --accent-color: #ffeaa7;
+            --success: #00b894;
+            --error: #d63031;
+            --border-radius: 12px;
+            --shadow: 4px 4px 0px rgba(0,0,0,0.1);
+            --font-main: 'Patrick Hand', cursive;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-main);
+            font-weight: bold; /* Global Bold Rule */
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            font-size: 18px;
+            padding-bottom: 60px;
+        }
+
+        /* --- Header --- */
+        header {
+            background: #a29bfe;
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            border-bottom: 4px solid #6c5ce7;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 20px;
+        }
+
+        h1 { font-size: 2.5rem; text-shadow: 2px 2px 0px rgba(0,0,0,0.2); }
+        h2 { font-size: 2rem; margin-bottom: 1rem; color: #6c5ce7; }
+        h3 { font-size: 1.5rem; margin-bottom: 0.5rem; color: #d35400; }
+
+        /* --- Sticky Score Panel --- */
+        #score-panel {
+            position: sticky;
+            top: 0;
+            background: #dfe6e9;
+            border-bottom: 3px solid #b2bec3;
+            padding: 10px;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .score-item {
+            background: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            border: 2px solid #2d3436;
+        }
+
+        /* --- Layout Containers --- */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .section-card {
+            background: var(--card-bg);
+            border: 2px solid #2d3436;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        /* --- Notes Styling --- */
+        .note-block {
+            background: #f0f8ff; /* AliceBlue */
+            border-left: 5px solid #0984e3;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .indian-example {
+            background: #fff3cd;
+            border: 2px dashed #ffc107;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 8px;
+        }
+
+        .memory-tip {
+            background: #d4edda;
+            color: #155724;
+            padding: 8px;
+            border-radius: 8px;
+            margin-top: 8px;
+            display: inline-block;
+        }
+
+        .img-placeholder {
+            width: 100%;
+            height: 150px;
+            background: #ecf0f1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #95a5a6;
+            margin: 15px 0;
+            color: #7f8c8d;
+            font-size: 1.2rem;
+            border-radius: 8px;
+        }
+
+        /* --- Questions Styling --- */
+        .question-box {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #000;
+            margin-bottom: 20px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button.option-btn {
+            padding: 12px;
+            background: #f1f2f6;
+            border: 2px solid #2f3542;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.2s;
+            text-align: left;
+        }
+
+        button.option-btn:hover { background: #dfe4ea; transform: translateY(-2px); }
+        
+        button.option-btn.correct { background: #55efc4; border-color: #00b894; }
+        button.option-btn.wrong { background: #ff7675; border-color: #d63031; }
+
+        .feedback-msg {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .long-answer-area textarea {
+            width: 100%;
+            height: 120px;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #2d3436;
+            border-radius: 8px;
+            font-size: 1rem;
+            resize: vertical;
+        }
+
+        .check-btn, .nav-btn {
+            background: #0984e3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            margin-top: 10px;
+            box-shadow: 2px 2px 0 #000;
+        }
+
+        .check-btn:active, .nav-btn:active { transform: translateY(2px); box-shadow: none; }
+
+        .imp-q-card {
+            background: #ffeaa7;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #fdcb6e;
+        }
+
+        /* --- Footer --- */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #2d3436;
+            color: #fff;
+            margin-top: 50px;
+            border-top: 4px solid #6c5ce7;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            #score-panel { font-size: 0.9rem; flex-wrap: wrap; }
+            .score-item { margin: 2px; }
+            h1 { font-size: 2rem; }
+        }
+
+        .hidden { display: none; }
+        .revision-points ul { list-style-type: square; padding-left: 20px; }
+        .revision-points li { margin-bottom: 8px; }
+
+    </style>
+</head>
+<body>
+
+    <!-- HERO SECTION -->
+    <header>
+        <h1>Internet & Digital Literacy</h1>
+        <p>Master the Digital World | Simple & Advanced</p>
+    </header>
+
+    <!-- SCORE PANEL -->
+    <div id="score-panel">
+        <div class="score-item">Correct: <span id="score-correct">0</span></div>
+        <div class="score-item">Wrong: <span id="score-wrong">0</span></div>
+        <div class="score-item">Total: <span id="score-total">0</span></div>
+        <div class="score-item">Marks: <span id="score-marks">0</span></div>
+    </div>
+
+    <div class="container">
+
+        <!-- NOTES SECTION -->
+        <section class="section-card">
+            <h2>📚 Comprehensive Notes</h2>
+            <p>Read carefully. All questions are based on these notes.</p>
+            <hr style="margin: 15px 0;">
+
+            <!-- TOPIC 1 -->
+            <div class="note-block">
+                <h3>1. How the Internet Works (Advanced)</h3>
+                <p>The internet is a massive global network of interconnected computers communicating via standardized protocols.</p>
+                <div class="img-placeholder">[Diagram: Client sends Request -> Router -> Server -> Response]</div>
+                <p><strong>The Process:</strong></p>
+                <ul>
+                    <li><strong>Client:</strong> Your device (Phone/Laptop) requests information.</li>
+                    <li><strong>Server:</strong> A powerful computer in a data center that stores websites.</li>
+                    <li><strong>Packets:</strong> Data is chopped into small chunks called packets to travel faster.</li>
+                </ul>
+                <div class="indian-example">
+                    🇮🇳 <strong>Daily Life Example:</strong> Think of the Internet like the <strong>Indian Railway System</strong>.
+                    <br>• The <strong>Tracks</strong> are the physical cables (Fiber Optics).
+                    <br>• The <strong>Trains</strong> are the data packets carrying passengers (information).
+                    <br>• The <strong>Stations</strong> are the Servers where trains stop to pick up/drop data.
+                </div>
+                <div class="memory-tip">💡 Tip: Client Asks, Server Serves.</div>
+            </div>
+
+            <!-- TOPIC 2 -->
+            <div class="note-block">
+                <h3>2. Infrastructure & Protocols</h3>
+                <p>Protocols are rules that computers follow to understand each other.</p>
+                <ul>
+                    <li><strong>TCP/IP:</strong> The foundational language of the internet. TCP ensures delivery; IP addresses where to go.</li>
+                    <li><strong>HTTP vs HTTPS:</strong> HTTP is plain text (unsafe). HTTPS (Secure) uses encryption (SSL/TLS).</li>
+                </ul>
+                <div class="img-placeholder">[Visual: Unlocked Padlock (HTTP) vs Locked Padlock (HTTPS)]</div>
+                <div class="indian-example">
+                    🇮🇳 <strong>Analogy:</strong>
+                    <br>• <strong>HTTP:</strong> Sending a postcard. Anyone can read it on the way.
+                    <br>• <strong>HTTPS:</strong> Sending a sealed envelope inside a locked box. Only the receiver has the key.
+                </div>
+            </div>
+
+            <!-- TOPIC 3 -->
+            <div class="note-block">
+                <h3>3. DNS (Domain Name System)</h3>
+                <p>DNS is the "Phonebook of the Internet". It translates human-friendly names (google.com) into computer-friendly IP addresses (142.250.193.78).</p>
+                <div class="img-placeholder">[Diagram: User types domain -> DNS Server -> Returns IP -> Browser loads site]</div>
+                <div class="indian-example">
+                    🇮🇳 <strong>Example:</strong> You don't memorize your friend's 10-digit phone number. You just tap their name in your contacts. <strong>DNS is that contact list.</strong>
+                </div>
+                <div class="memory-tip">💡 DNS = Internet's Translator.</div>
+            </div>
+
+            <!-- TOPIC 4 -->
+            <div class="note-block">
+                <h3>4. Advanced Browser Usage</h3>
+                <p>A browser (Chrome, Firefox) is an application that renders HTML code into visual web pages.</p>
+                <ul>
+                    <li><strong>Cache:</strong> Stores images/files locally to load pages faster next time.</li>
+                    <li><strong>Cookies:</strong> Small files saving your login status or preferences.</li>
+                    <li><strong>Incognito Mode:</strong> Doesn't save history locally, but your ISP still sees you.</li>
+                </ul>
+                <div class="img-placeholder">[Icon: Browser Engine Rendering HTML]</div>
+            </div>
+
+            <!-- TOPIC 5 -->
+            <div class="note-block">
+                <h3>5. Smart Search Techniques</h3>
+                <p>Google has billions of pages. Use "Search Operators" to find exact results.</p>
+                <ul>
+                    <li><code>"search term"</code> : Finds exact phrase.</li>
+                    <li><code>site:edu</code> : Search only educational sites.</li>
+                    <li><code>filetype:pdf</code> : Find only PDF documents.</li>
+                </ul>
+                <div class="indian-example">
+                    🇮🇳 <strong>Scenario:</strong> You need a project report on pollution. Search: <strong>"Air Pollution India" filetype:pdf</strong> to get ready-made reports instead of blogs.
+                </div>
+            </div>
+
+            <!-- TOPIC 6 -->
+            <div class="note-block">
+                <h3>6. Cloud Computing Fundamentals</h3>
+                <p>Cloud computing means storing and accessing data over the internet instead of your computer's hard drive.</p>
+                <p><strong>Types:</strong> IaaS (Infrastructure), PaaS (Platform), SaaS (Software like Gmail).</p>
+                <div class="img-placeholder">[Cloud Icon connecting Phone, Laptop, Tablet]</div>
+                <div class="indian-example">
+                    🇮🇳 <strong>Example:</strong> Storing photos on a pen drive is <strong>Local Storage</strong>. Storing photos on Google Photos is <strong>Cloud Storage</strong>. You can access Google Photos from any phone if you lose yours.
+                </div>
+            </div>
+
+            <!-- TOPIC 7 -->
+            <div class="note-block">
+                <h3>7. Advanced Email Systems</h3>
+                <p>Email uses specific protocols to send and receive messages.</p>
+                <ul>
+                    <li><strong>SMTP:</strong> Sends email (Pushing out).</li>
+                    <li><strong>IMAP:</strong> Syncs email across devices (Reads from server).</li>
+                    <li><strong>POP3:</strong> Downloads email to one device and deletes from server (Old style).</li>
+                </ul>
+                <div class="memory-tip">💡 SMTP = Sending Mail To People.</div>
+            </div>
+
+            <!-- TOPIC 8 -->
+            <div class="note-block">
+                <h3>8. Digital Footprint & Identity</h3>
+                <p>Everything you do online leaves a trace.</p>
+                <ul>
+                    <li><strong>Active Footprint:</strong> What you intentionally post (Instagram photos, Tweets).</li>
+                    <li><strong>Passive Footprint:</strong> What is collected without you knowing (IP address, location history).</li>
+                </ul>
+                <div class="indian-example">
+                    🇮🇳 <strong>Reality Check:</strong> Even if you delete a WhatsApp status, someone might have screenshotted it. The internet never forgets.
+                </div>
+            </div>
+
+            <!-- TOPIC 9 -->
+            <div class="note-block">
+                <h3>9. Privacy & Data Protection</h3>
+                <p>Your data is currency. Protect it.</p>
+                <ul>
+                    <li><strong>Permissions:</strong> Why does a calculator app need your contacts? Deny it.</li>
+                    <li><strong>Trackers:</strong> Scripts on websites that follow you to show ads.</li>
+                </ul>
+                <div class="img-placeholder">[Shield Icon blocking tracking scripts]</div>
+            </div>
+
+            <!-- TOPIC 10 -->
+            <div class="note-block">
+                <h3>10. Cybersecurity Fundamentals</h3>
+                <p>Protecting systems from digital attacks.</p>
+                <ul>
+                    <li><strong>Phishing:</strong> Fake emails pretending to be Bank/Netflix to steal passwords.</li>
+                    <li><strong>Ransomware:</strong> Virus that locks your files and demands money.</li>
+                    <li><strong>2FA (Two-Factor Auth):</strong> Password + OTP. Essential security layer.</li>
+                </ul>
+                <div class="indian-example">
+                    🇮🇳 <strong>Scam Alert:</strong> "KYC Update" SMS with a link is usually a phishing scam. Never click links from unknown numbers.
+                </div>
+            </div>
+        </section>
+
+        <!-- IMPORTANT QUESTIONS SECTION -->
+        <section class="section-card">
+            <h2>🔥 30 Important Questions (Exam Oriented)</h2>
+            <div id="imp-questions-container">
+                <!-- Populated via JS -->
+            </div>
+        </section>
+
+        <!-- PRACTICE QUESTIONS SECTION -->
+        <section class="section-card">
+            <h2>📝 Practice Questions (70+)</h2>
+            <p>Test your knowledge. Score updates live!</p>
+            <div id="quiz-container" class="question-box">
+                <div id="quiz-question-text">Loading Question...</div>
+                <div id="quiz-options" class="options-grid"></div>
+                <div id="quiz-feedback" class="feedback-msg"></div>
+                <button id="next-question-btn" class="nav-btn hidden" onclick="nextQuestion()">Next Question ➡️</button>
+            </div>
+        </section>
+
+        <!-- ADVANCED LONG QUESTIONS -->
+        <section class="section-card">
+            <h2>🧠 Advanced Long Answer Questions</h2>
+            <p>Type your answer. The AI logic will check for key concepts.</p>
+            <div id="long-qa-container">
+                <!-- Populated via JS -->
+            </div>
+        </section>
+
+        <!-- REVISION SECTION -->
+        <section class="section-card">
+            <h2>⚡ Quick Revision</h2>
+            <button class="nav-btn" onclick="document.getElementById('revision-content').classList.toggle('hidden')">Toggle Revision Notes</button>
+            <div id="revision-content" class="hidden revision-points" style="margin-top:20px;">
+                <ul>
+                    <li><strong>Internet:</strong> Network of networks using TCP/IP.</li>
+                    <li><strong>DNS:</strong> Translates Domains to IPs.</li>
+                    <li><strong>HTTPs:</strong> Secure version of HTTP using encryption.</li>
+                    <li><strong>Cloud:</strong> Servers accessed over the internet (SaaS, PaaS, IaaS).</li>
+                    <li><strong>Phishing:</strong> Fraudulent attempt to steal data via fake identity.</li>
+                    <li><strong>Digital Footprint:</strong> Trail of data you leave online.</li>
+                    <li><strong>Search Operators:</strong> filetype:, site:, " ".</li>
+                    <li><strong>Cache:</strong> Local storage for faster loading.</li>
+                    <li><strong>SMTP:</strong> Protocol for SENDING mail.</li>
+                    <li><strong>Firewall:</strong> Barrier between trusted and untrusted networks.</li>
+                </ul>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>Designed & Created by SHRISHANT YADAV</p>
+        <p>ShanEduHub</p>
+    </footer>
+
+    <script>
+        // --- DATA STORE ---
+
+        // 30 Important Questions
+        const impQuestions = [
+            { q: "What is the primary protocol for the Internet?", a: "TCP/IP (Transmission Control Protocol/Internet Protocol)", e: "It defines how data is transmitted and routed." },
+            { q: "Difference between Internet and WWW?", a: "Internet is the hardware infrastructure; WWW is the information system on top of it.", e: "Internet = Tracks; WWW = Trains." },
+            { q: "What is a URL?", a: "Uniform Resource Locator.", e: "It is the address of a specific resource on the web." },
+            { q: "What does DNS stand for?", a: "Domain Name System.", e: "Resolves domain names to IP addresses." },
+            { q: "Port number for HTTP and HTTPS?", a: "HTTP: 80, HTTPS: 443.", e: "Standard ports defined by IANA." },
+            { q: "What is Bandwidth?", a: "Maximum data transfer rate of a network.", e: "Measured in bits per second (bps)." },
+            { q: "What is Latency?", a: "Time taken for data to travel from source to destination.", e: "Lower latency means faster response (Ping)." },
+            { q: "What is an ISP?", a: "Internet Service Provider.", e: "Companies like Jio, Airtel that give access." },
+            { q: "Define Phishing.", a: "A cyber attack using fake emails to steal sensitive data.", e: "Often impersonates banks or trusted services." },
+            { q: "What is a Cookie?", a: "Small text file stored by browser to remember user data.", e: "Used for sessions, carts, and tracking." },
+            { q: "What is Cloud Computing?", a: "Delivery of computing services over the internet.", e: "Includes storage, processing, and software." },
+            { q: "Full form of VPN?", a: "Virtual Private Network.", e: "Encrypts internet traffic and masks IP." },
+            { q: "What is the Dark Web?", a: "Part of the web not indexed by search engines, requiring special software.", e: "Accessible via Tor." },
+            { q: "What is 2FA?", a: "Two-Factor Authentication.", e: "Requires two forms of identification (Password + OTP)." },
+            { q: "Difference between CC and BCC?", a: "CC is visible to all; BCC is hidden.", e: "Carbon Copy vs Blind Carbon Copy." },
+            { q: "What is a Search Engine?", a: "Software system designed to search for information on WWW.", e: "Google, Bing, DuckDuckGo." },
+            { q: "What is SaaS?", a: "Software as a Service.", e: "Cloud apps like Google Docs, Netflix." },
+            { q: "What is a Firewall?", a: "Network security system monitoring traffic.", e: "Blocks unauthorized access." },
+            { q: "What is an IP Address?", a: "Unique numerical label for a device on a network.", e: "e.g., 192.168.1.1" },
+            { q: "What is HTML?", a: "HyperText Markup Language.", e: "Standard language for creating web pages." },
+            { q: "What is Encryption?", a: "Encoding data so only authorized parties can read it.", e: "Key to digital privacy." },
+            { q: "What is Malware?", a: "Malicious Software.", e: "Includes viruses, worms, trojans." },
+            { q: "What is Social Engineering?", a: "Manipulating people into divulging confidential info.", e: "Hacking the human, not the machine." },
+            { q: "What is a Browser Extension?", a: "Small software module for customizing a browser.", e: "e.g., AdBlocker." },
+            { q: "What is a Cache?", a: "Hardware or software component that stores data for faster future requests.", e: "Clearing cache fixes many loading issues." },
+            { q: "What is a DDOS attack?", a: "Distributed Denial of Service.", e: "Overwhelming a server with traffic to crash it." },
+            { q: "What is Net Neutrality?", a: "Principle that ISPs should treat all data equally.", e: "No fast lanes for specific sites." },
+            { q: "What is IoT?", a: "Internet of Things.", e: "Physical objects with sensors connecting to the internet (Smart bulbs)." },
+            { q: "What is a MAC address?", a: "Media Access Control address.", e: "Unique hardware ID of a network card." },
+            { q: "What is a Hyperlink?", a: "A reference to data that the user can follow by clicking.", e: "Connects web pages together." }
+        ];
+
+        // 70+ Practice Questions (Mixed Types)
+        const practiceQuestions = [
+            // Basics & Internet
+            { id: 1, t: 'mcq', q: "Who is known as the father of the Internet?", o: ["Bill Gates", "Vint Cerf", "Steve Jobs", "Tim Berners-Lee"], a: 1, e: "Vint Cerf co-designed TCP/IP protocols." },
+            { id: 2, t: 'mcq', q: "The standard protocol of the Internet is:", o: ["TCP/IP", "HTML", "Flash", "Java"], a: 0, e: "TCP/IP is the fundamental communication language." },
+            { id: 3, t: 'tf', q: "The Web and the Internet are exactly the same thing.", o: ["True", "False"], a: 1, e: "The Internet is the network; the Web is the pages on it." },
+            { id: 4, t: 'mcq', q: "Which is an example of a Web Browser?", o: ["Google", "Chrome", "Windows", "Facebook"], a: 1, e: "Google is a search engine; Chrome is the browser." },
+            { id: 5, t: 'fill', q: "I___ stands for Internet Service Provider.", o: ["ISP", "IDP", "ICP", "IAP"], a: 0, e: "ISP provides access to the internet." },
+            { id: 6, t: 'mcq', q: "In 'https', the 's' stands for:", o: ["Simple", "Secure", "Server", "System"], a: 1, e: "It indicates SSL/TLS encryption." },
+            { id: 7, t: 'mcq', q: "IPv4 addresses are ___ bits long.", o: ["16", "32", "64", "128"], a: 1, e: "IPv4 uses 32-bit addresses (e.g., 192.168.0.1)." },
+            
+            // Infrastructure
+            { id: 8, t: 'mcq', q: "Data travels across the internet in small chunks called:", o: ["Boxes", "Packets", "Envelopes", "Files"], a: 1, e: "Packets allow efficient transmission." },
+            { id: 9, t: 'mcq', q: "Which device connects different networks together?", o: ["Hub", "Switch", "Router", "Modem"], a: 2, e: "Routers direct traffic between networks." },
+            { id: 10, t: 'tf', q: "Fiber optic cables transmit data using light.", o: ["True", "False"], a: 0, e: "Light travels faster and carries more data than copper." },
+            { id: 11, t: 'mcq', q: "The speed of data transfer is called:", o: ["Frequency", "Bandwidth", "Clock Speed", "RPM"], a: 1, e: "Bandwidth determines capacity." },
+            { id: 12, t: 'mcq', q: "DNS translates domain names into:", o: ["URL", "MAC Address", "IP Address", "Binary"], a: 2, e: "Computers use IP addresses to find servers." },
+            { id: 13, t: 'mcq', q: "Which is a valid Top Level Domain (TLD)?", o: ["@gmail", ".com", "#hashtag", "www"], a: 1, e: ".com, .org, .edu are TLDs." },
+            { id: 14, t: 'mcq', q: "Error 404 means:", o: ["Server Down", "Forbidden", "Page Not Found", "Bad Request"], a: 2, e: "The standard HTTP error for missing resources." },
+
+            // Search & Browsers
+            { id: 15, t: 'mcq', q: "Which operator searches for a specific file type?", o: ["type:", "file:", "filetype:", "ext:"], a: 2, e: "Example: filetype:pdf" },
+            { id: 16, t: 'mcq', q: "Incognito mode hides your history from:", o: ["Your ISP", "The websites", "Your local browser", "The government"], a: 2, e: "It only prevents saving history on YOUR device." },
+            { id: 17, t: 'mcq', q: "To search for an exact phrase, use:", o: ["Brackets ()", "Quotes \"\"", "Asterisk *", "Minus -"], a: 1, e: "Quotes enforce exact match." },
+            { id: 18, t: 'tf', q: "Clearing cookies logs you out of websites.", o: ["True", "False"], a: 0, e: "Cookies store session tokens." },
+            { id: 19, t: 'mcq', q: "Which is NOT a search engine?", o: ["Bing", "DuckDuckGo", "Yahoo", "Firefox"], a: 3, e: "Firefox is a browser." },
+            { id: 20, t: 'mcq', q: "What is a 'Bookmark'?", o: ["A virus", "A saved link", "A cookie", "A history file"], a: 1, e: "Saves a URL for quick access." },
+            { id: 21, t: 'mcq', q: "A 'plugin' or 'extension' adds:", o: ["Speed", "Functionality", "Memory", "Hardware"], a: 1, e: "Adds features like ad-blocking." },
+
+            // Email
+            { id: 22, t: 'mcq', q: "Which protocol sends email?", o: ["POP3", "IMAP", "SMTP", "HTTP"], a: 2, e: "Simple Mail Transfer Protocol." },
+            { id: 23, t: 'mcq', q: "Unsolicited bulk email is called:", o: ["Trash", "Spam", "Draft", "Archive"], a: 1, e: "Junk or commercial bulk email." },
+            { id: 24, t: 'mcq', q: "Which field hides recipients from each other?", o: ["To", "Subject", "CC", "BCC"], a: 3, e: "Blind Carbon Copy." },
+            { id: 25, t: 'tf', q: "An email attachment can contain a virus.", o: ["True", "False"], a: 0, e: "Always scan attachments before opening." },
+            { id: 26, t: 'mcq', q: "The text part of an email address before @ is:", o: ["Domain", "Username", "Protocol", "TLD"], a: 1, e: "username@domain.com" },
+            { id: 27, t: 'mcq', q: "IMAP allows you to:", o: ["Send only", "Sync mail across devices", "Delete permanently", "Change passwords"], a: 1, e: "Mail stays on the server." },
+            { id: 28, t: 'fill', q: "A fraudulent email trying to steal bank info is P___.", o: ["Phishing", "Pharming", "Pinging", "Posting"], a: 0, e: "Phishing is a common scam." },
+
+            // Cloud
+            { id: 29, t: 'mcq', q: "Which is a Cloud Storage service?", o: ["MS Paint", "Google Drive", "VLC Player", "Notepad"], a: 1, e: "Stores files online." },
+            { id: 30, t: 'mcq', q: "SaaS stands for:", o: ["Storage as a Service", "Software as a Service", "System as a Server", "Safety as a Standard"], a: 1, e: "Software delivered online." },
+            { id: 31, t: 'tf', q: "Cloud computing requires an internet connection.", o: ["True", "False"], a: 0, e: "You need internet to access cloud servers." },
+            { id: 32, t: 'mcq', q: "Google Docs is an example of:", o: ["IaaS", "PaaS", "SaaS", "Hardware"], a: 2, e: "It's software you use via browser." },
+            { id: 33, t: 'mcq', q: "Main benefit of Cloud Storage?", o: ["Works offline", "Access from anywhere", "Cheaper hardware", "Better gaming"], a: 1, e: "Portability of data." },
+            { id: 34, t: 'mcq', q: "Who owns the data in the cloud?", o: ["The user (usually)", "The government", "The internet provider", "No one"], a: 0, e: "Legally the user, but stored by provider." },
+            { id: 35, t: 'mcq', q: "AWS stands for:", o: ["Apple Web System", "Amazon Web Services", "Azure Web Storage", "Advanced Web Site"], a: 1, e: "Amazon's cloud platform." },
+
+            // Security & Footprint
+            { id: 36, t: 'mcq', q: "A 'Digital Footprint' is:", o: ["Your fingerprint", "Your online history/trace", "A shoe brand", "A virus"], a: 1, e: "Data left behind by users." },
+            { id: 37, t: 'mcq', q: "Which password is strongest?", o: ["password123", "iloveyou", "Tr@v3l$88!", "admin"], a: 2, e: "Mix of cases, numbers, symbols." },
+            { id: 38, t: 'mcq', q: "Two-Factor Authentication requires:", o: ["Two passwords", "Two users", "Something you know + Something you have", "Two devices"], a: 2, e: "e.g., Password + OTP." },
+            { id: 39, t: 'mcq', q: "Malware that locks files for money is:", o: ["Spyware", "Ransomware", "Adware", "Freeware"], a: 1, e: "Demands a ransom." },
+            { id: 40, t: 'tf', q: "Public Wi-Fi is always safe for banking.", o: ["True", "False"], a: 1, e: "Public Wi-Fi can be intercepted easily." },
+            { id: 41, t: 'mcq', q: "What should you check before entering card details?", o: ["Site colors", "The Lock icon (HTTPS)", "The font", "The logo"], a: 1, e: "Lock means encryption is active." },
+            { id: 42, t: 'mcq', q: "Social Engineering attacks target:", o: ["Firewalls", "Human psychology", "Software bugs", "Hardware"], a: 1, e: "Tricking people." },
+
+            // Advanced Concepts
+            { id: 43, t: 'mcq', q: "A 'Firewall' can be:", o: ["Hardware only", "Software only", "Both Hardware and Software", "None"], a: 2, e: "It filters traffic." },
+            { id: 44, t: 'mcq', q: "Which relies on 'Blockchain'?", o: ["Email", "Cryptocurrency", "DNS", "Streaming"], a: 1, e: "Bitcoin uses blockchain." },
+            { id: 45, t: 'mcq', q: "IoT refers to:", o: ["Internet of Time", "Internet of Things", "Input of Text", "Internal of Tech"], a: 1, e: "Connected physical devices." },
+            { id: 46, t: 'mcq', q: "Ping measures:", o: ["Speed", "Latency", "Cost", "Volume"], a: 1, e: "Response time in ms." },
+            { id: 47, t: 'mcq', q: "What is a 'Botnet'?", o: ["A robot network", "Network of infected computers", "Faster internet", "A chat app"], a: 1, e: "Used for DDOS attacks." },
+            { id: 48, t: 'mcq', q: "VPN hides your:", o: ["Screen", "IP Address", "Keyboard", "Mouse"], a: 1, e: "Masks your location." },
+            { id: 49, t: 'mcq', q: "Open Source Software means:", o: ["It's free", "Source code is available to public", "It has no owner", "It's full of viruses"], a: 1, e: "Anyone can inspect/modify code." },
+
+            // General Literacy
+            { id: 50, t: 'mcq', q: "Ctrl + C is for:", o: ["Cut", "Copy", "Paste", "Close"], a: 1, e: "Standard shortcut." },
+            { id: 51, t: 'mcq', q: "PDF stands for:", o: ["Portable Document Format", "Public Data File", "Private Document Folder", "Print Data Format"], a: 0, e: "Standard for docs." },
+            { id: 52, t: 'mcq', q: "1024 Megabytes equals:", o: ["1 KB", "1 GB", "1 TB", "1 PB"], a: 1, e: "Binary conversion." },
+            { id: 53, t: 'mcq', q: "Which image format supports transparency?", o: ["JPG", "PNG", "BMP", "TXT"], a: 1, e: "PNG supports alpha channel." },
+            { id: 54, t: 'tf', q: "Deleting a file sends it to Recycle Bin.", o: ["True", "False"], a: 0, e: "Usually true on PC." },
+            { id: 55, t: 'mcq', q: "The 'Home' page is:", o: ["Your house", "First page of a website", "Last page", "Error page"], a: 1, e: "Landing page." },
+            { id: 56, t: 'mcq', q: "To refresh a page, press:", o: ["F1", "F5", "F10", "Alt+F4"], a: 1, e: "F5 or Ctrl+R." },
+            
+            // Indian Context & Safety
+            { id: 57, t: 'mcq', q: "In India, the cyber crime reporting portal is:", o: ["cybercrime.gov.in", "police.com", "help.in", "scam.org"], a: 0, e: "Official government portal." },
+            { id: 58, t: 'mcq', q: "OTP stands for:", o: ["One Time Password", "On The Phone", "One True Pairing", "Over The Protocol"], a: 0, e: "Valid for one session." },
+            { id: 59, t: 'mcq', q: "UPI stands for:", o: ["Unified Payment Interface", "Union Pay India", "Unique Pay ID", "Universal Protocol Internet"], a: 0, e: "Indian instant payment system." },
+            { id: 60, t: 'tf', q: "Bank employees will ask for your PIN/OTP.", o: ["True", "False"], a: 1, e: "NEVER share PIN/OTP." },
+            { id: 61, t: 'mcq', q: "Which is a valid Indian domain extension?", o: [".in", ".ind", ".bharat", ".india"], a: 0, e: ".in is the TLD." },
+            { id: 62, t: 'mcq', q: "DigiLocker is used for:", o: ["Storing movies", "Storing official documents", "Locking apps", "Chatting"], a: 1, e: "Govt of India initiative." },
+            { id: 63, t: 'mcq', q: "Aadhaar number has ___ digits.", o: ["10", "11", "12", "16"], a: 2, e: "12-digit unique ID." },
+            
+            // Mixed Bag
+            { id: 64, t: 'mcq', q: "What is 'Buffering'?", o: ["Cleaning", "Pre-loading data", "Deleting", "Hacking"], a: 1, e: "Loading video ahead of play." },
+            { id: 65, t: 'mcq', q: "The brain of the computer is:", o: ["RAM", "CPU", "HDD", "Monitor"], a: 1, e: "Central Processing Unit." },
+            { id: 66, t: 'mcq', q: "Which is an Output device?", o: ["Keyboard", "Mouse", "Printer", "Scanner"], a: 2, e: "Produces physical output." },
+            { id: 67, t: 'mcq', q: "BIOS is stored in:", o: ["RAM", "ROM", "HDD", "USB"], a: 1, e: "Read Only Memory." },
+            { id: 68, t: 'mcq', q: "GUI stands for:", o: ["Graphical User Interface", "Global User Internet", "General Unit Input", "Game UI"], a: 0, e: "Icons and windows." },
+            { id: 69, t: 'mcq', q: "HTML tags are surrounded by:", o: ["{}", "[]", "<>", "()"], a: 2, e: "Angle brackets." },
+            { id: 70, t: 'mcq', q: "Who owns the Internet?", o: ["USA", "Google", "No one", "United Nations"], a: 2, e: "It's a decentralized network." }
+        ];
+
+        // 10 Long Questions (Advanced)
+        const longQuestions = [
+            { id: 'l1', q: "Explain how DNS works in simple terms using a real-life analogy.", k: ["phonebook", "contacts", "ip address", "domain", "translate", "number"], m: "Must mention Phonebook/Contacts analogy and translation of Domain to IP." },
+            { id: 'l2', q: "Differentiate between HTTP and HTTPS. Why is HTTPS crucial for banking?", k: ["encrypt", "secure", "ssl", "tls", "lock", "intercept", "safe"], m: "HTTPS uses encryption (SSL/TLS). Crucial for preventing data theft." },
+            { id: 'l3', q: "What is a Digital Footprint? How can you manage it?", k: ["active", "passive", "trace", "history", "privacy", "post", "delete"], m: "Mention Active vs Passive. Manage by privacy settings and careful posting." },
+            { id: 'l4', q: "Explain the difference between Cloud Storage and Local Storage.", k: ["internet", "hard drive", "server", "access anywhere", "physical", "offline"], m: "Cloud = Internet/Remote Server. Local = Hard Drive/Pendrive." },
+            { id: 'l5', q: "What is Phishing? How can you identify a Phishing email?", k: ["fake", "link", "bank", "scam", "urgent", "spelling", "sender"], m: "Fake emails stealing info. Identify by urgent tone, bad spelling, weird links." },
+            { id: 'l6', q: "Describe the Client-Server model.", k: ["request", "response", "browser", "host", "service", "ask"], m: "Client requests, Server responds. Like customer and waiter." },
+            { id: 'l7', q: "What is Two-Factor Authentication (2FA) and why is it important?", k: ["layer", "otp", "phone", "second", "password", "security"], m: "Extra security layer. Something you know (pass) + have (phone)." },
+            { id: 'l8', q: "How do Search Engines (like Google) find results?", k: ["crawl", "index", "spider", "bot", "rank", "keyword"], m: "Crawling (Bots), Indexing (Database), Ranking (Relevance)." },
+            { id: 'l9', q: "What is the difference between Cache and Cookies?", k: ["speed", "load", "files", "login", "track", "session", "user"], m: "Cache = Files for speed. Cookies = User data/Login." },
+            { id: 'l10', q: "Explain the concept of Net Neutrality.", k: ["equal", "speed", "block", "isp", "slow", "discrimination", "traffic"], m: "ISPs must treat all traffic equally. No blocking or throttling specific sites." }
+        ];
+
+        // --- STATE & DOM ---
+        let state = {
+            correct: 0,
+            wrong: 0,
+            total: 0,
+            marks: 0,
+            currentQ: 0
+        };
+
+        const scoreEls = {
+            c: document.getElementById('score-correct'),
+            w: document.getElementById('score-wrong'),
+            t: document.getElementById('score-total'),
+            m: document.getElementById('score-marks')
+        };
+
+        // --- INIT ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderImpQuestions();
+            renderLongQuestions();
+            loadQuizQuestion();
+        });
+
+        // --- CORE FUNCTIONS ---
+
+        function updateScore(isCorrect, points) {
+            state.total++;
+            if (isCorrect) {
+                state.correct++;
+                state.marks += points;
+            } else {
+                state.wrong++;
+            }
+            
+            // DOM Update
+            scoreEls.c.textContent = state.correct;
+            scoreEls.w.textContent = state.wrong;
+            scoreEls.t.textContent = state.total;
+            scoreEls.m.textContent = state.marks;
+
+            // Percentage Calc logic can be added if needed, currently showing raw marks
+            // const pct = Math.round((state.correct / state.total) * 100);
+        }
+
+        function renderImpQuestions() {
+            const container = document.getElementById('imp-questions-container');
+            impQuestions.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'imp-q-card';
+                div.innerHTML = `<strong>Q${index+1}: ${item.q}</strong><br>
+                                 <span style="color:#006266">Ans: ${item.a}</span><br>
+                                 <em style="font-size:0.9rem; color:#636e72">(${item.e})</em>`;
+                container.appendChild(div);
+            });
+        }
+
+        // --- QUIZ ENGINE ---
+        function loadQuizQuestion() {
+            if (state.currentQ >= practiceQuestions.length) {
+                document.getElementById('quiz-container').innerHTML = `<div style="text-align:center; padding:20px;">
+                    <h3>🎉 Quiz Complete!</h3>
+                    <p>You scored ${state.marks} marks.</p>
+                </div>`;
+                return;
+            }
+
+            const q = practiceQuestions[state.currentQ];
+            document.getElementById('quiz-question-text').innerText = `Q${state.currentQ + 1}: ${q.q}`;
+            
+            const optionsDiv = document.getElementById('quiz-options');
+            optionsDiv.innerHTML = '';
+            document.getElementById('quiz-feedback').style.display = 'none';
+            document.getElementById('next-question-btn').classList.add('hidden');
+
+            q.o.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => checkQuizAnswer(idx, btn, q);
+                optionsDiv.appendChild(btn);
+            });
+        }
+
+        function checkQuizAnswer(selectedIdx, btn, qData) {
+            // Disable all buttons
+            const btns = document.querySelectorAll('.option-btn');
+            btns.forEach(b => b.disabled = true);
+
+            const isCorrect = (selectedIdx === qData.a);
+            const feedback = document.getElementById('quiz-feedback');
+            
+            if (isCorrect) {
+                btn.classList.add('correct');
+                btn.innerText += " ✅";
+                feedback.className = 'feedback-msg';
+                feedback.style.background = '#d4edda';
+                feedback.style.color = '#155724';
+                feedback.innerHTML = `<strong>Excellent! ⭐</strong><br>${qData.e}`;
+                updateScore(true, 1); // 1 Mark for practice
+            } else {
+                btn.classList.add('wrong');
+                btn.innerText += " ❌";
+                // Highlight correct
+                btns[qData.a].classList.add('correct');
+                feedback.className = 'feedback-msg';
+                feedback.style.background = '#f8d7da';
+                feedback.style.color = '#721c24';
+                feedback.innerHTML = `<strong>Incorrect.</strong><br>Correct: ${qData.o[qData.a]}<br>${qData.e}`;
+                updateScore(false, 0);
+            }
+
+            feedback.style.display = 'block';
+            document.getElementById('next-question-btn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            state.currentQ++;
+            loadQuizQuestion();
+        }
+
+        // --- LONG ANSWER ENGINE ---
+        function renderLongQuestions() {
+            const container = document.getElementById('long-qa-container');
+            longQuestions.forEach((q, index) => {
+                const div = document.createElement('div');
+                div.className = 'question-box';
+                div.id = `lq-box-${index}`;
+                div.innerHTML = `
+                    <p><strong>LQ ${index+1}:</strong> ${q.q}</p>
+                    <div class="long-answer-area">
+                        <textarea id="la-input-${index}" placeholder="Type your answer here..."></textarea>
+                    </div>
+                    <button class="check-btn" onclick="evaluateLongAnswer(${index})">Check Answer</button>
+                    <div id="la-feedback-${index}" class="feedback-msg"></div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function evaluateLongAnswer(index) {
+            const qData = longQuestions[index];
+            const inputVal = document.getElementById(`la-input-${index}`).value.toLowerCase();
+            const feedbackEl = document.getElementById(`la-feedback-${index}`);
+            const boxEl = document.getElementById(`lq-box-${index}`);
+            
+            if (inputVal.length < 10) {
+                alert("Please type a more detailed answer.");
+                return;
+            }
+
+            // Keyword Matching Logic
+            let hitCount = 0;
+            const foundKeywords = [];
+            const missingKeywords = [];
+
+            qData.k.forEach(key => {
+                if (inputVal.includes(key)) {
+                    hitCount++;
+                    foundKeywords.push(key);
+                } else {
+                    missingKeywords.push(key);
+                }
+            });
+
+            // Scoring Logic: Need at least 2 keywords for partial credit, 3 for full
+            let isCorrect = false;
+            let points = 0;
+            let msg = "";
+
+            if (hitCount >= 3) {
+                isCorrect = true;
+                points = 5;
+                msg = `<span style="color:green">Perfect! You covered key concepts. (+5 Marks)</span>`;
+            } else if (hitCount >= 1) {
+                isCorrect = true; // Partially
+                points = 2;
+                msg = `<span style="color:orange">Good attempt, but missing details. (+2 Marks)</span>`;
+            } else {
+                points = 0;
+                msg = `<span style="color:red">Needs improvement. Key concepts missing. (0 Marks)</span>`;
+            }
+
+            // Update UI
+            feedbackEl.style.display = 'block';
+            feedbackEl.innerHTML = `
+                ${msg}<br><br>
+                <strong>Model Answer Key Points:</strong> ${qData.m}<br>
+                <small>Keywords looked for: ${qData.k.join(", ")}</small>
+            `;
+            
+            // Disable input after check
+            document.getElementById(`la-input-${index}`).disabled = true;
+            boxEl.querySelector('.check-btn').disabled = true;
+            boxEl.querySelector('.check-btn').innerText = "Checked";
+
+            updateScore(isCorrect, points);
+        }
+
+    </script>
+</body>
+</html>

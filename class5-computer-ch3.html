@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 5 Computer - Ch 3: Memory Management (Advanced)</title>
+    <style>
+        /* GLOBAL TYPOGRAPHY & RESET */
+        @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+
+        :root {
+            --paper-color: #fdf6e3;
+            --line-color: #aebdcc;
+            --ink-color: #2c3e50;
+            --accent-blue: #0077b6;
+            --accent-green: #2e8b57;
+            --accent-red: #d32f2f;
+            --highlight: #fff9c4;
+            --shadow: rgba(0,0,0,0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            font-weight: bold !important; /* STRICT RULE: ALL TEXT BOLD */
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Patrick Hand', 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+            background-color: #f0f4f8;
+            color: var(--ink-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            font-size: 18px;
+        }
+
+        /* LAYOUT CONTAINERS */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding-bottom: 60px;
+        }
+
+        .paper-sheet {
+            background: var(--paper-color);
+            background-image: linear-gradient(var(--line-color) 1px, transparent 1px);
+            background-size: 100% 1.8rem;
+            padding: 20px;
+            margin: 15px;
+            box-shadow: 2px 2px 10px var(--shadow);
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-blue);
+            position: relative;
+        }
+
+        /* HEADER & HERO */
+        header {
+            background: var(--accent-blue);
+            color: white;
+            text-align: center;
+            padding: 20px 10px;
+            box-shadow: 0 4px 6px var(--shadow);
+        }
+
+        h1 { margin: 0; font-size: 2rem; text-shadow: 1px 1px 2px black; }
+        h2 { font-size: 1.5rem; margin-top: 5px; color: #e0f7fa; }
+        h3 { margin-top: 0; color: var(--accent-blue); border-bottom: 2px dashed var(--accent-blue); display: inline-block; }
+
+        /* LIVE SCORE PANEL (STICKY) */
+        #score-panel {
+            position: sticky;
+            top: 0;
+            background: #2d3436;
+            color: white;
+            z-index: 1000;
+            padding: 8px 15px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            border-bottom: 3px solid var(--accent-green);
+        }
+        
+        .score-item span { color: #ffeaa7; font-size: 1.1rem; }
+
+        /* SECTION STYLING */
+        .section-title {
+            text-align: center;
+            background: var(--ink-color);
+            color: white;
+            padding: 10px;
+            margin: 30px 15px 15px 15px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* NOTES STYLES */
+        .topic-box {
+            background: white;
+            border: 2px solid var(--line-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .indian-example {
+            background: #e8f5e9;
+            border-left: 5px solid var(--accent-green);
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.95em;
+        }
+
+        .memory-tip {
+            background: #fff3e0;
+            border: 2px dashed orange;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .static-image-box {
+            width: 100%;
+            height: 120px;
+            background: #eceff1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #cfd8dc;
+            margin: 10px 0;
+            color: #78909c;
+            text-align: center;
+            border-radius: 5px;
+        }
+
+        /* QUESTION STYLES */
+        .question-card {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 4px var(--shadow);
+        }
+
+        .q-text { font-size: 1.1rem; margin-bottom: 10px; display: block; }
+
+        /* MCQ Options */
+        .options-grid { display: grid; gap: 8px; }
+        .option-btn {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            padding: 10px;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        .option-btn:hover { background: #e9ecef; }
+        .option-btn.selected { border-color: var(--accent-blue); background: #e3f2fd; }
+        .option-btn.correct { background: #d4edda; border-color: #28a745; color: #155724; }
+        .option-btn.wrong { background: #f8d7da; border-color: #dc3545; color: #721c24; }
+        
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        .feedback.show { display: block; animation: fadeIn 0.3s; }
+        .feedback-correct { background: #d4edda; color: #155724; }
+        .feedback-wrong { background: #f8d7da; color: #721c24; }
+
+        /* LONG ANSWER STYLES */
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border: 2px solid var(--line-color);
+            border-radius: 5px;
+            font-family: inherit;
+            margin: 10px 0;
+            resize: vertical;
+        }
+
+        .check-btn {
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+        }
+        .check-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        /* IMPORTANT QUESTIONS */
+        .imp-q-card {
+            background: #fff8e1;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-left: 4px solid #ff6f00;
+            border-radius: 4px;
+        }
+
+        /* REVISION */
+        #revision-content { display: none; }
+        .revision-point { margin-bottom: 8px; padding-left: 15px; position: relative; }
+        .revision-point::before { content: "•"; position: absolute; left: 0; color: var(--accent-blue); }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: var(--ink-color);
+            color: white;
+            font-size: 0.9rem;
+            margin-top: 40px;
+        }
+
+        /* UTILS */
+        .hidden { display: none; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Responsive Fixes */
+        @media (max-width: 400px) {
+            h1 { font-size: 1.6rem; }
+            #score-panel { font-size: 0.75rem; padding: 5px; }
+            .paper-sheet { margin: 10px; padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HERO HEADER -->
+    <header>
+        <h1>Computer (Advanced)</h1>
+        <h2>Chapter 3: Memory Management</h2>
+        <div style="font-size: 0.9rem; margin-top:5px; opacity: 0.8;">Class 5 | ShanEduHub</div>
+    </header>
+
+    <!-- STICKY LIVE SCORE PANEL -->
+    <div id="score-panel">
+        <div class="score-item">Correct: <span id="score-correct">0</span></div>
+        <div class="score-item">Wrong: <span id="score-wrong">0</span></div>
+        <div class="score-item">Total: <span id="score-total">0</span></div>
+        <div class="score-item">Marks: <span id="score-marks">0</span>%</div>
+    </div>
+
+    <div class="container">
+
+        <!-- ==================== NOTES SECTION ==================== -->
+        <div class="section-title">📚 Chapter Notes</div>
+
+        <!-- 1. Memory Hierarchy -->
+        <div class="paper-sheet topic-box">
+            <h3>1. Memory Hierarchy</h3>
+            <p>Imagine a pyramid. The top part is small but super fast. The bottom is huge but slower.</p>
+            <div class="static-image-box">
+                [ DIAGRAM: Pyramid showing CPU > Cache > RAM > HDD ]
+            </div>
+            <ul>
+                <li><strong>Top:</strong> CPU Registers (Fastest, Smallest)</li>
+                <li><strong>Middle:</strong> Cache & RAM (Fast, Medium size)</li>
+                <li><strong>Bottom:</strong> Secondary Storage (Slowest, Largest)</li>
+            </ul>
+            <div class="indian-example">
+                🏠 <strong>Daily Life:</strong> 
+                <br>• Your hands (Registers) = Instant access.
+                <br>• Your desk (RAM) = Fast access.
+                <br>• The school library (Hard Disk) = Huge but takes time to walk there.
+            </div>
+            <div class="memory-tip">💡 Tip: Closer to CPU = Faster & More Expensive!</div>
+        </div>
+
+        <!-- 2. Primary Memory -->
+        <div class="paper-sheet topic-box">
+            <h3>2. Primary Memory (Main Memory)</h3>
+            <p>This is the computer's workspace. It holds data currently in use.</p>
+            
+            <h4>A. RAM (Random Access Memory)</h4>
+            <p><strong>Volatile Memory:</strong> Data is lost when power goes off.</p>
+            <div class="indian-example">
+                🏏 <strong>Example:</strong> Like a Cricket Scoreboard. When the match ends (power off), the score is reset/gone.
+            </div>
+
+            <h4>B. ROM (Read Only Memory)</h4>
+            <p><strong>Non-Volatile Memory:</strong> Data stays even without power.</p>
+            <div class="indian-example">
+                📖 <strong>Example:</strong> Like a printed textbook. You can read it, but you cannot change the printed words, and it doesn't disappear when you close it.
+            </div>
+            <div class="static-image-box">[ IMAGE: RAM Stick vs ROM Chip ]</div>
+        </div>
+
+        <!-- 3. Cache Memory -->
+        <div class="paper-sheet topic-box">
+            <h3>3. Cache Memory</h3>
+            <p>A very small, ultra-fast memory located inside or very close to the CPU.</p>
+            <p><strong>Function:</strong> It stores frequently used data to speed up the CPU.</p>
+            <div class="indian-example">
+                🍛 <strong>Daily Life:</strong> Like a "Tiffin Box" on your desk. You keep your favorite snack there for instant eating, instead of going to the kitchen (RAM) every time.
+            </div>
+            <div class="memory-tip">🚀 Tip: Cache acts like a "buffer" or waiting room for the CPU.</div>
+        </div>
+
+        <!-- 4. Secondary Storage -->
+        <div class="paper-sheet topic-box">
+            <h3>4. Secondary Storage</h3>
+            <p>Used for permanent storage. Programs and files live here when not open.</p>
+            
+            <ul>
+                <li><strong>HDD (Hard Disk Drive):</strong> Uses spinning magnetic disks. Cheaper, high capacity, but fragile.</li>
+                <li><strong>SSD (Solid State Drive):</strong> Uses flash memory (no moving parts). Super fast, durable, but expensive.</li>
+                <li><strong>Pen Drive:</strong> Portable flash memory. Connects via USB.</li>
+            </ul>
+            <div class="static-image-box">[ IMAGE: HDD vs SSD Side by Side ]</div>
+            <div class="indian-example">
+                🎒 <strong>Daily Life:</strong> Your School Bag. You keep all your books there safely until you need to take one out to read.
+            </div>
+        </div>
+
+        <!-- 5. Internal vs External -->
+        <div class="paper-sheet topic-box">
+            <h3>5. Internal vs External Memory</h3>
+            <p><strong>Internal:</strong> Fixed inside the computer (RAM, ROM, Internal HDD). Necessary for running the system.</p>
+            <p><strong>External:</strong> Removable devices (Pen drive, CD, External Hard Disk). Used for backup or transfer.</p>
+        </div>
+
+        <!-- 6. Virtual Memory -->
+        <div class="paper-sheet topic-box">
+            <h3>6. Virtual Memory (Advanced)</h3>
+            <p><strong>Definition:</strong> A technique where the computer uses a part of the Hard Disk (HDD/SSD) as if it were RAM.</p>
+            <p><strong>Why?</strong> When RAM is full, the OS moves less used data to the Hard Disk to prevent crashing.</p>
+            <div class="indian-example">
+                📦 <strong>Daily Life:</strong> If your desk (RAM) is full of books, you put some on the floor (Hard Disk) temporarily to make space. It's slower to pick them up from the floor, but you can keep working.
+            </div>
+        </div>
+
+        <!-- 7. Data Storage & Retrieval -->
+        <div class="paper-sheet topic-box">
+            <h3>7. Data Storage & Retrieval</h3>
+            <p><strong>Storage (Writing):</strong> Saving data from RAM to Secondary Storage.</p>
+            <p><strong>Retrieval (Reading):</strong> Loading data from Secondary Storage back into RAM for the CPU to process.</p>
+            <div class="memory-tip">🔄 The CPU cannot talk to the Hard Disk directly; it always needs RAM in the middle!</div>
+        </div>
+
+        <!-- ==================== IMPORTANT QUESTIONS ==================== -->
+        <div class="section-title">❓ Important Questions (Exam)</div>
+        <div class="paper-sheet" id="important-questions-container">
+            <!-- Populated by JS -->
+        </div>
+
+        <!-- ==================== PRACTICE QUESTIONS (70) ==================== -->
+        <div class="section-title">🧠 Practice Questions (70)</div>
+        <div class="paper-sheet">
+            <p style="text-align:center; font-style:italic;">Attempt all! Score updates automatically.</p>
+            <div id="practice-quiz-container">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- ==================== ADVANCED LONG QUESTIONS ==================== -->
+        <div class="section-title">🧪 Advanced Long Questions</div>
+        <div class="paper-sheet">
+            <p style="text-align:center;">Type your answer. The system will check for key concepts.</p>
+            <div id="long-answer-container">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- ==================== REVISION ==================== -->
+        <div class="section-title">🔁 Quick Revision</div>
+        <div class="paper-sheet">
+            <button onclick="toggleRevision()" class="check-btn" style="margin-bottom:15px;">Show/Hide Revision Points</button>
+            <div id="revision-content">
+                <div class="revision-point">Memory Hierarchy: CPU > Cache > Primary > Secondary.</div>
+                <div class="revision-point">RAM is Volatile (Temporary). ROM is Non-Volatile (Permanent).</div>
+                <div class="revision-point">Cache is the fastest memory after CPU registers.</div>
+                <div class="revision-point">Secondary Storage stores data permanently (HDD, SSD).</div>
+                <div class="revision-point">SSD is faster and stronger than HDD (no moving parts).</div>
+                <div class="revision-point">Virtual Memory uses Hard Disk space as "fake RAM".</div>
+                <div class="revision-point">Primary Memory = Internal. Pen Drive = External.</div>
+                <div class="revision-point">Data travels: HDD -> RAM -> Cache -> CPU.</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>Designed & Created by SHRISHANT YADAV</p>
+        <p>ShanEduHub</p>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- DATASETS ---
+
+            const importantQuestions = [
+                {q: "What is Memory Hierarchy?", a: "It is the arrangement of memory types based on speed, cost, and size, usually shaped like a pyramid."},
+                {q: "Define Primary Memory.", a: "It is the main memory of the computer directly accessible by the CPU, like RAM and ROM."},
+                {q: "Why is RAM called volatile?", a: "Because it loses all data when the power is turned off."},
+                {q: "Full form of ROM?", a: "Read Only Memory."},
+                {q: "What is the function of Cache Memory?", a: "It stores frequently used data to speed up CPU processing."},
+                {q: "Difference between HDD and SSD?", a: "HDD has moving parts and is slower. SSD has no moving parts and is faster."},
+                {q: "What is a Pen Drive?", a: "A small, portable storage device that uses Flash Memory and connects via USB."},
+                {q: "Define Virtual Memory.", a: "It is a memory management technique that uses a part of the hard disk as an extension of RAM."},
+                {q: "Which is faster: Cache or RAM?", a: "Cache memory is faster than RAM."},
+                {q: "Example of Optical Storage?", a: "CD, DVD, or Blu-ray Disc."},
+                {q: "What is a Bit?", a: "The smallest unit of data in a computer (0 or 1)."},
+                {q: "What is a Byte?", a: "A group of 8 bits."},
+                {q: "Where is the BIOS stored?", a: "In the ROM chip."},
+                {q: "Can the CPU access HDD directly?", a: "No, data must be loaded into RAM first."},
+                {q: "What happens during 'Booting'?", a: "The computer loads the Operating System from Secondary Storage to Main Memory."},
+                {q: "Is a Hard Disk internal or external?", a: "It can be both. Usually internal, but external HDDs exist."},
+                {q: "Why do we need Secondary Storage?", a: "To store data permanently, as RAM is volatile."},
+                {q: "What is the speed unit of CPU?", a: "Hertz (Hz, GHz)."},
+                {q: "Arrange in speed (Slow to Fast): HDD, RAM, Cache.", a: "HDD < RAM < Cache."},
+                {q: "What is 'Flash Memory'?", a: "A type of non-volatile memory used in SSDs and Pen Drives."},
+                {q: "Is RAM expensive or cheap compared to HDD?", a: "RAM is more expensive per GB than HDD."},
+                {q: "What does CPU stand for?", a: "Central Processing Unit."},
+                {q: "What is the main advantage of SSD over HDD?", a: "Speed and durability (shock resistance)."},
+                {q: "Name one internal memory.", a: "RAM or ROM."},
+                {q: "Name one external memory.", a: "Pen Drive or External Hard Disk."},
+                {q: "What stores the 'Start-up' instructions?", a: "ROM (BIOS)."},
+                {q: "If RAM is full, what helps?", a: "Virtual Memory."},
+                {q: "What is a register?", a: "A tiny, super-fast storage location inside the CPU."},
+                {q: "Can we write data to ROM easily?", a: "No, it is Read-Only."},
+                {q: "What is capacity?", a: "The amount of data a storage device can hold."}
+            ];
+
+            // 70 PRACTICE QUESTIONS
+            // Types: MCQ, True/False, Fill Blanks (as MCQ for ease of interaction), One Word
+            const practiceQuestions = [
+                // BASIC
+                { id: 1, type: 'mcq', q: "Which memory is Volatile?", options: ["ROM", "RAM", "HDD", "DVD"], correct: 1, exp: "RAM loses data without power." },
+                { id: 2, type: 'mcq', q: "Full form of ROM?", options: ["Random Only Memory", "Read Only Memory", "Real On Memory", "Run On Memory"], correct: 1, exp: "Read Only Memory." },
+                { id: 3, type: 'tf', q: "HDD is faster than SSD.", correct: false, exp: "False. SSD is much faster than HDD." },
+                { id: 4, type: 'mcq', q: "Smallest unit of memory?", options: ["Byte", "Bit", "KB", "MB"], correct: 1, exp: "A Bit (0 or 1) is smallest." },
+                { id: 5, type: 'mcq', q: "Primary memory is also called?", options: ["Main Memory", "Auxiliary Memory", "Backup Memory", "Slow Memory"], correct: 0, exp: "It is the Main Memory." },
+                
+                // MEDIUM - HIERARCHY & TYPES
+                { id: 6, type: 'mcq', q: "Which is closest to CPU?", options: ["RAM", "HDD", "Cache", "DVD"], correct: 2, exp: "Cache sits between CPU and RAM." },
+                { id: 7, type: 'mcq', q: "Data in ROM is:", options: ["Temporary", "Permanent", "Lost on reboot", "Changeable"], correct: 1, exp: "ROM is non-volatile (Permanent)." },
+                { id: 8, type: 'fill', q: "____ memory is used to bridge speed gap between CPU and RAM.", options: ["Virtual", "Cache", "Flash", "Secondary"], correct: 1, exp: "Cache memory." },
+                { id: 9, type: 'mcq', q: "Pen drive uses which technology?", options: ["Magnetic", "Optical", "Flash Memory", "Laser"], correct: 2, exp: "It uses Flash Memory." },
+                { id: 10, type: 'tf', q: "CPU can directly access the Hard Disk.", correct: false, exp: "False. It must go through RAM." },
+                { id: 11, type: 'mcq', q: "Which has moving parts?", options: ["SSD", "Pen Drive", "HDD", "RAM"], correct: 2, exp: "HDD has spinning magnetic disks." },
+                { id: 12, type: 'mcq', q: "Virtual memory uses space from?", options: ["ROM", "Cache", "Hard Disk", "Monitor"], correct: 2, exp: "It uses HDD space as fake RAM." },
+                { id: 13, type: 'mcq', q: "1 Byte = ____ Bits.", options: ["4", "8", "16", "32"], correct: 1, exp: "8 Bits make 1 Byte." },
+                { id: 14, type: 'tf', q: "Cache memory is larger than Hard Disk.", correct: false, exp: "False. Cache is very small." },
+                { id: 15, type: 'mcq', q: "Example of Optical Storage?", options: ["HDD", "SSD", "CD-ROM", "RAM"], correct: 2, exp: "CDs use light (optics) to read data." },
+
+                // ADVANCED - CONCEPTS
+                { id: 16, type: 'mcq', q: "If RAM is full, computer uses:", options: ["Virtual Memory", "ROM", "Cache", "BIOS"], correct: 0, exp: "Virtual memory acts as overflow RAM." },
+                { id: 17, type: 'mcq', q: "Which is Non-Volatile?", options: ["RAM", "Cache", "Register", "SSD"], correct: 3, exp: "SSD retains data without power." },
+                { id: 18, type: 'mcq', q: "Fastest memory in this list?", options: ["RAM", "SSD", "Cache", "HDD"], correct: 2, exp: "Cache is the fastest here." },
+                { id: 19, type: 'mcq', q: "BIOS is stored in:", options: ["RAM", "HDD", "ROM", "Cache"], correct: 2, exp: "Basic Input Output System is in ROM." },
+                { id: 20, type: 'tf', q: "Primary memory is cheaper than Secondary memory.", correct: false, exp: "False. Primary (RAM) is more expensive per GB." },
+                
+                // REASONING & SCENARIOS
+                { id: 21, type: 'mcq', q: "Why is SSD better for laptops?", options: ["It is heavy", "It consumes more power", "It is durable & fast", "It is cheap"], correct: 2, exp: "No moving parts make it durable." },
+                { id: 22, type: 'mcq', q: "Rahul is typing. Where is his data?", options: ["HDD", "RAM", "ROM", "CD"], correct: 1, exp: "Active work is in RAM." },
+                { id: 23, type: 'mcq', q: "He saves the file. Where does it go?", options: ["RAM", "Cache", "Secondary Storage", "Registers"], correct: 2, exp: "Saving moves it to HDD/SSD." },
+                { id: 24, type: 'mcq', q: "Power goes out! Which data is lost?", options: ["BIOS", "Data in RAM", "Photos on HDD", "Windows OS"], correct: 1, exp: "RAM is volatile." },
+                { id: 25, type: 'mcq', q: "Computer is slow. What might help?", options: ["Removing Fan", "Adding more RAM", "Deleting ROM", "Removing Mouse"], correct: 1, exp: "More RAM reduces reliance on slow Virtual Memory." },
+
+                // MIXED BAG
+                { id: 26, type: 'mcq', q: "External memory example:", options: ["RAM", "Cache", "External HDD", "Registers"], correct: 2, exp: "External HDD plugs in from outside." },
+                { id: 27, type: 'tf', q: "Registers are located inside the CPU.", correct: true, exp: "True. They are the CPU's immediate workspace." },
+                { id: 28, type: 'mcq', q: "Memory Hierarchy is based on:", options: ["Color", "Shape", "Speed & Cost", "Brand"], correct: 2, exp: "Speed, Cost, and Capacity." },
+                { id: 29, type: 'mcq', q: "Magnetic tape is:", options: ["Sequential Access", "Random Access", "Fastest", "Volatile"], correct: 0, exp: "You have to rewind/forward (Sequential)." },
+                { id: 30, type: 'mcq', q: "RAM stands for:", options: ["Read Access Memory", "Random Access Memory", "Run Accept Memory", "Read All Memory"], correct: 1, exp: "Random Access Memory." },
+
+                // FILL IN BLANKS / ONE WORD
+                { id: 31, type: 'mcq', q: "Flash memory is used in ____.", options: ["CDs", "Magnetic Tapes", "Pen Drives", "RAM"], correct: 2, exp: "Pen drives use Flash." },
+                { id: 32, type: 'mcq', q: "A DVD can hold ____ data than a CD.", options: ["Less", "More", "Same", "None"], correct: 1, exp: "DVD (4.7GB) > CD (700MB)." },
+                { id: 33, type: 'tf', q: "We can easily write data to ROM.", correct: false, exp: "False. It is Read-Only." },
+                { id: 34, type: 'mcq', q: "The 'Brain' of the computer uses ____.", options: ["Petrol", "Binary Language", "English", "French"], correct: 1, exp: "0s and 1s (Binary)." },
+                { id: 35, type: 'mcq', q: "To run a heavy game, you need good ____.", options: ["ROM", "RAM & GPU", "Printer", "Scanner"], correct: 1, exp: "RAM loads the game assets." },
+
+                // MORE ADVANCED
+                { id: 36, type: 'mcq', q: "Swapping data between RAM and HDD is done by:", options: ["User", "OS (Virtual Memory)", "Mouse", "Keyboard"], correct: 1, exp: "The OS manages Virtual Memory." },
+                { id: 37, type: 'mcq', q: "Which is most expensive per GB?", options: ["HDD", "SSD", "RAM", "Register"], correct: 3, exp: "Registers are the most expensive memory." },
+                { id: 38, type: 'mcq', q: "L1, L2, L3 are types of:", options: ["RAM", "Cache", "HDD", "Monitor"], correct: 1, exp: "Levels of Cache memory." },
+                { id: 39, type: 'tf', q: "Information in RAM can be read and written.", correct: true, exp: "True. R/W memory." },
+                { id: 40, type: 'mcq', q: "Storage capacity is measured in:", options: ["Meters", "Liters", "Bytes", "Hertz"], correct: 2, exp: "Bytes (KB, MB, GB)." },
+
+                // PICTURE BASED (Simulated via text description)
+                { id: 41, type: 'mcq', q: "Identify: A circular disc with rainbow reflection.", options: ["HDD", "CD/DVD", "Floppy", "Chip"], correct: 1, exp: "It is an Optical Disc." },
+                { id: 42, type: 'mcq', q: "Identify: Small stick inserted in USB port.", options: ["RAM", "ROM", "Pen Drive", "Cable"], correct: 2, exp: "Pen Drive." },
+                { id: 43, type: 'mcq', q: "Identify: Rectangular green stick inserted in motherboard.", options: ["RAM", "HDD", "Fan", "Battery"], correct: 0, exp: "That is a RAM stick." },
+                
+                // RAPID FIRE
+                { id: 44, type: 'mcq', q: "Who manages memory?", options: ["Operating System", "Monitor", "Printer", "Speaker"], correct: 0, exp: "OS handles memory management." },
+                { id: 45, type: 'tf', q: "Blu-ray stores less than DVD.", correct: false, exp: "False. Blu-ray stores much more (25GB+)." },
+                { id: 46, type: 'mcq', q: "SRAM stands for:", options: ["Static RAM", "Super RAM", "Slow RAM", "Smart RAM"], correct: 0, exp: "Static Random Access Memory." },
+                { id: 47, type: 'mcq', q: "DRAM needs to be:", options: ["Refreshed", "Painted", "Cooled", "Heated"], correct: 0, exp: "Dynamic RAM needs refreshing." },
+                { id: 48, type: 'mcq', q: "Speed of RAM is measured in:", options: ["MB", "MHz/GHz", "RPM", "Pixels"], correct: 1, exp: "Frequency (MHz or GHz)." },
+                { id: 49, type: 'mcq', q: "Speed of HDD is measured in:", options: ["RPM", "GB", "Hz", "Watts"], correct: 0, exp: "Revolutions Per Minute." },
+                { id: 50, type: 'tf', q: "Computer can work without Primary Memory.", correct: false, exp: "False. It won't even start." },
+
+                // FINAL STRETCH
+                { id: 51, type: 'mcq', q: "Which is internal memory?", options: ["CD", "Pen Drive", "Cache", "Tape"], correct: 2, exp: "Cache is internal to the system." },
+                { id: 52, type: 'mcq', q: "Which is external?", options: ["ROM", "RAM", "SD Card", "Register"], correct: 2, exp: "SD Card is removable." },
+                { id: 53, type: 'mcq', q: "Data retrieval means:", options: ["Saving", "Deleting", "Reading/Loading", "Hiding"], correct: 2, exp: "Getting data back." },
+                { id: 54, type: 'mcq', q: "Access time is shortest for:", options: ["HDD", "RAM", "Registers", "Cache"], correct: 2, exp: "Registers are instant." },
+                { id: 55, type: 'mcq', q: "Cloud storage uses remote:", options: ["Servers/HDDs", "RAMs", "Keyboards", "Mice"], correct: 0, exp: "Data centers full of HDDs/SSDs." },
+                { id: 56, type: 'tf', q: "ROM contains the bootstrap loader.", correct: true, exp: "True. It starts the OS." },
+                { id: 57, type: 'mcq', q: "A Terabyte (TB) is:", options: ["1024 KB", "1024 MB", "1024 GB", "1024 Bits"], correct: 2, exp: "1024 GB." },
+                { id: 58, type: 'mcq', q: "Volatile means:", options: ["Explosive", "Temporary", "Permanent", "Slow"], correct: 1, exp: "Temporary storage." },
+                { id: 59, type: 'mcq', q: "Non-volatile means:", options: ["Temporary", "Permanent", "Fast", "Cheap"], correct: 1, exp: "Permanent storage." },
+                { id: 60, type: 'mcq', q: "Which is not memory?", options: ["RAM", "ROM", "Microphone", "HDD"], correct: 2, exp: "Microphone is an Input device." },
+                
+                // LAST 10
+                { id: 61, type: 'mcq', q: "Binary digit 0 means:", options: ["On", "Off", "High", "Yes"], correct: 1, exp: "0 is Off, 1 is On." },
+                { id: 62, type: 'mcq', q: "RAM connects to:", options: ["Motherboard", "Screen", "Mouse", "Outside"], correct: 0, exp: "It slots into the motherboard." },
+                { id: 63, type: 'tf', q: "We install games on the RAM.", correct: false, exp: "False. Installed on HDD/SSD." },
+                { id: 64, type: 'mcq', q: "Cache hits are:", options: ["Bad", "Good/Fast", "Errors", "Viruses"], correct: 1, exp: "Hit means data was found in cache (Fast)." },
+                { id: 65, type: 'mcq', q: "Cache miss means:", options: ["Data not found in cache", "Data lost", "CPU broke", "RAM full"], correct: 0, exp: "CPU must look in RAM." },
+                { id: 66, type: 'mcq', q: "Which costs more?", options: ["1GB RAM", "1GB HDD"], correct: 0, exp: "RAM is much more expensive per unit." },
+                { id: 67, type: 'mcq', q: "Pen drives are also called:", options: ["Thumb drives", "Finger drives", "Hand drives", "Toe drives"], correct: 0, exp: "Thumb drives." },
+                { id: 68, type: 'tf', q: "An SSD makes an old computer faster.", correct: true, exp: "True. Drastically improves boot time." },
+                { id: 69, type: 'mcq', q: "Hierarchy shape is:", options: ["Square", "Circle", "Pyramid", "Line"], correct: 2, exp: "Pyramid." },
+                { id: 70, type: 'mcq', q: "Final destination of saved data?", options: ["Secondary Storage", "Primary Storage", "Cache", "Wires"], correct: 0, exp: "Secondary storage." }
+            ];
+
+            // 10 LONG ANSWER QUESTIONS
+            const longQuestions = [
+                { id: 'l1', q: "Explain the Memory Hierarchy pyramid.", keywords: ["speed", "cost", "size", "cpu", "pyramid", "fastest"] },
+                { id: 'l2', q: "Difference between RAM and ROM.", keywords: ["volatile", "permanent", "temporary", "read only", "power"] },
+                { id: 'l3', q: "How does Cache Memory work?", keywords: ["frequently", "buffer", "cpu", "fast", "speed", "between"] },
+                { id: 'l4', q: "Compare HDD and SSD.", keywords: ["moving", "spin", "flash", "fast", "durable", "solid state"] },
+                { id: 'l5', q: "What is Virtual Memory?", keywords: ["hard disk", "ram", "full", "space", "extension", "fake"] },
+                { id: 'l6', q: "Difference between Internal and External memory.", keywords: ["fixed", "removable", "inside", "portable", "plug"] },
+                { id: 'l7', q: "Why is RAM called Volatile?", keywords: ["power", "off", "lost", "delete", "forget"] },
+                { id: 'l8', q: "Describe the process of Data Retrieval.", keywords: ["read", "load", "storage", "ram", "cpu", "fetch"] },
+                { id: 'l9', q: "Why do we need Secondary Storage if we have RAM?", keywords: ["permanent", "save", "future", "volatile", "store"] },
+                { id: 'l10', q: "What is a Pen Drive used for?", keywords: ["transfer", "portable", "usb", "data", "carry"] }
+            ];
+
+            // --- APP STATE ---
+            let state = {
+                correct: 0,
+                wrong: 0,
+                total: 0,
+                marks: 0,
+                attemptedQs: new Set()
+            };
+
+            // --- DOM ELEMENTS ---
+            const scoreCorrect = document.getElementById('score-correct');
+            const scoreWrong = document.getElementById('score-wrong');
+            const scoreTotal = document.getElementById('score-total');
+            const scoreMarks = document.getElementById('score-marks');
+            const impContainer = document.getElementById('important-questions-container');
+            const practiceContainer = document.getElementById('practice-quiz-container');
+            const longContainer = document.getElementById('long-answer-container');
+
+            // --- INITIALIZATION ---
+            function init() {
+                renderImportantQuestions();
+                renderPracticeQuestions();
+                renderLongQuestions();
+                updateScorePanel();
+            }
+
+            // --- RENDER FUNCTIONS ---
+            
+            function renderImportantQuestions() {
+                let html = '';
+                importantQuestions.forEach((item, index) => {
+                    html += `
+                        <div class="imp-q-card">
+                            <div style="font-weight:900; color:#e65100;">Q${index+1}: ${item.q}</div>
+                            <div style="color:#333; margin-top:5px;">A: ${item.a}</div>
+                        </div>
+                    `;
+                });
+                impContainer.innerHTML = html;
+            }
+
+            function renderPracticeQuestions() {
+                let html = '';
+                practiceQuestions.forEach((q, index) => {
+                    let optionsHtml = '';
+                    if(q.type === 'mcq' || q.type === 'fill') {
+                        q.options.forEach((opt, i) => {
+                            optionsHtml += `<div class="option-btn" onclick="checkMCQ(this, ${q.id}, ${i})">${['A','B','C','D'][i]}. ${opt}</div>`;
+                        });
+                    } else if (q.type === 'tf') {
+                        optionsHtml += `<div class="option-btn" onclick="checkMCQ(this, ${q.id}, true)">True</div>`;
+                        optionsHtml += `<div class="option-btn" onclick="checkMCQ(this, ${q.id}, false)">False</div>`;
+                    }
+
+                    html += `
+                        <div class="question-card" id="q-card-${q.id}">
+                            <span class="q-text">${index+1}. ${q.q}</span>
+                            <div class="options-grid">${optionsHtml}</div>
+                            <div class="feedback" id="feedback-${q.id}"></div>
+                        </div>
+                    `;
+                });
+                practiceContainer.innerHTML = html;
+            }
+
+            function renderLongQuestions() {
+                let html = '';
+                longQuestions.forEach((q, index) => {
+                    html += `
+                        <div class="question-card">
+                            <span class="q-text">LQ${index+1}. ${q.q}</span>
+                            <textarea id="la-input-${q.id}" placeholder="Type your answer here..."></textarea>
+                            <button class="check-btn" id="btn-${q.id}" onclick="checkLongAnswer('${q.id}')">Check Answer</button>
+                            <div class="feedback" id="la-feedback-${q.id}"></div>
+                        </div>
+                    `;
+                });
+                longContainer.innerHTML = html;
+            }
+
+            // --- LOGIC FUNCTIONS ---
+
+            window.checkMCQ = function(btnElement, qId, userChoice) {
+                // Prevent multiple attempts
+                if(state.attemptedQs.has(qId)) return;
+                
+                const q = practiceQuestions.find(i => i.id === qId);
+                const feedbackEl = document.getElementById(`feedback-${q.id}`);
+                const parentGrid = btnElement.parentElement;
+                
+                state.attemptedQs.add(qId);
+                state.total++;
+
+                let isCorrect = false;
+                if(q.type === 'tf') {
+                    isCorrect = (userChoice === q.correct);
+                } else {
+                    isCorrect = (userChoice === q.correct);
+                }
+
+                // UI Updates
+                const allBtns = parentGrid.querySelectorAll('.option-btn');
+                allBtns.forEach(btn => btn.style.cursor = 'default'); // Lock buttons
+                
+                if(isCorrect) {
+                    state.correct++;
+                    btnElement.classList.add('correct');
+                    feedbackEl.innerHTML = `<strong>Excellent ⭐</strong><br>${q.exp}`;
+                    feedbackEl.className = "feedback show feedback-correct";
+                } else {
+                    state.wrong++;
+                    btnElement.classList.add('wrong');
+                    // Highlight correct answer
+                    if(q.type === 'tf') {
+                        allBtns[q.correct ? 0 : 1].classList.add('correct');
+                    } else {
+                        allBtns[q.correct].classList.add('correct');
+                    }
+                    feedbackEl.innerHTML = `<strong>Try Again!</strong><br>Correct Answer: ${q.type === 'tf' ? (q.correct?'True':'False') : q.options[q.correct]}<br>Reason: ${q.exp}`;
+                    feedbackEl.className = "feedback show feedback-wrong";
+                }
+
+                updateScorePanel();
+            };
+
+            window.checkLongAnswer = function(qId) {
+                const q = longQuestions.find(i => i.id === qId);
+                const input = document.getElementById(`la-input-${qId}`);
+                const btn = document.getElementById(`btn-${qId}`);
+                const feedback = document.getElementById(`la-feedback-${qId}`);
+                const text = input.value.toLowerCase().trim();
+
+                if(text.length < 5) {
+                    alert("Please write a proper answer.");
+                    return;
+                }
+
+                // Logic: Check for keywords
+                let matches = 0;
+                q.keywords.forEach(word => {
+                    if(text.includes(word)) matches++;
+                });
+
+                // Scoring Logic for Long Answers
+                const threshold = 2; // Need at least 2 keywords
+                state.total++;
+                btn.disabled = true;
+                input.disabled = true;
+
+                if(matches >= threshold) {
+                    state.correct++;
+                    feedback.innerHTML = `<strong>Good Job!</strong><br>Your answer covers key concepts.<br>Keywords found: ${matches}`;
+                    feedback.className = "feedback show feedback-correct";
+                } else {
+                    state.wrong++;
+                    feedback.innerHTML = `<strong>Needs Improvement.</strong><br>Key concepts missing. Try to include words like: ${q.keywords.join(", ")}.`;
+                    feedback.className = "feedback show feedback-wrong";
+                }
+                updateScorePanel();
+            };
+
+            function updateScorePanel() {
+                scoreCorrect.innerText = state.correct;
+                scoreWrong.innerText = state.wrong;
+                scoreTotal.innerText = state.total;
+                
+                let percent = 0;
+                if(state.total > 0) {
+                    percent = Math.round((state.correct / state.total) * 100);
+                }
+                scoreMarks.innerText = percent;
+
+                // Color code percentage
+                if(percent >= 80) scoreMarks.style.color = '#00b894'; // green
+                else if(percent >= 50) scoreMarks.style.color = '#fdcb6e'; // orange
+                else scoreMarks.style.color = '#ff7675'; // red
+            }
+
+            window.toggleRevision = function() {
+                const content = document.getElementById('revision-content');
+                if(content.style.display === 'block') {
+                    content.style.display = 'none';
+                } else {
+                    content.style.display = 'block';
+                    content.scrollIntoView({behavior: "smooth"});
+                }
+            };
+
+            // Run Init
+            init();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 5 - Computer System Architecture (Advanced)</title>
+    <style>
+        :root {
+            --paper-color: #fff9c4; /* Light yellow notebook paper */
+            --line-color: #a4b0be;
+            --accent-color: #ff6b6b;
+            --text-color: #2f3542;
+            --correct-color: #2ed573;
+            --wrong-color: #ff4757;
+            --note-bg: #dff9fb;
+            --card-shadow: 2px 3px 0px rgba(0,0,0,0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f1f2f6;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', sans-serif; /* Handwriting style */
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Typography - STRICT BOLD */
+        h1, h2, h3, h4, p, span, div, li, button, input, textarea {
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 15px 60px 15px;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 20px 0;
+            background: #7bed9f;
+            border-bottom: 3px dashed #2f3542;
+            margin-bottom: 20px;
+            border-radius: 0 0 20px 20px;
+        }
+
+        h1 { margin: 5px 0; font-size: 1.8rem; text-transform: uppercase; color: #2f3542; }
+        .sub-header { font-size: 1.1rem; color: #57606f; }
+
+        /* Live Score Panel */
+        #score-panel {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: #2f3542;
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-bottom: 4px solid var(--accent-color);
+        }
+
+        .score-item { text-align: center; }
+        .score-val { font-size: 1.2rem; color: var(--accent-color); }
+        .score-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Sections */
+        section {
+            background: white;
+            margin-bottom: 25px;
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid #2f3542;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.2);
+        }
+
+        h2.section-title {
+            background: var(--accent-color);
+            color: white;
+            padding: 10px 15px;
+            display: inline-block;
+            border-radius: 8px;
+            margin-top: 0;
+            border: 2px solid #2f3542;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.2);
+            font-size: 1.3rem;
+        }
+
+        /* Notes Style */
+        .topic-block {
+            background: var(--paper-color);
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--accent-color);
+            background-image: repeating-linear-gradient(transparent, transparent 27px, var(--line-color) 28px);
+        }
+
+        .topic-title { font-size: 1.2rem; color: #3742fa; text-decoration: underline; margin-bottom: 10px; }
+        .example-box { background: #ffeaa7; padding: 10px; border-radius: 8px; margin: 10px 0; border: 1px dashed #fdcb6e; }
+        .memory-tip { background: #dff9fb; padding: 8px; border-radius: 8px; font-size: 0.95rem; color: #130f40; }
+        .diagram-box { 
+            border: 2px dashed #2f3542; 
+            background: #fff; 
+            padding: 15px; 
+            text-align: center; 
+            margin: 10px 0; 
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+
+        /* Questions */
+        .q-card {
+            background: #f1f2f6;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border: 1px solid #ced6e0;
+        }
+
+        .q-text { font-size: 1.1rem; margin-bottom: 10px; }
+        
+        /* MCQ Options */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        @media(min-width: 600px) { .options-grid { grid-template-columns: 1fr 1fr; } }
+
+        .option-btn {
+            background: white;
+            border: 2px solid #2f3542;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .option-btn:active { transform: scale(0.98); }
+        .option-btn.correct { background: var(--correct-color); color: white; border-color: #1e8449; }
+        .option-btn.wrong { background: var(--wrong-color); color: white; border-color: #c0392b; }
+
+        /* Inputs */
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #2f3542;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            background: #fff;
+        }
+        
+        button.action-btn {
+            background: #3742fa;
+            color: white;
+            border: 2px solid #2f3542;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 2px 2px 0px #2f3542;
+        }
+        button.action-btn:active { transform: translate(2px, 2px); box-shadow: none; }
+
+        /* Feedback */
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+        }
+        .feedback.show { display: block; }
+        .feedback.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .feedback.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+        /* Important Questions List */
+        .imp-q-item {
+            margin-bottom: 15px;
+            border-bottom: 1px dashed #ccc;
+            padding-bottom: 10px;
+        }
+        .imp-q { color: #d63031; margin-bottom: 5px; }
+        .imp-a { color: #0984e3; }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px;
+            background: #2f3542;
+            color: #bdc3c7;
+            margin-top: 40px;
+        }
+        footer strong { color: white; }
+
+        /* Revision Toggle */
+        #revision-content { display: none; }
+        #revision-content.visible { display: block; animation: fadeIn 0.5s; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+    <div class="container" style="padding-bottom: 0;">
+        <div style="font-size: 3rem;">🖥️</div>
+        <h1>Class 5 • Computer</h1>
+        <div class="sub-header">Chapter 1: Computer System Architecture (Adv)</div>
+    </div>
+</header>
+
+<!-- Live Score Panel -->
+<div id="score-panel">
+    <div class="score-item">
+        <div class="score-val" id="score-correct" style="color: #2ed573;">0</div>
+        <div class="score-label">Correct</div>
+    </div>
+    <div class="score-item">
+        <div class="score-val" id="score-wrong">0</div>
+        <div class="score-label">Wrong</div>
+    </div>
+    <div class="score-item">
+        <div class="score-val" id="score-total">0</div>
+        <div class="score-label">Attempted</div>
+    </div>
+    <div class="score-item">
+        <div class="score-val" id="score-percent">0%</div>
+        <div class="score-label">Accuracy</div>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- NOTES SECTION -->
+    <section id="notes">
+        <h2 class="section-title">📘 Chapter Notes</h2>
+        
+        <!-- Topic 1 -->
+        <div class="topic-block">
+            <div class="topic-title">1. Block Diagram of Computer</div>
+            <p>A computer is not just one box. It is a system of parts working together.</p>
+            <div class="diagram-box">
+[ INPUT UNIT ] ➡️ [ CPU (Process) ] ➡️ [ OUTPUT UNIT ]
+                        ⬇️
+                  [ MEMORY UNIT ]
+            </div>
+            <p><strong>Basic:</strong> It takes data, works on it, and gives results.</p>
+            <p><strong>Advanced:</strong> The CPU acts as the brain, controlling data flow between input, memory, and output devices via the system bus.</p>
+            <div class="example-box">🏠 <strong>Life Example:</strong> Making Mango Shake. <br>Mango + Milk (Input) ➡️ Mixer (Process) ➡️ Shake (Output).</div>
+        </div>
+
+        <!-- Topic 2 -->
+        <div class="topic-block">
+            <div class="topic-title">2. IPO Cycle (Input-Process-Output)</div>
+            <p>Every computer follows this cycle strictly.</p>
+            <ul>
+                <li><strong>Input:</strong> Raw facts/data entered (Keyboard, Mouse).</li>
+                <li><strong>Process:</strong> Working on data (CPU).</li>
+                <li><strong>Output:</strong> Meaningful result displayed (Monitor, Printer).</li>
+            </ul>
+            <div class="memory-tip">💡 <strong>Tip:</strong> Remember "IPO" - Like a factory line!</div>
+        </div>
+
+        <!-- Topic 3 -->
+        <div class="topic-block">
+            <div class="topic-title">3. The CPU (Central Processing Unit)</div>
+            <p>The brain of the computer. It has three main parts:</p>
+            <ol>
+                <li><strong>ALU (Arithmetic Logic Unit):</strong> Does math (+, -, *, /) and logic (<, >, =).</li>
+                <li><strong>CU (Control Unit):</strong> Traffic policeman. Tells parts what to do.</li>
+                <li><strong>MU (Memory Unit):</strong> Stores data temporarily during processing.</li>
+            </ol>
+        </div>
+
+        <!-- Topic 4 -->
+        <div class="topic-block">
+            <div class="topic-title">4. Fetch – Decode – Execute Cycle</div>
+            <p>How the CPU actually runs a program:</p>
+            <ul>
+                <li><strong>Fetch:</strong> CPU gets instruction from memory.</li>
+                <li><strong>Decode:</strong> CU figures out what the instruction means.</li>
+                <li><strong>Execute:</strong> ALU performs the action.</li>
+            </ul>
+            <div class="example-box">🐕 <strong>Example:</strong> Dog Fetching Ball. <br>See ball (Fetch) ➡️ Understand "Bring it" (Decode) ➡️ Run & get it (Execute).</div>
+        </div>
+
+        <!-- Topic 5 -->
+        <div class="topic-block">
+            <div class="topic-title">5. Data vs Information</div>
+            <p>They are NOT the same!</p>
+            <ul>
+                <li><strong>Data:</strong> Raw facts. No meaning alone. (e.g., "5", "Red")</li>
+                <li><strong>Information:</strong> Processed data. Has meaning. (e.g., "5 Red Apples")</li>
+            </ul>
+        </div>
+
+        <!-- Topic 6 -->
+        <div class="topic-block">
+            <div class="topic-title">6. Memory Units</div>
+            <p>Computer understands only 0 and 1 (Binary).</p>
+            <ul>
+                <li><strong>Bit:</strong> Smallest unit (0 or 1).</li>
+                <li><strong>Nibble:</strong> 4 Bits.</li>
+                <li><strong>Byte:</strong> 8 Bits (1 Character).</li>
+                <li><strong>KB (Kilobyte):</strong> 1024 Bytes.</li>
+                <li><strong>MB (Megabyte):</strong> 1024 KB.</li>
+                <li><strong>GB (Gigabyte):</strong> 1024 MB.</li>
+                <li><strong>TB (Terabyte):</strong> 1024 GB.</li>
+            </ul>
+            <div class="memory-tip">🧠 <strong>Tip:</strong> "Big King Midas Got Toffees" (Byte, KB, MB, GB, TB).</div>
+        </div>
+
+        <!-- Topic 7 -->
+        <div class="topic-block">
+            <div class="topic-title">7. Processing Speed</div>
+            <p>How fast a CPU thinks.</p>
+            <p>Measured in <strong>Hertz (Hz)</strong>.</p>
+            <ul>
+                <li>Old computers: MHz (Megahertz - Million cycles/sec).</li>
+                <li>Modern computers: GHz (Gigahertz - Billion cycles/sec).</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- IMPORTANT QUESTIONS -->
+    <section id="important-questions">
+        <h2 class="section-title">❓ Important Questions (Read Only)</h2>
+        <div class="imp-q-container" id="imp-q-list">
+            <!-- Populated by JS -->
+        </div>
+    </section>
+
+    <!-- PRACTICE QUESTIONS -->
+    <section id="practice-section">
+        <h2 class="section-title">🧠 Practice Quiz (70 Questions)</h2>
+        <p style="text-align: center; color: #7f8c8d;">Test your knowledge! Answer to unlock the next question.</p>
+        <div id="quiz-container">
+            <!-- Dynamic Question Loads Here -->
+        </div>
+    </section>
+
+    <!-- ADVANCED LONG QUESTIONS -->
+    <section id="advanced-section">
+        <h2 class="section-title">🧪 Advanced Long Answer Zone</h2>
+        <p>Type your answer in detail. The AI will check for key concepts.</p>
+        <div id="long-q-container">
+            <!-- Dynamic Long Questions -->
+        </div>
+    </section>
+
+    <!-- REVISION -->
+    <section id="revision">
+        <h2 class="section-title">🔁 Quick Revision</h2>
+        <button class="action-btn" onclick="toggleRevision()" style="width: 100%;">Show/Hide Summary</button>
+        <div id="revision-content" style="margin-top: 15px;">
+            <ul style="list-style-type: square; color: #2c3e50;">
+                <li><strong>IPO:</strong> Input -> Process -> Output.</li>
+                <li><strong>CPU:</strong> Brain. Contains ALU, CU, MU.</li>
+                <li><strong>Cycle:</strong> Fetch -> Decode -> Execute.</li>
+                <li><strong>Data:</strong> Raw. <strong>Information:</strong> Processed.</li>
+                <li><strong>Bit:</strong> 0 or 1. <strong>Byte:</strong> 8 Bits.</li>
+                <li><strong>1 KB:</strong> 1024 Bytes.</li>
+                <li><strong>Speed:</strong> Measured in Hz or GHz.</li>
+            </ul>
+        </div>
+    </section>
+
+</div>
+
+<!-- Footer -->
+<footer>
+    <p>Designed & Created by <strong>SHRISHANT YADAV</strong></p>
+    <p>ShanEduHub</p>
+</footer>
+
+<script>
+    /* DATA STORE 
+       Contains all content logic to ensure single file integrity.
+    */
+
+    // --- STATE MANAGEMENT ---
+    const state = {
+        correct: 0,
+        wrong: 0,
+        total: 0,
+        currentQIndex: 0,
+        longQIndex: 0
+    };
+
+    // --- 30 IMPORTANT QUESTIONS (Static) ---
+    const importantQuestions = [
+        {q: "What does CPU stand for?", a: "Central Processing Unit."},
+        {q: "Name the three parts of CPU.", a: "ALU, CU, and MU."},
+        {q: "What is 1 Byte equal to?", a: "8 Bits."},
+        {q: "Define Data.", a: "Raw facts and figures without meaning."},
+        {q: "Define Information.", a: "Processed data that conveys meaning."},
+        {q: "What is the smallest unit of memory?", a: "Bit (Binary Digit)."},
+        {q: "What is the full form of IPO?", a: "Input Process Output."},
+        {q: "Which unit performs calculations?", a: "ALU (Arithmetic Logic Unit)."},
+        {q: "What does CU do?", a: "It controls and coordinates all computer operations."},
+        {q: "What is 1 KB?", a: "1024 Bytes."},
+        {q: "What is 1 MB?", a: "1024 KB."},
+        {q: "What is 1 GB?", a: "1024 MB."},
+        {q: "What is 1 TB?", a: "1024 GB."},
+        {q: "What is the speed of CPU measured in?", a: "Hertz (Hz) or Gigahertz (GHz)."},
+        {q: "What is a Nibble?", a: "A group of 4 bits."},
+        {q: "What is the first step of CPU cycle?", a: "Fetch."},
+        {q: "What happens in Decode step?", a: "CPU understands the instruction."},
+        {q: "What happens in Execute step?", a: "CPU performs the actual task."},
+        {q: "Example of Input device?", a: "Keyboard or Mouse."},
+        {q: "Example of Output device?", a: "Monitor or Printer."},
+        {q: "Is '25' data or information?", a: "Data (no context)."},
+        {q: "Is 'Age: 25' data or information?", a: "Information."},
+        {q: "What connects CPU to other parts?", a: "System Bus (Motherboard)."},
+        {q: "Which helps in decision making: Data or Info?", a: "Information."},
+        {q: "Full form of ALU?", a: "Arithmetic Logic Unit."},
+        {q: "Full form of MU?", a: "Memory Unit."},
+        {q: "How many states does a Bit have?", a: "Two (0 and 1)."},
+        {q: "Who is the brain of the computer?", a: "CPU."},
+        {q: "What is raw material for information?", a: "Data."},
+        {q: "Why is binary used?", a: "Computers only understand electronic signals (On/Off)." }
+    ];
+
+    // --- 70 PRACTICE QUESTIONS (Mix of types) ---
+    // Types: mcq, tf (true/false), fill (fill in blank), one (one word)
+    const practiceQuestions = [
+        // BASIC
+        { type: "mcq", q: "The brain of the computer is:", options: ["Mouse", "CPU", "Keyboard", "Monitor"], a: 1, exp: "CPU controls all functions." },
+        { type: "tf", q: "Data is processed facts.", a: false, exp: "Data is raw. Information is processed." },
+        { type: "mcq", q: "1 Byte = ___ Bits.", options: ["4", "16", "8", "32"], a: 2, exp: "Standard definition: 8 bits = 1 byte." },
+        { type: "fill", q: "IPO stands for Input _____ Output.", a: "process", exp: "Input-Process-Output cycle." },
+        { type: "one", q: "Which part of CPU does addition?", a: "alu", exp: "Arithmetic Logic Unit handles math." },
+        
+        // MEDIUM
+        { type: "mcq", q: "Which is NOT a part of the CPU?", options: ["ALU", "Mouse", "CU", "MU"], a: 1, exp: "Mouse is an input device." },
+        { type: "mcq", q: "1024 KB is equal to:", options: ["1 GB", "1 MB", "1 TB", "1 Byte"], a: 1, exp: "Order: KB -> MB -> GB." },
+        { type: "tf", q: "The Control Unit performs calculations.", a: false, exp: "ALU calculates. CU controls." },
+        { type: "mcq", q: "CPU speed is measured in:", options: ["Liters", "Meters", "Hertz", "Grams"], a: 2, exp: "Frequency is measured in Hz." },
+        { type: "fill", q: "A group of 4 bits is called a _____.", a: "nibble", exp: "Half a byte is a nibble." },
+        
+        // ADVANCED / MIX
+        { type: "mcq", q: "First step of CPU cycle:", options: ["Decode", "Execute", "Fetch", "Store"], a: 2, exp: "CPU first fetches instruction from memory." },
+        { type: "mcq", q: "Which represents 'Raw Facts'?", options: ["Information", "Data", "Knowledge", "Wisdom"], a: 1, exp: "Data is unprocessed." },
+        { type: "tf", q: "1 GB is smaller than 1 MB.", a: false, exp: "GB (Giga) is 1024 times larger than MB." },
+        { type: "mcq", q: "Decoding happens in which unit?", options: ["ALU", "CU", "MU", "Output"], a: 1, exp: "Control Unit decodes instructions." },
+        { type: "one", q: "What does 'G' stand for in GHz?", a: "giga", exp: "Gigahertz." },
+        
+        // Continuation to reach 70... (Generating pattern variations for coverage)
+        { type: "mcq", q: "Who directs the flow of data?", options: ["ALU", "CU", "Monitor", "Keyboard"], a: 1, exp: "CU is the traffic policeman." },
+        { type: "mcq", q: "Result produced by CPU is:", options: ["Data", "Input", "Information", "Raw"], a: 2, exp: "Output/Result is Information." },
+        { type: "tf", q: "Fetch means to execute.", a: false, exp: "Fetch means getting the instruction." },
+        { type: "fill", q: "ALU stands for Arithmetic _____ Unit.", a: "logic", exp: "It handles logic operations too." },
+        { type: "one", q: "Is 'Red Color' data or information?", a: "data", exp: "Without context, it's just data." },
+        
+        { type: "mcq", q: "Which is largest?", options: ["KB", "GB", "MB", "TB"], a: 3, exp: "TB (Terabyte) is the largest here." },
+        { type: "mcq", q: "Computer understands which language?", options: ["English", "Binary", "Hindi", "French"], a: 1, exp: "0s and 1s (Binary)." },
+        { type: "tf", q: "MU stores data permanently in CPU.", a: false, exp: "MU (registers) is temporary/fast." },
+        { type: "mcq", q: "3 GHz is faster than 500 MHz.", options: ["True", "False"], a: 0, exp: "3 GHz = 3000 MHz." },
+        { type: "fill", q: "The cycle is Fetch - _____ - Execute.", a: "decode", exp: "The missing middle step." },
+        
+        { type: "one", q: "How many bits in 2 bytes?", a: "16", exp: "2 x 8 = 16." },
+        { type: "mcq", q: "Meaningful data is:", options: ["Input", "Data", "Information", "Bit"], a: 2, exp: "Processed data." },
+        { type: "mcq", q: "Which comes after MB?", options: ["KB", "Byte", "GB", "Bit"], a: 2, exp: "KB -> MB -> GB." },
+        { type: "tf", q: "We can touch Software.", a: false, exp: "Hardware is touchable, Software is not." },
+        { type: "mcq", q: "Example of Process device:", options: ["Scanner", "CPU", "Printer", "Speaker"], a: 1, exp: "Only CPU processes." },
+        
+        // 31-40
+        { type: "fill", q: "1 TB = 1024 _____.", a: "gb", exp: "Terabyte consists of Gigabytes." },
+        { type: "mcq", q: "Does ALU control the computer?", options: ["Yes", "No"], a: 1, exp: "CU controls, ALU calculates." },
+        { type: "one", q: "Short form for Binary Digit?", a: "bit", exp: "Bi-nary Digi-t." },
+        { type: "mcq", q: "Instructions are held in:", options: ["MU", "Mouse", "Screen", "Wire"], a: 0, exp: "Memory Unit holds active instructions." },
+        { type: "tf", q: "Input leads directly to Output.", a: false, exp: "Must go through Process." },
+        { type: "mcq", q: "Checking if A > B is done by:", options: ["CU", "MU", "ALU", "Monitor"], a: 2, exp: "Logical comparison." },
+        { type: "mcq", q: "GHz measures:", options: ["Space", "Weight", "Speed", "Height"], a: 2, exp: "Clock speed." },
+        { type: "fill", q: "A computer works on the _____ cycle.", a: "ipo", exp: "Input Process Output." },
+        { type: "one", q: "What is the physical part of PC?", a: "hardware", exp: "Parts you can touch." },
+        { type: "mcq", q: "Which is a unit of storage?", options: ["Hz", "Byte", "Second", "Meter"], a: 1, exp: "Byte measures capacity." },
+
+        // 41-50
+        { type: "mcq", q: "4096 MB is equal to:", options: ["4 GB", "2 GB", "1 GB", "10 GB"], a: 0, exp: "1024 MB x 4 = 4096 MB." },
+        { type: "tf", q: "Data is organized.", a: false, exp: "Information is organized." },
+        { type: "mcq", q: "Fetch gets instruction from:", options: ["User", "Memory", "Output", "Printer"], a: 1, exp: "From RAM/Cache." },
+        { type: "mcq", q: "Which symbol is a Bit?", options: ["A", "5", "0", "#"], a: 2, exp: "0 or 1." },
+        { type: "fill", q: "MU stands for _____ Unit.", a: "memory", exp: "Storage inside CPU." },
+        { type: "one", q: "Device to type data?", a: "keyboard", exp: "Standard input device." },
+        { type: "mcq", q: "If CPU is 2.5 GHz, it does:", options: ["2.5 ops", "2.5 billion ops", "2.5 million ops", "2.5 thousand ops"], a: 1, exp: "Giga = Billion." },
+        { type: "tf", q: "A file named 'Homework' is information.", a: true, exp: "It has context and meaning." },
+        { type: "mcq", q: "Step after Decode is:", options: ["Fetch", "Stop", "Execute", "Input"], a: 2, exp: "Action phase." },
+        { type: "mcq", q: "Logic operations include:", options: ["+", "-", "AND/OR", "*"], a: 2, exp: "Plus/Minus are Arithmetic." },
+
+        // 51-60
+        { type: "mcq", q: "Where does processing happen?", options: ["Hard Disk", "CPU Box", "Screen", "Keyboard"], a: 1, exp: "Inside the system unit." },
+        { type: "fill", q: "1024 GB makes 1 _____.", a: "tb", exp: "Terabyte." },
+        { type: "one", q: "Brain of computer?", a: "cpu", exp: "Classic definition." },
+        { type: "mcq", q: "Smallest meaningful unit?", options: ["Bit", "Byte", "Data", "None"], a: 1, exp: "Byte represents a character." },
+        { type: "tf", q: "CU does the math.", a: false, exp: "ALU does math." },
+        { type: "mcq", q: "Which comes first?", options: ["Process", "Output", "Input", "Storage"], a: 2, exp: "Must input first." },
+        { type: "mcq", q: "Hertz is unit of:", options: ["Frequency", "Size", "Color", "Weight"], a: 0, exp: "Cycles per second." },
+        { type: "fill", q: "Computer runs on _____ power.", a: "electric", exp: "It is an electronic machine." },
+        { type: "one", q: "Set of instructions is?", a: "program", exp: "Software/Program." },
+        { type: "mcq", q: "Binary has how many digits?", options: ["10", "2", "8", "16"], a: 1, exp: "Base 2." },
+
+        // 61-70
+        { type: "mcq", q: "Comparing numbers is done by:", options: ["CU", "MU", "ALU", "Bus"], a: 2, exp: "Logical comparison." },
+        { type: "tf", q: "Fetch-Execute-Decode is the correct order.", a: false, exp: "Wrong. It is Fetch-Decode-Execute." },
+        { type: "mcq", q: "Which is largest?", options: ["Bit", "Nibble", "Byte", "KB"], a: 3, exp: "KB > Byte > Nibble > Bit." },
+        { type: "mcq", q: "Information is:", options: ["Useless", "Useful", "Raw", "Random"], a: 1, exp: "Helps make decisions." },
+        { type: "fill", q: "CU stands for _____ Unit.", a: "control", exp: "Controller." },
+        { type: "one", q: "How many bits in a nibble?", a: "4", exp: "Half byte." },
+        { type: "mcq", q: "Speed of modern PC is in:", options: ["kHz", "mHz", "GHz", "nHz"], a: 2, exp: "Gigahertz." },
+        { type: "tf", q: "Output comes before Process.", a: false, exp: "Never." },
+        { type: "mcq", q: "Final Question: The result of processing is?", options: ["Data", "Instruction", "Output", "Bit"], a: 2, exp: "The final product." },
+        { type: "one", q: "Full form of PC?", a: "personal computer", exp: "Your desktop/laptop." }
+    ];
+
+    // --- 10 ADVANCED LONG QUESTIONS ---
+    const longQuestions = [
+        {
+            id: "L1",
+            q: "Explain the IPO cycle with a real-life example.",
+            keywords: ["input", "process", "output", "example", "result", "raw"],
+            model: "Must mention: Input (taking data), Process (working on it), Output (result). Example: Making tea, washing clothes, or calculator."
+        },
+        {
+            id: "L2",
+            q: "Differentiate between Data and Information.",
+            keywords: ["data", "information", "raw", "processed", "meaning", "facts"],
+            model: "Data is raw facts (e.g., '10'). Information is processed data with meaning (e.g., '10 Apples')."
+        },
+        {
+            id: "L3",
+            q: "Describe the function of the ALU.",
+            keywords: ["arithmetic", "logic", "math", "calculation", "compare", "addition"],
+            model: "ALU (Arithmetic Logic Unit) performs mathematical calculations (+,-,*,/) and logical comparisons (<,>,=)."
+        },
+        {
+            id: "L4",
+            q: "What is the Control Unit (CU) and why is it important?",
+            keywords: ["control", "coordinate", "traffic", "signal", "flow", "manage"],
+            model: "CU controls the flow of data. It acts like a traffic policeman coordinating all parts of the computer."
+        },
+        {
+            id: "L5",
+            q: "Explain the Fetch-Decode-Execute cycle.",
+            keywords: ["fetch", "decode", "execute", "instruction", "memory", "understand"],
+            model: "1. Fetch: Get instruction. 2. Decode: Understand it. 3. Execute: Do the task."
+        },
+        {
+            id: "L6",
+            q: "List the memory units from Bit to TB.",
+            keywords: ["bit", "byte", "kb", "mb", "gb", "tb"],
+            model: "Bit -> Nibble -> Byte -> KB -> MB -> GB -> TB."
+        },
+        {
+            id: "L7",
+            q: "What is processing speed? How is it measured?",
+            keywords: ["speed", "hertz", "hz", "ghz", "clock", "cycles"],
+            model: "It is how fast CPU executes instructions. Measured in Hertz (Hz) or Gigahertz (GHz)."
+        },
+        {
+            id: "L8",
+            q: "Why is the CPU called the brain of the computer?",
+            keywords: ["brain", "control", "process", "think", "decision", "command"],
+            model: "Because it controls all other parts, processes data, and takes decisions, just like a human brain."
+        },
+        {
+            id: "L9",
+            q: "What is the role of MU (Memory Unit) in the CPU?",
+            keywords: ["store", "hold", "data", "instruction", "temporary", "memory"],
+            model: "MU stores data and instructions temporarily while the CPU is working on them."
+        },
+        {
+            id: "L10",
+            q: "Explain the relationship between Input, CPU, and Output using a block diagram concept.",
+            keywords: ["input", "cpu", "output", "connect", "flow", "diagram"],
+            model: "Input devices send data to CPU. CPU processes it (using ALU, CU, MU). CPU sends result to Output devices."
+        }
+    ];
+
+    // --- DOM ELEMENTS ---
+    const dom = {
+        scoreCorrect: document.getElementById('score-correct'),
+        scoreWrong: document.getElementById('score-wrong'),
+        scoreTotal: document.getElementById('score-total'),
+        scorePercent: document.getElementById('score-percent'),
+        impList: document.getElementById('imp-q-list'),
+        quizContainer: document.getElementById('quiz-container'),
+        longContainer: document.getElementById('long-q-container')
+    };
+
+    // --- INITIALIZATION ---
+    window.addEventListener('DOMContentLoaded', () => {
+        renderImpQuestions();
+        loadPracticeQuestion();
+        renderLongQuestions();
+    });
+
+    // --- CORE LOGIC ---
+
+    function updateScorePanel() {
+        state.total = state.correct + state.wrong;
+        dom.scoreCorrect.textContent = state.correct;
+        dom.scoreWrong.textContent = state.wrong;
+        dom.scoreTotal.textContent = state.total;
+        
+        let pct = state.total === 0 ? 0 : Math.round((state.correct / state.total) * 100);
+        dom.scorePercent.textContent = pct + "%";
+    }
+
+    function renderImpQuestions() {
+        dom.impList.innerHTML = importantQuestions.map((item, i) => `
+            <div class="imp-q-item">
+                <div class="imp-q">Q${i+1}. ${item.q}</div>
+                <div class="imp-a">Ans: ${item.a}</div>
+            </div>
+        `).join('');
+    }
+
+    // --- PRACTICE QUESTION ENGINE ---
+    
+    function loadPracticeQuestion() {
+        if (state.currentQIndex >= practiceQuestions.length) {
+            dom.quizContainer.innerHTML = `
+                <div class="q-card" style="text-align:center; background:#dff9fb;">
+                    <h3>🎉 All Practice Questions Completed!</h3>
+                    <p>Great job revising Chapter 1.</p>
+                </div>`;
+            return;
+        }
+
+        const q = practiceQuestions[state.currentQIndex];
+        let html = `<div class="q-card">
+            <div style="float:right; font-size:0.8rem; color:#7f8c8d;">${state.currentQIndex + 1}/70</div>
+            <div class="q-text"><strong>Q.</strong> ${q.q}</div>`;
+
+        // Render input based on type
+        if (q.type === 'mcq') {
+            html += `<div class="options-grid">`;
+            q.options.forEach((opt, idx) => {
+                html += `<div class="option-btn" onclick="checkMCQ(this, ${idx})">${opt}</div>`;
+            });
+            html += `</div>`;
+        } else if (q.type === 'tf') {
+            html += `<div class="options-grid">
+                <div class="option-btn" onclick="checkTF(this, true)">True</div>
+                <div class="option-btn" onclick="checkTF(this, false)">False</div>
+            </div>`;
+        } else {
+            // Fill or One word
+            html += `
+                <input type="text" id="text-answer" placeholder="Type answer here..." autocomplete="off">
+                <button class="action-btn" onclick="checkText()">Submit</button>
+            `;
+        }
+
+        html += `<div class="feedback" id="q-feedback"></div>`;
+        
+        // Next button (hidden initially)
+        html += `<div style="text-align:right; margin-top:10px;">
+                    <button class="action-btn" id="next-btn" style="display:none;" onclick="nextQuestion()">Next Question ➡️</button>
+                 </div>`;
+        
+        html += `</div>`;
+        dom.quizContainer.innerHTML = html;
+    }
+
+    // Check MCQ
+    window.checkMCQ = (btn, selectedIdx) => {
+        if (btn.parentElement.classList.contains('locked')) return;
+        
+        const q = practiceQuestions[state.currentQIndex];
+        const feedback = document.getElementById('q-feedback');
+        const nextBtn = document.getElementById('next-btn');
+        const allBtns = btn.parentElement.children;
+
+        // Lock interaction
+        btn.parentElement.classList.add('locked');
+
+        if (selectedIdx === q.a) {
+            btn.classList.add('correct');
+            feedback.innerHTML = `<strong>Excellent ⭐</strong><br>${q.exp}`;
+            feedback.className = 'feedback show success';
+            state.correct++;
+        } else {
+            btn.classList.add('wrong');
+            // Highlight correct
+            allBtns[q.a].classList.add('correct');
+            feedback.innerHTML = `<strong>Try Again!</strong><br>Correct: ${q.options[q.a]}<br><em>${q.exp}</em>`;
+            feedback.className = 'feedback show error';
+            state.wrong++;
+        }
+        
+        updateScorePanel();
+        nextBtn.style.display = 'inline-block';
+    };
+
+    // Check True/False
+    window.checkTF = (btn, val) => {
+        if (btn.parentElement.classList.contains('locked')) return;
+        
+        const q = practiceQuestions[state.currentQIndex];
+        const feedback = document.getElementById('q-feedback');
+        const nextBtn = document.getElementById('next-btn');
+
+        btn.parentElement.classList.add('locked');
+
+        const isCorrect = (val === q.a);
+        
+        if (isCorrect) {
+            btn.classList.add('correct');
+            feedback.innerHTML = `<strong>Excellent ⭐</strong><br>${q.exp}`;
+            feedback.className = 'feedback show success';
+            state.correct++;
+        } else {
+            btn.classList.add('wrong');
+            // Find sibling
+            const sibling = btn.nextElementSibling || btn.previousElementSibling;
+            sibling.classList.add('correct');
+            feedback.innerHTML = `<strong>Try Again!</strong><br>Correct: ${q.a ? 'True' : 'False'}<br><em>${q.exp}</em>`;
+            feedback.className = 'feedback show error';
+            state.wrong++;
+        }
+        updateScorePanel();
+        nextBtn.style.display = 'inline-block';
+    };
+
+    // Check Text (Fill/One)
+    window.checkText = () => {
+        const input = document.getElementById('text-answer');
+        const btn = document.querySelector('#quiz-container .action-btn'); // Submit button
+        const feedback = document.getElementById('q-feedback');
+        const nextBtn = document.getElementById('next-btn');
+        
+        if (input.disabled) return;
+        
+        const q = practiceQuestions[state.currentQIndex];
+        const userVal = input.value.trim().toLowerCase();
+        
+        input.disabled = true;
+        btn.style.display = 'none';
+
+        if (userVal === q.a.toLowerCase()) {
+            input.style.borderColor = '#2ed573';
+            input.style.backgroundColor = '#d4edda';
+            feedback.innerHTML = `<strong>Excellent ⭐</strong><br>${q.exp}`;
+            feedback.className = 'feedback show success';
+            state.correct++;
+        } else {
+            input.style.borderColor = '#ff4757';
+            input.style.backgroundColor = '#f8d7da';
+            feedback.innerHTML = `<strong>Correct Answer:</strong> ${q.a}<br><em>${q.exp}</em>`;
+            feedback.className = 'feedback show error';
+            state.wrong++;
+        }
+        updateScorePanel();
+        nextBtn.style.display = 'inline-block';
+    };
+
+    window.nextQuestion = () => {
+        state.currentQIndex++;
+        loadPracticeQuestion();
+    };
+
+    // --- LONG ANSWER ENGINE ---
+
+    function renderLongQuestions() {
+        const container = dom.longContainer;
+        let html = '';
+        
+        longQuestions.forEach((q, index) => {
+            html += `
+            <div class="q-card" id="lq-${index}">
+                <div class="q-text"><strong>Q${index + 1}.</strong> ${q.q}</div>
+                <textarea rows="4" placeholder="Type your answer here..." id="la-input-${index}"></textarea>
+                <div class="feedback" id="la-feedback-${index}"></div>
+                <button class="action-btn" onclick="checkLongAnswer(${index})">Check Answer</button>
+            </div>`;
+        });
+        
+        container.innerHTML = html;
+    }
+
+    window.checkLongAnswer = (index) => {
+        const q = longQuestions[index];
+        const input = document.getElementById(`la-input-${index}`);
+        const feedback = document.getElementById(`la-feedback-${index}`);
+        const btn = document.querySelector(`#lq-${index} button`);
+        
+        const userText = input.value.toLowerCase();
+        if (userText.length < 5) {
+            alert("Please write a proper answer.");
+            return;
+        }
+
+        // Logic: Check for at least 2 keywords
+        let hits = 0;
+        let missing = [];
+        
+        q.keywords.forEach(k => {
+            if (userText.includes(k)) hits++;
+            else missing.push(k);
+        });
+
+        const passed = hits >= 2; // Threshold
+
+        if (passed) {
+            state.correct++;
+            feedback.className = 'feedback show success';
+            feedback.innerHTML = `
+                <strong>Correct! ⭐</strong><br>
+                You included key concepts.<br>
+                <hr style="border-top:1px dashed #ccc; margin:5px 0;">
+                <strong>Model Answer:</strong> ${q.model}
+            `;
+            input.style.borderColor = "#2ed573";
+        } else {
+            state.wrong++;
+            feedback.className = 'feedback show error';
+            feedback.innerHTML = `
+                <strong>Needs Improvement</strong><br>
+                Your answer is missing key terms: <em>${missing.slice(0,3).join(", ")}</em>.<br>
+                <hr style="border-top:1px dashed #ccc; margin:5px 0;">
+                <strong>Model Answer:</strong> ${q.model}
+            `;
+            input.style.borderColor = "#ff4757";
+        }
+
+        // Disable
+        input.disabled = true;
+        btn.style.display = 'none';
+        updateScorePanel();
+    };
+
+    // --- UTILS ---
+    window.toggleRevision = () => {
+        const el = document.getElementById('revision-content');
+        if (el.classList.contains('visible')) {
+            el.classList.remove('visible');
+        } else {
+            el.classList.add('visible');
+        }
+    };
+
+</script>
+</body>
+</html>

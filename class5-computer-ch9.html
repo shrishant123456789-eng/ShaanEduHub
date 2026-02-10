@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 5 - Computer Ch 9: AI & Emerging Technology</title>
+    <style>
+        /* GLOBAL RESET & TYPOGRAPHY */
+        :root {
+            --paper-bg: #fffdf0;
+            --line-color: #a8d1ff;
+            --ink-color: #2c3e50;
+            --accent-blue: #4a90e2;
+            --accent-green: #2ecc71;
+            --accent-red: #e74c3c;
+            --note-yellow: #fff9c4;
+            --note-blue: #e1f5fe;
+            --note-pink: #fce4ec;
+            --header-font: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', sans-serif;
+            --body-font: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--body-font);
+            background-color: #f0f4f8;
+            color: var(--ink-color);
+            line-height: 1.6;
+            font-weight: bold; /* STRICT REQUIREMENT: ALL TEXT BOLD */
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--paper-bg);
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            padding-bottom: 60px;
+        }
+
+        /* HEADER */
+        header {
+            background: var(--accent-blue);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 4px solid #2980b9;
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        /* LIVE SCORE PANEL (STICKY) */
+        #score-panel {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: #2c3e50;
+            color: #fff;
+            padding: 10px;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
+            font-size: 0.8rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-bottom: 2px solid #34495e;
+        }
+
+        .score-item span {
+            display: block;
+            font-size: 1.1em;
+            color: #f1c40f;
+        }
+
+        .score-label {
+            font-size: 0.7em;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+
+        /* SECTION STYLING */
+        section {
+            padding: 20px;
+            border-bottom: 2px dashed var(--line-color);
+        }
+
+        h2 {
+            background: var(--ink-color);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.2);
+        }
+
+        /* NOTES CARDS */
+        .topic-card {
+            background: white;
+            border: 2px solid var(--ink-color);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 25px;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .topic-card.yellow { background: var(--note-yellow); }
+        .topic-card.blue { background: var(--note-blue); }
+        .topic-card.pink { background: var(--note-pink); }
+
+        .topic-title {
+            font-size: 1.2rem;
+            text-decoration: underline;
+            margin-bottom: 10px;
+            color: #d35400;
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 150px;
+            background: rgba(0,0,0,0.05);
+            border: 2px dashed #999;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
+            color: #666;
+            font-style: italic;
+        }
+
+        .memory-tip {
+            background: #fff;
+            padding: 8px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border-left: 5px solid var(--accent-green);
+        }
+
+        /* IMPORTANT QUESTIONS */
+        .imp-q-card {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+        }
+        .imp-q-text { color: #c0392b; margin-bottom: 5px; }
+        .imp-a-text { color: #27ae60; }
+
+        /* PRACTICE & LONG QUESTIONS */
+        .question-box {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #eee;
+            margin-bottom: 30px;
+        }
+
+        .q-header {
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        /* MCQs */
+        .options-grid {
+            display: grid;
+            gap: 10px;
+        }
+
+        .option-btn {
+            background: #f8f9fa;
+            border: 2px solid #ddd;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+
+        .option-btn:hover { background: #e9ecef; }
+        .option-btn.selected { background: #d1ecf1; border-color: #17a2b8; }
+        .option-btn.correct { background: #d4edda; border-color: #28a745; color: #155724; }
+        .option-btn.wrong { background: #f8d7da; border-color: #dc3545; color: #721c24; }
+
+        /* LONG ANSWERS */
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            resize: vertical;
+        }
+
+        .check-btn {
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 0 #2980b9;
+        }
+        
+        .check-btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        /* FEEDBACK */
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        .feedback.show { display: block; }
+        .feedback.correct { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .feedback.wrong { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+
+        /* REVISION */
+        #revision-content { display: none; }
+        .revision-point {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .revision-point:last-child { border: 0; }
+
+        /* FOOTER */
+        footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            font-size: 0.9rem;
+        }
+
+        /* UTILS */
+        .hidden { display: none; }
+        .btn-toggle {
+            background: #e67e22;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            width: 100%;
+            font-weight: bold;
+            font-family: inherit;
+        }
+
+        @media (max-width: 400px) {
+            h1 { font-size: 1.5rem; }
+            .option-btn { padding: 10px; font-size: 0.9rem; }
+            textarea { height: 100px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>AI & Emerging Tech</h1>
+        <div class="subtitle">Class 5 • Computer • Chapter 9</div>
+    </header>
+
+    <!-- LIVE SCORE PANEL -->
+    <div id="score-panel">
+        <div class="score-item">
+            <span id="score-correct">0</span>
+            <div class="score-label">Correct</div>
+        </div>
+        <div class="score-item">
+            <span id="score-wrong">0</span>
+            <div class="score-label">Wrong</div>
+        </div>
+        <div class="score-item">
+            <span id="score-total">0</span>
+            <div class="score-label">Attempted</div>
+        </div>
+        <div class="score-item">
+            <span id="score-percent">0%</span>
+            <div class="score-label">Accuracy</div>
+        </div>
+        <div class="score-item">
+            <span id="score-marks">0</span>
+            <div class="score-label">Marks</div>
+        </div>
+    </div>
+
+    <!-- NOTES SECTION -->
+    <section id="notes-section">
+        <h2>📘 Chapter Notes</h2>
+        <div id="notes-container"></div>
+    </section>
+
+    <!-- IMPORTANT QUESTIONS -->
+    <section id="imp-questions-section">
+        <h2>⭐ Important Q&A</h2>
+        <div id="imp-questions-container"></div>
+    </section>
+
+    <!-- PRACTICE QUESTIONS -->
+    <section id="practice-section">
+        <h2>🎯 Practice Zone (70 Qs)</h2>
+        <div id="practice-container"></div>
+    </section>
+
+    <!-- ADVANCED LONG QUESTIONS -->
+    <section id="long-questions-section">
+        <h2>🧠 Advanced Analysis</h2>
+        <p style="margin-bottom:15px; color:#666;">Type your answer and click check. Keywords matter!</p>
+        <div id="long-questions-container"></div>
+    </section>
+
+    <!-- REVISION -->
+    <section id="revision-section">
+        <h2>🔁 Quick Revision</h2>
+        <button class="btn-toggle" id="toggle-rev-btn">Show Revision Points</button>
+        <div id="revision-content">
+            <div id="revision-list"></div>
+        </div>
+    </section>
+
+    <footer>
+        <p>Designed & Created by SHRISHANT YADAV</p>
+        <p>ShanEduHub</p>
+    </footer>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    /* ================= DATA STORE ================= */
+
+    const topics = [
+        {
+            title: "1. Introduction to AI",
+            content: "Artificial Intelligence (AI) is the ability of a computer or a robot controlled by a computer to do tasks that are usually done by humans because they require human intelligence and discernment. In simple terms, making computers 'smart' enough to think and act like humans.",
+            example: "Playing Chess against a computer opponent.",
+            tip: "AI = Artificial (Man-made) + Intelligence (Thinking power). 🧠",
+            checkQ: "Does AI occur naturally?",
+            style: "yellow"
+        },
+        {
+            title: "2. Machine Learning (Basic)",
+            content: "Machine Learning (ML) is a part of AI. Instead of programming every single rule, we give the computer lots of data (examples) and let it learn the rules itself. Just like a baby learns to recognize a dog by seeing many dogs.",
+            example: "Netflix recommending movies based on what you watched before.",
+            tip: "ML is like training a puppy with treats! 🦴",
+            checkQ: "Does ML require examples to learn?",
+            style: "blue"
+        },
+        {
+            title: "3. Smart Devices",
+            content: "Smart devices are electronic gadgets that can connect, share, and interact with their user and other devices. They often use AI to make decisions.",
+            example: "Smart Watch tracking your steps, Smart Bulb changing colors via phone.",
+            tip: "If it connects to the internet and 'thinks', it's Smart! ⌚",
+            checkQ: "Is an old calculator a smart device?",
+            style: "pink"
+        },
+        {
+            title: "4. Voice Assistants",
+            content: "Voice assistants are AI programs that listen to your voice commands and perform tasks. They use speech recognition technology.",
+            example: "Siri (Apple), Alexa (Amazon), Google Assistant.",
+            tip: "They are like invisible robot helpers! 🗣️",
+            checkQ: "Name one popular voice assistant.",
+            style: "yellow"
+        },
+        {
+            title: "5. Robotics",
+            content: "Robotics is the branch of technology that deals with the design, construction, operation, and application of robots. Not all robots have AI, but modern robots use AI to see and navigate.",
+            example: "Robot vacuum cleaner (Roomba) cleaning your floor automatically.",
+            tip: "Robot = Body. AI = Brain. 🤖",
+            checkQ: "Do all robots have AI?",
+            style: "blue"
+        },
+        {
+            title: "6. AI in Daily Life",
+            content: "AI is everywhere today. It helps in navigation, security, entertainment, and shopping. It makes life easier by automating boring tasks.",
+            example: "Face Unlock on your phone, Google Maps showing traffic.",
+            tip: "AI is your digital co-pilot everyday! 🗺️",
+            checkQ: "Is Face Unlock an AI feature?",
+            style: "pink"
+        },
+        {
+            title: "7. Future Scope of AI",
+            content: "In the future, AI will help doctors cure diseases, drive cars safely (driverless cars), and help us explore space. However, we must use it responsibly.",
+            example: "Self-driving cars taking you to school.",
+            tip: "The future is automated and smart! 🚀",
+            checkQ: "Will AI help in healthcare?",
+            style: "yellow"
+        }
+    ];
+
+    const importantQuestions = [
+        { q: "Who is known as the father of AI?", a: "John McCarthy", exp: "He coined the term in 1956." },
+        { q: "What does AI stand for?", a: "Artificial Intelligence", exp: "Man-made thinking power." },
+        { q: "Name a game where AI beat a human champion.", a: "Chess (Deep Blue)", exp: "It beat Garry Kasparov." },
+        { q: "What is the brain of a computer vision system?", a: "Camera + AI", exp: "Camera sees, AI understands." },
+        { q: "Which company created Alexa?", a: "Amazon", exp: "It is a popular voice assistant." },
+        { q: "What is IoT?", a: "Internet of Things", exp: "Network of connected smart devices." },
+        { q: "Can AI feel emotions like humans?", a: "No", exp: "AI has no feelings or consciousness." },
+        { q: "What is a drone?", a: "Unmanned Aerial Vehicle", exp: "Often controlled by AI." },
+        { q: "Name a humanoid robot developed by Hanson Robotics.", a: "Sophia", exp: "She looks very human-like." },
+        { q: "What is Siri?", a: "Voice Assistant", exp: "Developed by Apple." },
+        { q: "Does a washing machine use AI?", a: "Yes (Some)", exp: "Smart ones sense load weight." },
+        { q: "What is the key to Machine Learning?", a: "Data", exp: "ML needs data to learn." },
+        { q: "Is a calculator AI?", a: "No", exp: "It only follows fixed math rules." },
+        { q: "What technology powers self-driving cars?", a: "AI & Sensors", exp: "To see the road and decide." },
+        { q: "What is a chatbot?", a: "AI that chats", exp: "Simulates conversation with users." },
+        { q: "Which AI helps in translating languages?", a: "Google Translate", exp: "Uses Neural Networks." },
+        { q: "What is 'Computer Vision'?", a: "Computers seeing", exp: "Understanding images/video." },
+        { q: "Can AI paint pictures?", a: "Yes", exp: "Generative AI can create art." },
+        { q: "What is the main goal of AI?", a: "Solve problems", exp: "To mimic human intelligence." },
+        { q: "Is AI dangerous?", a: "Depends on use", exp: "It is a tool; ethics matter." },
+        { q: "What is a 'Smart Home'?", a: "Automated house", exp: "Lights/locks controlled by AI." },
+        { q: "Who created Google Assistant?", a: "Google", exp: "Launched in 2016." },
+        { q: "What is a 'Wake Word'?", a: "Activation command", exp: "Like 'Hey Siri'." },
+        { q: "Can AI compose music?", a: "Yes", exp: "It analyzes patterns in songs." },
+        { q: "What is a recommendation engine?", a: "AI suggester", exp: "Suggests videos/products." },
+        { q: "Do smartwatches use AI?", a: "Yes", exp: "For health tracking analysis." },
+        { q: "What is Virtual Reality?", a: "Simulated world", exp: "Often used with AI for training." },
+        { q: "What is an algorithm?", a: "Set of rules", exp: "Instructions for the computer." },
+        { q: "Can AI make medical diagnoses?", a: "Yes", exp: "Often better than humans in X-rays." },
+        { q: "Is the human brain faster than AI?", a: "Sometimes", exp: "Humans are better at general thinking." }
+    ];
+
+    const practiceQuestions = [
+        // MCQs (40)
+        { id: 1, type: "mcq", q: "Which of these is a Voice Assistant?", options: ["Excel", "Alexa", "Paint", "Mouse"], ans: "Alexa", hint: "Amazon made it." },
+        { id: 2, type: "mcq", q: "AI stands for ___ Intelligence.", options: ["Automatic", "Applied", "Artificial", "Advanced"], ans: "Artificial", hint: "Not natural." },
+        { id: 3, type: "mcq", q: "Which device is likely to be 'Smart'?", options: ["Old Hammer", "Smart Watch", "Wooden Chair", "Paper"], ans: "Smart Watch", hint: "It has a screen and chip." },
+        { id: 4, type: "mcq", q: "Self-driving cars use ___ to see.", options: ["Fuel", "Sensors & AI", "Mirrors only", "Wind"], ans: "Sensors & AI", hint: "Digital eyes." },
+        { id: 5, type: "mcq", q: "Machine Learning requires lots of ___.", options: ["Food", "Data", "Sleep", "Water"], ans: "Data", hint: "Information to learn from." },
+        { id: 6, type: "mcq", q: "Who is the 'father' of AI?", options: ["Bill Gates", "Elon Musk", "John McCarthy", "Steve Jobs"], ans: "John McCarthy", hint: "Coined in 1956." },
+        { id: 7, type: "mcq", q: "Siri is made by ___.", options: ["Google", "Microsoft", "Samsung", "Apple"], ans: "Apple", hint: "Found on iPhones." },
+        { id: 8, type: "mcq", q: "Robots always need ___ to work.", options: ["Legs", "Power/Program", "Shoes", "Food"], ans: "Power/Program", hint: "Electricity and code." },
+        { id: 9, type: "mcq", q: "Netflix uses AI to ___.", options: ["Make popcorn", "Recommend movies", "Print tickets", "Clean screen"], ans: "Recommend movies", hint: "Suggestions for you." },
+        { id: 10, type: "mcq", q: "Face Unlock uses ___.", options: ["Fingerprint", "Computer Vision", "Voice", "Touch"], ans: "Computer Vision", hint: "It looks at your face." },
+        { id: 11, type: "mcq", q: "Google Maps uses AI for ___.", options: ["Traffic routes", "Painting", "Singing", "Cooking"], ans: "Traffic routes", hint: "Finding the fastest way." },
+        { id: 12, type: "mcq", q: "Can AI write a poem?", options: ["Yes", "No", "Only math", "Never"], ans: "Yes", hint: "Generative AI can write." },
+        { id: 13, type: "mcq", q: "Sophia is a ___.", options: ["Car", "Humanoid Robot", "Phone", "Dog"], ans: "Humanoid Robot", hint: "Looks like a human." },
+        { id: 14, type: "mcq", q: "A smart bulb can be controlled by ___.", options: ["Mind", "Smartphone", "Water", "Air"], ans: "Smartphone", hint: "Via an app." },
+        { id: 15, type: "mcq", q: "AI helps doctors to ___.", options: ["Drive", "Diagnose diseases", "Build walls", "Fly"], ans: "Diagnose diseases", hint: "Checking X-rays." },
+        { id: 16, type: "mcq", q: "Which is NOT an AI?", options: ["Siri", "Calculator", "Tesla Autopilot", "ChatGPT"], ans: "Calculator", hint: "It only does fixed math." },
+        { id: 17, type: "mcq", q: "Cortana is from ___.", options: ["Apple", "Microsoft", "Amazon", "Nokia"], ans: "Microsoft", hint: "Windows assistant." },
+        { id: 18, type: "mcq", q: "The 'I' in AI stands for ___.", options: ["Internet", "Information", "Intelligence", "Idea"], ans: "Intelligence", hint: "Smartness." },
+        { id: 19, type: "mcq", q: "Deep Blue played ___.", options: ["Cricket", "Chess", "Ludo", "Tennis"], ans: "Chess", hint: "Strategy game." },
+        { id: 20, type: "mcq", q: "Spam filters in email use ___.", options: ["Magic", "AI", "Postman", "Stamps"], ans: "AI", hint: "Detects junk mail." },
+        { id: 21, type: "mcq", q: "Smart homes can save ___.", options: ["Energy", "Time travel", "Rain", "Clouds"], ans: "Energy", hint: "Turning off lights automatically." },
+        { id: 22, type: "mcq", q: "A vacuum robot is called ___.", options: ["Roomba", "Zoomba", "Pumba", "Lumba"], ans: "Roomba", hint: "Famous brand." },
+        { id: 23, type: "mcq", q: "AI patterns are found in ___.", options: ["Data", "Clouds", "Water", "Sand"], ans: "Data", hint: "Information sets." },
+        { id: 24, type: "mcq", q: "IoT devices are connected to ___.", options: ["The Internet", "Trees", "Roads", "Nothing"], ans: "The Internet", hint: "Online connection." },
+        { id: 25, type: "mcq", q: "Can AI learn from mistakes?", options: ["Yes", "No", "Maybe", "Only humans"], ans: "Yes", hint: "That is Machine Learning." },
+        { id: 26, type: "mcq", q: "A drone is a flying ___.", options: ["Bird", "Robot", "Fish", "Car"], ans: "Robot", hint: "Unmanned vehicle." },
+        { id: 27, type: "mcq", q: "Which sensor helps screen rotation?", options: ["Camera", "Accelerometer", "Mic", "Speaker"], ans: "Accelerometer", hint: "Detects movement/tilt." },
+        { id: 28, type: "mcq", q: "Chatbots are mostly used for ___.", options: ["Cooking", "Customer Service", "Running", "Sleeping"], ans: "Customer Service", hint: "Helping users online." },
+        { id: 29, type: "mcq", q: "Predictive text helps in ___.", options: ["Typing", "Running", "Eating", "Walking"], ans: "Typing", hint: "Finishes your words." },
+        { id: 30, type: "mcq", q: "Deepfakes are ___.", options: ["Real videos", "Fake AI videos", "Deep oceans", "Fake news only"], ans: "Fake AI videos", hint: "Altered by AI." },
+        { id: 31, type: "mcq", q: "Watson AI was made by ___.", options: ["IBM", "Apple", "Dell", "HP"], ans: "IBM", hint: "Famous computer company." },
+        { id: 32, type: "mcq", q: "AI in farming uses ___.", options: ["Drones", "Tractors only", "Horses", "Spades"], ans: "Drones", hint: "To monitor crops." },
+        { id: 33, type: "mcq", q: "Does AI get tired?", options: ["Yes", "No", "After 1 hour", "At night"], ans: "No", hint: "Machines don't fatigue." },
+        { id: 34, type: "mcq", q: "Biometrics uses ___.", options: ["Body parts", "Books", "Pens", "Cars"], ans: "Body parts", hint: "Fingerprint, Face, Iris." },
+        { id: 35, type: "mcq", q: "Natural Language Processing (NLP) is for ___.", options: ["Images", "Language/Text", "Music", "Math"], ans: "Language/Text", hint: "Understanding words." },
+        { id: 36, type: "mcq", q: "A Roomba uses ___ to avoid walls.", options: ["Sensors", "Cameras only", "Bumpers", "All of these"], ans: "All of these", hint: "Combination of tech." },
+        { id: 37, type: "mcq", q: "Future AI might help us explore ___.", options: ["Mars", "Dreams", "History", "Magic"], ans: "Mars", hint: "Space exploration." },
+        { id: 38, type: "mcq", q: "AI is a subset of ___.", options: ["Biology", "Computer Science", "Chemistry", "Arts"], ans: "Computer Science", hint: "Study of computers." },
+        { id: 39, type: "mcq", q: "Facial recognition is used for ___.", options: ["Security", "Cooking", "Driving", "Swimming"], ans: "Security", hint: "Unlocking phones/doors." },
+        { id: 40, type: "mcq", q: "Can AI drive a truck?", options: ["Yes", "No", "Only bikes", "Never"], ans: "Yes", hint: "Autonomous trucks exist." },
+
+        // True/False (15)
+        { id: 41, type: "tf", q: "AI stands for Automated Intelligence.", options: ["True", "False"], ans: "False", hint: "Artificial Intelligence." },
+        { id: 42, type: "tf", q: "Siri is a voice assistant.", options: ["True", "False"], ans: "True", hint: "Made by Apple." },
+        { id: 43, type: "tf", q: "Machines can think exactly like humans.", options: ["True", "False"], ans: "False", hint: "They mimic, not feel." },
+        { id: 44, type: "tf", q: "A normal fan is a smart device.", options: ["True", "False"], ans: "False", hint: "Unless it connects to WiFi." },
+        { id: 45, type: "tf", q: "AI can help in weather forecasting.", options: ["True", "False"], ans: "True", hint: "Analyzes climate data." },
+        { id: 46, type: "tf", q: "Robots must look like humans.", options: ["True", "False"], ans: "False", hint: "Industrial robots are arms." },
+        { id: 47, type: "tf", q: "Machine Learning needs data.", options: ["True", "False"], ans: "True", hint: "Data is fuel." },
+        { id: 48, type: "tf", q: "Alexa is made by Google.", options: ["True", "False"], ans: "False", hint: "Amazon made Alexa." },
+        { id: 49, type: "tf", q: "Smart watches track heart rate.", options: ["True", "False"], ans: "True", hint: "Using sensors." },
+        { id: 50, type: "tf", q: "AI never makes mistakes.", options: ["True", "False"], ans: "False", hint: "It can err if data is bad." },
+        { id: 51, type: "tf", q: "YouTube recommendations use AI.", options: ["True", "False"], ans: "True", hint: "Suggests what to watch." },
+        { id: 52, type: "tf", q: "AI can play video games.", options: ["True", "False"], ans: "True", hint: "Often better than humans." },
+        { id: 53, type: "tf", q: "All computers have AI.", options: ["True", "False"], ans: "False", hint: "Basic ones don't." },
+        { id: 54, type: "tf", q: "Deep Blue defeated a Chess champion.", options: ["True", "False"], ans: "True", hint: "Garry Kasparov." },
+        { id: 55, type: "tf", q: "Smart homes are connected to the internet.", options: ["True", "False"], ans: "True", hint: "That makes them smart." },
+
+        // Fill in Blanks (10) - implemented as MCQs with text options
+        { id: 56, type: "mcq", q: "___ is the ability of a machine to copy human intelligence.", options: ["AI", "ML", "IoT", "VR"], ans: "AI", hint: "The chapter title." },
+        { id: 57, type: "mcq", q: "___ learning allows computers to learn from data.", options: ["Book", "Machine", "Rote", "Fast"], ans: "Machine", hint: "ML." },
+        { id: 58, type: "mcq", q: "Google ___ is a popular voice assistant.", options: ["Home", "Assistant", "Talk", "Speak"], ans: "Assistant", hint: "Google's helper." },
+        { id: 59, type: "mcq", q: "___ devices connect to the internet to share data.", options: ["Dumb", "Smart", "Slow", "Hard"], ans: "Smart", hint: "Like smart phones." },
+        { id: 60, type: "mcq", q: "___ means Internet of Things.", options: ["IoA", "IoT", "IoW", "IoS"], ans: "IoT", hint: "Things connected." },
+        { id: 61, type: "mcq", q: "Self-driving cars are also called ___ cars.", options: ["Auto", "Autonomous", "Airplane", "Manual"], ans: "Autonomous", hint: "Self-governing." },
+        { id: 62, type: "mcq", q: "___ is a robot citizen of Saudi Arabia.", options: ["Alexa", "Sophia", "Siri", "Cortana"], ans: "Sophia", hint: "Humanoid robot." },
+        { id: 63, type: "mcq", q: "Amazon's smart speaker is called ___.", options: ["Echo", "Dot", "Box", "Cube"], ans: "Echo", hint: "Houses Alexa." },
+        { id: 64, type: "mcq", q: "AI uses ___ to process information.", options: ["Algorithms", "Fuel", "Paper", "Magic"], ans: "Algorithms", hint: "Step-by-step rules." },
+        { id: 65, type: "mcq", q: "Face ID is a type of ___ security.", options: ["Lock", "Biometric", "Key", "Pin"], ans: "Biometric", hint: "Biological measurement." },
+
+        // Thinking/One Word (5)
+        { id: 66, type: "mcq", q: "If a computer beats you at Ludo, is it AI?", options: ["Yes", "No"], ans: "Yes", hint: "Game AI." },
+        { id: 67, type: "mcq", q: "Does a traffic light that changes on time use AI?", options: ["Yes", "No"], ans: "No", hint: "It uses a timer, not intelligence." },
+        { id: 68, type: "mcq", q: "Can AI help a blind person see?", options: ["Yes", "No"], ans: "Yes", hint: "Describing the world via camera." },
+        { id: 69, type: "mcq", q: "Is the spell checker in Word AI?", options: ["Yes", "No"], ans: "Yes", hint: "Basic NLP." },
+        { id: 70, type: "mcq", q: "Will AI replace teachers?", options: ["Yes", "No", "Assist Only", "Never"], ans: "Assist Only", hint: "Human touch is needed." }
+    ];
+
+    const longQuestions = [
+        { 
+            id: "L1", 
+            q: "Explain how a Voice Assistant like Alexa works in simple steps.", 
+            keywords: ["listen", "voice", "microphone", "cloud", "internet", "command", "process", "answer", "speak", "recognize"],
+            minMatch: 3,
+            guide: "Mention: Listening -> Sending to cloud -> Understanding -> Replying."
+        },
+        { 
+            id: "L2", 
+            q: "What is the difference between a normal machine and a smart machine?", 
+            keywords: ["connect", "internet", "think", "decision", "learn", "data", "sensor", "adapt", "automation"],
+            minMatch: 3,
+            guide: "Normal machines follow fixed steps. Smart machines learn or connect to the internet."
+        },
+        { 
+            id: "L3", 
+            q: "How does YouTube know which video you want to watch next?", 
+            keywords: ["history", "watch", "past", "recommend", "algorithm", "pattern", "like", "similar", "data"],
+            minMatch: 3,
+            guide: "It looks at your watch history and finds patterns."
+        },
+        { 
+            id: "L4", 
+            q: "Imagine you have a robot at home. List three things you would want it to do.", 
+            keywords: ["clean", "cook", "wash", "homework", "play", "guard", "help", "water", "plants"],
+            minMatch: 2,
+            guide: "Any logical task like cleaning, cooking, or helping."
+        },
+        { 
+            id: "L5", 
+            q: "Why is data important for Artificial Intelligence?", 
+            keywords: ["learn", "train", "example", "experience", "teach", "improve", "pattern", "knowledge"],
+            minMatch: 3,
+            guide: "AI needs data to learn patterns, just like a student needs books."
+        },
+        { 
+            id: "L6", 
+            q: "What are the benefits of self-driving cars?", 
+            keywords: ["safe", "accident", "rest", "traffic", "driver", "sleep", "efficient", "faster"],
+            minMatch: 2,
+            guide: "Safety, fewer accidents, passengers can rest."
+        },
+        { 
+            id: "L7", 
+            q: "Is it good to rely completely on AI? Why or why not?", 
+            keywords: ["no", "lazy", "fail", "error", "dependent", "skill", "power", "thinking", "hack"],
+            minMatch: 2,
+            guide: "No, we might become lazy or the system might fail."
+        },
+        { 
+            id: "L8", 
+            q: "How helps AI in healthcare/hospitals?", 
+            keywords: ["diagnose", "x-ray", "scan", "disease", "surgery", "robot", "monitor", "fast", "record"],
+            minMatch: 3,
+            guide: "Diagnosing diseases faster, robotic surgery, monitoring patients."
+        },
+        { 
+            id: "L9", 
+            q: "What is a 'Smart Home'? Describe features.", 
+            keywords: ["light", "automatic", "phone", "control", "lock", "camera", "voice", "temperature", "security"],
+            minMatch: 3,
+            guide: "Controlling lights, locks, or AC using a phone or voice."
+        },
+        { 
+            id: "L10", 
+            q: "Write one positive and one negative effect of AI.", 
+            keywords: ["fast", "easy", "job", "lazy", "error", "cost", "help", "dangerous", "loss"],
+            minMatch: 2,
+            guide: "Positive: Makes life easy. Negative: Loss of jobs or laziness."
+        }
+    ];
+
+    /* ================= LOGIC & RENDER ================= */
+
+    let state = {
+        correct: 0,
+        wrong: 0,
+        total: 0,
+        marks: 0
+    };
+
+    // DOM Elements
+    const notesContainer = document.getElementById('notes-container');
+    const impContainer = document.getElementById('imp-questions-container');
+    const pracContainer = document.getElementById('practice-container');
+    const longContainer = document.getElementById('long-questions-container');
+    const revisionList = document.getElementById('revision-list');
+    const toggleRevBtn = document.getElementById('toggle-rev-btn');
+    const revContent = document.getElementById('revision-content');
+    
+    // Score Elements
+    const elCorrect = document.getElementById('score-correct');
+    const elWrong = document.getElementById('score-wrong');
+    const elTotal = document.getElementById('score-total');
+    const elPercent = document.getElementById('score-percent');
+    const elMarks = document.getElementById('score-marks');
+
+    // Render Notes
+    topics.forEach(topic => {
+        const card = document.createElement('div');
+        card.className = `topic-card ${topic.style}`;
+        card.innerHTML = `
+            <div class="topic-title">${topic.title}</div>
+            <p>${topic.content}</p>
+            <div class="image-placeholder">🖼️ Image: ${topic.example}</div>
+            <p><strong>Example:</strong> ${topic.example}</p>
+            <div class="memory-tip"><strong>Tip:</strong> ${topic.tip}</div>
+            <div style="margin-top:10px; font-size:0.9em; color:#555;"><em>Quick Check: ${topic.checkQ}</em></div>
+        `;
+        notesContainer.appendChild(card);
+    });
+
+    // Render Important Questions
+    importantQuestions.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'imp-q-card';
+        div.innerHTML = `
+            <div class="imp-q-text"><strong>Q${index + 1}:</strong> ${item.q}</div>
+            <div class="imp-a-text"><strong>Ans:</strong> ${item.a}</div>
+            <div style="font-size:0.9em; color:#666;"><em>${item.exp}</em></div>
+        `;
+        impContainer.appendChild(div);
+    });
+
+    // Render Practice Questions
+    practiceQuestions.forEach(q => {
+        const box = document.createElement('div');
+        box.className = 'question-box';
+        
+        // Shuffle options for randomness in display (preserving answer logic)
+        let displayOptions = [...q.options];
+        if(q.type === 'mcq' && q.options.length > 2) {
+             // Fisher-Yates shuffle mainly for MCQs, not TF
+             for (let i = displayOptions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [displayOptions[i], displayOptions[j]] = [displayOptions[j], displayOptions[i]];
+            }
+        }
+
+        let optionsHtml = displayOptions.map(opt => 
+            `<button class="option-btn" onclick="checkPracticeAnswer(this, ${q.id}, '${opt.replace(/'/g, "\\'")}')">${opt}</button>`
+        ).join('');
+
+        box.innerHTML = `
+            <div class="q-header"><strong>Q${q.id}:</strong> ${q.q}</div>
+            <div class="options-grid" id="opts-${q.id}">${optionsHtml}</div>
+            <div class="feedback" id="feed-${q.id}"></div>
+        `;
+        pracContainer.appendChild(box);
+    });
+
+    // Render Long Questions
+    longQuestions.forEach(q => {
+        const box = document.createElement('div');
+        box.className = 'question-box';
+        box.innerHTML = `
+            <div class="q-header"><strong>${q.id}:</strong> ${q.q}</div>
+            <textarea id="text-${q.id}" placeholder="Type your answer here..."></textarea>
+            <button class="check-btn" onclick="checkLongAnswer('${q.id}')">Check Answer</button>
+            <div class="feedback" id="feed-${q.id}"></div>
+        `;
+        longContainer.appendChild(box);
+    });
+
+    // Render Revision
+    const revPoints = [
+        "AI = Artificial Intelligence (Man-made thinking).",
+        "Machine Learning = Learning from data examples.",
+        "Smart Devices connect to the internet (IoT).",
+        "Voice Assistants: Siri, Alexa, Google Assistant.",
+        "Robotics = Machines that do physical tasks.",
+        "AI is used in maps, games, healthcare, and security.",
+        "Father of AI = John McCarthy."
+    ];
+    revPoints.forEach(pt => {
+        const div = document.createElement('div');
+        div.className = 'revision-point';
+        div.innerHTML = `✅ ${pt}`;
+        revisionList.appendChild(div);
+    });
+
+    toggleRevBtn.addEventListener('click', () => {
+        if (revContent.style.display === 'block') {
+            revContent.style.display = 'none';
+            toggleRevBtn.textContent = 'Show Revision Points';
+        } else {
+            revContent.style.display = 'block';
+            toggleRevBtn.textContent = 'Hide Revision Points';
+        }
+    });
+
+    /* ================= FUNCTIONS ================= */
+
+    window.updateScore = (isCorrect, points) => {
+        state.total++;
+        if (isCorrect) {
+            state.correct++;
+            state.marks += points;
+        } else {
+            state.wrong++;
+        }
+        
+        elCorrect.textContent = state.correct;
+        elWrong.textContent = state.wrong;
+        elTotal.textContent = state.total;
+        elMarks.textContent = state.marks;
+        
+        const pct = Math.round((state.correct / state.total) * 100);
+        elPercent.textContent = (isNaN(pct) ? 0 : pct) + "%";
+    };
+
+    window.checkPracticeAnswer = (btn, id, selected) => {
+        // Prevent re-answering
+        const grid = document.getElementById(`opts-${id}`);
+        if (grid.classList.contains('answered')) return;
+        grid.classList.add('answered');
+
+        const question = practiceQuestions.find(q => q.id === id);
+        const feedbackEl = document.getElementById(`feed-${id}`);
+        const allBtns = grid.querySelectorAll('.option-btn');
+
+        // Visual feedback
+        allBtns.forEach(b => {
+            b.style.cursor = 'default';
+            if (b.innerText === question.ans) {
+                b.classList.add('correct');
+            }
+            if (b === btn && selected !== question.ans) {
+                b.classList.add('wrong');
+            }
+        });
+
+        const isCorrect = (selected === question.ans);
+        
+        feedbackEl.className = `feedback show ${isCorrect ? 'correct' : 'wrong'}`;
+        if (isCorrect) {
+            feedbackEl.innerHTML = `<strong>Excellent ⭐</strong><br>You got it right!`;
+            updateScore(true, 1);
+        } else {
+            feedbackEl.innerHTML = `<strong>Try Again</strong><br>Correct Answer: <u>${question.ans}</u><br><em>Why? ${question.hint}</em>`;
+            updateScore(false, 0);
+        }
+    };
+
+    window.checkLongAnswer = (id) => {
+        const textArea = document.getElementById(`text-${id}`);
+        const btn = textArea.nextElementSibling;
+        const feedbackEl = document.getElementById(`feed-${id}`);
+        
+        if (btn.disabled) return;
+        
+        const userText = textArea.value.toLowerCase().trim();
+        if (userText.length < 5) {
+            alert("Please write a proper answer!");
+            return;
+        }
+
+        btn.disabled = true;
+        textArea.disabled = true;
+        btn.style.opacity = "0.6";
+
+        const qData = longQuestions.find(q => q.id === id);
+        let matchCount = 0;
+        let matchedWords = [];
+
+        qData.keywords.forEach(word => {
+            if (userText.includes(word)) {
+                matchCount++;
+                matchedWords.push(word);
+            }
+        });
+
+        const isCorrect = matchCount >= qData.minMatch;
+        
+        feedbackEl.className = `feedback show ${isCorrect ? 'correct' : 'wrong'}`;
+        
+        let msg = isCorrect ? "<strong>Good Job! 🌟</strong>" : "<strong>Needs Improvement</strong>";
+        msg += `<br>Matches found: ${matchCount}/${qData.minMatch}`;
+        msg += `<br><br><strong>Key concepts expected:</strong> ${qData.guide}`;
+        
+        feedbackEl.innerHTML = msg;
+        updateScore(isCorrect, 5); // Long answers worth 5 marks
+    };
+
+});
+</script>
+
+</body>
+</html>

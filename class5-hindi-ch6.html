@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>अध्याय 6: काल – समय की गहरी समझ</title>
+    <style>
+        :root {
+            --paper-color: #fdfbf7;
+            --line-color: #e1e1e1;
+            --margin-line: #ffcfcf;
+            --ink-color: #2c3e50;
+            --accent-color: #d35400;
+            --success-color: #27ae60;
+            --error-color: #c0392b;
+            --btn-bg: #34495e;
+            --btn-text: #ffffff;
+            --note-bg: #fff9c4;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none; /* Prevents copying to encourage typing/learning */
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            color: var(--ink-color);
+            line-height: 1.6;
+        }
+
+        /* Notebook Style Container */
+        .page-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--paper-color);
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            position: relative;
+            padding-bottom: 60px;
+        }
+
+        /* Lined Paper Effect */
+        .content-area {
+            background-image: linear-gradient(var(--line-color) 1px, transparent 1px);
+            background-size: 100% 2rem;
+            padding: 20px;
+        }
+
+        h1, h2, h3, h4 {
+            font-weight: 900; /* Bold as requested */
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        p, li, span, div {
+            font-weight: 700; /* All text bold */
+        }
+
+        /* Header */
+        header {
+            background: var(--ink-color);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 4px solid var(--accent-color);
+        }
+
+        .class-info {
+            font-size: 1.2rem;
+            color: #bdc3c7;
+        }
+
+        h1.chapter-title {
+            font-size: 2rem;
+            margin: 10px 0;
+            color: #f1c40f;
+        }
+
+        /* Sticky Score Panel */
+        #score-panel {
+            position: sticky;
+            top: 0;
+            background: #fff;
+            border-bottom: 3px solid var(--ink-color);
+            padding: 10px;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            font-size: 0.9rem;
+        }
+
+        .score-item {
+            background: #ecf0f1;
+            padding: 5px 10px;
+            border-radius: 15px;
+            margin: 2px;
+            border: 2px solid var(--ink-color);
+        }
+
+        /* Notes Section */
+        .note-card {
+            background-color: var(--note-bg);
+            border: 2px dashed var(--ink-color);
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .note-card::before {
+            content: '📌';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.5rem;
+            background: var(--paper-color);
+            padding: 0 10px;
+        }
+
+        .example-box {
+            background: #e8f8f5;
+            padding: 10px;
+            border-left: 5px solid var(--success-color);
+            margin: 10px 0;
+        }
+
+        .trick-box {
+            background: #fce4ec;
+            padding: 10px;
+            border-left: 5px solid var(--accent-color);
+            margin: 10px 0;
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 150px;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #999;
+            margin: 10px 0;
+            color: #555;
+            font-style: italic;
+        }
+
+        /* Question Styles */
+        .question-container {
+            background: white;
+            border: 3px solid var(--ink-color);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 15px;
+        }
+
+        .option-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            background: white;
+            border: 2px solid var(--ink-color);
+            border-radius: 8px;
+            text-align: left;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+
+        .option-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .option-btn.correct {
+            background: #d4edda;
+            border-color: #155724;
+            color: #155724;
+        }
+
+        .option-btn.wrong {
+            background: #f8d7da;
+            border-color: #721c24;
+            color: #721c24;
+        }
+
+        .feedback-msg {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+            font-size: 1.1rem;
+        }
+
+        .feedback-correct {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .feedback-wrong {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Long Answer Styles */
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border: 2px solid var(--ink-color);
+            border-radius: 8px;
+            font-family: inherit;
+            font-weight: bold;
+            font-size: 1rem;
+            margin: 10px 0;
+            resize: vertical;
+        }
+
+        .check-btn {
+            background: var(--btn-bg);
+            color: var(--btn-text);
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .check-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Revision Section */
+        #revision-content {
+            display: none;
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #2196f3;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--ink-color);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            font-size: 0.9rem;
+        }
+
+        /* Utilities */
+        .hidden { display: none; }
+        .nav-btn {
+            background: var(--accent-color);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            margin-top: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+        }
+
+        .important-q-card {
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        /* Media Queries */
+        @media (max-width: 600px) {
+            h1.chapter-title { font-size: 1.5rem; }
+            .score-item { font-size: 0.8rem; padding: 4px 8px; }
+            .page-container { padding-bottom: 80px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-container">
+    <header>
+        <div class="class-info">कक्षा 5 | हिन्दी व्याकरण</div>
+        <h1 class="chapter-title">अध्याय 6: काल – समय की गहरी समझ</h1>
+    </header>
+
+    <!-- SCORE PANEL -->
+    <div id="score-panel">
+        <div class="score-item">सही: <span id="score-correct">0</span></div>
+        <div class="score-item">गलत: <span id="score-wrong">0</span></div>
+        <div class="score-item">प्रयास: <span id="score-total">0</span></div>
+        <div class="score-item">प्रतिशत: <span id="score-percent">0%</span></div>
+        <div class="score-item">अंक: <span id="score-points">0</span></div>
+    </div>
+
+    <div class="content-area">
+
+        <!-- 1. NOTES SECTION -->
+        <section id="notes-section">
+            <h2>📚 अध्ययन नोट्स (Study Notes)</h2>
+
+            <!-- Topic 1 -->
+            <div class="note-card">
+                <h3>1. काल की परिभाषा</h3>
+                <p>क्रिया के जिस रूप से कार्य के होने या करने के समय का पता चलता है, उसे 'काल' कहते हैं।</p>
+                <div class="example-box">
+                    उदाहरण:<br>
+                    • मैं पढ़ रहा हूँ। (अभी)<br>
+                    • मैंने कल पढ़ा था। (बीता हुआ समय)<br>
+                    • मैं कल पढूँगा। (आने वाला समय)
+                </div>
+                <div class="trick-box">💡 याद रखें: काल = समय का चक्र ⏳</div>
+                <div class="image-placeholder">[चित्र: एक घड़ी जो वर्तमान, भूत और भविष्य दिखा रही है]</div>
+            </div>
+
+            <!-- Topic 2 -->
+            <div class="note-card">
+                <h3>2. वर्तमान काल (Present Tense)</h3>
+                <p>जो समय अभी चल रहा है।</p>
+                <ul>
+                    <li><strong>सामान्य वर्तमान:</strong> जो क्रिया सामान्य रूप से होती है। (ता है, ती है)<br>
+                        <em>उदाहरण: सूरज पूरब से निकलता है।</em></li>
+                    <li><strong>अपूर्ण वर्तमान:</strong> कार्य अभी जारी है, समाप्त नहीं हुआ। (रहा है, रही है)<br>
+                        <em>उदाहरण: बच्चे खेल रहे हैं।</em></li>
+                </ul>
+                <div class="image-placeholder">[चित्र: एक लड़का स्कूल जा रहा है - अभी का दृश्य]</div>
+            </div>
+
+            <!-- Topic 3 -->
+            <div class="note-card">
+                <h3>3. भूतकाल (Past Tense)</h3>
+                <p>जो समय बीत चुका है।</p>
+                <ul>
+                    <li><strong>सामान्य भूतकाल:</strong> सामान्य रूप से बीते समय की बात। (आ, ई, ए, था, थी)<br>
+                        <em>उदाहरण: राम ने रावण को मारा।</em></li>
+                    <li><strong>पूर्ण भूतकाल:</strong> कार्य बहुत पहले ही पूरा हो चुका था। (चुका था, चुकी थी)<br>
+                        <em>उदाहरण: गाड़ी जा चुकी थी।</em></li>
+                </ul>
+                <div class="image-placeholder">[चित्र: एक पुराना महल या कल की तारीख का कैलेंडर]</div>
+            </div>
+
+            <!-- Topic 4 -->
+            <div class="note-card">
+                <h3>4. भविष्य काल (Future Tense)</h3>
+                <p>आने वाला समय।</p>
+                <p>पहचान: अंत में 'गा', 'गे', 'गी' आता है।</p>
+                <div class="example-box">
+                    उदाहरण:<br>
+                    • हम कल पिकनिक जाएंगे।<br>
+                    • वर्षा होगी।
+                </div>
+                <div class="image-placeholder">[चित्र: एक बच्चा दूरबीन से भविष्य देख रहा है]</div>
+            </div>
+
+            <!-- Topic 5 -->
+            <div class="note-card">
+                <h3>5. काल परिवर्तन अभ्यास</h3>
+                <p>एक काल से दूसरे काल में वाक्य बदलना।</p>
+                <div class="trick-box">
+                    नियम:<br>
+                    • 'है' को 'था' में बदलें (वर्तमान → भूत)<br>
+                    • 'था' को 'गा' में बदलें (भूत → भविष्य)
+                </div>
+                <p><strong>उदाहरण:</strong><br>
+                राधा गाती है। (वर्तमान)<br>
+                ↓<br>
+                राधा गाती थी। (भूतकाल)<br>
+                ↓<br>
+                राधा गाएगी। (भविष्य काल)</p>
+            </div>
+
+            <!-- Topic 6 -->
+            <div class="note-card">
+                <h3>6. संदर्भ के अनुसार काल चयन</h3>
+                <p>वाक्य में दिए गए शब्दों से काल पहचानना।</p>
+                <ul>
+                    <li>आज, अभी → वर्तमान काल</li>
+                    <li>कल (बीता), पहले, था → भूतकाल</li>
+                    <li>कल (आने वाला), अगले साल → भविष्य काल</li>
+                </ul>
+            </div>
+
+            <!-- Topic 7 -->
+            <div class="note-card">
+                <h3>7. काल आधारित अनुच्छेद निर्माण</h3>
+                <p>सही काल का प्रयोग करके कहानी या लेख लिखना।</p>
+                <div class="example-box">
+                    <em>कल मेरा जन्मदिन था (भूत)। मैंने केक काटा (भूत)। आज मैं बहुत खुश हूँ (वर्तमान)। अगले साल मैं कक्षा 6 में होऊंगा (भविष्य)।</em>
+                </div>
+            </div>
+        </section>
+
+        <hr style="border: 2px solid var(--accent-color); margin: 40px 0;">
+
+        <!-- 2. IMPORTANT QUESTIONS -->
+        <section id="important-questions">
+            <h2>⭐ महत्वपूर्ण प्रश्न (Important Questions)</h2>
+            <div id="imp-q-container">
+                <!-- Javascript will populate 30 questions here -->
+            </div>
+        </section>
+
+        <hr style="border: 2px solid var(--accent-color); margin: 40px 0;">
+
+        <!-- 3. PRACTICE QUESTIONS -->
+        <section id="practice-section">
+            <h2>📝 अभ्यास करें (Practice Quiz)</h2>
+            <p>कुल प्रश्न: 70 | लक्ष्य: 100% सटीकता</p>
+            
+            <div id="quiz-container" class="question-container">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span>प्रश्न: <span id="current-q-num">1</span>/70</span>
+                    <span id="q-type-badge" style="background: #eee; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem;">MCQ</span>
+                </div>
+                <h3 id="question-text">प्रश्न यहाँ आएगा...</h3>
+                
+                <!-- Image Container for Picture Based Questions -->
+                <div id="question-image" class="image-placeholder hidden">चित्र</div>
+
+                <div id="options-container">
+                    <!-- Options will be generated here -->
+                </div>
+
+                <div id="feedback" class="feedback-msg"></div>
+
+                <button id="next-btn" class="nav-btn hidden" onclick="loadNextQuestion()">अगला प्रश्न ➡️</button>
+            </div>
+        </section>
+
+        <hr style="border: 2px solid var(--accent-color); margin: 40px 0;">
+
+        <!-- 4. ADVANCED LONG QUESTIONS -->
+        <section id="advanced-section">
+            <h2>🧠 दीर्घ उत्तरीय प्रश्न (Advanced Questions)</h2>
+            <p>सोचें और लिखें (10 प्रश्न)</p>
+            <div id="long-q-container">
+                <!-- JS will populate -->
+            </div>
+        </section>
+
+        <hr style="border: 2px solid var(--accent-color); margin: 40px 0;">
+
+        <!-- 5. REVISION SECTION -->
+        <section id="revision-section">
+            <h2>🔄 दोहराव (Revision)</h2>
+            <button class="nav-btn" style="background: var(--ink-color);" onclick="toggleRevision()">तेज़ दोहराव (Revision) खोलें/बंद करें</button>
+            
+            <div id="revision-content" style="margin-top: 20px;">
+                <ul>
+                    <li>काल = समय।</li>
+                    <li>तीन भेद: वर्तमान (है), भूत (था), भविष्य (गा)।</li>
+                    <li>'ता है' = सामान्य वर्तमान।</li>
+                    <li>'रहा है' = अपूर्ण वर्तमान।</li>
+                    <li>'चका था' = पूर्ण भूतकाल।</li>
+                    <li>काल बदलते समय क्रिया का रूप बदलता है, कर्ता नहीं।</li>
+                </ul>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>Designed & Created by SHRISHANT YADAV</p>
+        <p>ShanEduHub</p>
+    </footer>
+</div>
+
+<script>
+    // --- DATA ---
+
+    // 1. Important Questions (30 Static)
+    const importantQuestions = [
+        { q: "काल के कितने भेद होते हैं?", a: "तीन", r: "वर्तमान, भूत और भविष्य।" },
+        { q: "'राम पढ़ता है' - कौन सा काल है?", a: "सामान्य वर्तमान", r: "अंत में 'ता है' आया है।" },
+        { q: "'सीता सो रही थी' - कौन सा काल है?", a: "अपूर्ण भूतकाल", r: "कार्य भूतकाल में जारी था।" },
+        { q: "'मैं कल दिल्ली जाऊंगा' - कौन सा काल है?", a: "भविष्य काल", r: "आने वाले समय की बात है।" },
+        { q: "'बच्चा रो रहा है' - इसे भूतकाल में बदलो।", a: "बच्चा रो रहा था", r: "'है' को 'था' में बदलें।" },
+        { q: "जो समय बीत चुका है, उसे क्या कहते हैं?", a: "भूतकाल", r: "बीता हुआ समय = भूतकाल।" },
+        { q: "जो समय अभी चल रहा है, उसे क्या कहते हैं?", a: "वर्तमान काल", r: "चल रहा समय = वर्तमान।" },
+        { q: "आने वाले समय को क्या कहते हैं?", a: "भविष्य काल", r: "आगे आने वाला = भविष्य।" },
+        { q: "'मैंने खाना खाया' - काल पहचानें।", a: "सामान्य भूतकाल", r: "क्रिया अभी-अभी समाप्त हुई या पहले हुई।" },
+        { q: "'वे खेल रहे होंगे' - क्या यह वर्तमान काल है?", a: "नहीं", r: "यह संदिग्ध वर्तमान या भविष्य हो सकता है, लेकिन निश्चित वर्तमान नहीं।" },
+        { q: "काल का प्रभाव किस पर पड़ता है?", a: "क्रिया पर", r: "काल बदलने से क्रिया बदलती है।" },
+        { q: "'सूर्य निकल रहा है' - काल बताओ।", a: "अपूर्ण वर्तमान", r: "कार्य जारी है।" },
+        { q: "'गांधीजी अहिंसा के पुजारी थे' - काल?", a: "भूतकाल", r: "ऐतिहासिक सत्य भूतकाल में होते हैं।" },
+        { q: "'शायद आज बारिश हो' - काल?", a: "संभाव्य भविष्य", r: "संभावना व्यक्त की गई है।" },
+        { q: "वर्तमान काल के मुख्य कितने भेद कक्षा 5 में पढ़ाए जाते हैं?", a: "दो (मुख्यतः)", r: "सामान्य और अपूर्ण।" },
+        { q: "'तुम क्या कर रहे हो?' - काल पहचानें।", a: "वर्तमान काल", r: "प्रश्न अभी पूछा जा रहा है।" },
+        { q: "'कल छुट्टी थी' - काल?", a: "भूतकाल", r: "बीता हुआ कल।" },
+        { q: "'हम मैच जीतेंगे' - काल?", a: "भविष्य काल", r: "जीतने की क्रिया आगे होगी।" },
+        { q: "'अध्यापक पढ़ा रहे हैं' - काल?", a: "अपूर्ण वर्तमान", r: "क्रिया चल रही है।" },
+        { q: "'चिड़िया उड़ गई' - काल?", a: "भूतकाल", r: "उड़ने का काम हो गया।" },
+        { q: "'मैं डॉक्टर बनूँगा' - काल?", a: "भविष्य काल", r: "इच्छा भविष्य की है।" },
+        { q: "'माँ खाना बना रही है' - भूतकाल बनाएँ।", a: "माँ खाना बना रही थी", r: "है -> थी।" },
+        { q: "'लड़के मैदान में दौड़े' - काल?", a: "सामान्य भूतकाल", r: "दौड़ने की क्रिया हुई।" },
+        { q: "'क्या तुम चलोगे?' - काल?", a: "भविष्य काल", r: "पूछा जा रहा है कि काम होगा या नहीं।" },
+        { q: "'किसान हल चला रहा था' - वर्तमान में बदलो।", a: "किसान हल चला रहा है", r: "था -> है।" },
+        { q: "'बारिश हो रही है' - भविष्य में बदलो।", a: "बारिश होगी", r: "रही है -> होगी।" },
+        { q: "अपूर्ण भूतकाल की पहचान क्या है?", a: "रहा था, रही थी", r: "काम खत्म नहीं हुआ था।" },
+        { q: "सामान्य भविष्य काल की पहचान क्या है?", a: "गा, गे, गी", r: "वाक्य के अंत में आते हैं।" },
+        { q: "'शेर दहाड़ता है' - काल?", a: "सामान्य वर्तमान", r: "स्वभाव या आदत।" },
+        { q: "कहानी सुनाते समय अक्सर किस काल का प्रयोग होता है?", a: "भूतकाल", r: "एक था राजा... (भूतकाल)।" }
+    ];
+
+    // 2. Practice Questions (70 Questions Mix)
+    // Types: MCQ, TF (True/False), FIB (Fill in Blanks as MCQ), OW (One Word as MCQ logic), THINK (Conceptual)
+    const practiceQuestions = [
+        // Topic: Definition & Basics
+        { id: 1, type: "MCQ", q: "काल का अर्थ क्या होता है?", options: ["समय", "काम", "स्थान", "नाम"], a: "समय", exp: "काल का शाब्दिक अर्थ समय होता है।" },
+        { id: 2, type: "TF", q: "क्रिया के होने के समय को काल कहते हैं। (सही/गलत)", options: ["सही", "गलत"], a: "सही", exp: "यह काल की परिभाषा है।" },
+        { id: 3, type: "MCQ", q: "काल के मुख्य भेद कितने हैं?", options: ["2", "3", "4", "5"], a: "3", exp: "वर्तमान, भूत, भविष्य।" },
+        { id: 4, type: "THINK", q: "यदि घड़ी रुक जाए, तो क्या काल रुक जाएगा?", options: ["हाँ", "नहीं"], a: "नहीं", exp: "समय (काल) निरंतर चलता रहता है, घड़ी सिर्फ उसे मापती है।" },
+        { id: 5, type: "MCQ", q: "इनमें से कौन काल का भेद नहीं है?", options: ["भूतकाल", "वर्तमान काल", "भविष्य काल", "संज्ञा काल"], a: "संज्ञा काल", exp: "संज्ञा काल जैसा कुछ नहीं होता।" },
+        
+        // Topic: Present Tense (Vartman)
+        { id: 6, type: "MCQ", q: "'मोहन खेलता है' - यह कौन सा काल है?", options: ["भूतकाल", "वर्तमान काल", "भविष्य काल", "इनमें से कोई नहीं"], a: "वर्तमान काल", exp: "'ता है' वर्तमान काल की पहचान है।" },
+        { id: 7, type: "FIB", q: "मैं पत्र लिख _____ हूँ। (वर्तमान काल)", options: ["था", "गा", "रहा", "चूका"], a: "रहा", exp: "मैं पत्र लिख 'रहा' हूँ (अपूर्ण वर्तमान)।" },
+        { id: 8, type: "MCQ", q: "सामान्य वर्तमान काल का उदाहरण चुनें:", options: ["वह जा रहा है", "वह जाता है", "वह गया", "वह जाएगा"], a: "वह जाता है", exp: "सामान्य आदत या सत्य = सामान्य वर्तमान।" },
+        { id: 9, type: "MCQ", q: "अपूर्ण वर्तमान काल की पहचान क्या है?", options: ["ता है", "रहा है", "गा", "था"], a: "रहा है", exp: "कार्य अभी जारी है = रहा है।" },
+        { id: 10, type: "MCQ", q: "'पक्षी आकाश में उड़ रहे हैं' - काल बताएं।", options: ["सामान्य वर्तमान", "अपूर्ण वर्तमान", "पूर्ण भूत", "भविष्य"], a: "अपूर्ण वर्तमान", exp: "उड़ने का काम अभी चल रहा है।" },
+        { id: 11, type: "TF", q: "'सूरज गर्म होता है' - यह वर्तमान काल है।", options: ["सही", "गलत"], a: "सही", exp: "यह एक सार्वभौमिक सत्य है, जो हमेशा सामान्य वर्तमान में होता है।" },
+        { id: 12, type: "MCQ", q: "इनमें से वर्तमान काल का वाक्य कौन सा है?", options: ["मैंने खाया", "मैं खा रहा हूँ", "मैं खाऊँगा", "उसने खाया था"], a: "मैं खा रहा हूँ", exp: "है/हूँ = वर्तमान।" },
+        { id: 13, type: "MCQ", q: "'पिताजी अखबार पढ़ रहे हैं' - कौन सा भेद है?", options: ["सामान्य वर्तमान", "अपूर्ण वर्तमान", "सामान्य भूत", "भविष्य"], a: "अपूर्ण वर्तमान", exp: "कार्य जारी है।" },
+        { id: 14, type: "FIB", q: "तुम क्या कर _____ हो?", options: ["रही", "रहे", "रहा", "रहु"], a: "रहे", exp: "तुम के साथ 'रहे' लगता है।" },
+        { id: 15, type: "MCQ", q: "जो क्रिया अभी हो रही हो, उसे क्या कहते हैं?", options: ["तात्कालिक/अपूर्ण वर्तमान", "सामान्य वर्तमान", "भूतकाल", "भविष्य"], a: "तात्कालिक/अपूर्ण वर्तमान", exp: "अपूर्ण मतलब पूरा नहीं हुआ, चल रहा है।" },
+
+        // Topic: Past Tense (Bhootkal)
+        { id: 16, type: "MCQ", q: "'राम ने रावण को मारा' - काल बताएं।", options: ["वर्तमान", "भूतकाल", "भविष्य", "कोई नहीं"], a: "भूतकाल", exp: "काम हो चुका है।" },
+        { id: 17, type: "FIB", q: "कल रविवार _____।", options: ["है", "था", "होगा", "रहेगा"], a: "था", exp: "बीता हुआ कल 'था' से जुड़ता है।" },
+        { id: 18, type: "MCQ", q: "पूर्ण भूतकाल का वाक्य पहचानें:", options: ["वह गया", "वह जा रहा था", "वह जा चुका था", "वह जाएगा"], a: "वह जा चुका था", exp: "चुका था = काम बहुत पहले पूरा हो गया।" },
+        { id: 19, type: "MCQ", q: "'नानी कहानी सुना रही थी' - कौन सा काल है?", options: ["अपूर्ण भूतकाल", "पूर्ण भूतकाल", "सामान्य भूत", "वर्तमान"], a: "अपूर्ण भूतकाल", exp: "बीते समय में काम चल रहा था (रही थी)।" },
+        { id: 20, type: "MCQ", q: "भूतकाल की मुख्य पहचान क्या है?", options: ["है, हैं", "गा, गे, गी", "था, थी, थे", "शायद"], a: "था, थी, थे", exp: "बीता समय = था।" },
+        { id: 21, type: "TF", q: "'मैंने पानी पिया' - यह भविष्य काल है।", options: ["सही", "गलत"], a: "गलत", exp: "यह सामान्य भूतकाल है।" },
+        { id: 22, type: "MCQ", q: "सामान्य भूतकाल का उदाहरण है:", options: ["सीता गई", "सीता जा रही है", "सीता जाएगी", "सीता जाती है"], a: "सीता गई", exp: "क्रिया समाप्त हुई (गई)।" },
+        { id: 23, type: "FIB", q: "ट्रेन स्टेशन से जा _____ थी।", options: ["चुकी", "रहा", "रहे", "गा"], a: "चुकी", exp: "ट्रेन स्त्रीलिंग है, इसलिए 'चुकी'।" },
+        { id: 24, type: "MCQ", q: "'नेताजी ने भाषण दिया' - काल?", options: ["भूतकाल", "वर्तमान", "भविष्य", "कोई नहीं"], a: "भूतकाल", exp: "भाषण देने का काम हो गया।" },
+        { id: 25, type: "THINK", q: "यदि आज सोमवार है, तो 'परसों रविवार था' - यह वाक्य सही है?", options: ["हाँ", "नहीं"], a: "नहीं", exp: "अगर आज सोमवार है, तो कल रविवार था, परसों शनिवार था।" },
+
+        // Topic: Future Tense (Bhavishya)
+        { id: 26, type: "MCQ", q: "भविष्य काल का वाक्य चुनें:", options: ["मैं पढ़ता हूँ", "मैंने पढ़ा", "मैं पढूँगा", "मैं पढ़ रहा था"], a: "मैं पढूँगा", exp: "गा, गे, गी = भविष्य।" },
+        { id: 27, type: "FIB", q: "हम कल चिड़ियाघर _____।", options: ["गए", "जाते हैं", "जाएंगे", "जा रहे थे"], a: "जाएंगे", exp: "कल (आने वाला) = जाएंगे।" },
+        { id: 28, type: "MCQ", q: "'वर्षा होगी' - काल?", options: ["सामान्य भविष्य", "भूतकाल", "वर्तमान", "अपूर्ण वर्तमान"], a: "सामान्य भविष्य", exp: "होगी = भविष्य।" },
+        { id: 29, type: "TF", q: "भविष्य काल का मतलब है 'बीता हुआ समय'।", options: ["सही", "गलत"], a: "गलत", exp: "भविष्य मतलब 'आने वाला समय'।" },
+        { id: 30, type: "MCQ", q: "'शायद कल धूप निकले' - इसमें कौन सा भाव है?", options: ["निश्चितता", "संभावना", "आदेश", "मनाही"], a: "संभावना", exp: "शायद = संभावना (संभाव्य भविष्य)।" },
+        { id: 31, type: "MCQ", q: "आपके वार्षिक परीक्षा कब _____?", options: ["हुई", "होती है", "होंगी", "था"], a: "होंगी", exp: "परीक्षा आगे होगी, इसलिए भविष्य।" },
+        { id: 32, type: "MCQ", q: "'गा, गे, गी' किस काल के अंत में आते हैं?", options: ["भूत", "भविष्य", "वर्तमान", "तीनों"], a: "भविष्य", exp: "यह भविष्य काल की पहचान है।" },
+        { id: 33, type: "MCQ", q: "'वह बड़ा होकर डॉक्टर बनेगा' - काल?", options: ["भविष्य काल", "भूतकाल", "वर्तमान काल", "अपूर्ण काल"], a: "भविष्य काल", exp: "बनेगा = भविष्य।" },
+        { id: 34, type: "FIB", q: "अगले सप्ताह स्कूल _____ रहेगा।", options: ["खुला", "बंद", "गया", "था"], a: "बंद", exp: "संदर्भ के अनुसार 'बंद रहेगा' सही भविष्य वाक्य है।" }, // Contextual fix: options changed to fit grammar logic better
+        { id: 35, type: "THINK", q: "'मैं अभी जा रहा हूँ ताकि कल जल्दी आ सकूँ' - इसमें कितने काल हैं?", options: ["केवल वर्तमान", "वर्तमान और भविष्य", "केवल भविष्य", "भूत और वर्तमान"], a: "वर्तमान और भविष्य", exp: "'जा रहा हूँ' (वर्तमान), 'आ सकूँ' (भविष्य का संकेत)।" },
+
+        // Topic: Conversion (Parivartan)
+        { id: 36, type: "MCQ", q: "'वह खाता है' को भूतकाल में बदलो।", options: ["वह खाएगा", "वह खा रहा है", "उसने खाया", "वह खाता"], a: "उसने खाया", exp: "खाता है (वर्तमान) -> खाया (भूत)।" },
+        { id: 37, type: "MCQ", q: "'मीरा नाचेगी' को वर्तमान काल में बदलो।", options: ["मीरा नाचती है", "मीरा नाची थी", "मीरा नाच रही थी", "मीरा नाचे"], a: "मीरा नाचती है", exp: "नाचेगी (भविष्य) -> नाचती है (सामान्य वर्तमान)।" },
+        { id: 38, type: "MCQ", q: "'लड़के खेल रहे थे' को भविष्य काल में बदलो।", options: ["लड़के खेल रहे हैं", "लड़के खेलेंगे", "लड़के खेले", "लड़के खेलते हैं"], a: "लड़के खेलेंगे", exp: "खेल रहे थे (भूत) -> खेलेंगे (भविष्य)।" },
+        { id: 39, type: "MCQ", q: "'मैं स्कूल जाता हूँ' - इसे भविष्य काल बनाएँ।", options: ["मैं स्कूल गया", "मैं स्कूल जा रहा था", "मैं स्कूल जाऊँगा", "मैं स्कूल जाता था"], a: "मैं स्कूल जाऊँगा", exp: "जाता हूँ -> जाऊँगा।" },
+        { id: 40, type: "MCQ", q: "'शेर दहाड़ रहा है' - इसे भूतकाल बनाएँ।", options: ["शेर दहाड़ेगा", "शेर दहाड़ रहा था", "शेर दहाड़ा", "शेर दहाड़ता है"], a: "शेर दहाड़ रहा था", exp: "रहा है (वर्तमान) -> रहा था (भूत)।" },
+        { id: 41, type: "THINK", q: "अगर 'कल छुट्टी है' को भूतकाल में कहना हो, तो क्या कहेंगे?", options: ["कल छुट्टी होगी", "कल छुट्टी थी", "कल छुट्टी है", "आज छुट्टी है"], a: "कल छुट्टी थी", exp: "है -> थी।" },
+        { id: 42, type: "MCQ", q: "'दादी कहानी सुनाती हैं' -> भूतकाल?", options: ["दादी कहानी सुनाएंगी", "दादी कहानी सुना रही हैं", "दादी ने कहानी सुनाई", "दादी कहानी सुनाती"], a: "दादी ने कहानी सुनाई", exp: "सामान्य वर्तमान -> सामान्य भूत।" },
+        { id: 43, type: "MCQ", q: "'धोबी कपड़े धोएगा' -> वर्तमान काल?", options: ["धोबी कपड़े धोता है", "धोबी कपड़े धो रहा था", "धोबी ने कपड़े धोए", "धोबी कपड़े धोया"], a: "धोबी कपड़े धोता है", exp: "भविष्य -> सामान्य वर्तमान।" },
+        { id: 44, type: "MCQ", q: "'चिड़िया उड़ रही है' -> भविष्य काल?", options: ["चिड़िया उड़ रही थी", "चिड़िया उड़ेगी", "चिड़िया उड़ गई", "चिड़िया उड़ती है"], a: "चिड़िया उड़ेगी", exp: "निरंतरता को सामान्य भविष्य में बदलते हैं या 'उड़ रही होगी'। यहाँ 'उड़ेगी' सबसे सटीक है।" },
+        { id: 45, type: "MCQ", q: "'तुमने क्या किया?' -> भविष्य काल?", options: ["तुम क्या करते हो?", "तुम क्या कर रहे थे?", "तुम क्या करोगे?", "तुमने क्या किया था?"], a: "तुम क्या करोगे?", exp: "किया (भूत) -> करोगे (भविष्य)।" },
+
+        // Topic: Context & Identification
+        { id: 46, type: "PICTURE", q: "[चित्र: एक बूढ़ा व्यक्ति लाठी लेकर चल रहा है] वाक्य 'दादाजी सैर कर रहे हैं' का काल बताएं।", options: ["सामान्य वर्तमान", "अपूर्ण वर्तमान", "भूतकाल", "भविष्य"], a: "अपूर्ण वर्तमान", exp: "चित्र में काम चल रहा है।" },
+        { id: 47, type: "MCQ", q: "'अगले साल' शब्द किस काल का संकेत है?", options: ["भूत", "वर्तमान", "भविष्य", "कोई नहीं"], a: "भविष्य", exp: "अगला साल अभी आया नहीं है।" },
+        { id: 48, type: "MCQ", q: "'बहुत पहले' शब्द किस काल का संकेत है?", options: ["भूत", "वर्तमान", "भविष्य", "कोई नहीं"], a: "भूत", exp: "पहले = बीता हुआ।" },
+        { id: 49, type: "MCQ", q: "वाक्य शुद्ध करें: 'मैं कल बाजार जाता हूँ।' (बीते कल के लिए)", options: ["मैं कल बाजार गया था", "मैं कल बाजार जाऊँगा", "मैं बाजार जा रहा हूँ", "मैं बाजार जाता था"], a: "मैं कल बाजार गया था", exp: "बीते कल के लिए 'गया था' सही है।" },
+        { id: 50, type: "THINK", q: "इतिहास की पुस्तक किस काल में लिखी होती है?", options: ["वर्तमान काल", "भूतकाल", "भविष्य काल", "इनमें से कोई नहीं"], a: "भूतकाल", exp: "इतिहास बीती घटनाओं का वर्णन है।" },
+        { id: 51, type: "MCQ", q: "'प्रतिदिन' शब्द किस काल के साथ अक्सर आता है?", options: ["सामान्य वर्तमान", "पूर्ण भूत", "भविष्य", "अपूर्ण भूत"], a: "सामान्य वर्तमान", exp: "आदत (Habit) बताने के लिए। जैसे: मैं प्रतिदिन नहाता हूँ।" },
+        { id: 52, type: "MCQ", q: "'अभी-अभी' किस काल को दर्शाता है?", options: ["आसन्न भूत / पूर्ण वर्तमान", "भविष्य", "प्राचीन भूत", "कोई नहीं"], a: "आसन्न भूत / पूर्ण वर्तमान", exp: "काम अभी खत्म हुआ है।" },
+        { id: 53, type: "MCQ", q: "समाचार पत्र की हेडलाइन 'भारत ने मैच जीता' किस काल का बोध कराती है?", options: ["भविष्य", "भूत", "वर्तमान", "कोई नहीं"], a: "भूत", exp: "घटना हो चुकी है।" },
+        { id: 54, type: "PICTURE", q: "[चित्र: बारिश रुकी हुई है और सूरज निकल रहा है] 'बारिश हो चुकी है' - काल?", options: ["पूर्ण वर्तमान/आसन्न भूत", "अपूर्ण वर्तमान", "भविष्य", "सामान्य भविष्य"], a: "पूर्ण वर्तमान/आसन्न भूत", exp: "काम पूरा हो गया है।" },
+        { id: 55, type: "MCQ", q: "'1947' की बात किस काल में होगी?", options: ["वर्तमान", "भविष्य", "भूत", "तीनों"], a: "भूत", exp: "यह बीता हुआ वर्ष है।" },
+
+        // Topic: Paragraph & Advanced Grammar
+        { id: 56, type: "MCQ", q: "अनुच्छेद लिखते समय यदि घटना पिछली है, तो किस काल का प्रयोग होगा?", options: ["भूतकाल", "वर्तमान काल", "भविष्य काल", "मिश्रित"], a: "भूतकाल", exp: "पिछली घटना = भूतकाल।" },
+        { id: 57, type: "THINK", q: "'वह आया और चला गया' - इसमें कितनी क्रियाएँ भूतकाल में हैं?", options: ["1", "2", "3", "0"], a: "2", exp: "'आया' और 'चला गया' - दोनों भूतकाल हैं।" },
+        { id: 58, type: "FIB", q: "अगर तुम पढ़ोगे तो _____।", options: ["पास होगे", "फेल होगे", "गिर जाओगे", "सो जाओगे"], a: "पास होगे", exp: "शर्त वाले वाक्यों में भविष्य काल (पढ़ोगे -> पास होगे)।" },
+        { id: 59, type: "MCQ", q: "क्रिया के जिस रूप से 'आज्ञा' दी जाए, वह अक्सर किस तरह दिखता है?", options: ["तुम जाओ", "तुम गए", "तुम जाओगे", "तुम जा रहे हो"], a: "तुम जाओ", exp: "यह आज्ञार्थ है, जो वर्तमान/भविष्य का मिश्रण है।" },
+        { id: 60, type: "MCQ", q: "'काश मैं राजा होता!' - यह कौन सा काल भाव है?", options: ["हेतुहेतुमद् भूत (Past Conditional)", "सामान्य वर्तमान", "सामान्य भविष्य", "पूर्ण भूत"], a: "हेतुहेतुमद् भूत (Past Conditional)", exp: "बीती इच्छा।" },
+        { id: 61, type: "MCQ", q: "गलत जोड़ा चुनें:", options: ["था - भूत", "है - वर्तमान", "गा - भविष्य", "थी - भविष्य"], a: "थी - भविष्य", exp: "'थी' भूतकाल में आता है।" },
+        { id: 62, type: "MCQ", q: "'सोनू और मोनू खेल _____।'", options: ["रहा है", "रहे हैं", "रहा था", "रहा होगा"], a: "रहे हैं", exp: "बहुवचन है, इसलिए 'रहे हैं'।" },
+        { id: 63, type: "MCQ", q: "भूतकाल के कितने भेद होते हैं? (कक्षा 5 स्तर से ऊपर लेकिन ज्ञानवर्धक)", options: ["3", "6", "2", "10"], a: "6", exp: "सामान्य, आसन्न, पूर्ण, अपूर्ण, संदिग्ध, हेतुहेतुमद्।" },
+        { id: 64, type: "THINK", q: "क्या एक ही वाक्य में दो काल हो सकते हैं? जैसे 'उसने कहा था कि वह आएगा'?", options: ["हाँ", "नहीं"], a: "हाँ", exp: "'कहा था' (भूत), 'आएगा' (भूत के नजरिए से भविष्य)।" },
+        { id: 65, type: "MCQ", q: "भविष्य काल के कितने भेद माने जाते हैं?", options: ["2", "3", "4", "5"], a: "3", exp: "सामान्य, संभाव्य, हेतुहेतुमद्।" },
+        { id: 66, type: "FIB", q: "बच्चे मैदान में _____ रहे थे।", options: ["खेल", "सो", "उड़", "तैर"], a: "खेल", exp: "मैदान में 'खेलना' सबसे उपयुक्त क्रिया है।" },
+        { id: 67, type: "MCQ", q: "वाक्य पूरा करें: 'कल मेरे मामाजी _____।'", options: ["आएंगे", "आता है", "आ रहा है", "आते हैं"], a: "आएंगे", exp: "सम्मानसूचक बहुवचन + भविष्य।" },
+        { id: 68, type: "THINK", q: "'सूरज पश्चिम में अस्त होता है' - इसे भूतकाल में बदलें तो क्या यह वैज्ञानिक रूप से सही होगा?", options: ["हाँ", "नहीं"], a: "नहीं", exp: "सार्वभौमिक सत्य को काल में नहीं बदलते, वह हमेशा वर्तमान रहता है।" },
+        { id: 69, type: "MCQ", q: "'मैं यह काम कर सकता हूँ' - काल?", options: ["वर्तमान", "भूत", "भविष्य", "कोई नहीं"], a: "वर्तमान", exp: "सामर्थ्य अभी है।" },
+        { id: 70, type: "MCQ", q: "अंतिम प्रश्न: व्याकरण में काल का राजा कौन है?", options: ["क्रिया", "संज्ञा", "सर्वनाम", "विशेषण"], a: "क्रिया", exp: "काल पूरी तरह क्रिया पर निर्भर करता है।" }
+    ];
+
+    // 3. Advanced Long Questions (10 Questions)
+    const longQuestions = [
+        { 
+            id: 1, 
+            q: "काल किसे कहते हैं? उदाहरण सहित समझाइए।", 
+            keys: ["क्रिया", "समय", "रूप", "पता", "चलता", "उदाहरण"], 
+            model: "क्रिया के जिस रूप से उसके होने के समय का पता चले, उसे काल कहते हैं। उदाहरण: मैं पढ़ता हूँ।" 
+        },
+        { 
+            id: 2, 
+            q: "वर्तमान काल और भूतकाल में मुख्य अंतर क्या है?", 
+            keys: ["वर्तमान", "चल", "रहा", "भूत", "बीत", "गया"], 
+            model: "वर्तमान काल चल रहे समय को बताता है (है), जबकि भूतकाल बीते हुए समय को बताता है (था)।" 
+        },
+        { 
+            id: 3, 
+            q: "भविष्य काल के दो वाक्य बनाकर लिखें।", 
+            keys: ["गा", "गे", "गी", "कल", "जाऊंगा", "खाऊंगा", "करूंगा"], 
+            model: "1. मैं कल स्कूल जाऊंगा। 2. हम मैच जीतेंगे। (अंत में गा, गे, गी होना चाहिए)।" 
+        },
+        { 
+            id: 4, 
+            q: "अपूर्ण वर्तमान काल क्या होता है? एक उदाहरण दें।", 
+            keys: ["जारी", "चल", "रहा", "पूरा", "नहीं"], 
+            model: "जिसमें क्रिया अभी चल रही हो और पूरी न हुई हो। उदाहरण: वर्षा हो रही है।" 
+        },
+        { 
+            id: 5, 
+            q: "अपने कल (बीते हुए दिन) की दिनचर्या की 3 बातें भूतकाल में लिखें।", 
+            keys: ["उठा", "खाया", "गया", "पढ़ा", "खेला", "था"], 
+            model: "1. मैं 6 बजे उठा था। 2. मैंने नाश्ता किया। 3. मैं खेलने गया।" 
+        },
+        { 
+            id: 6, 
+            q: "सामान्य वर्तमान काल का प्रयोग कब किया जाता है?", 
+            keys: ["आदत", "नियम", "सत्य", "रोज", "होता", "है"], 
+            model: "जो क्रिया रोज होती है, आदत है या सत्य है। जैसे: सूरज उगता है।" 
+        },
+        { 
+            id: 7, 
+            q: "'यदि वर्षा अच्छी होगी, तो फसल अच्छी होगी' - यह किस काल का उदाहरण है और क्यों?", 
+            keys: ["भविष्य", "हेतु", "शर्त", "निर्भर"], 
+            model: "यह भविष्य काल है (हेतुहेतुमद्) क्योंकि एक क्रिया दूसरी पर निर्भर है।" 
+        },
+        { 
+            id: 8, 
+            q: "कहानी लेखन में भूतकाल का महत्व क्यों है?", 
+            keys: ["घटना", "बीत", "चुकी", "वर्णन", "इतिहास"], 
+            model: "क्योंकि कहानियाँ अक्सर हो चुकी घटनाओं का वर्णन करती हैं, इसलिए 'था/थे' का प्रयोग होता है।" 
+        },
+        { 
+            id: 9, 
+            q: "चित्र देखकर वाक्य बनाएँ: [बच्चा रो रहा है] - इसे तीनों कालों में लिखें।", 
+            keys: ["रोता", "रो", "रहा", "था", "रोएगा"], 
+            model: "वर्तमान: बच्चा रो रहा है। भूत: बच्चा रो रहा था। भविष्य: बच्चा रोएगा।" 
+        },
+        { 
+            id: 10, 
+            q: "काल परिवर्तन क्यों जरूरी है? अपने विचार लिखें।", 
+            keys: ["सही", "समय", "बताने", "स्पष्ट", "अर्थ", "बातचीत"], 
+            model: "सही समय बताने के लिए ताकि सुनने वाला समझ सके कि घटना कब हुई - अभी, पहले या बाद में।" 
+        }
+    ];
+
+    // --- GAME STATE ---
+    let state = {
+        score: 0,
+        wrong: 0,
+        attempted: 0,
+        qIndex: 0,
+        visited: new Set() // Track visited questions to prevent duplicates in random mode if implemented, but here linear
+    };
+
+    // --- DOM ELEMENTS ---
+    const scoreCorrectEl = document.getElementById('score-correct');
+    const scoreWrongEl = document.getElementById('score-wrong');
+    const scoreTotalEl = document.getElementById('score-total');
+    const scorePercentEl = document.getElementById('score-percent');
+    const scorePointsEl = document.getElementById('score-points');
+    const impQContainer = document.getElementById('imp-q-container');
+    const quizContainer = document.getElementById('quiz-container');
+    const longQContainer = document.getElementById('long-q-container');
+
+    // --- INIT ---
+    window.addEventListener('DOMContentLoaded', () => {
+        renderImportantQuestions();
+        renderPracticeQuestion();
+        renderLongQuestions();
+    });
+
+    // --- SCORE LOGIC ---
+    function updateScore(isCorrect, points) {
+        state.attempted++;
+        if (isCorrect) {
+            state.score++;
+        } else {
+            state.wrong++;
+        }
+        
+        // Update DOM
+        scoreCorrectEl.textContent = state.score;
+        scoreWrongEl.textContent = state.wrong;
+        scoreTotalEl.textContent = state.attempted;
+        
+        const percent = Math.round((state.score / state.attempted) * 100) || 0;
+        scorePercentEl.textContent = percent + "%";
+
+        // Points logic: +10 for MCQ correct, +0 for wrong
+        // This is a simple counter for now, can be sophisticated
+        const currentPoints = parseInt(scorePointsEl.textContent);
+        scorePointsEl.textContent = currentPoints + (isCorrect ? points : 0);
+    }
+
+    // --- IMPORTANT QUESTIONS RENDER ---
+    function renderImportantQuestions() {
+        let html = '';
+        importantQuestions.forEach((item, index) => {
+            html += `
+                <div class="important-q-card">
+                    <p><strong>प्र. ${index + 1}:</strong> ${item.q}</p>
+                    <p style="color: var(--success-color);"><strong>उ.</strong> ${item.a}</p>
+                    <p style="font-size: 0.9rem; color: #666;"><em>(क्योंकि: ${item.r})</em></p>
+                </div>
+            `;
+        });
+        impQContainer.innerHTML = html;
+    }
+
+    // --- PRACTICE QUIZ RENDER ---
+    function renderPracticeQuestion() {
+        const q = practiceQuestions[state.qIndex];
+        
+        // Reset UI
+        document.getElementById('current-q-num').textContent = state.qIndex + 1;
+        document.getElementById('q-type-badge').textContent = q.type;
+        document.getElementById('question-text').textContent = q.q;
+        document.getElementById('feedback').style.display = 'none';
+        document.getElementById('next-btn').classList.add('hidden');
+        document.getElementById('question-image').classList.add('hidden');
+
+        // Handle Image/Picture Questions
+        if (q.type === 'PICTURE') {
+            const imgEl = document.getElementById('question-image');
+            imgEl.classList.remove('hidden');
+            imgEl.textContent = "🖼️ " + q.q.match(/\[.*?\]/)[0]; // Extract bracket text
+        }
+
+        // Shuffle options for randomness (Bias removal)
+        // Clone options to not mutate original data
+        let opts = [...q.options];
+        // Fisher-Yates Shuffle
+        for (let i = opts.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [opts[i], opts[j]] = [opts[j], opts[i]];
+        }
+
+        let optionsHtml = '';
+        opts.forEach(opt => {
+            optionsHtml += `<button class="option-btn" onclick="checkAnswer(this, '${opt.replace(/'/g, "\\'")}')">${opt}</button>`;
+        });
+        document.getElementById('options-container').innerHTML = optionsHtml;
+    }
+
+    // --- CHECK PRACTICE ANSWER ---
+    window.checkAnswer = function(btn, selectedValue) {
+        // Prevent multiple clicks
+        const allBtns = document.querySelectorAll('.option-btn');
+        allBtns.forEach(b => b.disabled = true);
+
+        const q = practiceQuestions[state.qIndex];
+        const feedbackEl = document.getElementById('feedback');
+        const nextBtn = document.getElementById('next-btn');
+
+        const isCorrect = selectedValue === q.a;
+
+        if (isCorrect) {
+            btn.classList.add('correct');
+            feedbackEl.className = 'feedback-msg feedback-correct';
+            feedbackEl.innerHTML = `<strong>Excellent ⭐</strong><br>${q.exp}`;
+            updateScore(true, 10);
+        } else {
+            btn.classList.add('wrong');
+            // Highlight correct answer
+            allBtns.forEach(b => {
+                if (b.textContent === q.a) b.classList.add('correct');
+            });
+            feedbackEl.className = 'feedback-msg feedback-wrong';
+            feedbackEl.innerHTML = `<strong>Try Again</strong><br>सही उत्तर: ${q.a}<br>${q.exp}`;
+            updateScore(false, 0);
+        }
+
+        feedbackEl.style.display = 'block';
+        nextBtn.classList.remove('hidden');
+    }
+
+    window.loadNextQuestion = function() {
+        if (state.qIndex < practiceQuestions.length - 1) {
+            state.qIndex++;
+            renderPracticeQuestion();
+        } else {
+            document.getElementById('quiz-container').innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <h3 style="color: var(--success-color);">🎉 अभ्यास पूरा हुआ! 🎉</h3>
+                    <p>आपने सभी 70 प्रश्न हल कर लिए।</p>
+                    <p>आपका कुल स्कोर ऊपर देखें।</p>
+                </div>
+            `;
+        }
+    }
+
+    // --- LONG QUESTIONS RENDER & LOGIC ---
+    function renderLongQuestions() {
+        let html = '';
+        longQuestions.forEach((q, index) => {
+            html += `
+                <div class="question-container" id="long-q-${q.id}">
+                    <p><strong>प्र. ${index + 1}:</strong> ${q.q}</p>
+                    <textarea id="ans-text-${q.id}" placeholder="अपना उत्तर यहाँ लिखें..."></textarea>
+                    <button class="check-btn" onclick="evaluateLongAnswer(${q.id})">उत्तर जाँचें</button>
+                    <div id="long-feedback-${q.id}" class="feedback-msg"></div>
+                </div>
+            `;
+        });
+        longQContainer.innerHTML = html;
+    }
+
+    window.evaluateLongAnswer = function(id) {
+        const qData = longQuestions.find(q => q.id === id);
+        const userText = document.getElementById(`ans-text-${id}`).value.trim().toLowerCase();
+        const feedbackEl = document.getElementById(`long-feedback-${id}`);
+        
+        if (!userText) {
+            alert("कृपया उत्तर लिखें!");
+            return;
+        }
+
+        // Check keywords
+        let matchedKeys = 0;
+        qData.keys.forEach(key => {
+            if (userText.includes(key)) matchedKeys++;
+        });
+
+        const threshold = Math.ceil(qData.keys.length / 2); // Need 50% keywords
+        const isPass = matchedKeys >= threshold;
+
+        if (isPass) {
+            feedbackEl.className = 'feedback-msg feedback-correct';
+            feedbackEl.innerHTML = `
+                <strong>बहुत अच्छे! ⭐</strong><br>
+                आपका उत्तर सही दिशा में है।<br>
+                <em>मुख्य बिंदु मिले: ${matchedKeys}/${qData.keys.length}</em>
+            `;
+            updateScore(true, 20); // More points for long answers
+            // Disable button
+            document.querySelector(`#long-q-${id} .check-btn`).disabled = true;
+        } else {
+            feedbackEl.className = 'feedback-msg feedback-wrong';
+            feedbackEl.innerHTML = `
+                <strong>सुधार की आवश्यकता है</strong><br>
+                आपने मुख्य बिंदु छोड़ दिए।<br>
+                <strong>सही उत्तर में यह होना चाहिए:</strong> ${qData.model}<br>
+                <em>(मुख्य शब्द: ${qData.keys.join(', ')})</em>
+            `;
+            updateScore(false, 0);
+        }
+        feedbackEl.style.display = 'block';
+    }
+
+    // --- UTILS ---
+    window.toggleRevision = function() {
+        const revContent = document.getElementById('revision-content');
+        if (revContent.style.display === 'block') {
+            revContent.style.display = 'none';
+        } else {
+            revContent.style.display = 'block';
+            revContent.scrollIntoView({behavior: 'smooth'});
+        }
+    }
+
+</script>
+</body>
+</html>

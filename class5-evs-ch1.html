@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Chapter 1: Living and Non-Living Things</title>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --paper-bg: #fffdf0;
+            --line-color: #a4b0be;
+            --ink-color: #2d3436;
+            --accent-blue: #74b9ff;
+            --accent-green: #55efc4;
+            --accent-red: #ff7675;
+            --accent-yellow: #ffeaa7;
+            --font-main: 'Patrick Hand', cursive, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: #f0f2f5;
+            color: var(--ink-color);
+            margin: 0;
+            padding: 0;
+            font-size: 18px;
+            font-weight: 700; /* STRICT RULE: ALL TEXT BOLD */
+            line-height: 1.4;
+            overflow-x: hidden;
+        }
+
+        /* Container for Mobile First (360px optimized) */
+        .app-container {
+            max-width: 480px;
+            margin: 0 auto;
+            background-color: var(--paper-bg);
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            position: relative;
+            padding-bottom: 60px;
+            background-image: linear-gradient(var(--line-color) 1px, transparent 1px);
+            background-size: 100% 1.8em; /* Notebook lines */
+        }
+
+        /* HEADER */
+        header {
+            background: var(--accent-blue);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 3px solid var(--ink-color);
+            border-radius: 0 0 20px 20px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.2rem;
+            color: #fff;
+            text-shadow: 2px 2px 0px var(--ink-color);
+        }
+
+        h2, h3 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+            text-decoration: underline;
+            text-decoration-style: wavy;
+            text-decoration-color: var(--accent-red);
+        }
+
+        /* STICKY SCORE PANEL */
+        #score-panel {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--ink-color);
+            color: #fff;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        .score-item span {
+            color: var(--accent-yellow);
+            font-size: 1.1rem;
+        }
+
+        /* SECTIONS */
+        .section {
+            padding: 15px;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-top: 2px solid var(--ink-color);
+            border-bottom: 2px solid var(--ink-color);
+        }
+
+        /* NOTES STYLING */
+        .topic-card {
+            background: #fff;
+            border: 2px solid var(--ink-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.1);
+        }
+
+        .topic-title {
+            background: var(--accent-yellow);
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            border: 1px solid var(--ink-color);
+        }
+
+        .img-box {
+            width: 100%;
+            height: 120px;
+            background: #eee;
+            border: 2px dashed var(--line-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+            color: #666;
+            text-align: center;
+            font-size: 0.9rem;
+            border-radius: 8px;
+        }
+
+        .memory-tip {
+            background: #e3f2fd;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            border-left: 4px solid var(--accent-blue);
+        }
+
+        .check-q {
+            font-style: italic;
+            color: #d63031;
+            margin-top: 8px;
+        }
+
+        /* IMPORTANT QUESTIONS */
+        .imp-q-card {
+            background: #ffeaa7;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--ink-color);
+        }
+
+        /* PRACTICE QUESTIONS ENGINE */
+        #practice-area {
+            min-height: 300px;
+            position: relative;
+        }
+
+        .q-card {
+            background: #fff;
+            border: 3px solid var(--ink-color);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .q-text {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+        }
+
+        .options-grid {
+            display: grid;
+            gap: 10px;
+        }
+
+        .option-btn {
+            background: #fff;
+            border: 2px solid var(--ink-color);
+            padding: 12px;
+            border-radius: 8px;
+            font-family: var(--font-main);
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .option-btn:active {
+            transform: scale(0.98);
+        }
+
+        .option-btn.correct {
+            background: var(--accent-green);
+            color: #000;
+        }
+
+        .option-btn.wrong {
+            background: var(--accent-red);
+            color: #fff;
+        }
+
+        .feedback-box {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .feedback-box.show {
+            display: block;
+        }
+
+        .next-btn {
+            background: var(--ink-color);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-family: var(--font-main);
+            font-size: 1.2rem;
+            border-radius: 8px;
+            margin-top: 15px;
+            cursor: pointer;
+            display: none;
+            width: 100%;
+        }
+
+        /* ADVANCED LONG QUESTIONS */
+        .long-q-card {
+            background: #dfe6e9;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            border: 2px solid #b2bec3;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-top: 10px;
+            padding: 10px;
+            border: 2px solid var(--ink-color);
+            border-radius: 8px;
+            font-family: var(--font-main);
+            font-weight: 700;
+            font-size: 1rem;
+            resize: none;
+        }
+
+        .check-long-btn {
+            background: var(--accent-blue);
+            color: #fff;
+            border: 2px solid var(--ink-color);
+            padding: 8px 16px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-family: var(--font-main);
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .long-feedback {
+            margin-top: 10px;
+            font-size: 0.95rem;
+            display: none;
+            background: #fff;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        /* REVISION */
+        .revision-list li {
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed #ccc;
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: var(--ink-color);
+            color: #fff;
+            margin-top: 40px;
+            font-size: 0.9rem;
+        }
+
+        /* UTILS */
+        .hidden { display: none; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    
+    <!-- STICKY SCORE PANEL -->
+    <div id="score-panel">
+        <div class="score-item">Correct: <span id="score-correct">0</span></div>
+        <div class="score-item">Wrong: <span id="score-wrong">0</span></div>
+        <div class="score-item">Score: <span id="score-percent">0%</span></div>
+    </div>
+
+    <!-- HEADER -->
+    <header>
+        <h1>CLASS 5 EVS</h1>
+        <p>CHAPTER 1: LIVING AND NON-LIVING THINGS</p>
+    </header>
+
+    <!-- NOTES SECTION -->
+    <div class="section" id="notes-section">
+        <h2>📚 My Notes</h2>
+        
+        <!-- 1. Definition -->
+        <div class="topic-card">
+            <div class="topic-title">1. Definition</div>
+            <p><strong>Living Things:</strong> Things that have life. They breathe, eat, grow, and feel.</p>
+            <p><strong>Non-Living Things:</strong> Things that do not have life. They cannot move or grow on their own.</p>
+            <div class="img-box">🖼️ IMAGE: A Dog (Living) vs A Stone (Non-Living)</div>
+            <div class="memory-tip">💡 TIP: If it needs food, it's Living!</div>
+            <div class="check-q">❓ Check: Is your pencil living or non-living?</div>
+        </div>
+
+        <!-- 2. Characteristics -->
+        <div class="topic-card">
+            <div class="topic-title">2. Characteristics of Life</div>
+            <p>All living things share special features: Growth, Movement, Respiration, Nutrition, Excretion, Reproduction, and Feeling.</p>
+            <div class="img-box">🖼️ IMAGE: Circle chart of 7 characteristics</div>
+            <div class="memory-tip">💡 TIP: MRS GREN (Movement, Respiration, Sensitivity, Growth, Reproduction, Excretion, Nutrition)</div>
+        </div>
+
+        <!-- 3. Growth -->
+        <div class="topic-card">
+            <div class="topic-title">3. Growth</div>
+            <p>Living things grow in size and shape. A baby becomes an adult. A seed becomes a tree.</p>
+            <p>Non-living things do not grow (unless we add material to them, like a sand pile).</p>
+            <div class="img-box">🖼️ IMAGE: Seed -> Sapling -> Tree</div>
+            <div class="check-q">❓ Check: Do your clothes grow?</div>
+        </div>
+
+        <!-- 4. Movement -->
+        <div class="topic-card">
+            <div class="topic-title">4. Movement</div>
+            <p><strong>Animals:</strong> Move from place to place (Locomotion) for food and shelter.</p>
+            <p><strong>Plants:</strong> Do not move place, but parts move (e.g., Sunflower turns to sun).</p>
+            <div class="img-box">🖼️ IMAGE: Running Deer & Sunflower turning</div>
+        </div>
+
+        <!-- 5. Respiration -->
+        <div class="topic-card">
+            <div class="topic-title">5. Breathing</div>
+            <p>Living things need air. Animals use lungs, gills, or skin. Plants use tiny pores called Stomata.</p>
+            <div class="img-box">🖼️ IMAGE: Human Lungs vs Leaf Stomata</div>
+            <div class="memory-tip">💡 India Example: Like we take deep breaths in Yoga (Pranayam).</div>
+        </div>
+
+        <!-- 6. Nutrition -->
+        <div class="topic-card">
+            <div class="topic-title">6. Food & Energy</div>
+            <p>Animals eat plants or other animals. Plants make their own food using sunlight (Photosynthesis).</p>
+            <div class="img-box">🖼️ IMAGE: Cow eating grass vs Plant in sun</div>
+        </div>
+
+        <!-- 7. Excretion -->
+        <div class="topic-card">
+            <div class="topic-title">7. Waste Removal</div>
+            <p>Living things throw out waste. Animals sweat and urinate. Plants shed old leaves or release gum.</p>
+            <div class="img-box">🖼️ IMAGE: Sweating boy & Tree dropping leaves</div>
+        </div>
+
+        <!-- 8. Reproduction -->
+        <div class="topic-card">
+            <div class="topic-title">8. Reproduction</div>
+            <p>Producing young ones of their own kind. Animals lay eggs or give birth. Plants grow from seeds or stems.</p>
+            <div class="img-box">🖼️ IMAGE: Hen with chicks & Plant from seed</div>
+        </div>
+
+        <!-- 9. Life Span -->
+        <div class="topic-card">
+            <div class="topic-title">9. Life Span</div>
+            <p>All living things take birth, grow, become old, and finally die. This time period is called Life Span.</p>
+            <div class="img-box">🖼️ IMAGE: Timeline: Baby -> Old Man</div>
+            <div class="memory-tip">💡 Fact: Tortoises can live for 100+ years!</div>
+        </div>
+
+        <!-- 10. Sensitivity -->
+        <div class="topic-card">
+            <div class="topic-title">10. Response to Stimuli</div>
+            <p>Reacting to changes around us. We shiver in cold. Plants like 'Touch-me-not' close leaves when touched.</p>
+            <div class="img-box">🖼️ IMAGE: Mimosa (Touch-me-not) plant closing</div>
+        </div>
+
+        <!-- 11. Adaptation -->
+        <div class="topic-card">
+            <div class="topic-title">11. Adaptation</div>
+            <p>Changes in body to survive in an environment. Fish have fins to swim. Cactus has thorns to save water.</p>
+            <div class="img-box">🖼️ IMAGE: Camel in desert vs Fish in water</div>
+        </div>
+
+        <!-- 12. Interdependence -->
+        <div class="topic-card">
+            <div class="topic-title">12. Interdependence</div>
+            <p>Plants and animals depend on each other. Plants give oxygen; Animals give carbon dioxide.</p>
+            <div class="img-box">🖼️ IMAGE: Cycle of gas exchange</div>
+        </div>
+
+        <!-- 13. Plants vs Animals -->
+        <div class="topic-card">
+            <div class="topic-title">13. Plants vs Animals</div>
+            <p><strong>Plants:</strong> Make food (Autotrophs), Fixed in place.</p>
+            <p><strong>Animals:</strong> Find food (Heterotrophs), Can move.</p>
+        </div>
+
+        <!-- 14. Classification -->
+        <div class="topic-card">
+            <div class="topic-title">14. Classification</div>
+            <p>Grouping things to study them easily. E.g., Vertebrates (backbone) vs Invertebrates (no backbone).</p>
+            <div class="img-box">🖼️ IMAGE: Cat (Vertebrate) vs Worm (Invertebrate)</div>
+        </div>
+
+        <!-- 15. Importance -->
+        <div class="topic-card">
+            <div class="topic-title">15. Importance of Life</div>
+            <p>Living things provide food, medicine, wood, and balance gases in air.</p>
+        </div>
+
+        <!-- 16. Balance in Nature -->
+        <div class="topic-card">
+            <div class="topic-title">16. Balance in Nature</div>
+            <p>Predators eat prey to keep numbers in check. If lions disappear, deer will increase and eat all grass.</p>
+            <div class="img-box">🖼️ IMAGE: Food chain: Grass -> Deer -> Lion</div>
+        </div>
+
+        <!-- 17. Life Cycle -->
+        <div class="topic-card">
+            <div class="topic-title">17. Life Cycle</div>
+            <p>The stages of development. Butterfly: Egg -> Caterpillar -> Pupa -> Butterfly.</p>
+            <div class="img-box">🖼️ IMAGE: Butterfly Life Cycle Chart</div>
+        </div>
+
+        <!-- 18. Scientific Observation -->
+        <div class="topic-card">
+            <div class="topic-title">18. Being a Scientist</div>
+            <p>Use your eyes, ears, and nose to observe nature. Note down changes in plants and pets.</p>
+        </div>
+    </div>
+
+    <!-- IMPORTANT QUESTIONS SECTION -->
+    <div class="section">
+        <h2>🔥 Important Questions (Exam Ready)</h2>
+        <div id="important-questions-container">
+            <!-- Populated via JS for clean HTML structure, though content is static -->
+        </div>
+    </div>
+
+    <!-- PRACTICE QUESTIONS (70 items) -->
+    <div class="section">
+        <h2>🧪 Practice Quiz (70 Questions)</h2>
+        <p style="text-align:center; margin-bottom:10px;">Question <span id="q-current">1</span> of 70</p>
+        <div id="practice-area">
+            <div id="q-display" class="q-card">
+                <!-- Question renders here -->
+            </div>
+            <div id="q-feedback" class="feedback-box"></div>
+            <button id="q-next-btn" class="next-btn" onclick="nextQuestion()">Next Question ➡️</button>
+        </div>
+    </div>
+
+    <!-- ADVANCED LONG QUESTIONS -->
+    <div class="section">
+        <h2>🧠 Advanced Thinking Zone</h2>
+        <p>Answer in detail. The system checks for key concepts.</p>
+        <div id="long-questions-area">
+            <!-- 10 Long Questions Rendered Here -->
+        </div>
+    </div>
+
+    <!-- REVISION SECTION -->
+    <div class="section">
+        <h2>🔁 Rapid Revision</h2>
+        <button onclick="toggleRevision()" style="background:var(--accent-green); border:2px solid black; padding:10px; border-radius:8px; font-weight:bold; width:100%;">Show/Hide Summary</button>
+        <div id="revision-content" class="hidden" style="margin-top:15px; background:#fff; padding:15px; border-radius:10px; border:2px solid var(--ink-color);">
+            <ul class="revision-list">
+                <li>Living things breathe, grow, eat, feel, and reproduce.</li>
+                <li>Plants make their own food (Photosynthesis).</li>
+                <li>Animals depend on plants for food and oxygen.</li>
+                <li>Stomata are tiny holes in leaves for breathing.</li>
+                <li>The 'Touch-me-not' plant shows sensitivity.</li>
+                <li>Sunflowers turn towards the sun (movement).</li>
+                <li>Non-living things (rocks, cars) do not have life.</li>
+                <li>Adaptation helps organisms survive in their habitat.</li>
+            </ul>
+        </div>
+    </div>
+
+    <footer>
+        <p>Designed & Created by SHRISHANT YADAV</p>
+        <p>ShanEduHub</p>
+    </footer>
+
+</div>
+
+<script>
+    /* --- DATA: IMPORTANT QUESTIONS (30) --- */
+    const impQuestions = [
+        { q: "What is the main difference between a dog and a table?", a: "A dog is living (breathes, grows), a table is non-living." },
+        { q: "Name the breathing organ in fish.", a: "Gills." },
+        { q: "What are stomata?", a: "Tiny pores on leaves used for breathing." },
+        { q: "Do plants move?", a: "Yes, but only parts of them move (e.g., flowers opening), they don't change place." },
+        { q: "What is photosynthesis?", a: "The process by which plants make food using sunlight." },
+        { q: "Why do animals move?", a: "In search of food, water, and shelter." },
+        { q: "Give an example of a plant that shows sensitivity.", a: "Touch-me-not (Mimosa) plant." },
+        { q: "What is excretion?", a: "The removal of waste from the body." },
+        { q: "How do birds reproduce?", a: "By laying eggs." },
+        { q: "What is lifespan?", a: "The time from birth to death." },
+        { q: "Why is a car non-living even if it moves?", a: "It moves only with fuel and human help, it does not grow or reproduce." },
+        { q: "Name a non-green plant.", a: "Mushroom." },
+        { q: "What do plants give out during photosynthesis?", a: "Oxygen." },
+        { q: "What do animals give out during breathing?", a: "Carbon dioxide." },
+        { q: "Name an animal that breathes through skin.", a: "Earthworm." },
+        { q: "What is adaptation?", a: "Changes in the body to suit the environment." },
+        { q: "Why does a cactus have thorns?", a: "To save water in the desert." },
+        { q: "Who are producers in a food chain?", a: "Green plants." },
+        { q: "Define habitat.", a: "The natural home of an animal or plant." },
+        { q: "What happens to the leaves of the Touch-me-not plant when touched?", a: "They close or fold." },
+        { q: "How do insects breathe?", a: "Through air holes called spiracles." },
+        { q: "Do all living things die?", a: "Yes, every living thing has a fixed lifespan." },
+        { q: "Can a seed be called living?", a: "Yes, because it can grow into a new plant." },
+        { q: "Why do we need food?", a: "To get energy for growth and work." },
+        { q: "What is a vertebrate?", a: "An animal with a backbone." },
+        { q: "Name a mammal that lays eggs.", a: "Platypus." },
+        { q: "How do plants get water?", a: "Roots absorb water from the soil." },
+        { q: "What is the young one of a frog called?", a: "Tadpole." },
+        { q: "Name a natural non-living thing.", a: "Sun, Water, Rock." },
+        { q: "Name a man-made non-living thing.", a: "Car, Pen, House." }
+    ];
+
+    /* --- DATA: PRACTICE QUESTIONS (70) --- */
+    // Types: mcq, tf (true/false), fill (fill in blanks - presented as mcq for mobile ease)
+    const practiceQuestions = [
+        // 1-10: Basics
+        { id: 1, type: "mcq", q: "Which of these is a living thing?", options: ["Car", "Tree", "Teddy Bear", "Rock"], a: "Tree", why: "Trees grow and breathe." },
+        { id: 2, type: "mcq", q: "Living things need ___ to live.", options: ["Toys", "Air", "Candy", "Plastic"], a: "Air", why: "Air is essential for breathing." },
+        { id: 3, type: "tf", q: "A chair can feel pain.", options: ["True", "False"], a: "False", why: "Chairs are non-living." },
+        { id: 4, type: "mcq", q: "Fish breathe through ___.", options: ["Lungs", "Skin", "Gills", "Nose"], a: "Gills", why: "Fish use gills to take oxygen from water." },
+        { id: 5, type: "fill", q: "Plants make their own ___.", options: ["Water", "Food", "Soil", "Pot"], a: "Food", why: "Plants do photosynthesis." },
+        { id: 6, type: "mcq", q: "Which one grows?", options: ["Baby", "Doll", "Stone", "Pencil"], a: "Baby", why: "Growth is a sign of life." },
+        { id: 7, type: "tf", q: "Sunlight is non-living.", options: ["True", "False"], a: "True", why: "Sunlight is a natural non-living thing." },
+        { id: 8, type: "mcq", q: "Birds reproduce by ___.", options: ["Seeds", "Laying Eggs", "Giving Birth", "Splitting"], a: "Laying Eggs", why: "Birds are oviparous." },
+        { id: 9, type: "mcq", q: "Plants take in ___ gas to make food.", options: ["Oxygen", "Nitrogen", "Carbon Dioxide", "Helium"], a: "Carbon Dioxide", why: "They use CO2 for photosynthesis." },
+        { id: 10, type: "mcq", q: "A car moves. Is it living?", options: ["Yes", "No", "Maybe", "Sometimes"], a: "No", why: "It cannot grow or reproduce." },
+        
+        // 11-20: Characteristics
+        { id: 11, type: "mcq", q: "Tiny holes on leaves are called ___.", options: ["Pores", "Stomata", "Gills", "Holes"], a: "Stomata", why: "Stomata help leaves breathe." },
+        { id: 12, type: "tf", q: "Plants can move from one place to another.", options: ["True", "False"], a: "False", why: "Plants are fixed to the soil." },
+        { id: 13, type: "mcq", q: "Which plant closes leaves when touched?", options: ["Rose", "Mimosa", "Lotus", "Neem"], a: "Mimosa", why: "Also known as Touch-me-not." },
+        { id: 14, type: "mcq", q: "Throwing out waste is called ___.", options: ["Digestion", "Excretion", "Breathing", "Sleeping"], a: "Excretion", why: "Excretion removes toxins." },
+        { id: 15, type: "mcq", q: "Humans breathe through ___.", options: ["Gills", "Lungs", "Skin", "Stomata"], a: "Lungs", why: "Lungs are our respiratory organs." },
+        { id: 16, type: "mcq", q: "A seed turning into a plant shows ___.", options: ["Movement", "Growth", "Feeling", "Decay"], a: "Growth", why: "Increase in size over time." },
+        { id: 17, type: "tf", q: "Animals make their own food.", options: ["True", "False"], a: "False", why: "Animals depend on plants/others." },
+        { id: 18, type: "mcq", q: "An earthworm breathes through its ___.", options: ["Lungs", "Moist Skin", "Nose", "Gills"], a: "Moist Skin", why: "Earthworms have no lungs." },
+        { id: 19, type: "mcq", q: "Which is a natural non-living thing?", options: ["Plastic", "Cloud", "Car", "Book"], a: "Cloud", why: "Clouds are found in nature." },
+        { id: 20, type: "mcq", q: "Life span of a butterfly is ___.", options: ["100 years", "Very short", "Forever", "1 day"], a: "Very short", why: "Usually 1-2 weeks." },
+
+        // 21-40: Medium Level
+        { id: 21, type: "mcq", q: "Green plants are called ___.", options: ["Consumers", "Producers", "Decomposers", "Killers"], a: "Producers", why: "They produce food." },
+        { id: 22, type: "mcq", q: "Why do animals move?", options: ["To dance", "For food and safety", "To grow", "To sleep"], a: "For food and safety", why: "Survival needs movement." },
+        { id: 23, type: "tf", q: "Non-living things have cells.", options: ["True", "False"], a: "False", why: "Only living things have cells." },
+        { id: 24, type: "mcq", q: "A sunflower faces the ___.", options: ["Moon", "Water", "Sun", "Ground"], a: "Sun", why: "This movement is phototropism." },
+        { id: 25, type: "mcq", q: "Insects breathe through ___.", options: ["Lungs", "Spiracles", "Gills", "Mouth"], a: "Spiracles", why: "Air holes on their body." },
+        { id: 26, type: "mcq", q: "A tadpole grows into a ___.", options: ["Fish", "Frog", "Lizard", "Bird"], a: "Frog", why: "This is metamorphosis." },
+        { id: 27, type: "mcq", q: "Cows eat ___.", options: ["Meat", "Plants", "Insects", "Rocks"], a: "Plants", why: "Cows are herbivores." },
+        { id: 28, type: "tf", q: "Plants also excrete waste.", options: ["True", "False"], a: "True", why: "They release gum, resin, oxygen." },
+        { id: 29, type: "mcq", q: "Which sense organ helps you smell?", options: ["Eyes", "Nose", "Ears", "Skin"], a: "Nose", why: "Nose detects odors." },
+        { id: 30, type: "mcq", q: "Which animal lives in water?", options: ["Lion", "Shark", "Sparrow", "Camel"], a: "Shark", why: "It is an aquatic animal." },
+        { id: 31, type: "fill", q: "A cat gives birth to ___.", options: ["Eggs", "Kittens", "Puppies", "Seeds"], a: "Kittens", why: "Mammals give birth." },
+        { id: 32, type: "mcq", q: "Snakes move by ___.", options: ["Flying", "Slithering", "Running", "Jumping"], a: "Slithering", why: "They have no legs." },
+        { id: 33, type: "tf", q: "A broken glass can heal itself.", options: ["True", "False"], a: "False", why: "Non-living things cannot heal." },
+        { id: 34, type: "mcq", q: "Which one lays eggs?", options: ["Cow", "Snake", "Cat", "Dog"], a: "Snake", why: "Reptiles usually lay eggs." },
+        { id: 35, type: "mcq", q: "Plants give us ___ to breathe.", options: ["Carbon Dioxide", "Nitrogen", "Oxygen", "Smoke"], a: "Oxygen", why: "Product of photosynthesis." },
+        { id: 36, type: "mcq", q: "The time between birth and death is ___.", options: ["Life Cycle", "Life Span", "Growth", "Age"], a: "Life Span", why: "The total time of living." },
+        { id: 37, type: "mcq", q: "Which is a man-made thing?", options: ["River", "Mountain", "Mobile Phone", "Sand"], a: "Mobile Phone", why: "Humans created it." },
+        { id: 38, type: "tf", q: "All living things will die one day.", options: ["True", "False"], a: "True", why: "Death is natural." },
+        { id: 39, type: "mcq", q: "Camels have humps to store ___.", options: ["Water", "Fat", "Bones", "Air"], a: "Fat", why: "Fat converts to energy/water." },
+        { id: 40, type: "mcq", q: "Roots grow ___.", options: ["Towards light", "Under the ground", "In the air", "On flowers"], a: "Under the ground", why: "To absorb water." },
+
+        // 41-70: Advanced & Application
+        { id: 41, type: "mcq", q: "Why do leaves turn yellow in a dark box?", options: ["No air", "No sunlight", "Too hot", "No water"], a: "No sunlight", why: "Chlorophyll needs light." },
+        { id: 42, type: "mcq", q: "Fish die out of water because ___.", options: ["They get cold", "Gills can't take O2 from air", "They dry up", "They get scared"], a: "Gills can't take O2 from air", why: "Gills only work in water." },
+        { id: 43, type: "mcq", q: "Which is an invertebrate?", options: ["Dog", "Human", "Butterfly", "Fish"], a: "Butterfly", why: "It has no backbone." },
+        { id: 44, type: "mcq", q: "Mould on bread is a ___.", options: ["Plant", "Animal", "Fungus", "Stone"], a: "Fungus", why: "It is a living organism." },
+        { id: 45, type: "tf", q: "Seeds are dead.", options: ["True", "False"], a: "False", why: "They are dormant living things." },
+        { id: 46, type: "mcq", q: "If we hunt all deer, what happens to lions?", options: ["They party", "They die of hunger", "They eat grass", "They sleep"], a: "They die of hunger", why: "Food chain breaks." },
+        { id: 47, type: "mcq", q: "A lotus plant has ___ leaves.", options: ["Needle-like", "Broad and waxy", "No leaves", "Dry"], a: "Broad and waxy", why: "To float on water." },
+        { id: 48, type: "mcq", q: "Which part of a plant makes food?", options: ["Root", "Stem", "Leaf", "Flower"], a: "Leaf", why: "Kitchen of the plant." },
+        { id: 49, type: "mcq", q: "Why do we shiver in cold?", options: ["To dance", "To generate heat", "To sleep", "To sweat"], a: "To generate heat", why: "Response to stimulus." },
+        { id: 50, type: "mcq", q: "Animals that eat both plants and meat are ___.", options: ["Herbivores", "Carnivores", "Omnivores", "Insectivores"], a: "Omnivores", why: "E.g., Humans, Bears." },
+        { id: 51, type: "mcq", q: "Which is NOT a characteristic of life?", options: ["Reproduction", "Growth", "Rusting", "Breathing"], a: "Rusting", why: "Rusting happens to metal." },
+        { id: 52, type: "mcq", q: "The process of a caterpillar becoming a butterfly.", options: ["Metamorphosis", "Photosynthesis", "Respiration", "Digestion"], a: "Metamorphosis", why: "Changing form completely." },
+        { id: 53, type: "mcq", q: "Frogs breathe through lungs and ___.", options: ["Gills", "Skin", "Nose", "Ears"], a: "Skin", why: "Skin helps when in water." },
+        { id: 54, type: "mcq", q: "What helps a bird fly?", options: ["Heavy bones", "Hollow bones", "No bones", "Strong teeth"], a: "Hollow bones", why: "Makes them light." },
+        { id: 55, type: "mcq", q: "A mushroom cannot make food because ___.", options: ["It is small", "It has no chlorophyll", "It hates sun", "It has no roots"], a: "It has no chlorophyll", why: "It is not green." },
+        { id: 56, type: "mcq", q: "Balance in nature depends on ___.", options: ["Cars", "Food chains", "Buildings", "Computers"], a: "Food chains", why: "Eating and being eaten." },
+        { id: 57, type: "mcq", q: "Which is a scavenger?", options: ["Lion", "Vulture", "Cow", "Rabbit"], a: "Vulture", why: "Eats dead animals." },
+        { id: 58, type: "tf", q: "Plants breathe all day and night.", options: ["True", "False"], a: "True", why: "Respiration never stops." },
+        { id: 59, type: "mcq", q: "Why do polar bears have thick fur?", options: ["Fashion", "Protection from cold", "To swim", "To fly"], a: "Protection from cold", why: "Adaptation to Arctic." },
+        { id: 60, type: "mcq", q: "What protects a seed?", options: ["Leaf", "Seed Coat", "Root", "Stem"], a: "Seed Coat", why: "Hard outer layer." },
+        { id: 61, type: "mcq", q: "Whales breathe through ___.", options: ["Gills", "Blowholes (Lungs)", "Skin", "Mouth"], a: "Blowholes (Lungs)", why: "They are mammals." },
+        { id: 62, type: "mcq", q: "A computer has memory. Is it living?", options: ["Yes", "No", "Maybe", "Sometimes"], a: "No", why: "No cells, no growth." },
+        { id: 63, type: "mcq", q: "Which animal has no legs?", options: ["Lizard", "Snake", "Frog", "Tortoise"], a: "Snake", why: "It slithers." },
+        { id: 64, type: "mcq", q: "Humans belong to which group?", options: ["Reptiles", "Mammals", "Birds", "Amphibians"], a: "Mammals", why: "We have hair and give milk." },
+        { id: 65, type: "mcq", q: "Why do roots go down?", options: ["Gravity & Water", "To hide", "To sleep", "They like dark"], a: "Gravity & Water", why: "Geotropism." },
+        { id: 66, type: "mcq", q: "Which of these is Biodegradable (rots)?", options: ["Plastic Bottle", "Banana Peel", "Glass Jar", "Metal Can"], a: "Banana Peel", why: "It was part of a plant." },
+        { id: 67, type: "mcq", q: "Mosquitoes lay eggs in ___.", options: ["Sand", "Stagnant Water", "Air", "Trees"], a: "Stagnant Water", why: "Still water is their nursery." },
+        { id: 68, type: "mcq", q: "Which plant eats insects?", options: ["Rose", "Pitcher Plant", "Tulip", "Grass"], a: "Pitcher Plant", why: "Insectivorous plant." },
+        { id: 69, type: "mcq", q: "The primary source of energy for earth is ___.", options: ["Moon", "Sun", "Fire", "Electricity"], a: "Sun", why: "Solar energy." },
+        { id: 70, type: "mcq", q: "A baby chicken is called a ___.", options: ["Cub", "Chick", "Calf", "Kid"], a: "Chick", why: "Offspring of a hen." }
+    ];
+
+    /* --- DATA: LONG QUESTIONS (10) --- */
+    const longQuestions = [
+        { 
+            id: 1, 
+            q: "A car moves and consumes petrol (food). Why is it not living?", 
+            keywords: ["grow", "reproduce", "cell", "breathe", "feeling", "man-made"],
+            guide: "Mention: No growth, no reproduction, cannot feel, man-made."
+        },
+        { 
+            id: 2, 
+            q: "How is the way plants get food different from animals?", 
+            keywords: ["photosynthesis", "sunlight", "hunt", "make", "own", "depend"],
+            guide: "Plants make food (Photosynthesis). Animals hunt or eat plants."
+        },
+        { 
+            id: 3, 
+            q: "Explain how a fish breathes in water.", 
+            keywords: ["gills", "oxygen", "dissolved", "water", "mouth"],
+            guide: "Fish takes water in mouth -> passes over Gills -> absorbs Oxygen."
+        },
+        { 
+            id: 4, 
+            q: "What would happen if there were no plants on Earth?", 
+            keywords: ["die", "oxygen", "food", "starve", "carbon dioxide"],
+            guide: "Animals would die due to no food and no oxygen."
+        },
+        { 
+            id: 5, 
+            q: "Describe the 'Touch-me-not' plant's reaction. What does it show?", 
+            keywords: ["close", "fold", "leaves", "touch", "sensitivity", "stimuli"],
+            guide: "Leaves fold when touched. Shows sensitivity to stimuli."
+        },
+        { 
+            id: 6, 
+            q: "Differentiate between a bird and an airplane.", 
+            keywords: ["living", "egg", "grow", "fuel", "machine", "nature"],
+            guide: "Bird: Living, grows, lays eggs. Plane: Non-living, needs fuel, machine."
+        },
+        { 
+            id: 7, 
+            q: "Why do desert plants like Cactus have thorns?", 
+            keywords: ["water", "loss", "save", "leaves", "protect", "transpiration"],
+            guide: "Thorns are modified leaves to reduce water loss and protection."
+        },
+        { 
+            id: 8, 
+            q: "Explain the life cycle of a butterfly briefly.", 
+            keywords: ["egg", "larva", "caterpillar", "pupa", "cocoon", "adult"],
+            guide: "Egg -> Caterpillar (Larva) -> Pupa -> Adult Butterfly."
+        },
+        { 
+            id: 9, 
+            q: "Why is balance in nature important?", 
+            keywords: ["number", "increase", "population", "eat", "survive", "chain"],
+            guide: "To prevent one species from increasing too much and eating everything."
+        },
+        { 
+            id: 10, 
+            q: "How can you prove a seed is living?", 
+            keywords: ["grow", "soil", "water", "plant", "baby", "dormant"],
+            guide: "If put in soil/water, it grows into a plant. It has a baby plant inside."
+        }
+    ];
+
+    /* --- GLOBAL STATE --- */
+    let currentQIndex = 0;
+    let score = { correct: 0, wrong: 0, total: 80 }; // 70 practice + 10 long
+
+    /* --- INIT --- */
+    document.addEventListener("DOMContentLoaded", () => {
+        renderImportantQuestions();
+        renderQuestion();
+        renderLongQuestions();
+    });
+
+    /* --- FUNCTIONS --- */
+
+    function updateScoreDisplay() {
+        const totalAttempted = score.correct + score.wrong;
+        const percent = totalAttempted === 0 ? 0 : Math.round((score.correct / 80) * 100);
+        
+        document.getElementById("score-correct").textContent = score.correct;
+        document.getElementById("score-wrong").textContent = score.wrong;
+        document.getElementById("score-percent").textContent = percent + "%";
+    }
+
+    function renderImportantQuestions() {
+        const container = document.getElementById("important-questions-container");
+        let html = "";
+        impQuestions.forEach((item, index) => {
+            html += `
+                <div class="imp-q-card">
+                    <div style="color:#d63031;">Q${index+1}: ${item.q}</div>
+                    <div style="color:#2d3436; margin-top:5px;"><strong>Ans:</strong> ${item.a}</div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+
+    // --- PRACTICE ENGINE ---
+    function renderQuestion() {
+        if(currentQIndex >= practiceQuestions.length) {
+            document.getElementById("practice-area").innerHTML = `
+                <div class="q-card" style="background:#55efc4;">
+                    <h3>🎉 Practice Complete!</h3>
+                    <p>Proceed to Advanced Thinking Zone below.</p>
+                </div>`;
+            return;
+        }
+
+        const q = practiceQuestions[currentQIndex];
+        const display = document.getElementById("q-display");
+        document.getElementById("q-current").textContent = currentQIndex + 1;
+        document.getElementById("q-feedback").className = "feedback-box"; // Hide feedback
+        document.getElementById("q-next-btn").style.display = "none";
+
+        let optionsHtml = `<div class="options-grid">`;
+        // Randomize visual order of options only (keep logic simple)
+        // Actually, prompt says "No biased", so let's just render them. 
+        // We ensure distribution in the array definition.
+        
+        q.options.forEach(opt => {
+            optionsHtml += `<button class="option-btn" onclick="checkPracticeAnswer(this, '${opt.replace(/'/g, "\\'")}')">${opt}</button>`;
+        });
+        optionsHtml += `</div>`;
+
+        display.innerHTML = `
+            <div class="q-text">${q.q}</div>
+            ${optionsHtml}
+        `;
+    }
+
+    function checkPracticeAnswer(btn, selected) {
+        // Disable all buttons
+        const allBtns = document.querySelectorAll(".option-btn");
+        allBtns.forEach(b => b.disabled = true);
+
+        const q = practiceQuestions[currentQIndex];
+        const feedback = document.getElementById("q-feedback");
+        const nextBtn = document.getElementById("q-next-btn");
+
+        if (selected === q.a) {
+            // Correct
+            btn.classList.add("correct");
+            score.correct++;
+            feedback.innerHTML = `<strong>⭐ Excellent!</strong><br>${q.why}`;
+            feedback.style.background = "#dff9fb";
+            feedback.style.color = "#000";
+        } else {
+            // Wrong
+            btn.classList.add("wrong");
+            score.wrong++;
+            feedback.innerHTML = `<strong>❌ Try Again</strong><br>Correct Answer: ${q.a}<br>Reason: ${q.why}`;
+            feedback.style.background = "#ff7675";
+            feedback.style.color = "#fff";
+            
+            // Highlight correct one
+            allBtns.forEach(b => {
+                if (b.textContent === q.a) b.classList.add("correct");
+            });
+        }
+
+        feedback.classList.add("show");
+        nextBtn.style.display = "block";
+        updateScoreDisplay();
+    }
+
+    function nextQuestion() {
+        currentQIndex++;
+        renderQuestion();
+    }
+
+    // --- LONG QUESTION ENGINE ---
+    function renderLongQuestions() {
+        const area = document.getElementById("long-questions-area");
+        let html = "";
+        longQuestions.forEach((q, index) => {
+            html += `
+                <div class="long-q-card" id="long-card-${index}">
+                    <div><strong>Q${index+1}:</strong> ${q.q}</div>
+                    <textarea id="long-ans-${index}" placeholder="Type your answer here..."></textarea>
+                    <button class="check-long-btn" onclick="checkLongAnswer(${index})">Check Answer</button>
+                    <div id="long-feed-${index}" class="long-feedback"></div>
+                </div>
+            `;
+        });
+        area.innerHTML = html;
+    }
+
+    function checkLongAnswer(index) {
+        const input = document.getElementById(`long-ans-${index}`).value.toLowerCase();
+        const feedbackEl = document.getElementById(`long-feed-${index}`);
+        const card = document.getElementById(`long-card-${index}`);
+        const btn = card.querySelector("button");
+        
+        if (input.trim().length < 5) {
+            alert("Please write a proper answer.");
+            return;
+        }
+
+        const q = longQuestions[index];
+        const keywords = q.keywords;
+        let matchCount = 0;
+        let missing = [];
+
+        keywords.forEach(k => {
+            if (input.includes(k)) matchCount++;
+            else missing.push(k);
+        });
+
+        // Simple evaluation logic
+        // 50% keywords matched = Correct
+        const threshold = Math.ceil(keywords.length / 2);
+        
+        btn.disabled = true; // Prevent re-answering
+        feedbackEl.style.display = "block";
+
+        if (matchCount >= threshold) {
+            score.correct++;
+            feedbackEl.innerHTML = `<span style="color:green"><strong>✔ Good Job!</strong></span><br>You covered key concepts.<br><strong>Model Answer Points:</strong> ${q.guide}`;
+            card.style.border = "2px solid green";
+        } else {
+            score.wrong++;
+            feedbackEl.innerHTML = `<span style="color:red"><strong>Needs Improvement</strong></span><br><strong>Missing Keywords:</strong> ${missing.join(", ")}<br><strong>Correct Concept:</strong> ${q.guide}`;
+            card.style.border = "2px solid red";
+        }
+        updateScoreDisplay();
+    }
+
+    function toggleRevision() {
+        const content = document.getElementById("revision-content");
+        if (content.classList.contains("hidden")) {
+            content.classList.remove("hidden");
+        } else {
+            content.classList.add("hidden");
+        }
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 5 Mathematics - Chapter 4: Decimals</title>
+    <style>
+        :root {
+            --paper-bg: #fffdf0;
+            --ink-color: #2c3e50;
+            --accent-blue: #3498db;
+            --accent-green: #27ae60;
+            --accent-red: #e74c3c;
+            --accent-yellow: #f1c40f;
+            --line-color: #aab7b8;
+            --header-bg: #2c3e50;
+            --header-text: #ecf0f1;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-weight: bold !important; /* STRICT REQUIREMENT */
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', sans-serif;
+            background-color: var(--paper-bg);
+            color: var(--ink-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            overflow-x: hidden; /* Zero horizontal scroll */
+        }
+
+        /* UTILS */
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
+        .mt-2 { margin-top: 1rem; }
+        .mb-2 { margin-bottom: 1rem; }
+        .p-2 { padding: 1rem; }
+        .card {
+            background: white;
+            border: 2px solid var(--line-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.1);
+        }
+
+        /* HEADER */
+        header {
+            background-color: var(--header-bg);
+            color: var(--header-text);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 4px solid var(--accent-yellow);
+        }
+        h1 { margin: 0; font-size: 1.5rem; text-transform: uppercase; letter-spacing: 1px; }
+        h2 { font-size: 1.2rem; margin: 5px 0 0 0; color: var(--accent-yellow); }
+
+        /* LIVE SCORE PANEL - STICKY */
+        #score-panel {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: #fff;
+            border-bottom: 3px solid var(--ink-color);
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .score-item { display: flex; flex-direction: column; align-items: center; }
+        .score-val { font-size: 1.2rem; color: var(--accent-blue); }
+        .score-label { font-size: 0.7rem; text-transform: uppercase; }
+
+        /* MAIN CONTAINER */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* SECTIONS */
+        .section-title {
+            background: var(--accent-blue);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            text-align: center;
+            border: 2px solid var(--ink-color);
+        }
+
+        /* NOTES STYLES */
+        .note-block {
+            border-left: 5px solid var(--accent-green);
+            background: rgba(39, 174, 96, 0.1);
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 0 10px 10px 0;
+        }
+        .note-title { color: var(--accent-green); font-size: 1.2rem; margin-bottom: 10px; text-decoration: underline; }
+        .visual-box {
+            background: white;
+            border: 2px dashed var(--line-color);
+            padding: 10px;
+            margin: 10px 0;
+            text-align: center;
+            min-height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .grid-100 {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            width: 200px;
+            height: 200px;
+            border: 1px solid #000;
+        }
+        .grid-cell { border: 1px solid #ccc; background: white; }
+        .grid-cell.filled { background: var(--accent-blue); }
+        
+        /* QUESTIONS LIST */
+        .imp-q {
+            border-bottom: 1px dashed var(--line-color);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .imp-ans { color: var(--accent-green); margin-top: 5px; }
+
+        /* PRACTICE INTERACTIVE */
+        #practice-area {
+            background: #fff;
+            padding: 20px;
+            border: 3px solid var(--ink-color);
+            border-radius: 15px;
+        }
+        .option-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            background: #f8f9fa;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s;
+        }
+        .option-btn:hover { background: #eef2f3; }
+        .option-btn.selected { border-color: var(--accent-blue); background: #d6eaf8; }
+        .option-btn.correct { border-color: var(--accent-green); background: #d5f5e3; color: var(--accent-green); }
+        .option-btn.wrong { border-color: var(--accent-red); background: #fadbd8; color: var(--accent-red); }
+
+        .feedback-box {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        .feedback-correct { background: #d5f5e3; border: 2px solid var(--accent-green); }
+        .feedback-wrong { background: #fadbd8; border: 2px solid var(--accent-red); }
+
+        button.action-btn {
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 15px;
+            width: 100%;
+            border-bottom: 4px solid #2980b9;
+        }
+        button.action-btn:active { transform: translateY(2px); border-bottom: 0; }
+
+        /* LONG ANSWER */
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border: 2px solid var(--line-color);
+            border-radius: 8px;
+            font-family: inherit;
+            margin-top: 10px;
+            resize: vertical;
+        }
+
+        /* FOOTER */
+        footer {
+            background: var(--header-bg);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            margin-top: 50px;
+            border-top: 5px solid var(--accent-yellow);
+        }
+
+        /* REVISION TOGGLE */
+        .revision-content { display: none; background: #fffbe6; padding: 15px; border: 2px solid #f1c40f; }
+        .revision-content.show { display: block; animation: slideDown 0.3s ease; }
+
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* INPUTS */
+        input[type="text"], input[type="number"] {
+            padding: 8px;
+            border: 2px solid var(--line-color);
+            border-radius: 5px;
+            margin: 5px 0;
+            width: 100%;
+        }
+
+        /* MOBILE TWEAKS */
+        @media (max-width: 400px) {
+            h1 { font-size: 1.2rem; }
+            .score-item { padding: 0 5px; }
+            .score-val { font-size: 1rem; }
+            .grid-100 { width: 150px; height: 150px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HERO -->
+    <header>
+        <h1>Class 5 Mathematics</h1>
+        <h2>Chapter 4: Decimals (Advanced)</h2>
+    </header>
+
+    <!-- LIVE SCORE PANEL -->
+    <div id="score-panel">
+        <div class="score-item">
+            <span class="score-val" id="score-correct">0</span>
+            <span class="score-label">Correct</span>
+        </div>
+        <div class="score-item">
+            <span class="score-val" id="score-wrong">0</span>
+            <span class="score-label">Wrong</span>
+        </div>
+        <div class="score-item">
+            <span class="score-val" id="score-total">0</span>
+            <span class="score-label">Total</span>
+        </div>
+        <div class="score-item">
+            <span class="score-val" id="score-perc">0%</span>
+            <span class="score-label">Score</span>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <!-- NOTES SECTION -->
+        <div class="section-title">Class Notes & Concepts</div>
+        <div id="notes-container">
+            <!-- Topics rendered here -->
+            <div class="note-block">
+                <div class="note-title">1. Introduction to Decimals</div>
+                <p>A decimal is a way of writing a number that is not whole. It represents a part of a whole, just like a fraction.</p>
+                <p>Example: 1.5 is one and a half. The dot (.) is called the decimal point.</p>
+                <p><strong>Daily Life:</strong> Price tags! ₹10.50 means 10 rupees and 50 paise.</p>
+                <p>💡 <strong>Memory Tip:</strong> Think of the decimal point as a separator between Whole Numbers (Kings) and Fractions (Commoners).</p>
+                <div class="visual-box">
+                    <div>1 Whole + 0.5 Half = 1.5</div>
+                    <div style="font-size: 2rem;">🌕 + 🌗 = 1.5</div>
+                </div>
+            </div>
+
+            <div class="note-block">
+                <div class="note-title">2. Place Value of Decimals</div>
+                <p>After the decimal point, the values get smaller by 10 times.</p>
+                <p>Order: Tenths (1/10) → Hundredths (1/100) → Thousandths (1/1000).</p>
+                <div class="visual-box">
+                    <table border="1" cellpadding="5" style="border-collapse: collapse; width: 100%;">
+                        <tr><td>Ones</td><td>.</td><td>Tenths</td><td>Hundredths</td></tr>
+                        <tr><td>5</td><td>.</td><td>2</td><td>3</td></tr>
+                    </table>
+                    <p>5.23 = 5 + 2/10 + 3/100</p>
+                </div>
+            </div>
+
+            <div class="note-block">
+                <div class="note-title">3. Conversion: Fractions to Decimals</div>
+                <p>To convert, divide the numerator by the denominator OR make the denominator 10, 100, 1000.</p>
+                <p>Example: 7/10 = 0.7 | 5/100 = 0.05</p>
+                <div class="visual-box">
+                    <p>3/2 = 1.5</p>
+                    <p>1/4 = 0.25</p>
+                    <p>Method: 1 ÷ 4 = 0.25</p>
+                </div>
+            </div>
+
+            <div class="note-block">
+                <div class="note-title">4. Comparing Decimals</div>
+                <p>Always compare the whole number part first. If they are equal, compare the tenths, then hundredths.</p>
+                <p>Example: 5.6 vs 5.4 -> 5 is same. 6 > 4, so 5.6 > 5.4</p>
+                <p>⚠️ <strong>Trap:</strong> 0.5 is NOT smaller than 0.09. 0.5 = 0.50, which is bigger than 0.09.</p>
+                <div class="visual-box">
+                    Compare: 3.40 _ 3.04 <br>
+                    Answer: 3.40 > 3.04
+                </div>
+            </div>
+
+            <div class="note-block">
+                <div class="note-title">5. Ordering Decimals</div>
+                <p>Ascending: Smallest to Biggest. Descending: Biggest to Smallest.</p>
+                <p>Trick: Add zeros to make them the same length.</p>
+                <p>Example: 0.2, 0.02, 0.22 -> Change to 0.20, 0.02, 0.22 -> Order: 0.02, 0.20, 0.22</p>
+                <div class="visual-box">
+                    Ascending: 1.1, 1.01, 1.11 <br>
+                    Correct: 1.01, 1.10, 1.11
+                </div>
+            </div>
+
+            <div class="note-block">
+                <div class="note-title">6. Addition of Decimals</div>
+                <p><strong>Golden Rule:</strong> ALIGN THE DOTS!</p>
+                <p>Write numbers one below the other so decimal points are in a straight line.</p>
+                <div class="visual-box">
+                    <div style="text-align: right; width: 100px; margin: auto;">
+                        &nbsp;&nbsp;12.50<br>
+                        + &nbsp;3.45<br>
+                        -------<br>
+                        &nbsp;&nbsp;15.95
+                    </div>
+                </div>
+            </div>
+
+            <div class="note-block">
+                <div class="note-title">7. Subtraction of Decimals</div>
+                <p>Align the dots. Fill empty spaces with Zeros.</p>
+                <p>Example: 5 - 2.4 -> Write as 5.0 - 2.4</p>
+                <div class="visual-box">
+                    <div style="text-align: right; width: 100px; margin: auto;">
+                        &nbsp;&nbsp;5.0<br>
+                        - &nbsp;2.4<br>
+                        -------<br>
+                        &nbsp;&nbsp;2.6
+                    </div>
+                </div>
+            </div>
+
+            <div class="note-block">
+                <div class="note-title">8. Decimal Multiplication</div>
+                <p>1. Ignore point, multiply normally.</p>
+                <p>2. Count total decimal places in question.</p>
+                <p>3. Put point in answer.</p>
+                <div class="visual-box">
+                    0.2 x 0.3 = ?<br>
+                    2 x 3 = 6<br>
+                    Total places = 1 + 1 = 2<br>
+                    Answer = 0.06
+                </div>
+            </div>
+
+            <div class="note-block">
+                <div class="note-title">9. Decimal Division</div>
+                <p>When dividing by 10, 100, 1000, move the decimal point to the LEFT.</p>
+                <p>34.5 ÷ 10 = 3.45 (Jump 1 left)</p>
+                <div class="visual-box">
+                    ← Left for Division<br>
+                    Right for Multiplication →
+                </div>
+            </div>
+
+            <div class="note-block">
+                <div class="note-title">10. Money & Decimals</div>
+                <p>1 Rupee = 100 Paise.</p>
+                <p>To convert Paise to Rupees, put a dot before 2 digits.</p>
+                <p>50 paise = ₹0.50 | 5 paise = ₹0.05</p>
+                <div class="visual-box">
+                    💰 ₹5.75 = 5 Rupees + 75 Paise
+                </div>
+            </div>
+
+            <div class="note-block">
+                <div class="note-title">11. Measurement</div>
+                <p>1 cm = 10 mm (0.1 cm = 1 mm)</p>
+                <p>1 m = 100 cm (0.01 m = 1 cm)</p>
+                <p>1 kg = 1000 g (0.001 kg = 1 g)</p>
+                <div class="visual-box">
+                    📏 2 kg 500 g = 2.500 kg = 2.5 kg
+                </div>
+            </div>
+
+            <div class="note-block">
+                <div class="note-title">12. Advanced Word Problems</div>
+                <p>Read carefully. Identify if you need sum (total), difference (how much left), product (cost of many), or division (share).</p>
+                <div class="visual-box">
+                    "Total cost" -> Add<br>
+                    "Change back" -> Subtract
+                </div>
+            </div>
+        </div>
+
+        <!-- IMPORTANT QUESTIONS -->
+        <div class="section-title">Important Questions (Exam Ready)</div>
+        <div id="important-questions-list">
+            <!-- Populated via JS -->
+        </div>
+
+        <!-- PRACTICE QUESTIONS -->
+        <div class="section-title">Practice Zone (70 Questions)</div>
+        <div id="practice-area">
+            <div id="pq-container">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span>Question <span id="pq-num">1</span>/70</span>
+                    <span id="pq-diff" style="color: var(--accent-blue)">BASIC</span>
+                </div>
+                <div id="pq-text" style="font-size: 1.2rem; margin-bottom: 20px;">Loading...</div>
+                
+                <div id="pq-options">
+                    <!-- Options buttons go here -->
+                </div>
+
+                <div id="pq-input-area" class="hidden">
+                    <input type="text" id="pq-text-input" placeholder="Type your answer here...">
+                </div>
+
+                <button id="pq-submit" class="action-btn">Submit Answer</button>
+                <button id="pq-next" class="action-btn hidden" style="background: var(--accent-green);">Next Question ➡</button>
+
+                <div id="pq-feedback" class="feedback-box">
+                    <div id="fb-msg" style="font-size: 1.2rem;"></div>
+                    <div id="fb-exp" style="font-size: 0.9rem; margin-top: 5px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LONG ANSWER QUESTIONS -->
+        <div class="section-title">Advanced Long Questions</div>
+        <div id="long-questions-list">
+            <!-- Populated via JS -->
+        </div>
+
+        <!-- REVISION -->
+        <div class="section-title" onclick="toggleRevision()" style="cursor: pointer;">
+            ⚡ Quick Revision (Click to Open)
+        </div>
+        <div id="revision-panel" class="revision-content">
+            <h3>⚡ Rapid Fire Rules</h3>
+            <ul>
+                <li><strong>Add/Sub:</strong> Align the decimal points!</li>
+                <li><strong>Multiply:</strong> Ignore point first, count places later.</li>
+                <li><strong>Divide by 10:</strong> Jump point Left.</li>
+                <li><strong>Multiply by 10:</strong> Jump point Right.</li>
+                <li><strong>100 Paise:</strong> 1 Rupee.</li>
+                <li><strong>1000 Grams:</strong> 1 Kg.</li>
+                <li><strong>0.5:</strong> Half.</li>
+                <li><strong>0.25:</strong> Quarter.</li>
+                <li><strong>0.75:</strong> Three-Quarters.</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>Designed & Created by SHRISHANT YADAV</p>
+        <p>ShanEduHub</p>
+    </footer>
+
+    <script>
+        /* ----------------------------------------------------------------
+           DATASETS
+        ---------------------------------------------------------------- */
+
+        const importantQuestions = [
+            { q: "What is the place value of 5 in 12.53?", a: "Tenths (5/10)", e: "It is the first digit after the decimal." },
+            { q: "Write 3/10 as a decimal.", a: "0.3", e: "3 divided by 10 is 0.3." },
+            { q: "Which is greater: 0.5 or 0.05?", a: "0.5", e: "0.5 is 50 hundredths, 0.05 is 5 hundredths." },
+            { q: "Add: 2.5 + 3.2", a: "5.7", e: "2+3=5 and 0.5+0.2=0.7." },
+            { q: "Subtract: 5.9 - 2.1", a: "3.8", e: "9-1=8, 5-2=3." },
+            { q: "Convert 250 paise to rupees.", a: "₹2.50", e: "Divide by 100." },
+            { q: "Write 400 + 20 + 5 + 3/100 as a decimal.", a: "425.03", e: "No tenths digit mentioned, so 0." },
+            { q: "How many grams in 2.5 kg?", a: "2500 g", e: "Multiply 2.5 by 1000." },
+            { q: "Product of 0.2 x 0.2?", a: "0.04", e: "2x2=4, total 2 decimal places." },
+            { q: "Divide 15.5 by 10.", a: "1.55", e: "Shift decimal one place left." },
+            { q: "Write 'Five point zero two' in figures.", a: "5.02", e: "Standard notation." },
+            { q: "Fraction for 0.75?", a: "3/4 or 75/100", e: "Common fraction conversion." },
+            { q: "If 1m cloth costs ₹50.50, cost of 2m?", a: "₹101.00", e: "50.50 + 50.50." },
+            { q: "Perimeter of square with side 2.5cm?", a: "10 cm", e: "4 x 2.5." },
+            { q: "0.9 + 0.1 = ?", a: "1.0", e: "Completes the whole." },
+            { q: "How many decimal places in 1.234?", a: "3", e: "Digits after point." },
+            { q: "Write 2/100 as decimal.", a: "0.02", e: "Two decimal places needed." },
+            { q: "7 ones and 3 tenths.", a: "7.3", e: "Place value." },
+            { q: "Arrange 0.1, 0.8, 0.5 ascending.", a: "0.1, 0.5, 0.8", e: "Simple comparison." },
+            { q: "Subtract 1.5 from 3.", a: "1.5", e: "3.0 - 1.5." },
+            { q: "Value of 7 in 1.27?", a: "Hundredths", e: "Second place after decimal." },
+            { q: "2.5 km is how many meters?", a: "2500 m", e: "x 1000." },
+            { q: "Does 0.50 equal 0.5?", a: "Yes", e: "Trailing zeros don't change value." },
+            { q: "Half of 0.8?", a: "0.4", e: "Division by 2." },
+            { q: "Double of 1.2?", a: "2.4", e: "Multiplication by 2." },
+            { q: "Write 9/1000 as decimal.", a: "0.009", e: "Three decimal places." },
+            { q: "Sum of 1.1, 2.2, 3.3?", a: "6.6", e: "Simple addition." },
+            { q: "100 rupees and 5 paise.", a: "₹100.05", e: "05 for paise." },
+            { q: "Length of a pencil is 7.5 cm in mm?", a: "75 mm", e: "x 10." },
+            { q: "0.1 x 100?", a: "10", e: "Shift point 2 right." }
+        ];
+
+        // 70 PRACTICE QUESTIONS - DIVERSE TYPES
+        const practiceQuestions = [
+            // TOPIC 1 & 2: INTRO & PLACE VALUE
+            { type: "mcq", q: "The dot in a decimal number is called?", options: ["Period", "Decimal Point", "Stop", "Comma"], a: 1, exp: "It separates whole numbers from parts." },
+            { type: "mcq", q: "In 14.25, the digit 2 is in which place?", options: ["Tens", "Tenths", "Hundredths", "Ones"], a: 1, exp: "First digit after point is Tenths." },
+            { type: "text", q: "Write as decimal: Five and three tenths.", a: "5.3", exp: "5 whole and 3/10." },
+            { type: "mcq", q: "What is the value of 8 in 9.18?", options: ["8", "8/10", "8/100", "80"], a: 2, exp: "Second place after decimal is Hundredths." },
+            { type: "mcq", q: "Which represents 7/100?", options: ["0.7", "0.007", "7.00", "0.07"], a: 3, exp: "Two decimal places for hundredths." },
+            { type: "text", q: "Write 200 + 60 + 5 + 1/10 as a decimal.", a: "265.1", exp: "Add whole parts and append tenth." },
+            { type: "mcq", q: "How many tenths make 1 whole?", options: ["100", "5", "10", "50"], a: 2, exp: "10/10 = 1." },
+            { type: "mcq", q: "In 5.432, the digit 3 stands for?", options: ["3 Tenths", "3 Hundredths", "3 Thousandths", "3 Ones"], a: 1, exp: "Second decimal place." },
+            
+            // TOPIC 3: CONVERSION
+            { type: "mcq", q: "Convert 1/2 to decimal.", options: ["0.2", "0.5", "0.12", "0.05"], a: 1, exp: "1 ÷ 2 = 0.5" },
+            { type: "text", q: "Convert 3/4 to decimal.", a: "0.75", exp: "Common fraction." },
+            { type: "mcq", q: "12/100 as a decimal is?", options: ["0.12", "1.2", "0.012", "12.0"], a: 0, exp: "Divide by 100 = 2 decimal places." },
+            { type: "mcq", q: "Write 0.6 as a fraction.", options: ["6/100", "6/10", "60/10", "6/1"], a: 1, exp: "One decimal place means denominator 10." },
+            { type: "mcq", q: "4/5 as a decimal.", options: ["0.4", "0.5", "0.8", "0.45"], a: 2, exp: "Multiply num and den by 2 -> 8/10 = 0.8" },
+            { type: "text", q: "Convert 2.5 to fraction (simplest form). Write as a/b", a: "5/2", exp: "25/10 = 5/2" },
+            
+            // TOPIC 4 & 5: COMPARE & ORDER
+            { type: "mcq", q: "Which is greater?", options: ["0.5", "0.05", "0.005", "0.0005"], a: 0, exp: "0.5 has largest value in tenths place." },
+            { type: "mcq", q: "Compare: 3.05 ___ 3.50", options: [">", "<", "=", "None"], a: 1, exp: "3.50 is greater than 3.05" },
+            { type: "mcq", q: "Which set is in Ascending Order?", options: ["1.1, 1.2, 1.05", "0.5, 0.55, 0.6", "2.1, 2.0, 1.9", "0.1, 0.01, 0.001"], a: 1, exp: "Smallest to largest." },
+            { type: "mcq", q: "Is 1.0 equal to 1.00?", options: ["Yes", "No", "Maybe", "Cannot say"], a: 0, exp: "Extra zeros do not change value." },
+            { type: "mcq", q: "Smallest decimal:", options: ["0.2", "0.02", "0.002", "2.0"], a: 2, exp: "0.002 is 2 thousandths." },
+            
+            // TOPIC 6 & 7: ADD / SUB
+            { type: "text", q: "1.2 + 1.2 = ?", a: "2.4", exp: "Simple addition." },
+            { type: "mcq", q: "Sum of 0.3 and 0.7 is?", options: ["0.10", "10.0", "1.0", "0.37"], a: 2, exp: "3/10 + 7/10 = 10/10 = 1" },
+            { type: "text", q: "5.5 - 2.5 = ?", a: "3", exp: "Or 3.0" },
+            { type: "mcq", q: "Find the sum: 12.0 + 3.45", options: ["15.05", "15.45", "46.5", "12.345"], a: 1, exp: "Align dots: 12.00 + 3.45" },
+            { type: "mcq", q: "Subtract: 10 - 0.5", options: ["10.5", "9.5", "0.5", "9.0"], a: 1, exp: "10.0 - 0.5 = 9.5" },
+            { type: "text", q: "What must be added to 0.6 to get 1?", a: "0.4", exp: "1.0 - 0.6 = 0.4" },
+            { type: "mcq", q: "8.9 + 1.1 = ?", options: ["9.0", "9.9", "10.0", "10.1"], a: 2, exp: "Carrying over 1." },
+            
+            // TOPIC 8 & 9: MULTIPLY & DIVIDE
+            { type: "mcq", q: "0.6 x 3 = ?", options: ["0.18", "1.8", "18", "0.018"], a: 1, exp: "6x3=18, 1 decimal place." },
+            { type: "mcq", q: "1.5 ÷ 10 = ?", options: ["15.0", "0.15", "0.015", "150"], a: 1, exp: "Move dot left." },
+            { type: "mcq", q: "2.4 x 100 = ?", options: ["24", "240", "2.400", "0.24"], a: 1, exp: "Move dot right 2 times." },
+            { type: "text", q: "Half of 7.0 is?", a: "3.5", exp: "7 ÷ 2 = 3.5" },
+            { type: "mcq", q: "0.1 x 0.1 = ?", options: ["0.1", "0.2", "0.01", "1.0"], a: 2, exp: "Total 2 decimal places." },
+            { type: "mcq", q: "Divide 4.8 by 2.", options: ["2.4", "4.2", "2.2", "2.8"], a: 0, exp: "Normal division, keep point." },
+            
+            // TOPIC 10: MONEY
+            { type: "mcq", q: "75 paise in rupees?", options: ["₹7.5", "₹0.75", "₹75", "₹0.075"], a: 1, exp: "Divide by 100." },
+            { type: "mcq", q: "₹50.50 + ₹20.50 = ?", options: ["₹70.00", "₹71.00", "₹70.50", "₹71.50"], a: 1, exp: "50p + 50p = 1 Rupee." },
+            { type: "text", q: "How many 50 paise coins make ₹2?", a: "4", exp: "0.50 x 4 = 2.00" },
+            { type: "mcq", q: "Subtract ₹10.50 from ₹20.", options: ["₹10.50", "₹9.50", "₹10.00", "₹9.00"], a: 1, exp: "20.00 - 10.50" },
+            
+            // TOPIC 11: MEASUREMENT
+            { type: "mcq", q: "5mm in cm?", options: ["50cm", "0.5cm", "0.05cm", "5.0cm"], a: 1, exp: "Divide by 10." },
+            { type: "mcq", q: "2.5kg = ___ grams", options: ["250g", "2050g", "2500g", "25g"], a: 2, exp: "x 1000" },
+            { type: "mcq", q: "1.5 liters in ml?", options: ["150ml", "1500ml", "15ml", "1050ml"], a: 1, exp: "x 1000" },
+            { type: "text", q: "Convert 300cm to meters.", a: "3", exp: "Divide by 100." },
+            
+            // MIXED & THINKING
+            { type: "mcq", q: "Which digit is in the hundredths place in 6.09?", options: ["6", "0", "9", "None"], a: 2, exp: "Second digit after point." },
+            { type: "mcq", q: "10 + 0.5 + 0.007 = ?", options: ["10.57", "10.057", "10.507", "10.570"], a: 2, exp: "Place values match." },
+            { type: "mcq", q: "If 1 chocolate is ₹5.50, 2 are?", options: ["₹10", "₹12", "₹11", "₹10.50"], a: 2, exp: "5.5 + 5.5 = 11" },
+            { type: "text", q: "Next in pattern: 1.2, 1.4, 1.6, ___", a: "1.8", exp: "Adding 0.2" },
+            { type: "mcq", q: "Which is not equal to 3.5?", options: ["3.50", "3.500", "3.05", "3 and a half"], a: 2, exp: "3.05 is smaller." },
+            { type: "mcq", q: "Value of 4/10 + 3/100?", options: ["0.43", "0.7", "0.34", "4.3"], a: 0, exp: "0.4 + 0.03" },
+            { type: "mcq", q: "Double of 0.15", options: ["0.30", "0.45", "1.5", "0.03"], a: 0, exp: "15 + 15 = 30" },
+            { type: "mcq", q: "1 - 0.9 = ?", options: ["0.1", "0.01", "1.0", "0.9"], a: 0, exp: "1.0 - 0.9" },
+            { type: "text", q: "A square has side 1.2cm. Area?", a: "1.44", exp: "1.2 x 1.2" },
+            { type: "mcq", q: "Decimal form of 'Three hundred and two tenths'.", options: ["300.2", "300.02", "302.0", "3.2"], a: 0, exp: "300 + 0.2" },
+            
+            // FILLERS TO REACH 70
+            { type: "mcq", q: "5.67 x 10 = ?", options: ["56.7", "0.567", "567", "5.670"], a: 0, exp: "Shift right 1." },
+            { type: "mcq", q: "32.1 ÷ 100 = ?", options: ["3.21", "0.321", "321", "3210"], a: 1, exp: "Shift left 2." },
+            { type: "text", q: "Number of paise in ₹8?", a: "800", exp: "8 x 100" },
+            { type: "mcq", q: "2.2 + 2.2 + 2.2 = ?", options: ["6.6", "2.6", "4.4", "8.8"], a: 0, exp: "Addition." },
+            { type: "mcq", q: "Difference between 5.5 and 5.05?", options: ["0.5", "0.05", "0.45", "0.55"], a: 2, exp: "5.50 - 5.05 = 0.45" },
+            { type: "mcq", q: "0.8 is same as?", options: ["8/100", "8/10", "80/100", "Both B and C"], a: 3, exp: "0.8 = 0.80" },
+            { type: "mcq", q: "Quarter of 1 is?", options: ["0.25", "0.5", "0.75", "0.4"], a: 0, exp: "1/4" },
+            { type: "mcq", q: "Three quarters of 1 is?", options: ["0.25", "0.5", "0.75", "0.34"], a: 2, exp: "3/4" },
+            { type: "mcq", q: "1.1 x 1.1 = ?", options: ["1.21", "12.1", "121", "1.11"], a: 0, exp: "11x11=121, 2 decimals" },
+            { type: "text", q: "Cost of 10 pens at ₹2.50 each?", a: "25", exp: "2.50 x 10" },
+            { type: "mcq", q: "6.2 rounded to whole number?", options: ["6", "7", "6.5", "6.0"], a: 0, exp: "<.5 rounds down" },
+            { type: "mcq", q: "6.8 rounded to whole number?", options: ["6", "7", "6.5", "8"], a: 1, exp: ">.5 rounds up" },
+            { type: "mcq", q: "Which is largest?", options: ["0.11", "0.099", "0.1", "0.001"], a: 0, exp: "0.11 is eleven hundredths" },
+            { type: "text", q: "Subtract 0.1 from 0.11", a: "0.01", exp: "0.11 - 0.10" },
+            { type: "mcq", q: "20.5 + 0.5 = ?", options: ["20.55", "21.0", "20.0", "25.0"], a: 1, exp: "Completes whole." },
+            { type: "mcq", q: "Decimal for 7/1000", options: ["0.007", "0.07", "0.7", "7.0"], a: 0, exp: "Thousandths" },
+            { type: "mcq", q: "How many 0.1s are in 1?", options: ["5", "10", "100", "1"], a: 1, exp: "10 x 0.1 = 1" },
+            { type: "mcq", q: "If A=0.5, B=0.6, A+B=?", options: ["1.1", "0.11", "11", "1.0"], a: 0, exp: "Addition." },
+            { type: "mcq", q: "Shape with 100 grids has 25 shaded. Decimal?", options: ["0.25", "2.5", "0.025", "25"], a: 0, exp: "25/100" },
+            { type: "text", q: "Write 1.25 as mixed fraction (1 1/4)", a: "1 1/4", exp: "1.25 = 1 + 1/4" },
+            { type: "mcq", q: "Final Question: 100 - 0.01 = ?", options: ["99.99", "99.9", "99.09", "9.99"], a: 0, exp: "99.99 + 0.01 = 100" }
+        ];
+
+        // 10 LONG ANSWER QUESTIONS
+        const longQuestions = [
+            { id: 1, q: "Rohan bought a notebook for ₹35.50 and a pen for ₹12.75. He gave the shopkeeper a ₹100 note. How much money did he get back?", keywords: ["51.75", "48.25", "100", "subtract", "minus"], ans: "Total cost = 35.50 + 12.75 = ₹48.25. Change = 100 - 48.25 = ₹51.75." },
+            { id: 2, q: "A rectangular park is 20.5 meters long and 10.2 meters wide. Calculate its perimeter.", keywords: ["61.4", "perimeter", "add", "20.5", "10.2"], ans: "Perimeter = 2 x (Length + Width) = 2 x (20.5 + 10.2) = 2 x 30.7 = 61.4 meters." },
+            { id: 3, q: "A milkman sold 25.5 liters of milk in the morning and 14.75 liters in the evening. How much milk did he sell in total?", keywords: ["40.25", "total", "add", "sum"], ans: "Total = 25.50 + 14.75 = 40.25 Liters." },
+            { id: 4, q: "If 1 kg of apples costs ₹120.50, what is the cost of 2.5 kg of apples?", keywords: ["301.25", "multiply", "product"], ans: "Cost = 120.50 x 2.5 = ₹301.25." },
+            { id: 5, q: "A ribbon is 10 meters long. Cuts of 1.25 meters are made. How many pieces can be cut?", keywords: ["8", "divide", "division"], ans: "10 ÷ 1.25 = 8 pieces." },
+            { id: 6, q: "Tina walks 1.5 km to school, then 0.75 km to the market, and finally 0.5 km to home. What is the total distance she walked?", keywords: ["2.75", "total", "sum"], ans: "1.50 + 0.75 + 0.50 = 2.75 km." },
+            { id: 7, q: "Subtract the sum of 12.5 and 3.4 from 20.", keywords: ["4.1", "15.9", "subtract"], ans: "Sum = 12.5 + 3.4 = 15.9. Difference = 20.0 - 15.9 = 4.1." },
+            { id: 8, q: "Convert 5kg 25g into decimal form (kg) and add 2.5kg to it.", keywords: ["7.525", "5.025"], ans: "5kg 25g = 5.025 kg. Sum = 5.025 + 2.500 = 7.525 kg." },
+            { id: 9, q: "A car travels 15.5 km in 1 liter of petrol. How far will it travel in 10 liters?", keywords: ["155", "multiply"], ans: "15.5 x 10 = 155 km." },
+            { id: 10, q: "Arrange these heights in ascending order: 1.52m, 1.5m, 1.505m, 1.6m.", keywords: ["1.5", "1.505", "1.52", "1.6"], ans: "Order: 1.5m, 1.505m, 1.52m, 1.6m." }
+        ];
+
+        /* ----------------------------------------------------------------
+           LOGIC
+        ---------------------------------------------------------------- */
+
+        let scoreCorrect = 0;
+        let scoreWrong = 0;
+        let scoreTotal = 0;
+        let currentPQIndex = 0;
+
+        // INIT
+        window.addEventListener('DOMContentLoaded', () => {
+            renderImportantQuestions();
+            renderPracticeQuestion();
+            renderLongQuestions();
+            updateScoreBoard();
+        });
+
+        // RENDER IMPORTANT QUESTIONS
+        function renderImportantQuestions() {
+            const container = document.getElementById('important-questions-list');
+            importantQuestions.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'card imp-q';
+                div.innerHTML = `
+                    <div><strong>Q${index + 1}.</strong> ${item.q}</div>
+                    <div class="imp-ans">➤ <strong>Ans:</strong> ${item.a}</div>
+                    <div style="font-size: 0.85rem; color: #7f8c8d;"><em>(${item.e})</em></div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // RENDER PRACTICE QUESTION
+        function renderPracticeQuestion() {
+            const q = practiceQuestions[currentPQIndex];
+            document.getElementById('pq-num').innerText = currentPQIndex + 1;
+            document.getElementById('pq-text').innerText = q.q;
+            
+            // Difficulty label logic
+            const diffLabel = document.getElementById('pq-diff');
+            if (currentPQIndex < 20) { diffLabel.innerText = "BASIC"; diffLabel.style.color = "#27ae60"; }
+            else if (currentPQIndex < 50) { diffLabel.innerText = "MEDIUM"; diffLabel.style.color = "#f39c12"; }
+            else { diffLabel.innerText = "ADVANCED"; diffLabel.style.color = "#e74c3c"; }
+
+            const optionsDiv = document.getElementById('pq-options');
+            const inputArea = document.getElementById('pq-input-area');
+            const submitBtn = document.getElementById('pq-submit');
+            const nextBtn = document.getElementById('pq-next');
+            const feedback = document.getElementById('pq-feedback');
+            const textInput = document.getElementById('pq-text-input');
+
+            // Reset UI
+            optionsDiv.innerHTML = '';
+            inputArea.classList.add('hidden');
+            optionsDiv.classList.remove('hidden');
+            submitBtn.classList.remove('hidden');
+            nextBtn.classList.add('hidden');
+            feedback.style.display = 'none';
+            textInput.value = '';
+
+            if (q.type === 'mcq') {
+                q.options.forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerText = opt;
+                    btn.onclick = () => selectOption(btn, idx);
+                    optionsDiv.appendChild(btn);
+                });
+                submitBtn.onclick = () => checkMCQ(q.a);
+            } else {
+                optionsDiv.classList.add('hidden');
+                inputArea.classList.remove('hidden');
+                submitBtn.onclick = () => checkText(q.a);
+            }
+        }
+
+        let selectedOptionIndex = -1;
+
+        function selectOption(btn, idx) {
+            const allBtns = document.querySelectorAll('.option-btn');
+            allBtns.forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            selectedOptionIndex = idx;
+        }
+
+        function checkMCQ(correctIdx) {
+            if (selectedOptionIndex === -1) return; // Do nothing if none selected
+
+            const allBtns = document.querySelectorAll('.option-btn');
+            const feedback = document.getElementById('pq-feedback');
+            const msg = document.getElementById('fb-msg');
+            const exp = document.getElementById('fb-exp');
+            const submitBtn = document.getElementById('pq-submit');
+            const nextBtn = document.getElementById('pq-next');
+
+            let isCorrect = (selectedOptionIndex === correctIdx);
+            
+            // Highlight
+            allBtns[correctIdx].classList.add('correct');
+            if (!isCorrect) {
+                allBtns[selectedOptionIndex].classList.add('wrong');
+            }
+
+            processResult(isCorrect, practiceQuestions[currentPQIndex].exp);
+        }
+
+        function checkText(correctAnswer) {
+            const input = document.getElementById('pq-text-input');
+            const val = input.value.trim().toLowerCase();
+            const correctVal = correctAnswer.toString().toLowerCase();
+
+            // Loose comparison for text (allow space variations)
+            let isCorrect = (val === correctVal) || (val.replace(/\s/g, '') === correctVal.replace(/\s/g, ''));
+
+            // Specific check for fraction formats if needed
+            if (!isCorrect && val.includes('/') && correctVal.includes(' ')) {
+                // Handle mixed fractions if necessary, but simplicity is key
+            }
+
+            processResult(isCorrect, practiceQuestions[currentPQIndex].exp + ` (Correct: ${correctAnswer})`);
+        }
+
+        function processResult(isCorrect, explanation) {
+            scoreTotal++;
+            if (isCorrect) {
+                scoreCorrect++;
+                showFeedback(true, "Excellent ⭐", explanation);
+            } else {
+                scoreWrong++;
+                showFeedback(false, "Try Again", explanation);
+            }
+            updateScoreBoard();
+            
+            document.getElementById('pq-submit').classList.add('hidden');
+            
+            // If last question, handle differently
+            if (currentPQIndex < practiceQuestions.length - 1) {
+                document.getElementById('pq-next').classList.remove('hidden');
+                document.getElementById('pq-next').onclick = nextQuestion;
+            } else {
+                document.getElementById('pq-next').innerText = "Finish";
+                document.getElementById('pq-next').classList.remove('hidden');
+                document.getElementById('pq-next').onclick = () => alert("Practice Complete! Check your final score.");
+            }
+        }
+
+        function showFeedback(isSuccess, title, text) {
+            const fb = document.getElementById('pq-feedback');
+            fb.style.display = 'block';
+            fb.className = isSuccess ? 'feedback-box feedback-correct' : 'feedback-box feedback-wrong';
+            document.getElementById('fb-msg').innerText = title;
+            document.getElementById('fb-exp').innerText = text;
+        }
+
+        function nextQuestion() {
+            currentPQIndex++;
+            selectedOptionIndex = -1;
+            renderPracticeQuestion();
+        }
+
+        // RENDER LONG QUESTIONS
+        function renderLongQuestions() {
+            const container = document.getElementById('long-questions-list');
+            longQuestions.forEach((item) => {
+                const div = document.createElement('div');
+                div.className = 'card';
+                div.innerHTML = `
+                    <div class="mb-2"><strong>Q${item.id}.</strong> ${item.q}</div>
+                    <textarea id="lq-ans-${item.id}" placeholder="Type your step-by-step answer here..."></textarea>
+                    <button class="action-btn" onclick="checkLongAnswer(${item.id})">Check Answer</button>
+                    <div id="lq-fb-${item.id}" class="feedback-box"></div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function checkLongAnswer(id) {
+            const q = longQuestions.find(x => x.id === id);
+            const input = document.getElementById(`lq-ans-${id}`).value.toLowerCase();
+            const fbDiv = document.getElementById(`lq-fb-${id}`);
+            
+            if (input.trim().length < 5) {
+                alert("Please write a proper answer.");
+                return;
+            }
+
+            // Keyword matching logic
+            let matchCount = 0;
+            q.keywords.forEach(k => {
+                if (input.includes(k.toLowerCase())) matchCount++;
+            });
+
+            // Scoring logic for Long answers
+            scoreTotal++;
+            let isCorrect = false;
+
+            // Strictness: Need at least 2 keywords or the exact numerical answer if short
+            if (matchCount >= 2 || input.includes(q.keywords[0])) { // Assuming first keyword is usually the number answer
+                scoreCorrect++;
+                isCorrect = true;
+                fbDiv.className = 'feedback-box feedback-correct';
+                fbDiv.innerHTML = `<strong>Correct!</strong><br>${q.ans}`;
+            } else {
+                scoreWrong++;
+                fbDiv.className = 'feedback-box feedback-wrong';
+                fbDiv.innerHTML = `<strong>Needs Improvement.</strong><br>Expected Keywords: ${q.keywords.join(", ")}<br><strong>Correct Approach:</strong> ${q.ans}`;
+            }
+            
+            fbDiv.style.display = 'block';
+            updateScoreBoard();
+        }
+
+        // UPDATE SCORE
+        function updateScoreBoard() {
+            document.getElementById('score-correct').innerText = scoreCorrect;
+            document.getElementById('score-wrong').innerText = scoreWrong;
+            document.getElementById('score-total').innerText = scoreTotal;
+            
+            let perc = scoreTotal === 0 ? 0 : Math.round((scoreCorrect / scoreTotal) * 100);
+            document.getElementById('score-perc').innerText = perc + "%";
+        }
+
+        // REVISION TOGGLE
+        function toggleRevision() {
+            const el = document.getElementById('revision-panel');
+            el.classList.toggle('show');
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArtSpace | Advanced Class 5 Art Platform</title>
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            --primary: #FF6B6B;      /* Pastel Red */
+            --secondary: #4ECDC4;    /* Teal */
+            --accent: #FFE66D;       /* Yellow */
+            --dark: #292F36;         /* Charcoal */
+            --light: #F7FFF7;        /* Off-white */
+            --purple: #6C5B7B;
+            --shadow: 0 8px 15px rgba(0,0,0,0.1);
+            --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --font-head: 'Comic Sans MS', 'Chalkboard SE', sans-serif; /* Playful */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: #fdfdfd;
+            background-image: radial-gradient(#e0e0e0 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 5px solid var(--secondary);
+        }
+
+        .logo {
+            font-family: var(--font-head);
+            font-size: 1.8rem;
+            color: var(--primary);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        /* --- HERO SECTION --- */
+        header {
+            text-align: center;
+            padding: 4rem 1rem;
+            background: linear-gradient(135deg, #FF6B6B 0%, #FFE66D 100%);
+            color: white;
+            border-bottom-left-radius: 50px;
+            border-bottom-right-radius: 50px;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header h1 {
+            font-family: var(--font-head);
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        header p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 2rem auto;
+        }
+
+        .cta-group button {
+            background: white;
+            color: var(--primary);
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 0 10px;
+            box-shadow: 0 5px 0 rgba(0,0,0,0.1);
+        }
+
+        .cta-group button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 0 rgba(0,0,0,0.1);
+        }
+
+        /* --- GENERAL LAYOUT --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        section {
+            margin-bottom: 4rem;
+            padding: 2rem;
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            border: 2px solid #f0f0f0;
+        }
+
+        .section-title {
+            font-family: var(--font-head);
+            font-size: 2rem;
+            color: var(--purple);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 5px;
+            background: var(--secondary);
+            margin: 10px auto 0;
+            border-radius: 10px;
+        }
+
+        /* --- GRID CARDS --- */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: transform 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--secondary);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+            text-align: center;
+        }
+
+        .card h3 {
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        /* --- COLOR WHEEL INTERACTIVE --- */
+        .color-mixer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            background: #f9f9f9;
+            padding: 2rem;
+            border-radius: 15px;
+        }
+
+        .mix-controls {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .paint-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .paint-btn:active { transform: scale(0.9); }
+        .red { background: #FF0000; }
+        .blue { background: #0000FF; }
+        .yellow { background: #FFFF00; }
+        .white { background: #FFFFFF; border: 1px solid #ccc; }
+
+        .mix-result {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #FFFFFF;
+            border: 4px dashed #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #555;
+            transition: background 0.5s;
+        }
+
+        /* --- WRITING & TEXTAREAS --- */
+        textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-family: var(--font-main);
+            margin-top: 1rem;
+            resize: vertical;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--secondary);
+        }
+
+        /* --- DIGITAL CANVAS --- */
+        .canvas-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        canvas {
+            background: white;
+            border: 4px solid var(--dark);
+            border-radius: 10px;
+            cursor: crosshair;
+            touch-action: none;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+        }
+
+        .tools {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tool-btn {
+            padding: 8px 15px;
+            border: 2px solid var(--dark);
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .tool-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .color-picker {
+            width: 40px;
+            height: 40px;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* --- QUIZ & GAMES --- */
+        .quiz-option {
+            display: block;
+            padding: 10px;
+            margin: 5px 0;
+            background: #f4f4f4;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .quiz-option:hover {
+            background: #e8e8e8;
+        }
+
+        .quiz-option.correct { background: #d4edda; border: 1px solid #c3e6cb; }
+        .quiz-option.wrong { background: #f8d7da; border: 1px solid #f5c6cb; }
+
+        /* --- DASHBOARD & RUBRICS --- */
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #eee;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--secondary);
+            width: 0%;
+            transition: width 1s ease-in-out;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: var(--purple);
+            color: white;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 3rem 1rem;
+            margin-top: 4rem;
+        }
+
+        .tag {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--dark);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            header h1 { font-size: 2rem; }
+            .nav-links { display: none; } /* Simple hiding for single file simplicity */
+            canvas { width: 100%; height: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVIGATION -->
+    <nav>
+        <div class="logo">🎨 ArtSpace</div>
+        <div class="nav-links">
+            <a href="#skills">Skills</a>
+            <a href="#themes">Themes</a>
+            <a href="#writing">Write</a>
+            <a href="#games">Games</a>
+            <a href="#digital">Digital</a>
+            <a href="#dashboard">Dashboard</a>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header id="home">
+        <h1>Welcome Future Artists! 🌟</h1>
+        <p>Class 5 Advanced Art: Where Imagination Meets Skill.</p>
+        <div class="cta-group">
+            <button onclick="document.getElementById('skills').scrollIntoView({behavior: 'smooth'})">🚀 Start Learning</button>
+            <button onclick="document.getElementById('games').scrollIntoView({behavior: 'smooth'})">🎮 Play Art Games</button>
+            <button onclick="document.getElementById('digital').scrollIntoView({behavior: 'smooth'})">🖌️ Create Now</button>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <!-- SECTION 1: SKILLS & COLOR THEORY -->
+        <section id="skills">
+            <h2 class="section-title">1. Master Your Skills 🌈</h2>
+            <div class="grid-3">
+                <div class="card">
+                    <span class="card-icon">〰️</span>
+                    <h3>Lines & Strokes</h3>
+                    <p>Learn Zigzag, Curved, Thick & Thin. Practice controlling your pencil pressure.</p>
+                    <div style="margin-top:10px; height: 50px; background: repeating-linear-gradient(45deg, transparent, transparent 10px, #ccc 10px, #ccc 12px);"></div>
+                </div>
+                <div class="card">
+                    <span class="card-icon">🔺</span>
+                    <h3>Shapes & Forms</h3>
+                    <p>Transform 2D circles into 3D spheres using shading and shadow.</p>
+                    <div style="width: 50px; height: 50px; background: radial-gradient(circle at 30% 30%, white, black); border-radius: 50%; margin: 10px auto;"></div>
+                </div>
+                <div class="card">
+                    <span class="card-icon">🎨</span>
+                    <h3>Color Theory</h3>
+                    <p>Primary, Secondary, Warm vs Cool colors.</p>
+                    <!-- Interactive Color Mixer -->
+                    <div class="color-mixer">
+                        <div class="mix-result" id="mixTarget">Mix Me!</div>
+                        <div class="mix-controls">
+                            <button class="paint-btn red" onclick="addToMix('red')"></button>
+                            <button class="paint-btn yellow" onclick="addToMix('yellow')"></button>
+                            <button class="paint-btn blue" onclick="addToMix('blue')"></button>
+                            <button class="paint-btn white" onclick="resetMix()">🔄</button>
+                        </div>
+                        <small>Click two colors to mix them!</small>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: THEMES -->
+        <section id="themes">
+            <h2 class="section-title">2. Drawing Themes 🖼️</h2>
+            <div class="grid-3">
+                <div class="card">
+                    <span class="card-icon">🌳</span>
+                    <h3>Nature Art</h3>
+                    <p>Draw forests, rivers, and skies. Focus on texture (bark vs water).</p>
+                </div>
+                <div class="card">
+                    <span class="card-icon">🦁</span>
+                    <h3>Animals & Emotions</h3>
+                    <p>Don't just draw a cat. Draw a <i>happy</i> cat or a <i>scared</i> mouse.</p>
+                </div>
+                <div class="card">
+                    <span class="card-icon">🏙️</span>
+                    <h3>City & Village</h3>
+                    <p>Perspective drawing. Show distance using size differences.</p>
+                </div>
+                <div class="card">
+                    <span class="card-icon">🏮</span>
+                    <h3>Indian Festivals</h3>
+                    <p>Capture the colors of Holi or lights of Diwali.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: ART + WRITING -->
+        <section id="writing">
+            <h2 class="section-title">3. Art + Writing Integration ✍️</h2>
+            <div class="grid-3">
+                <!-- Task 1 -->
+                <div class="card" style="grid-column: span 2;">
+                    <h3><span class="tag">Task</span> Picture Description</h3>
+                    <p>Imagine you drew a magical forest. Describe the sounds and colors in 5-8 lines.</p>
+                    <textarea rows="5" placeholder="In my magical forest, the trees are purple and..."></textarea>
+                    <p style="text-align: right; font-size: 0.8rem; color: #888;">0 / 100 words</p>
+                </div>
+                
+                <!-- Vocabulary -->
+                <div class="card">
+                    <h3>📖 Art Vocabulary</h3>
+                    <ul style="list-style: none; padding-left: 0;">
+                        <li><strong>Hue:</strong> Another name for color.</li>
+                        <li><strong>Contrast:</strong> Difference between light/dark.</li>
+                        <li><strong>Texture:</strong> How a surface feels.</li>
+                        <li><strong>Perspective:</strong> Creating depth.</li>
+                    </ul>
+                </div>
+
+                <!-- Story Task -->
+                <div class="card" style="grid-column: span 3;">
+                    <h3><span class="tag">Creative</span> Story Writing</h3>
+                    <p><strong>Prompt:</strong> Draw an animal (on paper) and write 5 lines about its feelings below.</p>
+                    <textarea rows="3" placeholder="My animal is a lonely lion who wants to make friends..."></textarea>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: GAMES -->
+        <section id="games">
+            <h2 class="section-title">4. Game Zone 🎮</h2>
+            
+            <div class="grid-3">
+                <!-- Quiz Game -->
+                <div class="card" style="grid-column: span 1;">
+                    <h3>❓ Art Quiz</h3>
+                    <div id="quiz-container">
+                        <p id="question-text">Which is a cool color?</p>
+                        <div class="quiz-option" onclick="checkAnswer(this, true)">Blue</div>
+                        <div class="quiz-option" onclick="checkAnswer(this, false)">Red</div>
+                        <div class="quiz-option" onclick="checkAnswer(this, false)">Orange</div>
+                        <p id="quiz-feedback" style="margin-top:10px; font-weight:bold;"></p>
+                    </div>
+                </div>
+
+                <!-- Thinking Task -->
+                <div class="card" style="grid-column: span 2;">
+                    <h3>🧠 HOTS: Complete the Drawing</h3>
+                    <p>Imagine the other half of this shape. Is it a face? A vase? A building?</p>
+                    <div style="display:flex; justify-content:center; border:1px dashed #ccc; padding:20px;">
+                        <svg width="100" height="100" viewBox="0 0 100 100">
+                            <path d="M50 10 Q20 30 50 50 T50 90" stroke="black" fill="transparent" stroke-width="3"/>
+                            <line x1="50" y1="0" x2="50" y2="100" stroke="#ccc" stroke-dasharray="4"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: DIGITAL ART -->
+        <section id="digital">
+            <h2 class="section-title">5. Digital Art Studio 💻</h2>
+            <div class="canvas-container">
+                <div class="tools">
+                    <button class="tool-btn active" onclick="setTool('pen')">✏️ Pen</button>
+                    <button class="tool-btn" onclick="setTool('eraser')">🧼 Eraser</button>
+                    <input type="color" class="color-picker" id="strokeColor" value="#000000">
+                    <input type="range" id="lineWidth" min="1" max="20" value="5">
+                    <button class="tool-btn" onclick="clearCanvas()">❌ Clear</button>
+                    <button class="tool-btn" onclick="downloadArt()">💾 Save Art</button>
+                </div>
+                <canvas id="artCanvas" width="600" height="400"></canvas>
+                <p><small>Draw using mouse or touch! Create your own Pixel Art or Emoji.</small></p>
+            </div>
+        </section>
+
+        <!-- SECTION 6: SCIENCE INTEGRATION -->
+        <section id="science">
+            <h2 class="section-title">6. Art + Science Integration 🧪</h2>
+            <div class="grid-3">
+                <div class="card">
+                    <h3>🌱 Plant Life Cycle</h3>
+                    <p>Draw the stages: Seed → Sprout → Plant → Flower. Use green shades accurately.</p>
+                </div>
+                <div class="card">
+                    <h3>🪐 Solar System</h3>
+                    <p>Draw planets on black paper using chalk or pastels. Show size differences.</p>
+                </div>
+                <div class="card">
+                    <h3>💧 Conservation Poster</h3>
+                    <p>Design a poster: "Save Water". Use bold letters and blue colors.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 7: DASHBOARD & ASSESSMENT -->
+        <section id="dashboard">
+            <h2 class="section-title">Teacher & Student Dashboard 📊</h2>
+            
+            <div class="grid-3">
+                <div class="card" style="grid-column: span 2;">
+                    <h3>Student Progress</h3>
+                    <div>
+                        <p>Art Skills</p>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 80%"></div></div>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <p>Creative Writing</p>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 60%"></div></div>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <p>Digital Art</p>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 90%"></div></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>🏆 Achievements</h3>
+                    <div style="font-size: 2rem; text-align: center;">
+                        <span>🥇</span> <span>🎨</span> <span>⭐</span>
+                    </div>
+                    <p style="text-align: center; margin-top: 10px;">Level: <strong>Art Pro</strong></p>
+                </div>
+            </div>
+
+            <!-- Rubrics Table -->
+            <div style="margin-top: 2rem;">
+                <h3>🎓 Grading Rubric (Total: 25 Marks)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Criteria</th>
+                            <th>Marks</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Creativity</td>
+                            <td>10</td>
+                            <td>Originality and imagination used.</td>
+                        </tr>
+                        <tr>
+                            <td>Neatness</td>
+                            <td>5</td>
+                            <td>Clean strokes, no smudges.</td>
+                        </tr>
+                        <tr>
+                            <td>Concept</td>
+                            <td>5</td>
+                            <td>Understanding of the theme.</td>
+                        </tr>
+                        <tr>
+                            <td>Writing/Explanation</td>
+                            <td>5</td>
+                            <td>Clarity of the written description.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <h3>🎨 ArtSpace Platform</h3>
+        <p>Designed for Class 5 | Advanced Curriculum</p>
+        <p><small>Education Use Only. No Copyright Intended.</small></p>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        /* --- COLOR MIXER LOGIC --- */
+        let mixStack = [];
+        const mixTarget = document.getElementById('mixTarget');
+
+        function addToMix(color) {
+            if (mixStack.length < 2) {
+                mixStack.push(color);
+                
+                // Visual feedback
+                if(mixStack.length === 1) {
+                    mixTarget.style.backgroundColor = getColorHex(color);
+                    mixTarget.innerText = "+ ?";
+                } else if (mixStack.length === 2) {
+                    calculateMix();
+                }
+            }
+        }
+
+        function getColorHex(name) {
+            if(name === 'red') return '#FF0000';
+            if(name === 'blue') return '#0000FF';
+            if(name === 'yellow') return '#FFFF00';
+            return '#fff';
+        }
+
+        function calculateMix() {
+            const c1 = mixStack[0];
+            const c2 = mixStack[1];
+            let resultColor = '#ccc';
+            let text = "Gray";
+
+            if ((c1 === 'red' && c2 === 'yellow') || (c1 === 'yellow' && c2 === 'red')) {
+                resultColor = '#FFA500'; text = "Orange";
+            } else if ((c1 === 'blue' && c2 === 'yellow') || (c1 === 'yellow' && c2 === 'blue')) {
+                resultColor = '#008000'; text = "Green";
+            } else if ((c1 === 'red' && c2 === 'blue') || (c1 === 'blue' && c2 === 'red')) {
+                resultColor = '#800080'; text = "Purple";
+            } else if (c1 === c2) {
+                resultColor = getColorHex(c1); text = "Same!";
+            }
+
+            mixTarget.style.backgroundColor = resultColor;
+            mixTarget.style.color = '#fff';
+            mixTarget.innerText = text;
+            mixTarget.style.textShadow = "1px 1px 2px black";
+        }
+
+        function resetMix() {
+            mixStack = [];
+            mixTarget.style.backgroundColor = '#fff';
+            mixTarget.style.color = '#555';
+            mixTarget.innerText = "Mix Me!";
+            mixTarget.style.textShadow = "none";
+        }
+
+        /* --- CANVAS DRAWING LOGIC --- */
+        const canvas = document.getElementById('artCanvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+        let tool = 'pen';
+
+        // Set default styles
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
+
+        function setTool(t) {
+            tool = t;
+            // Update UI buttons
+            document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            
+            // Get mouse/touch position relative to canvas
+            const rect = canvas.getBoundingClientRect();
+            let clientX = e.clientX;
+            let clientY = e.clientY;
+
+            // Handle touch events
+            if(e.touches && e.touches.length > 0) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+                e.preventDefault(); // Stop scrolling while drawing
+            }
+
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
+
+            ctx.lineWidth = document.getElementById('lineWidth').value;
+            
+            if (tool === 'eraser') {
+                ctx.globalCompositeOperation = 'destination-out';
+            } else {
+                ctx.globalCompositeOperation = 'source-over';
+                ctx.strokeStyle = document.getElementById('strokeColor').value;
+            }
+
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+
+            [lastX, lastY] = [x, y];
+        }
+
+        // Mouse Events
+        canvas.addEventListener('mousedown', (e) => {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            [lastX, lastY] = [e.clientX - rect.left, e.clientY - rect.top];
+        });
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', () => isDrawing = false);
+        canvas.addEventListener('mouseout', () => isDrawing = false);
+
+        // Touch Events
+        canvas.addEventListener('touchstart', (e) => {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            [lastX, lastY] = [e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top];
+        });
+        canvas.addEventListener('touchmove', draw);
+        canvas.addEventListener('touchend', () => isDrawing = false);
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function downloadArt() {
+            const link = document.createElement('a');
+            link.download = 'my-masterpiece.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        /* --- QUIZ LOGIC --- */
+        function checkAnswer(element, isCorrect) {
+            const feedback = document.getElementById('quiz-feedback');
+            if(isCorrect) {
+                element.classList.add('correct');
+                feedback.innerText = "Correct! Blue is a cool color (like water).";
+                feedback.style.color = "green";
+            } else {
+                element.classList.add('wrong');
+                feedback.innerText = "Try again! That is a warm color.";
+                feedback.style.color = "red";
+            }
+        }
+    </script>
+</body>
+</html>

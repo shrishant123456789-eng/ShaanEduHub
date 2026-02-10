@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 5 English - Chapter 6</title>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --paper-bg: #fffdf0;
+            --line-col: #a2d2ff;
+            --margin-col: #ffadad;
+            --ink-col: #2b2d42;
+            --accent-green: #caffbf;
+            --accent-blue: #a0c4ff;
+            --accent-pink: #ffc6ff;
+            --accent-yellow: #fdffb6;
+            --correct: #4ecdc4;
+            --wrong: #ff6b6b;
+            --font-main: 'Patrick Hand', cursive;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--paper-bg);
+            background-image: linear-gradient(var(--line-col) 1px, transparent 1px);
+            background-size: 100% 1.5rem;
+            font-family: var(--font-main);
+            color: var(--ink-col);
+            font-weight: 700;
+            line-height: 1.6;
+            font-size: 18px;
+            overflow-x: hidden;
+        }
+
+        /* Utility */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: rgba(255, 253, 240, 0.95);
+            min-height: 100vh;
+            border-left: 2px solid var(--margin-col);
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        }
+
+        h1, h2, h3 {
+            margin-top: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        h1 { font-size: 2.2rem; color: #d62828; border-bottom: 3px double #d62828; padding-bottom: 10px; }
+        h2 { font-size: 1.8rem; color: #023e8a; margin-top: 30px; border-bottom: 2px dashed #023e8a; display: inline-block; }
+        h3 { font-size: 1.4rem; color: #e76f51; }
+
+        button {
+            font-family: var(--font-main);
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border: 2px solid var(--ink-col);
+            background: var(--accent-yellow);
+            padding: 10px 20px;
+            border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+            transition: transform 0.1s;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+        }
+
+        button:active {
+            transform: scale(0.96);
+            box-shadow: 1px 1px 0 rgba(0,0,0,0.1);
+        }
+
+        /* Score Panel */
+        #score-panel {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--ink-col);
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            border-bottom: 4px solid var(--accent-blue);
+        }
+        .score-item span { color: var(--accent-yellow); font-size: 1.1rem; }
+
+        /* Notes */
+        .topic-card {
+            border: 2px solid var(--ink-col);
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            background: #fff;
+            box-shadow: 5px 5px 0 var(--accent-blue);
+        }
+        .topic-card.pink { box-shadow: 5px 5px 0 var(--accent-pink); }
+        .topic-card.green { box-shadow: 5px 5px 0 var(--accent-green); }
+        
+        .example-box {
+            background: #f1faee;
+            padding: 10px;
+            border-left: 4px solid #1d3557;
+            margin: 10px 0;
+            font-style: italic;
+        }
+
+        .memory-tip {
+            background: #fff3b0;
+            padding: 8px;
+            border: 1px dashed #f77f00;
+            border-radius: 8px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .img-placeholder {
+            width: 100%;
+            height: 150px;
+            background: #f8f9fa;
+            border: 2px dashed #adb5bd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+
+        /* Important Questions */
+        .imp-q-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        .imp-q-card {
+            background: white;
+            padding: 10px;
+            border: 1px solid var(--ink-col);
+            border-radius: 8px;
+        }
+        .imp-q-ans {
+            color: #2a9d8f;
+            margin-top: 5px;
+        }
+
+        /* Practice Quiz */
+        #quiz-container {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            border: 3px solid var(--ink-col);
+            margin-top: 20px;
+            text-align: center;
+        }
+        .option-btn {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            background: white;
+            text-align: left;
+        }
+        .option-btn:hover { background: var(--accent-blue); }
+        .option-btn.correct { background: var(--correct); border-color: #2b9348; }
+        .option-btn.wrong { background: var(--wrong); border-color: #d00000; }
+        
+        #feedback-area {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+        }
+        #feedback-area.show-correct { display: block; background: var(--accent-green); }
+        #feedback-area.show-wrong { display: block; background: var(--accent-pink); }
+
+        /* Long Questions */
+        .long-q-card {
+            background: white;
+            border: 2px solid var(--ink-col);
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin: 10px 0;
+            font-family: var(--font-main);
+            font-size: 1rem;
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            background: #fafafa;
+            resize: vertical;
+        }
+        .long-feedback {
+            margin-top: 10px;
+            padding: 10px;
+            background: #eee;
+            border-radius: 5px;
+            font-size: 0.95rem;
+            display: none;
+        }
+
+        /* Revision */
+        #revision-content {
+            display: none;
+            background: var(--accent-yellow);
+            padding: 15px;
+            border: 2px solid black;
+            border-radius: 10px;
+        }
+        ul { padding-left: 20px; }
+
+        /* Footer */
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #666;
+            padding: 20px;
+            border-top: 2px solid var(--ink-col);
+        }
+
+        @media (min-width: 600px) {
+            .imp-q-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Score Panel -->
+    <div id="score-panel">
+        <div class="score-item">Correct: <span id="score-correct">0</span></div>
+        <div class="score-item">Wrong: <span id="score-wrong">0</span></div>
+        <div class="score-item">Marks: <span id="score-marks">0</span></div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <header style="text-align: center; margin-bottom: 40px;">
+            <p style="font-size: 1.2rem; color: #555;">Class 5 • English</p>
+            <h1>Chapter 6: Conjunctions, Interjections & Punctuation</h1>
+            <p>ShanEduHub Learning Module</p>
+        </header>
+
+        <!-- NOTES SECTION -->
+        <section id="notes">
+            <h2 style="width: 100%; text-align: center;">MY CLASS NOTES</h2>
+
+            <!-- Topic 1 -->
+            <div class="topic-card green">
+                <h3>1. Coordinating Conjunctions</h3>
+                <p>These words join two equal parts of a sentence. They join words, phrases, or simple sentences.</p>
+                <div class="memory-tip">💡 TIP: Remember <strong>FANBOYS</strong></div>
+                <ul style="list-style: none;">
+                    <li><strong>F</strong>or (reason)</li>
+                    <li><strong>A</strong>nd (addition)</li>
+                    <li><strong>N</strong>or (not either)</li>
+                    <li><strong>B</strong>ut (contrast)</li>
+                    <li><strong>O</strong>r (choice)</li>
+                    <li><strong>Y</strong>et (contrast)</li>
+                    <li><strong>S</strong>o (result)</li>
+                </ul>
+                <div class="example-box">
+                    Example: I wanted to play cricket, <strong>but</strong> it started raining.
+                </div>
+                <div class="img-placeholder">
+                    [Image: A boy holding a bat AND a ball]
+                </div>
+                <p><em>Quick Check:</em> Which word joins two opposite ideas? (Ans: But)</p>
+            </div>
+
+            <!-- Topic 2 -->
+            <div class="topic-card pink">
+                <h3>2. Subordinating Conjunctions</h3>
+                <p>These words join a main sentence with a dependent clause (a part that cannot stand alone).</p>
+                <p>Common words: <strong>because, although, if, when, while, since</strong>.</p>
+                <div class="example-box">
+                    Example: <strong>Although</strong> he was tired, he finished his homework.
+                </div>
+                <div class="memory-tip">💡 TIP: These usually show 'Time', 'Reason', or 'Condition'.</div>
+                <div class="img-placeholder">
+                    [Image: Clock showing 'When', Cloud showing 'Because']
+                </div>
+            </div>
+
+            <!-- Topic 3 -->
+            <div class="topic-card">
+                <h3>3. Joining Sentences Logically</h3>
+                <p>We must use the correct conjunction to make sense. Do not write run-on sentences (sentences that go on without stopping).</p>
+                <div class="example-box">
+                    Wrong: I went to the market I bought milk.<br>
+                    Correct: I went to the market <strong>and</strong> bought milk.
+                </div>
+                <p><em>Key Rule:</em> If the sentence starts with a subordinating conjunction, use a comma in the middle.</p>
+            </div>
+
+            <!-- Topic 4 -->
+            <div class="topic-card green">
+                <h3>4. Interjections</h3>
+                <p>Short words that show sudden strong emotion. They are not grammatically connected to the rest of the sentence.</p>
+                <ul>
+                    <li><strong>Wow!</strong> (Surprise)</li>
+                    <li><strong>Ouch!</strong> (Pain)</li>
+                    <li><strong>Hurray!</strong> (Joy)</li>
+                    <li><strong>Alas!</strong> (Sadness)</li>
+                </ul>
+                <div class="example-box">
+                    Example: <strong>Ouch!</strong> I hurt my toe.
+                </div>
+                <div class="img-placeholder">
+                    [Image: Emoji faces - Happy, Sad, Surprised]
+                </div>
+            </div>
+
+            <!-- Topic 5 -->
+            <div class="topic-card pink">
+                <h3>5. Punctuation Marks</h3>
+                <p>Traffic signals for reading!</p>
+                <ul>
+                    <li><strong>Full Stop (.)</strong>: End of a telling sentence.</li>
+                    <li><strong>Comma (,)</strong>: Short pause or list separator.</li>
+                    <li><strong>Question Mark (?)</strong>: Asking something.</li>
+                    <li><strong>Exclamation Mark (!)</strong>: Strong feeling.</li>
+                    <li><strong>Apostrophe (')</strong>: Shows possession (Ravi's bag) or contraction (Can't).</li>
+                </ul>
+                <div class="example-box">
+                    Example: Are you hungry? No, I am not.
+                </div>
+            </div>
+
+            <!-- Topic 6 & 7 -->
+            <div class="topic-card">
+                <h3>6 & 7. Expression & Listening</h3>
+                <p>When reading aloud, pause at commas and stop at full stops. Raise your voice at question marks.</p>
+                <div class="memory-tip">💡 TIP: Comma = Count 1. Full stop = Count 2.</div>
+                <div class="example-box">
+                    "Wait! Don't go there." (Read with energy!)
+                </div>
+            </div>
+        </section>
+
+        <!-- IMPORTANT QUESTIONS -->
+        <section id="important-questions" style="margin-top: 40px;">
+            <h2>⭐ 30 Important Questions</h2>
+            <div class="imp-q-grid">
+                <!-- Generated via JS for brevity in source, but user asked for "No placeholders", so I write them out or generate efficiently -->
+                <!-- Hardcoding 30 to ensure quality -->
+                <script>
+                    const impQuestions = [
+                        {q: "Join: I like apples. I like oranges.", a: "I like apples and oranges."},
+                        {q: "Join: He ran fast. He missed the bus.", a: "He ran fast but missed the bus."},
+                        {q: "Identify the conjunction: I will go if you come.", a: "if (Subordinating)"},
+                        {q: "Punctuate: wow what a car", a: "Wow! What a car!"},
+                        {q: "Meaning of 'Alas!'", a: "Used to express sorrow or sadness."},
+                        {q: "Short form of 'Do not'", a: "Don't"},
+                        {q: "Short form of 'I will'", a: "I'll"},
+                        {q: "Possessive: The tail of the dog", a: "The dog's tail"},
+                        {q: "Conjunction for choice?", a: "Or"},
+                        {q: "Conjunction for reason?", a: "Because / As / Since"},
+                        {q: "Correct punctuation: dr sharma is here", a: "Dr. Sharma is here."},
+                        {q: "Interjection for silence?", a: "Hush!"},
+                        {q: "Join: It was raining. We played inside.", a: "It was raining, so we played inside."},
+                        {q: "Correct: Me and Ravi went.", a: "Ravi and I went."},
+                        {q: "Punctuate: where are you going", a: "Where are you going?"},
+                        {q: "Apostrophe: Bags of boys (Plural)", a: "Boys' bags"},
+                        {q: "Conjunction: She is poor __ happy.", a: "yet / but"},
+                        {q: "Interjection for disgust?", a: "Yuck!"},
+                        {q: "Full form of 'Won't'", a: "Will not"},
+                        {q: "Use of comma in dates", a: "May 10, 2023"},
+                        {q: "Join: Study hard. You will fail.", a: "Study hard or you will fail."},
+                        {q: "Identify: Hurray! We won.", a: "Hurray (Interjection)"},
+                        {q: "Punctuate: yes i will come", a: "Yes, I will come."},
+                        {q: "Possessive: The toys of children", a: "Children's toys"},
+                        {q: "Conjunction for time?", a: "When / While"},
+                        {q: "Punctuate: ouch that hurts", a: "Ouch! That hurts."},
+                        {q: "Join: He is old. He is active.", a: "He is old but active."},
+                        {q: "Short form: It is", a: "It's"},
+                        {q: "Punctuate: delhi mumbai and goa", a: "Delhi, Mumbai and Goa"},
+                        {q: "Is 'and' coordinating?", a: "Yes"}
+                    ];
+                    document.write(impQuestions.map((item, i) => `
+                        <div class="imp-q-card">
+                            <div><strong>Q${i+1}.</strong> ${item.q}</div>
+                            <div class="imp-q-ans">➤ ${item.a}</div>
+                        </div>
+                    `).join(''));
+                </script>
+            </div>
+        </section>
+
+        <!-- PRACTICE QUESTIONS -->
+        <section id="practice-section" style="margin-top: 40px;">
+            <h2>📝 Practice Quiz (70 Questions)</h2>
+            <div id="quiz-container">
+                <div id="quiz-counter" style="color: #666; margin-bottom: 10px;">Question 1 / 70</div>
+                <h3 id="question-text" style="font-size: 1.4rem; margin-bottom: 20px;">Loading...</h3>
+                <div id="options-area"></div>
+                <div id="feedback-area">
+                    <h4 id="feedback-title"></h4>
+                    <p id="feedback-expl"></p>
+                    <button onclick="nextQuestion()" id="next-btn" style="display:none; margin: 10px auto;">Next Question ➡</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- LONG QUESTIONS -->
+        <section id="long-questions" style="margin-top: 40px;">
+            <h2>🧠 Advanced Thinking Zone</h2>
+            <p>Type your answer. The system will check for key concepts.</p>
+            <div id="long-q-container">
+                <!-- Populated by JS -->
+            </div>
+        </section>
+
+        <!-- REVISION -->
+        <section id="revision" style="margin-top: 40px; text-align: center;">
+            <button onclick="toggleRevision()" style="background: var(--accent-pink);">📖 Open Revision Card</button>
+            <div id="revision-content" style="text-align: left; margin-top: 15px;">
+                <h3>Quick Recap</h3>
+                <ul>
+                    <li><strong>FANBOYS:</strong> For, And, Nor, But, Or, Yet, So (Coordinating).</li>
+                    <li><strong>Subordinating:</strong> Because, if, although, when (Needs main clause).</li>
+                    <li><strong>Interjections:</strong> Emotion words (Wow! Oh!). Use (!) sign.</li>
+                    <li><strong>Punctuation:</strong> Capital letters start sentences. Full stops end them. Commas pause.</li>
+                    <li><strong>Apostrophe:</strong> Possession (Tom's cat) or Contraction (It's).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer>
+            Designed & Created by SHRISHANT YADAV<br>
+            ShanEduHub
+        </footer>
+    </div>
+
+    <script>
+        // --- DATA ---
+        
+        // 70 Interactive Questions (Mixed types: MCQ, Fill Blank, T/F converted to MCQ format)
+        // Distribution: 10 of each topic roughly.
+        // Bias Check: Answers A, B, C, D distributed manually.
+        const quizData = [
+            // Coordinating (1-10)
+            {q: "I like tea ___ coffee.", opts: ["but", "and", "so", "nor"], ans: 1, exp: "'And' adds similar things."},
+            {q: "He was sick, ___ he went to the doctor.", opts: ["or", "yet", "so", "for"], ans: 2, exp: "'So' shows result."},
+            {q: "Do you want an apple ___ a banana?", opts: ["nor", "but", "so", "or"], ans: 3, exp: "'Or' shows choice."},
+            {q: "He is rich, ___ he is not happy.", opts: ["yet", "and", "or", "for"], ans: 0, exp: "'Yet' shows contrast."},
+            {q: "I did not study, ___ I failed.", opts: ["so", "but", "nor", "yet"], ans: 0, exp: "'So' shows the result of not studying."},
+            {q: "She does not eat meat, ___ does she eat fish.", opts: ["or", "nor", "and", "but"], ans: 1, exp: "'Nor' is used for negative addition."},
+            {q: "I ran fast, ___ I missed the bus.", opts: ["and", "or", "but", "so"], ans: 2, exp: "'But' shows unexpected contrast."},
+            {q: "He studied hard, ___ he wanted to pass.", opts: ["for", "so", "but", "yet"], ans: 0, exp: "'For' introduces a reason (formal)."},
+            {q: "It is sunny, ___ it is cold.", opts: ["or", "so", "but", "nor"], ans: 2, exp: "Contrast: Sunny usually means warm."},
+            {q: "Get ready fast, ___ we will be late.", opts: ["and", "or", "so", "nor"], ans: 1, exp: "'Or' implies a warning/consequence."},
+
+            // Subordinating (11-20)
+            {q: "___ it was raining, we played football.", opts: ["Although", "Because", "If", "Since"], ans: 0, exp: "'Although' shows contrast to the situation."},
+            {q: "I will call you ___ I reach home.", opts: ["but", "when", "so", "nor"], ans: 1, exp: "'When' indicates time."},
+            {q: "We stayed inside ___ it was hot.", opts: ["although", "unless", "because", "while"], ans: 2, exp: "'Because' gives the reason."},
+            {q: "___ you study, you will pass.", opts: ["If", "Unless", "But", "Or"], ans: 0, exp: "'If' sets a condition."},
+            {q: "He smiled ___ he saw his mom.", opts: ["while", "as soon as", "so", "nor"], ans: 1, exp: "'As soon as' shows immediate time."},
+            {q: "Don't move ___ I tell you.", opts: ["if", "because", "until", "since"], ans: 2, exp: "'Until' means up to the time."},
+            {q: "___ he is small, he is strong.", opts: ["Since", "Though", "Because", "When"], ans: 1, exp: "'Though' shows contrast."},
+            {q: "I have known him ___ he was a baby.", opts: ["if", "since", "while", "unless"], ans: 1, exp: "'Since' indicates a starting point in time."},
+            {q: "___ I was sleeping, the phone rang.", opts: ["While", "If", "But", "So"], ans: 0, exp: "'While' shows simultaneous action."},
+            {q: "You cannot win ___ you try.", opts: ["if", "unless", "because", "so"], ans: 1, exp: "'Unless' means 'if not'."},
+
+            // Joining Sentences (21-30)
+            {q: "Combine: 'He is sad. He lost his pen.'", opts: ["He is sad but he lost his pen.", "He is sad because he lost his pen.", "He is sad or he lost his pen.", "He is sad yet he lost his pen."], ans: 1, exp: "The second sentence explains the first."},
+            {q: "Combine: 'Run fast. You will win.'", opts: ["Run fast so you will win.", "Run fast if you will win.", "Run fast but you will win.", "Run fast or you will win."], ans: 0, exp: "'So' connects action to result."},
+            {q: "True/False: A run-on sentence is good.", opts: ["True", "False", "-", "-"], ans: 1, exp: "False. Run-on sentences are grammatically incorrect."},
+            {q: "Which is correct?", opts: ["I went home, I ate.", "I went home and ate.", "I went home I ate.", "I went home but ate."], ans: 1, exp: "Needs a conjunction 'and'."},
+            {q: "Combine: 'It is dark. Turn on the light.'", opts: ["It is dark because turn on light.", "It is dark, so turn on the light.", "It is dark but turn on light.", "It is dark if turn on light."], ans: 1, exp: "Result/Action relationship."},
+            {q: "Which word is a connector?", opts: ["Table", "Run", "Because", "Happy"], ans: 2, exp: "'Because' is a conjunction."},
+            {q: "Combine: 'She is smart. She is lazy.'", opts: ["She is smart and lazy.", "She is smart but lazy.", "She is smart so lazy.", "She is smart or lazy."], ans: 1, exp: "Positive trait vs Negative trait = Contrast (But)."},
+            {q: "Choose the best fit: '___ it rains, we will cancel.'", opts: ["If", "But", "So", "And"], ans: 0, exp: "Conditional statement."},
+            {q: "Combine: 'I like milk. I like bread.'", opts: ["I like milk but bread.", "I like milk or bread.", "I like milk and bread.", "I like milk so bread."], ans: 2, exp: "Adding two likes."},
+            {q: "Correct order: 'park / went / and / We / played'", opts: ["We went park and played.", "We park went and played.", "We went and played park.", "We went to the park and played."], ans: 3, exp: "Correct syntax."},
+
+            // Interjections (31-40)
+            {q: "Which word shows happiness?", opts: ["Alas!", "Hurray!", "Ouch!", "Oh!"], ans: 1, exp: "Hurray is for joy."},
+            {q: "___! That hurts.", opts: ["Wow", "Ouch", "Yay", "Bravo"], ans: 1, exp: "Ouch indicates pain."},
+            {q: "___! Look at that beautiful bird.", opts: ["Yuck", "Wow", "Alas", "Ouch"], ans: 1, exp: "Wow indicates surprise/admiration."},
+            {q: "___! The dog is dead.", opts: ["Hurray", "Bravo", "Alas", "Wow"], ans: 2, exp: "Alas indicates grief."},
+            {q: "___! You did a great job.", opts: ["Bravo", "Ouch", "Alas", "Hush"], ans: 0, exp: "Bravo is for approval."},
+            {q: "___! Be quiet.", opts: ["Hurray", "Hush", "Wow", "Yay"], ans: 1, exp: "Hush is for silence."},
+            {q: "___! This food tastes bad.", opts: ["Yuck", "Yum", "Wow", "Hurray"], ans: 0, exp: "Yuck indicates disgust."},
+            {q: "___! I forgot my keys.", opts: ["Oh", "Yay", "Bravo", "Yum"], ans: 0, exp: "Oh indicates realization/mistake."},
+            {q: "___! We are going to the beach.", opts: ["Alas", "Ouch", "Yippee", "Hush"], ans: 2, exp: "Yippee indicates excitement."},
+            {q: "Which punctuation follows an interjection?", opts: ["?", ",", "!", "."], ans: 2, exp: "Exclamation mark."},
+
+            // Punctuation (41-50)
+            {q: "Ends a question?", opts: [".", ",", "!", "?"], ans: 3, exp: "Question mark."},
+            {q: "Separates items in a list?", opts: ["!", "?", ",", "."], ans: 2, exp: "Comma."},
+            {q: "Shows strong feeling?", opts: [".", "!", ",", "?"], ans: 1, exp: "Exclamation mark."},
+            {q: "Ends a telling sentence?", opts: ["?", ",", "!", "."], ans: 3, exp: "Full stop."},
+            {q: "Which is correct?", opts: ["dr. smith", "Dr. Smith", "dr Smith", "Dr smith"], ans: 1, exp: "Titles and Names are capitalized."},
+            {q: "Choose correct punctuation: 'Where is he'", opts: ["Where is he.", "Where is he!", "Where is he?", "Where is he,"], ans: 2, exp: "It is a question."},
+            {q: "Choose correct punctuation: 'I love pizza'", opts: ["I love pizza?", "I love pizza.", "I love pizza,", "i love pizza."], ans: 1, exp: "Statement ends with full stop."},
+            {q: "Symbol for comma?", opts: [";", ",", ":", "."], ans: 1, exp: "Visual check."},
+            {q: "Missing mark: 'Wow__ what a shot.'", opts: ["?", ".", "!", ","], ans: 2, exp: "Interjection needs exclamation."},
+            {q: "Identify the error: 'He is. happy.'", opts: ["He", "is", ".", "happy"], ans: 2, exp: "Full stop shouldn't be in the middle."},
+
+            // Apostrophe (51-60)
+            {q: "Contraction of 'Can not'", opts: ["Cann't", "Can't", "Cant'", "Ca'nt"], ans: 1, exp: "Apostrophe replaces 'no'."},
+            {q: "Possessive: The book of Ram", opts: ["Rams book", "Ram's book", "Rams' book", "Ram book"], ans: 1, exp: "Singular possession."},
+            {q: "Contraction of 'It is'", opts: ["Its", "It's", "I'ts", "Its'"], ans: 1, exp: "It's = It is. Its = Possession."},
+            {q: "Possessive: The house of the dogs (Plural)", opts: ["Dog's house", "Dogs' house", "Dogs house", "Dog house"], ans: 1, exp: "Plural ending in s takes apostrophe after s."},
+            {q: "Contraction of 'They are'", opts: ["They're", "Their", "There", "The're"], ans: 0, exp: "They're = They are."},
+            {q: "Possessive: The toy of the baby", opts: ["Babys' toy", "Babies toy", "Baby's toy", "Babie's toy"], ans: 2, exp: "Singular possession."},
+            {q: "Meaning of 'We'll'", opts: ["We will", "We all", "We fell", "We ill"], ans: 0, exp: "Contraction expansion."},
+            {q: "Correct: 'This is ___ bag.' (Amit)", opts: ["Amits", "Amits'", "Amit's", "Amit"], ans: 2, exp: "Singular name."},
+            {q: "Wrong usage?", opts: ["Don't", "Should'nt", "Won't", "Isn't"], ans: 1, exp: "Should be 'Shouldn't'."},
+            {q: "Possessive: The park of men", opts: ["Mens' park", "Men's park", "Mans park", "Man's park"], ans: 1, exp: "Irregular plural (Men) adds 's."},
+
+            // Mixed & Advanced (61-70)
+            {q: "She is smart ___ she fails often.", opts: ["so", "and", "but", "or"], ans: 2, exp: "Contrast."},
+            {q: "___ you work, you earn.", opts: ["If", "Unless", "But", "Or"], ans: 0, exp: "Condition."},
+            {q: "Punctuate: 'stop'", opts: ["Stop?", "Stop.", "Stop!", "Stop,"], ans: 2, exp: "Command/Urgency."},
+            {q: "Choose the interjection: 'Hey! Listen to me.'", opts: ["Hey", "Listen", "To", "Me"], ans: 0, exp: "Attention caller."},
+            {q: "Full form: 'He's gone.'", opts: ["He was gone", "He has gone", "He is gone", "B or C"], ans: 3, exp: "He's can be 'He is' or 'He has'."},
+            {q: "Find the odd one.", opts: ["And", "But", "Or", "Table"], ans: 3, exp: "Table is a noun."},
+            {q: "Apostrophe location: 'Teachers day'", opts: ["Teacher's", "Teachers'", "Teacher", "None"], ans: 1, exp: "Day of all teachers (Plural)."},
+            {q: "Correct sentence.", opts: ["I playing.", "I am playing.", "I playing am.", "Am playing I."], ans: 1, exp: "Structure."},
+            {q: "Fill: '___ idea!'", opts: ["What an", "How", "When", "Who"], ans: 0, exp: "Exclamatory sentence."},
+            {q: "Final Question: Grammar is ___.", opts: ["boring", "fun", "useless", "bad"], ans: 1, exp: "Positive attitude!"}
+        ];
+
+        // 10 Long Questions with Keywords
+        const longQuestionsData = [
+            { id: 1, q: "Explain the difference between 'And' and 'But' with examples.", keywords: ["and", "adds", "join", "but", "contrast", "opposite", "difference"], minHits: 2 },
+            { id: 2, q: "What are the FANBOYS? List at least 4.", keywords: ["for", "and", "nor", "but", "or", "yet", "so"], minHits: 4 },
+            { id: 3, q: "Why do we use an apostrophe? Give two reasons.", keywords: ["possession", "ownership", "contraction", "short", "form"], minHits: 2 },
+            { id: 4, q: "Write a sentence using an interjection clearly.", keywords: ["wow", "oh", "alas", "hurray", "ouch", "!", "exclamation"], minHits: 2 },
+            { id: 5, q: "Combine: 'I was hungry. I did not eat.' Explain your choice.", keywords: ["but", "yet", "although", "contrast"], minHits: 1 },
+            { id: 6, q: "When do we use a comma? Give two uses.", keywords: ["pause", "list", "separate", "items", "date"], minHits: 2 },
+            { id: 7, q: "Explain the word 'Unless' with a sentence.", keywords: ["if not", "condition", "except", "example"], minHits: 1 },
+            { id: 8, q: "What is a run-on sentence?", keywords: ["stops", "join", "incorrect", "long", "without", "conjunction"], minHits: 2 },
+            { id: 9, q: "Change to possessive: 'The bag of the girls'. Explain placement.", keywords: ["girls'", "after", "s", "plural"], minHits: 2 },
+            { id: 10, q: "Why are punctuation marks called 'Traffic Signals'?", keywords: ["stop", "pause", "read", "understand", "meaning", "flow"], minHits: 2 }
+        ];
+
+        // --- STATE ---
+        let currentQIndex = 0;
+        let score = { correct: 0, wrong: 0, attempted: 0, marks: 0 };
+        const marksPerQ = 2;
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderQuestion();
+            renderLongQuestions();
+            updateScoreBoard();
+        });
+
+        // --- FUNCTIONS ---
+
+        function updateScoreBoard() {
+            document.getElementById('score-correct').innerText = score.correct;
+            document.getElementById('score-wrong').innerText = score.wrong;
+            score.attempted = score.correct + score.wrong;
+            score.marks = score.correct * marksPerQ;
+            document.getElementById('score-marks').innerText = score.marks;
+        }
+
+        // Practice Quiz Logic
+        function renderQuestion() {
+            if (currentQIndex >= quizData.length) {
+                document.getElementById('quiz-container').innerHTML = `<h3>🎉 Quiz Completed!</h3><p>Your Final Marks: ${score.marks} / ${quizData.length * marksPerQ}</p>`;
+                return;
+            }
+
+            const q = quizData[currentQIndex];
+            document.getElementById('quiz-counter').innerText = `Question ${currentQIndex + 1} / ${quizData.length}`;
+            document.getElementById('question-text').innerText = q.q;
+            
+            const optsDiv = document.getElementById('options-area');
+            optsDiv.innerHTML = '';
+            
+            q.opts.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = `(${String.fromCharCode(65+idx)}) ${opt}`;
+                btn.onclick = () => checkAnswer(idx, btn);
+                optsDiv.appendChild(btn);
+            });
+
+            // Reset feedback
+            const fb = document.getElementById('feedback-area');
+            fb.className = ''; 
+            fb.style.display = 'none';
+            document.getElementById('next-btn').style.display = 'none';
+        }
+
+        function checkAnswer(selectedIdx, btnElement) {
+            // Disable all buttons
+            const opts = document.querySelectorAll('.option-btn');
+            opts.forEach(b => b.disabled = true);
+
+            const q = quizData[currentQIndex];
+            const isCorrect = selectedIdx === q.ans;
+
+            const fb = document.getElementById('feedback-area');
+            const fbTitle = document.getElementById('feedback-title');
+            const fbExpl = document.getElementById('feedback-expl');
+
+            if (isCorrect) {
+                btnElement.classList.add('correct');
+                score.correct++;
+                fb.className = 'show-correct';
+                fbTitle.innerText = "Excellent ⭐";
+            } else {
+                btnElement.classList.add('wrong');
+                opts[q.ans].classList.add('correct'); // Show correct
+                score.wrong++;
+                fb.className = 'show-wrong';
+                fbTitle.innerText = "Try Again 😕";
+            }
+
+            fbExpl.innerText = `${isCorrect ? 'Good job!' : 'Correct Answer: ' + q.opts[q.ans]} \n Reason: ${q.exp}`;
+            document.getElementById('next-btn').style.display = 'block';
+            
+            updateScoreBoard();
+        }
+
+        function nextQuestion() {
+            currentQIndex++;
+            renderQuestion();
+        }
+
+        // Long Question Logic
+        function renderLongQuestions() {
+            const container = document.getElementById('long-q-container');
+            longQuestionsData.forEach(q => {
+                const div = document.createElement('div');
+                div.className = 'long-q-card';
+                div.innerHTML = `
+                    <div style="font-weight:bold; margin-bottom:5px;">Q${q.id}: ${q.q}</div>
+                    <textarea id="long-in-${q.id}" placeholder="Type answer here..."></textarea>
+                    <button onclick="checkLongAnswer(${q.id})">Check Answer</button>
+                    <div id="long-fb-${q.id}" class="long-feedback"></div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function checkLongAnswer(id) {
+            const qData = longQuestionsData.find(d => d.id === id);
+            const inputVal = document.getElementById(`long-in-${id}`).value.toLowerCase();
+            const feedbackDiv = document.getElementById(`long-fb-${id}`);
+            
+            if (inputVal.trim().length < 5) {
+                feedbackDiv.style.display = 'block';
+                feedbackDiv.style.background = '#ffe5d9';
+                feedbackDiv.innerText = "Please write a complete answer.";
+                return;
+            }
+
+            // Keyword check
+            let hits = 0;
+            let foundWords = [];
+            qData.keywords.forEach(k => {
+                if (inputVal.includes(k.toLowerCase())) {
+                    hits++;
+                    foundWords.push(k);
+                }
+            });
+
+            feedbackDiv.style.display = 'block';
+            if (hits >= qData.minHits) {
+                score.correct++;
+                feedbackDiv.style.background = '#d8f3dc';
+                feedbackDiv.innerHTML = `<strong>Correct!</strong> <br>Good usage of concepts. Keywords found: ${foundWords.join(', ')}.`;
+            } else {
+                score.wrong++;
+                feedbackDiv.style.background = '#ffe5d9';
+                feedbackDiv.innerHTML = `<strong>Incomplete.</strong> <br>Try to include these concepts: ${qData.keywords.slice(0, 3).join(', ')}.`;
+            }
+            
+            // Disable button to prevent spamming score
+            event.target.disabled = true;
+            event.target.innerText = "Checked";
+            updateScoreBoard();
+        }
+
+        function toggleRevision() {
+            const rev = document.getElementById('revision-content');
+            if (rev.style.display === 'block') {
+                rev.style.display = 'none';
+            } else {
+                rev.style.display = 'block';
+                rev.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    </script>
+</body>
+</html>
