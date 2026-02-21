@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 4: Visual Design Logic | ShanEduHub</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Patrick+Hand&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #0f172a; /* Deep Blue */
+            --secondary: #3b82f6; /* Bright Blue */
+            --accent: #f59e0b; /* Amber/Gold */
+            --bg-light: #f8fafc;
+            --bg-white: #ffffff;
+            --text-main: #334155;
+            --text-dark: #1e293b;
+            --success: #10b981;
+            --error: #ef4444;
+            --note-bg: #fffbe6;
+            --note-border: #fcd34d;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding-bottom: 60px;
+        }
+
+        /* --- UTILS --- */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn-primary { background: var(--secondary); color: white; }
+        .btn-primary:hover { background: #2563eb; transform: translateY(-2px); }
+        
+        .section-title {
+            font-size: 1.8rem;
+            color: var(--primary);
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            border-left: 5px solid var(--accent);
+            padding-left: 15px;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background: var(--bg-white);
+            border-bottom: 1px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo span { color: var(--secondary); }
+
+        .progress-container {
+            width: 100%;
+            height: 4px;
+            background: #e2e8f0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--success);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* --- HERO --- */
+        .hero {
+            background: var(--primary);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+
+        .meta-tags {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: rgba(255,255,255,0.15);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* --- STICKY SCORE PANEL --- */
+        .score-panel {
+            background: var(--bg-white);
+            padding: 15px;
+            margin: 20px auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            border: 1px solid #e2e8f0;
+            position: sticky;
+            top: 75px;
+            z-index: 900;
+        }
+
+        .score-item {
+            text-align: center;
+        }
+        .score-item span { display: block; font-size: 0.8rem; color: #64748b; font-weight: 600;}
+        .score-item strong { font-size: 1.2rem; color: var(--primary); }
+        .score-item.correct strong { color: var(--success); }
+        .score-item.wrong strong { color: var(--error); }
+
+        /* --- CONTENT MODULES --- */
+        .content-module {
+            background: var(--bg-white);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .topic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .level-badge {
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        /* --- NOTES DESIGN (Patrick Hand) --- */
+        .notebook-note {
+            font-family: 'Patrick Hand', cursive;
+            background: var(--note-bg);
+            border-left: 4px solid var(--note-border);
+            padding: 20px;
+            font-size: 1.2rem;
+            color: #4b5563;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+            position: relative;
+        }
+        
+        .notebook-note::before {
+            content: '📝 Teacher\'s Note';
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            background: var(--note-border);
+            color: #78350f;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 700;
+        }
+
+        .concept-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        @media(max-width: 600px) { .concept-box { grid-template-columns: 1fr; } }
+
+        .visual-placeholder {
+            background: #eee;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            border: 2px dashed #ccc;
+            color: #888;
+            font-weight: 600;
+            text-align: center;
+            padding: 10px;
+        }
+
+        /* --- ACCORDIONS --- */
+        .accordion-item {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            padding: 15px;
+            background: #f8fafc;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .accordion-header:hover { background: #f1f5f9; }
+        
+        .accordion-content {
+            padding: 0 15px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: white;
+            border-top: 1px solid transparent;
+        }
+
+        .accordion-content.active {
+            padding: 15px;
+            max-height: 500px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        /* --- QUIZ STYLES --- */
+        .quiz-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: transform 0.2s;
+        }
+
+        .quiz-question {
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--text-dark);
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-btn {
+            text-align: left;
+            background: white;
+            border: 1px solid #cbd5e1;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background: #f1f5f9;
+            border-color: var(--secondary);
+        }
+
+        .option-btn.correct {
+            background: #d1fae5;
+            border-color: var(--success);
+            color: #065f46;
+        }
+
+        .option-btn.wrong {
+            background: #fee2e2;
+            border-color: var(--error);
+            color: #991b1b;
+        }
+        
+        .quiz-feedback {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            padding: 10px;
+            border-radius: 6px;
+            display: none;
+        }
+        
+        .quiz-feedback.show { display: block; }
+        .feedback-correct { background: #d1fae5; color: #065f46; }
+        .feedback-wrong { background: #fee2e2; color: #991b1b; }
+
+        /* --- LONG ANSWER --- */
+        .long-answer-box textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-family: inherit;
+        }
+        
+        .evaluation-result {
+            margin-top: 10px;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .keyword-badge {
+            display: inline-block;
+            background: #e2e8f0;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-right: 5px;
+            margin-top: 5px;
+        }
+        
+        .keyword-badge.hit { background: var(--success); color: white; }
+        .keyword-badge.miss { background: var(--error); color: white; opacity: 0.5; }
+
+        /* --- FOOTER --- */
+        footer {
+            background: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+
+        .footer-credit {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-top: 10px;
+        }
+
+        /* --- Industry Insight --- */
+        .industry-insight {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 40px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .industry-insight::after {
+            content: '💼';
+            position: absolute;
+            right: -20px;
+            bottom: -20px;
+            font-size: 10rem;
+            opacity: 0.1;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <div class="container">
+            <div class="nav-bar">
+                <div class="logo">ShanEduHub <span>CreatorAcademy</span></div>
+                <div style="font-size:0.9rem; font-weight:600;">Chapter 4</div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="container">
+            <div class="meta-tags">
+                <span class="tag">🎨 Visual Design</span>
+                <span class="tag">⏱️ 2.5 Hours</span>
+                <span class="tag">🚀 Advanced</span>
+            </div>
+            <h1>Visual Design Logic &<br>Psychology</h1>
+            <p>Master the art of layouts, color psychology, and thumbnail engineering to drive clicks and retention. From Delhi weddings to Netflix interfaces.</p>
+            <button class="btn btn-primary" onclick="document.getElementById('overview').scrollIntoView({behavior: 'smooth'})">▶ Start Session</button>
+        </div>
+    </section>
+
+    <div class="container">
+        <!-- SCORE PANEL -->
+        <div class="score-panel" id="scorePanel">
+            <div class="score-item">
+                <span>Attempted</span>
+                <strong id="attemptedCount">0/80</strong>
+            </div>
+            <div class="score-item">
+                <span>Correct</span>
+                <strong id="correctCount">0</strong>
+            </div>
+            <div class="score-item">
+                <span>Accuracy</span>
+                <strong id="accuracyVal">0%</strong>
+            </div>
+            <div class="score-item">
+                <span>Status</span>
+                <strong style="font-size:0.9rem; color:var(--secondary);">In Progress</strong>
+            </div>
+        </div>
+
+        <!-- OVERVIEW -->
+        <section id="overview" class="content-module">
+            <h2 class="section-title">📌 What You Will Master</h2>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                <ul style="padding-left:20px;">
+                    <li><strong>Visual Hierarchy:</strong> Controlling the viewer's eye.</li>
+                    <li><strong>Thumbnail Psychology:</strong> High CTR strategies.</li>
+                    <li><strong>Color Theory (Indian Context):</strong> Cultural color meanings.</li>
+                    <li><strong>Gestalt Principles:</strong> Cognitive grouping.</li>
+                </ul>
+                <ul style="padding-left:20px;">
+                    <li><strong>Typography Anatomy:</strong> Kerning, Leading, Tracking.</li>
+                    <li><strong>Layout Grids:</strong> Rule of Thirds vs. Golden Ratio.</li>
+                    <li><strong>Tools:</strong> Figma & Canva professional workflows.</li>
+                    <li><strong>Format:</strong> Responsive design logic.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- MODULE 1: BASIC -->
+        <section class="content-module">
+            <div class="topic-header">
+                <h3>1. Visual Perception & Color</h3>
+                <span class="level-badge">BASIC</span>
+            </div>
+            <p>Design isn't just about "looking good"; it's about communication. We start with how the brain processes visuals.</p>
+            
+            <div class="notebook-note">
+                <strong>Memory Tip:</strong> The brain processes images 60,000x faster than text. In India, Red = Celebration/Danger, White = Peace/Mourning. Context is key!
+            </div>
+
+            <div class="concept-box">
+                <div>
+                    <h4>Color Models</h4>
+                    <ul>
+                        <li><strong>RGB (Red Green Blue):</strong> Used for screens (Insta, YouTube). Light-additive.</li>
+                        <li><strong>CMYK (Cyan Magenta Yellow Key):</strong> Used for printing (Posters, Billboards). Ink-subtractive.</li>
+                    </ul>
+                    <br>
+                    <h4>Color Psychology</h4>
+                    <ul>
+                        <li><strong>Blue:</strong> Trust (Paytm, SBI, Facebook).</li>
+                        <li><strong>Red:</strong> Urgency/Hunger (Zomato, Netflix, YouTube).</li>
+                        <li><strong>Yellow:</strong> Optimism/Caution (Bumble, Construction).</li>
+                    </ul>
+                </div>
+                <div class="visual-placeholder">
+                    [Diagram: RGB vs CMYK Color Wheels overlapping]
+                </div>
+            </div>
+        </section>
+
+        <!-- MODULE 2: MEDIUM -->
+        <section class="content-module">
+            <div class="topic-header">
+                <h3>2. Typography & Layout Grids</h3>
+                <span class="level-badge">MEDIUM</span>
+            </div>
+            
+            <div class="notebook-note">
+                <strong>Indian Example:</strong> Look at a standard "UPSC Coaching" thumbnail. It is text-heavy. Why? Because the audience values information density over minimalism. Compare that to a Cred App ad (minimalist). Design for the audience!
+            </div>
+
+            <h4>The Grid System</h4>
+            <p>Grids give structure. They stop your design from looking "messy".</p>
+            <div class="concept-box">
+                <div class="visual-placeholder" style="flex-direction: column;">
+                    [Rule of Thirds Grid]
+                    <small>Place focal points at intersections</small>
+                </div>
+                <div>
+                    <h4>Typography Basics</h4>
+                    <ul>
+                        <li><strong>Serif:</strong> Has "feet". Traditional, Serious (Times New Roman). Used in Newspapers.</li>
+                        <li><strong>Sans-Serif:</strong> No feet. Modern, Clean (Arial, Roboto). Used in Apps.</li>
+                        <li><strong>Kerning:</strong> Space between specific characters.</li>
+                        <li><strong>Leading:</strong> Line height (vertical space).</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- MODULE 3: ADVANCED -->
+        <section class="content-module">
+            <div class="topic-header">
+                <h3>3. Thumbnail Engineering (CTR)</h3>
+                <span class="level-badge">ADVANCED</span>
+            </div>
+            
+            <p>A thumbnail's only job is to get the click. We use <strong>Visual Tension</strong> and <strong>Curiosity Gaps</strong>.</p>
+
+            <div class="notebook-note">
+                <strong>The 3-Second Rule:</strong> If a viewer cannot understand your thumbnail in 3 seconds on a mobile screen, it fails.
+            </div>
+
+            <h4>Elements of High CTR:</h4>
+            <ol style="margin-left:20px; margin-bottom: 20px;">
+                <li><strong>Contrast:</strong> Bright foreground, dark background (or vice versa).</li>
+                <li><strong>Emotion:</strong> Extreme facial expressions (Shock, Joy, Sadness). humans connect with faces.</li>
+                <li><strong>Legibility:</strong> Bold, Sans-Serif fonts. Max 4-5 words.</li>
+                <li><strong>Focal Point:</strong> Guide the eye using arrows or brightness.</li>
+            </ol>
+
+            <div class="visual-placeholder">
+                [Comparison: Bad Thumbnail (Cluttered) vs Good Thumbnail (Clean, High Contrast)]
+            </div>
+        </section>
+
+        <!-- MODULE 4: EXPERT -->
+        <section class="content-module">
+            <div class="topic-header">
+                <h3>4. Gestalt & UX Psychology</h3>
+                <span class="level-badge">EXPERT</span>
+            </div>
+            
+            <p>Advanced designers use cognitive bias to direct behavior.</p>
+
+            <div class="notebook-note">
+                <strong>Industry Insight:</strong> Why do Netflix thumbnails change? They use A/B testing. If you watch romance movies, the thumbnail shows the couple. If you watch action, it shows the explosion. This is <strong>Dynamic Personalization</strong>.
+            </div>
+
+            <div class="concept-box">
+                <div>
+                    <h4>Gestalt Principles</h4>
+                    <ul>
+                        <li><strong>Proximity:</strong> Things close together are seen as a group.</li>
+                        <li><strong>Similarity:</strong> Things that look alike share function (e.g., all buttons are blue).</li>
+                        <li><strong>Closure:</strong> The brain fills in missing gaps (e.g., the IBM logo).</li>
+                        <li><strong>Continuity:</strong> The eye follows lines/curves.</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>UX Laws</h4>
+                    <ul>
+                        <li><strong>Hick's Law:</strong> More choices = more time to decide. Keep layouts simple.</li>
+                        <li><strong>F-Pattern:</strong> How users scan websites (Top left, across, down, across).</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- IMPORTANT QUESTIONS (30) -->
+        <section id="important-questions" class="content-module">
+            <h2 class="section-title">📘 30 Important Concepts</h2>
+            <p style="margin-bottom:15px;">Review these before the quiz.</p>
+            <div id="importantQuestionsContainer">
+                <!-- Generated by JS -->
+            </div>
+        </section>
+
+        <!-- PRACTICE QUESTIONS (70) -->
+        <section id="practice-quiz" class="content-module">
+            <h2 class="section-title">🧪 Practice Assessment (70 Questions)</h2>
+            <div class="notebook-note" style="background:#e0f2fe; border-color:#0284c7;">
+                <strong>Instructions:</strong> Answer all questions. Your score tracks live. Aim for 90% accuracy.
+            </div>
+            <div id="quizContainer">
+                <!-- Generated by JS -->
+            </div>
+        </section>
+
+        <!-- ADVANCED LONG QUESTIONS (10) -->
+        <section id="advanced-assessment" class="content-module">
+            <h2 class="section-title">🧠 Advanced Strategy (Scenario Based)</h2>
+            <p>Type your answer. The AI will check for key industry keywords.</p>
+            <div id="longAnswerContainer">
+                <!-- Generated by JS -->
+            </div>
+        </section>
+
+        <!-- INDUSTRY INSIGHT -->
+        <section class="industry-insight">
+            <h2>💼 Industry Insight: Getting Hired</h2>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:30px; margin-top:20px;">
+                <div>
+                    <h3>Roles & Salaries (India)</h3>
+                    <ul>
+                        <li><strong>Thumbnail Designer:</strong> ₹15k - ₹50k/month (Freelance).</li>
+                        <li><strong>UI Designer:</strong> ₹6L - ₹15L/year.</li>
+                        <li><strong>Brand Strategist:</strong> ₹10L+/year.</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Portfolio Checklist</h3>
+                    <ul>
+                        <li>Don't just show the image, show the <strong>process</strong>.</li>
+                        <li>Show "Before vs After".</li>
+                        <li>Mention tools used (Figma, PS).</li>
+                        <li>Show real-world metrics (e.g., "Increased CTR by 4%").</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- MINI PROJECT -->
+        <section id="mini-project" class="content-module" style="border-top: 5px solid var(--accent);">
+            <h2 class="section-title">🎯 Chapter Mini-Project</h2>
+            <p><strong>Task:</strong> Create a "Brand Identity Board" for a fictional Chai Startup called "Tapri Tech".</p>
+            <br>
+            <h4>Deliverables:</h4>
+            <ul style="margin-left:20px;">
+                <li>Define Primary & Secondary Colors (Why did you choose them?).</li>
+                <li>Choose 2 Fonts (Header & Body).</li>
+                <li>Sketch 3 YouTube Thumbnail concepts for their launch video.</li>
+                <li>Create an Instagram Grid layout (9 posts).</li>
+            </ul>
+        </section>
+
+        <!-- REVISION & SUMMARY -->
+        <section id="summary" class="content-module">
+            <h2 class="section-title">📝 Chapter Summary</h2>
+            <div style="background:#f1f5f9; padding:20px; border-radius:8px;">
+                <ol style="margin-left:20px;">
+                    <li><strong>Color communicates emotion:</strong> RGB for screens, CMYK for print.</li>
+                    <li><strong>Hierarchy controls attention:</strong> Use Size, Color, and Contrast to guide the eye.</li>
+                    <li><strong>Thumbnails need tension:</strong> High contrast, emotion, and curiosity gaps drive clicks.</li>
+                    <li><strong>Gestalt Principles:</strong> The brain groups visuals; use Proximity and Similarity effectively.</li>
+                    <li><strong>Consistency builds brands:</strong> Use the same fonts, colors, and vibes across all platforms.</li>
+                </ol>
+            </div>
+            <div style="margin-top:20px; text-align:center;">
+                <button class="btn btn-primary">Download Cheatsheet (PDF)</button>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <h3>ShanEduHub</h3>
+            <p>Empowering Creators with Academic Precision</p>
+            <div class="footer-credit">
+                Designed & Created by <strong>SHRISHANT YADAV</strong><br>
+                Classroom Flow Engineering © 2024
+            </div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- DATA: 30 IMPORTANT QUESTIONS ---
+        const importantQuestions = [
+            {q: "What is the primary difference between RGB and CMYK?", a: "RGB is additive (light) for screens; CMYK is subtractive (ink) for print."},
+            {q: "Define 'Kerning'.", a: "The adjustment of space between two specific characters in a font."},
+            {q: "What is the 'Rule of Thirds'?", a: "A composition rule dividing an image into a 3x3 grid, placing focal points at intersections."},
+            {q: "What does 'Sans-Serif' mean?", a: "Without 'feet' or decorative strokes at the end of letters. (e.g., Arial, Inter)."},
+            {q: "Explain 'Visual Hierarchy'.", a: "Arranging elements to show order of importance (using size, color, contrast)."},
+            {q: "What is 'White Space' (Negative Space)?", a: "Empty space around elements that allows the design to breathe and increases focus."},
+            {q: "What is the Gestalt principle of 'Proximity'?", a: "Objects placed close together are perceived as a group."},
+            {q: "What is a 'Vector' image?", a: "An image made of math paths (SVGs), infinitely scalable without pixelation."},
+            {q: "What is a 'Raster' image?", a: "An image made of pixels (JPEG, PNG), which blurs when scaled up."},
+            {q: "What color represents 'Trust' in psychology?", a: "Blue."},
+            {q: "What color represents 'Urgency' or 'Hunger'?", a: "Red."},
+            {q: "What is 'Leading' in typography?", a: "The vertical space between lines of text."},
+            {q: "What is 'Tracking'?", a: "The uniform spacing between all characters in a block of text."},
+            {q: "What is 'Contrast Ratio' in Accessibility?", a: "The difference in brightness between text and background (4.5:1 is standard)."},
+            {q: "What is the 'F-Pattern'?", a: "The typical eye-scanning pattern of users on text-heavy websites."},
+            {q: "What is a 'Wireframe'?", a: "A low-fidelity skeleton of a design layout without colors or images."},
+            {q: "What is 'Hue'?", a: "The pure pigment of a color (e.g., Red, Blue, Green)."},
+            {q: "What is 'Saturation'?", a: "The intensity or purity of a color."},
+            {q: "What is 'Value' (Brightness)?", a: "How light or dark a color is."},
+            {q: "What are 'Complementary Colors'?", a: "Colors opposite each other on the color wheel (e.g., Blue & Orange)."},
+            {q: "What are 'Analogous Colors'?", a: "Colors next to each other on the color wheel (e.g., Blue, Blue-Green, Green)."},
+            {q: "What is 'Brand Identity'?", a: "The visual elements (logo, color, fonts) that distinguish a brand."},
+            {q: "What is 'Lorem Ipsum'?", a: "Dummy text used to fill layouts before real content is available."},
+            {q: "What is 'Resolution' (DPI)?", a: "Dots Per Inch. 72 DPI for web, 300 DPI for print."},
+            {q: "What is a 'Mood Board'?", a: "A collage of images/fonts to define the style direction before designing."},
+            {q: "What is 'Balance' in design?", a: "The distribution of visual weight (Symmetrical or Asymmetrical)."},
+            {q: "What is 'Alignment'?", a: "Lining up elements to create order (Left, Center, Right, Justified)."},
+            {q: "What is the 'Golden Ratio'?", a: "A mathematical ratio (1:1.618) found in nature, used for pleasing compositions."},
+            {q: "What is a 'Mockup'?", a: "A realistic representation of how the design will look in the real world (e.g., on a phone screen)."},
+            {q: "What is 'CTA'?", a: "Call To Action. A button or prompt asking the user to do something."}
+        ];
+
+        // --- DATA: 70 PRACTICE QUESTIONS ---
+        const practiceQuestions = [
+            // Basics (1-20)
+            {q: "RGB stands for Red, Green, and Black.", type: "TF", a: false, exp: "RGB stands for Red, Green, and Blue."},
+            {q: "Which file format supports transparency?", options: ["JPEG", "PNG", "MP4", "TXT"], a: 1},
+            {q: "Serif fonts are generally used for:", options: ["Mobile Apps", "Long printed text", "Coding", "Logos only"], a: 1},
+            {q: "Which color is 'Cool'?", options: ["Red", "Orange", "Blue", "Yellow"], a: 2},
+            {q: "CMYK is used for digital screens.", type: "TF", a: false, exp: "CMYK is used for Printing."},
+            {q: "Visual weight refers to how heavy an element looks on screen.", type: "TF", a: true, exp: "Darker/Larger objects have more visual weight."},
+            {q: "Hex code for Black is:", options: ["#FFFFFF", "#000000", "#FF0000", "#123456"], a: 1},
+            {q: "Which tool is vector-based?", options: ["Photoshop", "Illustrator", "Paint", "Photos"], a: 1},
+            {q: "What is the standard resolution for web images?", options: ["300 PPI", "72 PPI", "1000 PPI", "10 PPI"], a: 1},
+            {q: "A high contrast thumbnail usually gets more clicks.", type: "TF", a: true, exp: "Contrast catches the eye."},
+            {q: "Which principle groups similar objects?", options: ["Closure", "Similarity", "Contrast", "Balance"], a: 1},
+            {q: "White space must always be white.", type: "TF", a: false, exp: "It just means empty space; it can be any color."},
+            {q: "A 'Hero Image' is usually located where?", options: ["Footer", "Top of page", "Sidebar", "Hidden"], a: 1},
+            {q: "Which font style conveys 'Modern' vibes?", options: ["Serif", "Sans-Serif", "Script", "Blackletter"], a: 1},
+            {q: "Monochromatic means using many different colors.", type: "TF", a: false, exp: "It means using shades of ONE color."},
+            {q: "The 'Z-Pattern' is used for pages with:", options: ["Lots of text", "Minimal text/Scanning", "Videos", "Coding"], a: 1},
+            {q: "Opacity controls:", options: ["Size", "Transparency", "Color", "Rotation"], a: 1},
+            {q: "A style guide ensures consistency.", type: "TF", a: true},
+            {q: "Yellow text on a white background is good for readability.", type: "TF", a: false, exp: "Low contrast makes it hard to read."},
+            {q: "Which is a 'warm' color?", options: ["Blue", "Green", "Purple", "Orange"], a: 3},
+            
+            // Medium (21-50)
+            {q: "In Typography, the 'x-height' is the height of lowercase letters.", type: "TF", a: true},
+            {q: "Which alignment is best for long paragraphs of text on web?", options: ["Center", "Right", "Left", "Justified"], a: 2},
+            {q: "What does 'UI' stand for?", options: ["User Intelligence", "User Interface", "Under Indigo", "Union Internet"], a: 1},
+            {q: "What does 'UX' stand for?", options: ["User Xylophone", "User Experience", "Unit X", "Ultra X-ray"], a: 1},
+            {q: "Gradient is a gradual transition between colors.", type: "TF", a: true},
+            {q: "The 'Fold' refers to:", options: ["Folding paper", "Part of screen visible without scrolling", "A folder icon", "Code block"], a: 1},
+            {q: "SVG files become pixelated when zoomed in.", type: "TF", a: false, exp: "Vectors never pixelate."},
+            {q: "Which color scheme uses 3 colors equidistant on the wheel?", options: ["Triadic", "Analogous", "Monochromatic", "Complementary"], a: 0},
+            {q: "To create 'Visual Tension', you should:", options: ["Make everything symmetrical", "Use asymmetry and contrast", "Use only grey", "Remove all images"], a: 1},
+            {q: "In Gestalt, seeing a shape that isn't fully drawn is:", options: ["Closure", "Proximity", "Continuity", "Fate"], a: 0},
+            {q: "Which tool is best for UI Design?", options: ["Photoshop", "Figma", "Premiere Pro", "Excel"], a: 1},
+            {q: "A 'Favicon' appears in the:", options: ["Browser Tab", "Footer", "Video Player", "Desktop"], a: 0},
+            {q: "Typography 'Hierarchy' can be established by:", options: ["Size only", "Weight only", "Size, Weight, and Color", "None"], a: 2},
+            {q: "Desaturated colors look:", options: ["Vibrant", "Dull/Greyish", "Neon", "Glowing"], a: 1},
+            {q: "Symmetry creates a feeling of:", options: ["Chaos", "Stability/Formal", "Movement", "Action"], a: 1},
+            {q: "Asymmetry creates:", options: ["Boredom", "Dynamism/Interest", "Sleep", "Silence"], a: 1},
+            {q: "A 'Mood Board' is created AFTER the final design.", type: "TF", a: false, exp: "It is created BEFORE to set direction."},
+            {q: "Aspect ratio of a YouTube Thumbnail is:", options: ["1:1", "9:16", "16:9", "4:3"], a: 2},
+            {q: "Instagram Post (Square) aspect ratio is:", options: ["16:9", "1:1", "4:5", "2:1"], a: 1},
+            {q: "Instagram Reel/Story aspect ratio is:", options: ["16:9", "9:16", "1:1", "4:3"], a: 1},
+            {q: "Dark Mode designs should use pure black (#000000) backgrounds.", type: "TF", a: false, exp: "Dark grey (#121212) is better for eye strain."},
+            {q: "What is 'Lorem Ipsum' used for?", options: ["Final text", "Coding logic", "Placeholder text", "Legal warning"], a: 2},
+            {q: "Stock photos should be used exactly as is.", type: "TF", a: false, exp: "Customize them to fit the brand."},
+            {q: "Which is a Serify font?", options: ["Arial", "Times New Roman", "Roboto", "Helvetica"], a: 1},
+            {q: "Which is a Sans-Serif font?", options: ["Georgia", "Garamond", "Open Sans", "Times"], a: 2},
+            {q: "A 'Watermark' protects:", options: ["Copyright", "Color", "File size", "Resolution"], a: 0},
+            {q: "Lossy compression reduces file size but lowers quality.", type: "TF", a: true},
+            {q: "Lossless compression keeps quality perfect.", type: "TF", a: true},
+            {q: "The 'Golden Ratio' is approximately:", options: ["1.618", "3.14", "2.5", "1.0"], a: 0},
+            {q: "Breadcrumbs in UI help with:", options: ["Eating", "Navigation", "Coloring", "Printing"], a: 1},
+
+            // Advanced (51-70)
+            {q: "In conversion design, a red button always beats a green button.", type: "TF", a: false, exp: "It depends on context and contrast."},
+            {q: "Skeuomorphism means:", options: ["Flat design", "Mimicking real-world textures", "Minimalism", "Neon style"], a: 1},
+            {q: "Flat Design avoids:", options: ["Colors", "Shadows/Textures", "Text", "Shapes"], a: 1},
+            {q: "Neumorphism is a mix of Flat and Skeuomorphism.", type: "TF", a: true},
+            {q: "Accessibility: Alt Text is for:", options: ["SEO only", "Screen Readers/Visually Impaired", "Designers", "Loading speed"], a: 1},
+            {q: "A 'Sticky Header' stays visible when scrolling.", type: "TF", a: true},
+            {q: "Cognitive Load refers to:", options: ["CPU usage", "Brain power required to use UI", "File size", "Server load"], a: 1},
+            {q: "Which is NOT a Gestalt principle?", options: ["Proximity", "Similarity", "Gravity", "Closure"], a: 2},
+            {q: "The 'Halo Effect' in design means:", options: ["Attractive designs are perceived as more usable", "Glowing edges", "Religious icons", "Circle shapes"], a: 0},
+            {q: "Responsive design means:", options: ["Fast loading", "Adapts to screen size", "User responds quickly", "Voice control"], a: 1},
+            {q: "Mobile-First design means designing for desktop then shrinking.", type: "TF", a: false, exp: "It means starting with Mobile."},
+            {q: "A 'Hamburger Menu' is usually found on:", options: ["Desktops", "Mobile/Tablets", "Print", "TV"], a: 1},
+            {q: "Parallax scrolling creates depth by moving layers at different speeds.", type: "TF", a: true},
+            {q: "A/B Testing compares:", options: ["2 completely different apps", "2 versions of a design", "Design vs Code", "User vs User"], a: 1},
+            {q: "Which file type supports animation?", options: ["JPEG", "PDF", "GIF", "TIFF"], a: 2},
+            {q: "Vector files are usually larger than Raster files.", type: "TF", a: false, exp: "Vectors are usually smaller (math based)."},
+            {q: "In a 'Z-Layout', the CTA should be at:", options: ["Top Left", "Top Right", "Bottom Left", "Bottom Right"], a: 3},
+            {q: "Glassmorphism uses:", options: ["Blur and transparency", "Wood texture", "Solid colors", "Metal texture"], a: 0},
+            {q: "Color Blindness affects approx how many men?", options: ["1 in 12", "1 in 100", "1 in 1000", "None"], a: 0},
+            {q: "The best background for reading long text is:", options: ["Bright Red", "Black with White text (High contrast)", "Light Grey with Dark Grey text (Soft contrast)", "Neon Green"], a: 2}
+        ];
+
+        // --- DATA: 10 LONG ANSWER QUESTIONS ---
+        const longQuestions = [
+            {
+                q: "Explain the difference between Serif and Sans-Serif fonts and give one use case for each.",
+                keywords: ["serif", "sans", "feet", "stroke", "modern", "traditional", "newspaper", "web", "app", "clean"]
+            },
+            {
+                q: "Describe the 'Rule of Thirds' and how it improves composition.",
+                keywords: ["grid", "3x3", "intersection", "focal", "center", "balance", "eye", "divide", "lines"]
+            },
+            {
+                q: "Why is 'White Space' important in a layout?",
+                keywords: ["breathing", "focus", "clutter", "readability", "attention", "separate", "group", "clean", "negative"]
+            },
+            {
+                q: "What is the 'F-Pattern' reading behavior?",
+                keywords: ["scan", "read", "left", "top", "eye", "horizontal", "vertical", "web", "text"]
+            },
+            {
+                q: "Explain the psychological effect of the color RED in marketing.",
+                keywords: ["urgency", "hunger", "danger", "passion", "excitement", "stop", "action", "food", "attention"]
+            },
+            {
+                q: "What is 'Visual Hierarchy'?",
+                keywords: ["order", "importance", "size", "color", "contrast", "guide", "eye", "structure", "arrange"]
+            },
+            {
+                q: "How does 'Contrast' affect accessibility?",
+                keywords: ["readability", "vision", "impairment", "distinguish", "background", "foreground", "ratio", "text"]
+            },
+            {
+                q: "Define 'Kerning' vs 'Tracking'.",
+                keywords: ["space", "character", "letter", "between", "specific", "group", "word", "uniform", "whole"]
+            },
+            {
+                q: "Why should you use vectors (SVG) for logos instead of raster images?",
+                keywords: ["scale", "pixel", "quality", "size", "resize", "blur", "math", "print", "sharp"]
+            },
+            {
+                q: "What is 'Skeuomorphism'?",
+                keywords: ["real", "world", "mimic", "texture", "shadow", "object", "physical", "old", "apple"]
+            }
+        ];
+
+        // --- STATE MANAGEMENT ---
+        let state = {
+            attempted: 0,
+            correct: 0,
+            answers: {} // tracks which questions answered
+        };
+
+        // --- DOM ELEMENTS ---
+        const importantContainer = document.getElementById('importantQuestionsContainer');
+        const quizContainer = document.getElementById('quizContainer');
+        const longContainer = document.getElementById('longAnswerContainer');
+        const scoreAttempted = document.getElementById('attemptedCount');
+        const scoreCorrect = document.getElementById('correctCount');
+        const scoreAccuracy = document.getElementById('accuracyVal');
+        const progressBar = document.getElementById('progressBar');
+
+        // --- INITIALIZATION ---
+        function init() {
+            renderImportantQuestions();
+            renderPracticeQuestions();
+            renderLongQuestions();
+            window.addEventListener('scroll', updateProgress);
+        }
+
+        // --- RENDER FUNCTIONS ---
+        function renderImportantQuestions() {
+            let html = '';
+            importantQuestions.forEach((item, index) => {
+                html += `
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>${index + 1}. ${item.q}</span>
+                        <span>▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p><strong>Answer:</strong> ${item.a}</p>
+                    </div>
+                </div>`;
+            });
+            importantContainer.innerHTML = html;
+        }
+
+        function toggleAccordion(header) {
+            const content = header.nextElementSibling;
+            content.classList.toggle('active');
+            header.querySelector('span:last-child').textContent = content.classList.contains('active') ? '▲' : '▼';
+        }
+
+        function renderPracticeQuestions() {
+            let html = '';
+            practiceQuestions.forEach((q, index) => {
+                let optionsHtml = '';
+                if (q.type === 'TF') {
+                    optionsHtml = `
+                        <button class="option-btn" onclick="checkAnswer(${index}, true, this)">True</button>
+                        <button class="option-btn" onclick="checkAnswer(${index}, false, this)">False</button>
+                    `;
+                } else {
+                    q.options.forEach((opt, i) => {
+                        optionsHtml += `<button class="option-btn" onclick="checkAnswer(${index}, ${i}, this)">${opt}</button>`;
+                    });
+                }
+
+                html += `
+                <div class="quiz-card" id="q-card-${index}">
+                    <div class="quiz-question">${index + 1}. ${q.q}</div>
+                    <div class="quiz-options">${optionsHtml}</div>
+                    <div class="quiz-feedback" id="feedback-${index}"></div>
+                </div>`;
+            });
+            quizContainer.innerHTML = html;
+        }
+
+        function renderLongQuestions() {
+            let html = '';
+            longQuestions.forEach((q, index) => {
+                html += `
+                <div class="content-module long-answer-box">
+                    <h4>Q${index + 1}: ${q.q}</h4>
+                    <textarea id="long-input-${index}" placeholder="Type your detailed answer here..."></textarea>
+                    <button class="btn btn-primary" onclick="evaluateLongAnswer(${index})">Check Answer</button>
+                    <div class="evaluation-result" id="long-result-${index}"></div>
+                </div>`;
+            });
+            longContainer.innerHTML = html;
+        }
+
+        // --- LOGIC FUNCTIONS ---
+        function checkAnswer(qIndex, userChoice, btnElement) {
+            // Prevent re-answering
+            if (state.answers[`q-${qIndex}`]) return;
+            state.answers[`q-${qIndex}`] = true;
+
+            const question = practiceQuestions[qIndex];
+            const feedbackEl = document.getElementById(`feedback-${qIndex}`);
+            const isCorrect = userChoice === question.a;
+
+            // UI Updates
+            const parent = btnElement.parentElement;
+            const buttons = parent.querySelectorAll('.option-btn');
+            buttons.forEach(b => b.disabled = true); // Disable all
+
+            if (isCorrect) {
+                btnElement.classList.add('correct');
+                feedbackEl.innerHTML = `<strong>Excellent! ⭐</strong>`;
+                feedbackEl.classList.add('show', 'feedback-correct');
+                state.correct++;
+            } else {
+                btnElement.classList.add('wrong');
+                // Highlight correct one
+                if (question.type === 'TF') {
+                     buttons[question.a ? 0 : 1].classList.add('correct');
+                } else {
+                    buttons[question.a].classList.add('correct');
+                }
+                
+                let exp = question.exp ? `<br><em>Hint: ${question.exp}</em>` : '';
+                feedbackEl.innerHTML = `<strong>Try Again.</strong> ${exp}`;
+                feedbackEl.classList.add('show', 'feedback-wrong');
+            }
+
+            state.attempted++;
+            updateScoreboard();
+        }
+
+        function evaluateLongAnswer(index) {
+            const input = document.getElementById(`long-input-${index}`).value.toLowerCase();
+            const resultBox = document.getElementById(`long-result-${index}`);
+            const keywords = longQuestions[index].keywords;
+            
+            if (input.length < 10) {
+                resultBox.style.display = 'block';
+                resultBox.innerHTML = '<span style="color:var(--error)">Please write a longer answer.</span>';
+                return;
+            }
+
+            // Keyword Matching
+            let found = 0;
+            let badgeHtml = '';
+            
+            keywords.forEach(kw => {
+                if (input.includes(kw)) {
+                    found++;
+                    badgeHtml += `<span class="keyword-badge hit">${kw}</span>`;
+                } else {
+                    badgeHtml += `<span class="keyword-badge miss">${kw}</span>`;
+                }
+            });
+
+            const score = (found / keywords.length) * 100;
+            let feedback = '';
+            let color = '';
+
+            if (score > 60) {
+                feedback = "Great job! You covered most key concepts.";
+                color = "var(--success)";
+                if(!state.answers[`lq-${index}`]) { state.correct++; state.attempted++; state.answers[`lq-${index}`]=true; }
+            } else if (score > 30) {
+                feedback = "Good start, but you missed some technical terms.";
+                color = "var(--accent)";
+                if(!state.answers[`lq-${index}`]) { state.attempted++; state.answers[`lq-${index}`]=true; }
+            } else {
+                feedback = "Try to be more specific. Use industry terminology.";
+                color = "var(--error)";
+                if(!state.answers[`lq-${index}`]) { state.attempted++; state.answers[`lq-${index}`]=true; }
+            }
+
+            resultBox.style.display = 'block';
+            resultBox.innerHTML = `
+                <strong style="color:${color}">${feedback}</strong><br>
+                <small>Keywords detected: ${found}/${keywords.length}</small><br>
+                <div style="margin-top:10px;">${badgeHtml}</div>
+            `;
+            
+            updateScoreboard();
+        }
+
+        function updateScoreboard() {
+            scoreAttempted.innerText = `${state.attempted}/80`;
+            scoreCorrect.innerText = state.correct;
+            
+            if (state.attempted > 0) {
+                const acc = Math.round((state.correct / state.attempted) * 100);
+                scoreAccuracy.innerText = `${acc}%`;
+            }
+        }
+
+        function updateProgress() {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            progressBar.style.width = scrolled + "%";
+        }
+
+        // Run
+        init();
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 2: ATS Resume Engineering & Professional Branding</title>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #0d47a1;
+            --bg-white: #ffffff;
+            --panel-grey: #f5f5f5;
+            --success-green: #2e7d32;
+            --alert-orange: #ef6c00;
+            --text-dark: #212121;
+            --border-color: #e0e0e0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Patrick Hand', cursive, sans-serif;
+            font-weight: 700 !important; /* STRICT BOLD RULE */
+        }
+
+        body {
+            background-color: var(--bg-white);
+            color: var(--text-dark);
+            line-height: 1.6;
+            font-size: 18px;
+        }
+
+        /* --- HEADER --- */
+        header {
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 4px solid #002171;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* --- STICKY SCORE PANEL --- */
+        #score-panel {
+            position: sticky;
+            top: 0;
+            background: white;
+            border-bottom: 2px solid var(--primary-blue);
+            padding: 10px 20px;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            font-size: 1rem;
+        }
+
+        .score-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .score-value {
+            color: var(--primary-blue);
+            font-size: 1.2rem;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: #eee;
+            margin-top: 5px;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--success-green);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* --- CONTAINER --- */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* --- SECTIONS --- */
+        section {
+            margin-bottom: 40px;
+            background: var(--bg-white);
+            border-radius: 8px;
+        }
+
+        h2.section-title {
+            color: var(--primary-blue);
+            border-bottom: 2px solid var(--panel-grey);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        /* --- NOTES CARDS --- */
+        .note-card {
+            background-color: var(--panel-grey);
+            border-left: 5px solid var(--primary-blue);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .note-title {
+            color: var(--primary-blue);
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .indian-example {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border: 1px dashed var(--primary-blue);
+        }
+
+        .memory-tip {
+            background-color: #fff3e0;
+            color: var(--alert-orange);
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 4px;
+            font-size: 0.95rem;
+        }
+
+        /* --- STATIC IMAGE BOX PLACEHOLDERS --- */
+        .static-image-box {
+            background-color: #e0e0e0;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
+            color: #616161;
+            border: 2px dashed #9e9e9e;
+            text-transform: uppercase;
+            text-align: center;
+            padding: 10px;
+        }
+
+        /* --- QUESTIONS --- */
+        .question-block {
+            background: white;
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .q-text {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--text-dark);
+        }
+
+        /* --- PRACTICE MODE --- */
+        .practice-option {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            background: var(--panel-grey);
+            border: 2px solid transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+
+        .practice-option:hover {
+            background: #e0e0e0;
+        }
+
+        .practice-option.selected {
+            border-color: var(--primary-blue);
+            background: #e3f2fd;
+        }
+
+        .practice-option.correct {
+            background-color: #c8e6c9;
+            border-color: var(--success-green);
+        }
+
+        .practice-option.wrong {
+            background-color: #ffccbc;
+            border-color: var(--alert-orange);
+        }
+
+        .feedback-msg {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .feedback-correct {
+            background-color: #e8f5e9;
+            color: var(--success-green);
+            display: block;
+        }
+
+        .feedback-wrong {
+            background-color: #fbe9e7;
+            color: var(--alert-orange);
+            display: block;
+        }
+
+        /* --- LONG ANSWER --- */
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            margin-top: 10px;
+            border: 2px solid var(--panel-grey);
+            border-radius: 4px;
+            font-size: 1rem;
+            resize: vertical;
+        }
+
+        .btn-check {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            margin-top: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn-check:hover {
+            opacity: 0.9;
+        }
+
+        .nav-btn {
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            margin: 10px 5px;
+            cursor: pointer;
+            min-width: 100px;
+        }
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+            background-color: var(--panel-grey);
+            color: #666;
+            border-top: 1px solid #ddd;
+        }
+
+        .badge-area {
+            text-align: center;
+            padding: 20px;
+            display: none;
+            background: #e8f5e9;
+            border: 2px solid var(--success-green);
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+
+        /* --- ANIMATION --- */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Hiding sections logic */
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Job Ready: Chapter 2</h1>
+        <div class="subtitle">ATS Resume Engineering & Professional Branding</div>
+        <div style="font-size: 0.9rem; margin-top: 5px; opacity: 0.8;">Lecture 2.1 • 5-8 Mins • Performance Assessment</div>
+    </header>
+
+    <div id="score-panel">
+        <div class="score-item">
+            <span>Score</span>
+            <span class="score-value" id="score-display">0/0</span>
+        </div>
+        <div class="score-item">
+            <span>Accuracy</span>
+            <span class="score-value" id="accuracy-display">0%</span>
+        </div>
+        <div class="score-item">
+            <span>Status</span>
+            <span class="score-value" id="status-display">Active</span>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar" id="master-progress"></div>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <!-- PART 1: NOTES -->
+        <section id="notes-section">
+            <h2 class="section-title">2.1 Resume & CV Engineering</h2>
+            
+            <div class="note-card">
+                <div class="note-title">The ATS (Applicant Tracking System)</div>
+                <p>An ATS is robot software used by 99% of big companies (TCS, Infosys, Google) to filter resumes before a human sees them. It scans for keywords.</p>
+                <div class="static-image-box">Diagram: Resume -> ATS Scanner -> Reject/Accept Bin</div>
+                <div class="indian-example">
+                    <strong>Real Life Example:</strong> Imagine a security guard at a wedding hall who only lets people in if their invitation card has a specific "QR Code". The ATS is that guard. Your "Keywords" are the QR Code.
+                </div>
+                <div class="memory-tip"><strong>Tip:</strong> ATS reads left-to-right, top-to-bottom. Avoid columns and graphics.</div>
+            </div>
+
+            <div class="note-card">
+                <div class="note-title">Structure & Action Verbs</div>
+                <p>Start bullet points with Action Verbs (Created, Managed, Developed). Use the XYZ formula: "Accomplished [X] as measured by [Y], by doing [Z]".</p>
+                <div class="indian-example">
+                    <strong>Bad:</strong> "I worked on sales."<br>
+                    <strong>Good:</strong> "Generated ₹5 Lakh revenue (Y) by acquiring 50 new clients (X) using cold calling strategies (Z)."
+                </div>
+                <div class="static-image-box">Table: Weak Verbs vs Power Verbs</div>
+            </div>
+
+            <h2 class="section-title">2.2 High-Impact Cover Letters</h2>
+            <div class="note-card">
+                <div class="note-title">The 4-Paragraph Structure</div>
+                <ol style="margin-left: 20px;">
+                    <li><strong>The Hook:</strong> Who you are and why you are writing.</li>
+                    <li><strong>The Value:</strong> Specific examples of your work.</li>
+                    <li><strong>The Bridge:</strong> Why this specific company?</li>
+                    <li><strong>The Ask:</strong> Call to action (Interview request).</li>
+                </ol>
+                <div class="indian-example">
+                    <strong>Context:</strong> Applying to Zomato? Mention how you admire their recent quick-commerce logistics and how your supply chain project aligns with it.
+                </div>
+            </div>
+
+            <h2 class="section-title">2.3 LinkedIn & Digital Identity</h2>
+            <div class="note-card">
+                <div class="note-title">Headline Optimization</div>
+                <p>Formula: [Role] | [Key Skill 1] | [Key Skill 2] | [Unique Value Proposition]</p>
+                <div class="indian-example">
+                    <strong>Example:</strong> "Java Developer | Spring Boot Specialist | AWS Certified | Building scalable fintech solutions for Rural India"
+                </div>
+                <div class="static-image-box">Image: LinkedIn Profile Header Layout</div>
+            </div>
+
+            <h2 class="section-title">2.4 Personal Branding Strategy</h2>
+            <div class="note-card">
+                <div class="note-title">Brand Positioning</div>
+                <p>Your brand is what people say about you when you are not in the room. Move from "Generalist" to "Specialist".</p>
+                <div class="indian-example">
+                    <strong>Case:</strong> Instead of being just a "Content Writer", position yourself as a "B2B SaaS Technical Writer".
+                </div>
+                <div class="static-image-box">Matrix: Generalist (Low Value) vs Specialist (High Value)</div>
+            </div>
+        </section>
+
+        <!-- PART 2: IMPORTANT QUESTIONS (30) -->
+        <section id="important-questions-section">
+            <h2 class="section-title">Important Questions (Study Mode)</h2>
+            <div id="imp-questions-container">
+                <!-- JS will populate this -->
+            </div>
+        </section>
+
+        <!-- PART 3: PRACTICE QUESTIONS (70) -->
+        <section id="practice-section">
+            <h2 class="section-title">Practice Assessment (Drill Mode)</h2>
+            <div id="practice-container" class="question-block">
+                <!-- Single Question Rendered Here -->
+                <div id="pq-content"></div>
+                <div id="pq-feedback" class="feedback-msg"></div>
+                
+                <div class="nav-container">
+                    <button class="nav-btn" style="background-color: #757575;" onclick="alert('Cannot go back in exam mode!')" disabled>Previous</button>
+                    <button class="nav-btn" id="next-pq-btn" onclick="nextPracticeQuestion()">Next Question</button>
+                </div>
+                <div style="text-align: center; margin-top: 10px; font-size: 0.9rem; color: #666;">
+                    Question <span id="pq-current-count">1</span> of 70
+                </div>
+            </div>
+        </section>
+
+        <!-- PART 4: ADVANCED LONG QUESTIONS (10) -->
+        <section id="long-questions-section">
+            <h2 class="section-title">Advanced Scenario Analysis</h2>
+            <div id="lq-container">
+                <!-- JS will populate -->
+            </div>
+        </section>
+
+        <!-- PART 5: REVISION -->
+        <section id="revision-section">
+            <h2 class="section-title">Quick Revision Checklist</h2>
+            <div class="note-card">
+                <ul>
+                    <li>✅ Resume: No photos, Single Column, Standard Fonts (Arial/Calibri), PDF Format.</li>
+                    <li>✅ Keywords: Match job description exactly (e.g., "Python" -> "Python").</li>
+                    <li>✅ Cover Letter: Customized for EVERY job. No generic templates.</li>
+                    <li>✅ LinkedIn: Professional Photo, SEO Headline, "Featured" section utilized.</li>
+                </ul>
+            </div>
+        </section>
+
+        <div id="completion-badge" class="badge-area">
+            <h2>🎉 Session 02 Completed!</h2>
+            <p>ATS Engineering Certified</p>
+        </div>
+
+    </div>
+
+    <footer>
+        <p>Designed & Created by SHRISHANT YADAV</p>
+        <p style="font-size: 0.9rem; color: #9e9e9e;">ShanEduHub</p>
+    </footer>
+
+    <script>
+        // --- DATA STORAGE ---
+
+        // 30 Important Questions
+        const importantQuestions = [
+            { q: "What does ATS stand for?", a: "Applicant Tracking System." },
+            { q: "What is the primary function of an ATS?", a: "To filter and rank resumes based on keywords before human review." },
+            { q: "What is the best file format for an ATS-friendly resume?", a: "Word (.docx) or PDF (text-based, not image-based)." },
+            { q: "Why should you avoid graphics and columns in resumes?", a: "ATS parsers often cannot read complex layouts or images, causing rejection." },
+            { q: "What is the 'XYZ' formula in resume writing?", a: "Accomplished [X] as measured by [Y], by doing [Z]." },
+            { q: "How long should a freshers resume be?", a: "Ideally 1 page, maximum 2 pages." },
+            { q: "What is a 'Targeted Resume'?", a: "A resume customized specifically for the job description." },
+            { q: "Should you include your full address on a modern resume?", a: "No, City and State (e.g., Mumbai, Maharashtra) is sufficient." },
+            { q: "What is the purpose of a Cover Letter?", a: "To explain why you are the best fit and show personality/motivation." },
+            { q: "What is the 'Hook' in a cover letter?", a: "The opening sentence that grabs the recruiter's attention." },
+            { q: "Does LinkedIn affect job applications?", a: "Yes, 87% of recruiters check LinkedIn to verify credibility." },
+            { q: "What is a LinkedIn Headline?", a: "The text below your name that describes your professional identity." },
+            { q: "What is 'Keyword Stuffing'?", a: "Overusing keywords unnaturally; it can lead to rejection." },
+            { q: "What is a 'Soft Skill'?", a: "Interpersonal skills like Communication, Teamwork, Adaptability." },
+            { q: "What is a 'Hard Skill'?", a: "Technical abilities like Java, Accounting, Graphic Design." },
+            { q: "Why use bullet points instead of paragraphs?", a: "Bullets are easier to scan for both humans and ATS." },
+            { q: "What is the 'Summary' section of a resume?", a: "A 2-3 line elevator pitch at the top of the resume." },
+            { q: "Should you include a photo on an Indian corporate resume?", a: "Generally No, unless it is a modeling or acting job." },
+            { q: "What is 'Social Proof' on LinkedIn?", a: "Recommendations, Endorsements, and Comments." },
+            { q: "How do you quantify achievements?", a: "By using numbers, percentages, and currency (e.g., Increased sales by 20%)." },
+            { q: "What is the difference between a CV and a Resume?", a: "CV is detailed/academic (long); Resume is a summary for jobs (short)." },
+            { q: "What creates a strong 'Personal Brand'?", a: "Consistency, Niche Expertise, and Value Creation." },
+            { q: "Should you mention hobbies?", a: "Only if they are relevant to the job or show leadership/discipline." },
+            { q: "What is 'Reverse Chronological Order'?", a: "Listing latest experience first." },
+            { q: "Why is a professional email ID important?", a: "coolboy123@gmail.com looks unprofessional; use firstname.lastname@gmail.com." },
+            { q: "What is a 'Functional Resume'?", a: "Focuses on skills rather than timeline (good for career gaps)." },
+            { q: "How to handle career gaps?", a: "Explain them honestly in the cover letter or focus on skills learned during the gap." },
+            { q: "What are 'Action Verbs'?", a: "Strong words used to start bullets (e.g., Led, Designed, Engineered)." },
+            { q: "Does font size matter?", a: "Yes, keep body text 10-12pt and headers 14-16pt." },
+            { q: "What is the final step before submitting?", a: "Proofreading for spelling and grammar errors." }
+        ];
+
+        // 70 Practice Questions (Mixed Types) - Only showing a subset of structure for brevity in generation but representing 70.
+        // I will generate the array programmatically to ensure 70 distinct entries or list them.
+        // Listing 70 specific questions to meet the requirement.
+        
+        const practiceData = [
+             // MCQs (A,B,C,D balanced)
+            { t: 'mcq', q: "Which font is safest for ATS?", o: ["Comic Sans", "Arial", "Papyrus", "Handwriting"], a: 1, exp: "Arial is a standard sans-serif font easily read by all ATS software." },
+            { t: 'mcq', q: "The 'S' in ATS stands for:", o: ["System", "Software", "Service", "Selection"], a: 0, exp: "Applicant Tracking System." },
+            { t: 'mcq', q: "Ideally, how many bullet points per job role?", o: ["1-2", "10-15", "3-5", "20+"], a: 2, exp: "3-5 high impact bullets are best for readability." },
+            { t: 'mcq', q: "LinkedIn headlines should contain:", o: ["Just Job Title", "Keywords & Value Prop", "Personal Address", "Phone Number"], a: 1, exp: "Keywords help you appear in search results." },
+            { t: 'mcq', q: "A resume summary should be:", o: ["1 page long", "2-3 lines", "10 lines", "Absent"], a: 1, exp: "It is a short elevator pitch." },
+            { t: 'mcq', q: "What should NOT be in a resume?", o: ["Contact Info", "Skills", "Marital Status", "Education"], a: 2, exp: "Personal details like marital status cause bias and are irrelevant." },
+            { t: 'mcq', q: "Cover letters should be addressed to:", o: ["To Whom It May Concern", "Hiring Manager (Name if possible)", "CEO only", "HR Intern"], a: 1, exp: "Personalization shows effort." },
+            { t: 'mcq', q: "Which file type preserves formatting best?", o: ["TXT", "DOC", "PDF", "HTML"], a: 2, exp: "PDF locks formatting, but ensure it is text-based." },
+            { t: 'mcq', q: "Action verbs are used to:", o: ["Describe duties", "Show impact", "Fill space", "Confuse ATS"], a: 1, exp: "They show what you actually did." },
+            { t: 'mcq', q: "On LinkedIn, 'Connections' refer to:", o: ["Followers", "Professional Network", "Friends only", "Family"], a: 1, exp: "It is your professional network." },
+            // ... (Generating more to reach 70 mixed types)
+            { t: 'tf', q: "True/False: You should include a photo on a standard US/India tech resume.", o: ["True", "False"], a: 1, exp: "False. It is not standard and can cause ATS issues." },
+            { t: 'tf', q: "True/False: 80% of jobs are not advertised publicly.", o: ["True", "False"], a: 0, exp: "True. This is the 'Hidden Job Market'." },
+            { t: 'tf', q: "True/False: You should use the same resume for every job application.", o: ["True", "False"], a: 1, exp: "False. Tailor it every time." },
+            { t: 'fill', q: "The section listing your contact details is the ______.", o: ["Header", "Footer", "Body", "Margin"], a: 0, exp: "The Header contains name and contact info." },
+            { t: 'fill', q: "Use ______ numbers to quantify results.", o: ["Roman", "Arabic (1,2,3)", "Words", "None"], a: 1, exp: "Digits (20%) stand out more than words (twenty percent)." },
+            // Adding remainder efficiently to reach 70
+        ];
+
+        // Programmatically adding remaining questions to ensure exactly 70 unique drills
+        const extraQuestions = [
+            {q: "What color should resume text be?", o: ["Red", "Blue", "Black/Dark Grey", "Green"], a: 2, type: 'mcq', exp: "Standard professional colors are black or dark grey."},
+            {q: "Which section comes first for a fresher?", o: ["Experience", "Education", "Hobbies", "References"], a: 1, type: 'mcq', exp: "Freshers sell their education first."},
+            {q: "Which section comes first for an experienced pro?", o: ["Education", "Experience", "Skills", "Awards"], a: 1, type: 'mcq', exp: "Experience is most relevant."},
+            {q: "LinkedIn URLs should be:", o: ["Default with numbers", "Customized/Clean", "Hidden", "Long"], a: 1, type: 'mcq', exp: "linkedin.com/in/name is professional."},
+            {q: "Avoid using personal pronouns like:", o: ["I, Me, My", "He, She", "They", "We"], a: 0, type: 'mcq', exp: "Resumes are written in implied first person without 'I'."},
+            {q: "A 'Career Objective' is now replaced by:", o: ["Goal Statement", "Professional Summary", "Mission", "Vision"], a: 1, type: 'mcq', exp: "Summaries show value; Objectives just say what you want."},
+            {q: "How many years of history should you show?", o: ["All", "Last 10-15 years", "Last 2 years", "None"], a: 1, type: 'mcq', exp: "Going back too far is irrelevant."},
+            {q: "References should be:", o: ["Included", "Available on Request", "Attached as file", "First page"], a: 1, type: 'mcq', exp: "Save space. Provide only when asked."},
+            {q: "Which is a 'Soft Skill'?", o: ["Python", "Excel", "Leadership", "SEO"], a: 2, type: 'mcq', exp: "Leadership is a behavioral skill."},
+            {q: "Which is a 'Hard Skill'?", o: ["Empathy", "Data Analysis", "Patience", "Listening"], a: 1, type: 'mcq', exp: "Data Analysis is a technical skill."},
+            {q: "Gap years should be:", o: ["Hidden", "Lied about", "Explained briefly", "Ignored"], a: 2, type: 'mcq', exp: "Honesty is key."},
+            {q: "T/F: Creative resumes are good for banking jobs.", o: ["True", "False"], a: 1, type: 'tf', exp: "False. Conservative industries prefer standard formats."},
+            {q: "T/F: Typos can get you rejected.", o: ["True", "False"], a: 0, type: 'tf', exp: "True. It shows lack of detail."},
+            {q: "T/F: You should list high school grades if you have a degree.", o: ["True", "False"], a: 1, type: 'tf', exp: "False. College degree supersedes high school."},
+            {q: "T/F: Volunteer work counts as experience.", o: ["True", "False"], a: 0, type: 'tf', exp: "True. Especially for freshers."},
+            {q: "T/F: Tables are ATS friendly.", o: ["True", "False"], a: 1, type: 'tf', exp: "False. Tables confuse parsers."},
+            {q: "T/F: Headers and Footers are read by all ATS.", o: ["True", "False"], a: 1, type: 'tf', exp: "False. Vital info in headers might be skipped."},
+            {q: "T/F: Hyperlinks work in printed resumes.", o: ["True", "False"], a: 1, type: 'tf', exp: "False. Use short URLs."},
+            {q: "T/F: PDF is safer than Word.", o: ["True", "False"], a: 0, type: 'tf', exp: "True. It preserves design."},
+            {q: "T/F: You need a LinkedIn photo.", o: ["True", "False"], a: 0, type: 'tf', exp: "True. Profiles with photos get 21x more views."},
+            {q: "Best font size for Name?", o: ["10pt", "12pt", "18-24pt", "40pt"], a: 2, type: 'mcq', exp: "Name must be the biggest element."},
+            {q: "Margins should be:", o: ["0 inches", "1 inch", "3 inches", "0.2 inches"], a: 1, type: 'mcq', exp: "Standard 1 inch margins are best."},
+            {q: "Alignment for body text?", o: ["Center", "Right", "Left", "Justified"], a: 2, type: 'mcq', exp: "Left aligned is easiest to read."},
+            {q: "How to order Education?", o: ["Oldest first", "Reverse Chronological", "Random", "Alphabetical"], a: 1, type: 'mcq', exp: "Highest degree first."},
+            {q: "GPA should be included if:", o: ["Below 2.0", "Above 3.0/4.0", "Always", "Never"], a: 1, type: 'mcq', exp: "Only show strong academic performance."},
+            {q: "Email addresses should be:", o: ["Funny", "Professional", "Complex", "Shared"], a: 1, type: 'mcq', exp: "First.Last is standard."},
+            {q: "Phone numbers need:", o: ["Country Code", "Fax extension", "Home line", "None"], a: 0, type: 'mcq', exp: "+91 for India is crucial for international firms."},
+            {q: "Keywords come from:", o: ["The sky", "Job Description", "Dictionary", "Friends"], a: 1, type: 'mcq', exp: "Match the JD vocabulary."},
+            {q: "T/F: 'Responsible for' is a strong phrase.", o: ["True", "False"], a: 1, type: 'tf', exp: "False. It is passive. Use 'Managed' or 'Led'."},
+            {q: "T/F: Networking accounts for 70% of jobs.", o: ["True", "False"], a: 0, type: 'tf', exp: "True. Referrals are powerful."},
+            {q: "T/F: You can lie about degree.", o: ["True", "False"], a: 1, type: 'tf', exp: "False. Background checks will catch you."},
+            {q: "T/F: Skill bars (graphs) are good.", o: ["True", "False"], a: 1, type: 'tf', exp: "False. ATS cannot read them and they are subjective."},
+            {q: "T/F: Portfolio links are useful.", o: ["True", "False"], a: 0, type: 'tf', exp: "True. Show your work."},
+            {q: "One word for 'Working together':", o: ["Collaboration", "Fighting", "Solo", "None"], a: 0, type: 'mcq', exp: "Collaboration."},
+            {q: "One word for 'Leading a team':", o: ["Following", "Leadership", "Watching", "Waiting"], a: 1, type: 'mcq', exp: "Leadership."},
+            {q: "Best way to start a bullet:", o: ["Noun", "Adjective", "Action Verb", "Number"], a: 2, type: 'mcq', exp: "Verbs drive action."},
+            {q: "Resume filename format:", o: ["resume.pdf", "Name_Job_Resume.pdf", "doc1.pdf", "final_final.pdf"], a: 1, type: 'mcq', exp: "Help the recruiter find your file."},
+            {q: "LinkedIn Summary limit:", o: ["20 chars", "2000 chars", "5000 chars", "No limit"], a: 1, type: 'mcq', exp: "Approx 2000 characters to tell your story."},
+            {q: "Endorsements are:", o: ["Skill validations", "Job offers", "Likes", "Shares"], a: 0, type: 'mcq', exp: "Others vouching for your skills."},
+            {q: "Recommendations are:", o: ["Written reviews", "Clicks", "Ads", "Spam"], a: 0, type: 'mcq', exp: "Written testimonials from colleagues."},
+            {q: "Open to Work frame is:", o: ["Green", "Red", "Blue", "Black"], a: 0, type: 'mcq', exp: "Green frame on LinkedIn."},
+            {q: "T/F: You should accept every connection.", o: ["True", "False"], a: 1, type: 'tf', exp: "False. Quality over quantity."},
+            {q: "T/F: Posting content increases visibility.", o: ["True", "False"], a: 0, type: 'tf', exp: "True. Be active."},
+            {q: "T/F: Commenting helps your profile.", o: ["True", "False"], a: 0, type: 'tf', exp: "True. It shows engagement."},
+            {q: "T/F: Premium is mandatory for jobs.", o: ["True", "False"], a: 1, type: 'tf', exp: "False. You can succeed with free."},
+            {q: "ATS helps companies save:", o: ["Time", "Money", "Both", "None"], a: 2, type: 'mcq', exp: "Efficiency is key."},
+            {q: "Resume is a ______ document.", o: ["Marketing", "Legal", "Fiction", "History"], a: 0, type: 'mcq', exp: "You are marketing yourself."},
+            {q: "Cover Letter length:", o: ["3-4 paras", "10 pages", "1 line", "100 words"], a: 0, type: 'mcq', exp: "Concise and structured."},
+            {q: "Personal Branding is about:", o: ["Reputation", "Logo", "Colors", "Website"], a: 0, type: 'mcq', exp: "Reputation matters most."},
+            {q: "Niche means:", o: ["General area", "Specialized focus", "Wide range", "None"], a: 1, type: 'mcq', exp: "Specialization pays more."},
+            {q: "Consistency builds:", o: ["Trust", "Confusion", "Boredom", "Fear"], a: 0, type: 'mcq', exp: "Trust comes from predictability."},
+            {q: "Networking is:", o: ["Selling", "Relationship building", "Begging", "Taking"], a: 1, type: 'mcq', exp: "Mutually beneficial relationships."},
+            {q: "Elevator Pitch time:", o: ["30-60 secs", "10 mins", "1 hour", "5 secs"], a: 0, type: 'mcq', exp: "Time of an elevator ride."},
+            {q: "STAR method stands for:", o: ["Situation Task Action Result", "Star Moon Sun", "Stop Think Act", "None"], a: 0, type: 'mcq', exp: "Behavioral interview technique."},
+            {q: "First impression time:", o: ["6-7 seconds", "1 minute", "5 minutes", "1 hour"], a: 0, type: 'mcq', exp: "Recruiters scan quickly."}
+        ];
+
+        // Combine for 70 total
+        let allPracticeQuestions = [...practiceData, ...extraQuestions]; 
+
+        // 10 Long Questions with Keywords
+        const longQuestions = [
+            {
+                id: 1,
+                q: "Analyze this bullet point: 'Worked on sales team and helped sell software.' Rewrite it to be ATS friendly and impactful.",
+                keywords: ["revenue", "increased", "generated", "percent", "%", "customer", "client"],
+                points: 10
+            },
+            {
+                id: 2,
+                q: "A fresher has no work experience. List 3 things they can put on their resume to show value.",
+                keywords: ["project", "internship", "certification", "volunteer", "hackathon", "portfolio"],
+                points: 10
+            },
+            {
+                id: 3,
+                q: "Explain the 'White Fonting' trick and why it is a bad idea.",
+                keywords: ["hide", "keywords", "white", "text", "penalize", "reject", "unethical", "ban"],
+                points: 10
+            },
+            {
+                id: 4,
+                q: "Draft a LinkedIn Headline for a Digital Marketing Fresher specializing in SEO.",
+                keywords: ["digital marketing", "seo", "specialist", "strategist", "growth", "content", "certified"],
+                points: 10
+            },
+            {
+                id: 5,
+                q: "Why is a Functional Resume often flagged by ATS?",
+                keywords: ["chronological", "dates", "hide", "gap", "format", "standard", "parse"],
+                points: 10
+            },
+            {
+                id: 6,
+                q: "Explain how to optimize the 'Skills' section for ATS.",
+                keywords: ["match", "job description", "hard skill", "soft skill", "list", "keyword"],
+                points: 10
+            },
+            {
+                id: 7,
+                q: "Write a 'Hook' sentence for a Cover Letter to Google.",
+                keywords: ["admire", "innovat", "user", "passion", "align", "mission", "contribute"],
+                points: 10
+            },
+            {
+                id: 8,
+                q: "Create a 3-step strategy to build a Personal Brand on LinkedIn.",
+                keywords: ["post", "content", "engage", "comment", "connect", "value", "consistency"],
+                points: 10
+            },
+            {
+                id: 9,
+                q: "What is the 'Hidden Job Market' and how do you access it?",
+                keywords: ["network", "referral", "connection", "unadvertised", "relationship", "linkedin"],
+                points: 10
+            },
+            {
+                id: 10,
+                q: "Critique this email ID: 'suraj_rockstar_99@yahoo.com' and suggest a fix.",
+                keywords: ["unprofessional", "professional", "name", "gmail", "first", "last"],
+                points: 10
+            }
+        ];
+
+        // --- STATE VARIABLES ---
+        let currentPQIndex = 0;
+        let score = 0;
+        let attempted = 0;
+        let maxScore = allPracticeQuestions.length + (longQuestions.length * 10); // 70 + 100 = 170
+
+        // --- INITIALIZATION ---
+        window.onload = function() {
+            renderImportantQuestions();
+            renderPracticeQuestion();
+            renderLongQuestions();
+            updateScoreBoard();
+        };
+
+        // --- FUNCTIONS ---
+
+        function updateScoreBoard() {
+            const percentage = attempted === 0 ? 0 : Math.round((score / attempted) * 100); // This is accuracy
+            // Total marks tracking
+            document.getElementById('score-display').innerText = `${score}`;
+            document.getElementById('accuracy-display').innerText = `${percentage}%`;
+            
+            // Progress based on count of questions done (Practice + Long)
+            const totalItems = allPracticeQuestions.length + longQuestions.length;
+            const progress = (attempted / totalItems) * 100;
+            document.getElementById('master-progress').style.width = `${progress}%`;
+
+            if(progress >= 100) {
+                document.getElementById('status-display').innerText = "Complete";
+                document.getElementById('completion-badge').style.display = 'block';
+            }
+        }
+
+        function renderImportantQuestions() {
+            const container = document.getElementById('imp-questions-container');
+            let html = '';
+            importantQuestions.forEach((item, index) => {
+                html += `
+                    <div style="background: #e3f2fd; padding: 10px; margin-bottom: 5px; border-radius: 4px;">
+                        <div style="color: #0d47a1;"><strong>Q${index+1}: ${item.q}</strong></div>
+                        <div style="color: #333;">A: ${item.a}</div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // --- PRACTICE LOGIC ---
+        function renderPracticeQuestion() {
+            if (currentPQIndex >= allPracticeQuestions.length) {
+                document.getElementById('pq-content').innerHTML = "<div style='text-align:center; color:green; font-size:1.5rem;'>Practice Section Completed! ⭐</div>";
+                document.getElementById('next-pq-btn').disabled = true;
+                return;
+            }
+
+            const q = allPracticeQuestions[currentPQIndex];
+            const contentDiv = document.getElementById('pq-content');
+            
+            let optionsHtml = '';
+            q.o.forEach((opt, idx) => {
+                optionsHtml += `<button class="practice-option" onclick="checkPracticeAnswer(${idx})">${opt}</button>`;
+            });
+
+            contentDiv.innerHTML = `
+                <div class="q-text">Q${currentPQIndex+1}: ${q.q}</div>
+                <div id="options-box-${currentPQIndex}">${optionsHtml}</div>
+            `;
+            
+            // Update counter
+            document.getElementById('pq-current-count').innerText = currentPQIndex + 1;
+            
+            // Reset feedback
+            const fb = document.getElementById('pq-feedback');
+            fb.style.display = 'none';
+            fb.className = 'feedback-msg';
+        }
+
+        function checkPracticeAnswer(selectedIndex) {
+            // Prevent multiple clicks
+            const q = allPracticeQuestions[currentPQIndex];
+            const optionsBox = document.getElementById(`options-box-${currentPQIndex}`);
+            const buttons = optionsBox.getElementsByTagName('button');
+            
+            if (optionsBox.getAttribute('data-answered') === 'true') return;
+            optionsBox.setAttribute('data-answered', 'true');
+
+            attempted++;
+
+            const feedback = document.getElementById('pq-feedback');
+            feedback.style.display = 'block';
+
+            if (selectedIndex === q.a) {
+                // Correct
+                score++;
+                buttons[selectedIndex].classList.add('correct');
+                feedback.innerHTML = `<strong>Excellent ⭐</strong><br>${q.exp}`;
+                feedback.classList.add('feedback-correct');
+            } else {
+                // Wrong
+                buttons[selectedIndex].classList.add('wrong');
+                buttons[q.a].classList.add('correct'); // Show correct one
+                feedback.innerHTML = `<strong>Try Again</strong><br>Correct: ${q.o[q.a]}<br><em>${q.exp}</em>`;
+                feedback.classList.add('feedback-wrong');
+            }
+
+            updateScoreBoard();
+        }
+
+        function nextPracticeQuestion() {
+            const optionsBox = document.getElementById(`options-box-${currentPQIndex}`);
+            if (optionsBox && optionsBox.getAttribute('data-answered') !== 'true') {
+                alert("Please attempt the question first!");
+                return;
+            }
+            currentPQIndex++;
+            renderPracticeQuestion();
+        }
+
+        // --- LONG QUESTION LOGIC ---
+        function renderLongQuestions() {
+            const container = document.getElementById('lq-container');
+            let html = '';
+            longQuestions.forEach((q, index) => {
+                html += `
+                    <div class="question-block">
+                        <div class="q-text">Scenario ${index + 1}: ${q.q}</div>
+                        <textarea id="lq-text-${index}" placeholder="Type your detailed answer here..."></textarea>
+                        <button class="btn-check" onclick="checkLongAnswer(${index})">Check Answer</button>
+                        <div id="lq-feedback-${index}" class="feedback-msg"></div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function checkLongAnswer(index) {
+            const q = longQuestions[index];
+            const input = document.getElementById(`lq-text-${index}`).value.toLowerCase();
+            const feedback = document.getElementById(`lq-feedback-${index}`);
+            const btn = document.querySelectorAll('.btn-check')[index];
+
+            if (input.trim().length < 5) {
+                alert("Please write a proper answer.");
+                return;
+            }
+
+            if (btn.disabled) return;
+            btn.disabled = true;
+            attempted++;
+
+            // Evaluate
+            let hitCount = 0;
+            q.keywords.forEach(k => {
+                if (input.includes(k)) hitCount++;
+            });
+
+            // Logic: Need at least 2 keywords match for partial, 3 for full
+            let awarded = 0;
+            let msg = "";
+            let cls = "";
+
+            if (hitCount >= 2) {
+                awarded = q.points;
+                score += awarded;
+                msg = `<strong>Correct / Good Analysis!</strong><br>You mentioned key concepts like: ${q.keywords.slice(0,3).join(", ")}.`;
+                cls = "feedback-correct";
+            } else {
+                msg = `<strong>Incomplete Analysis.</strong><br>Expected keywords: ${q.keywords.join(", ")}.`;
+                cls = "feedback-wrong";
+            }
+
+            feedback.innerHTML = msg;
+            feedback.className = `feedback-msg ${cls}`;
+            feedback.style.display = 'block';
+            updateScoreBoard();
+        }
+
+    </script>
+</body>
+</html>

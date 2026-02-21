@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cognitive Science Lab – Session 02</title>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --font-main: 'Patrick Hand', cursive, sans-serif;
+            --color-bg: #ffffff;
+            --color-text: #2c3e50;
+            --color-primary: #2c3e50; /* Deep Blue Heading */
+            --color-accent: #3498db;
+            --color-success-bg: #d4edda;
+            --color-success-text: #155724;
+            --color-error-bg: #f8d7da;
+            --color-error-text: #721c24;
+            --color-warning-bg: #fff3cd;
+            --color-warning-text: #856404;
+            --panel-bg: #f8f9fa;
+            --card-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            --notebook-line: #e0e0e0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+            font-size: 18px;
+        }
+
+        /* --- Header & Hero --- */
+        .hero {
+            background: linear-gradient(135deg, #fdfbf7 0%, #fff 100%);
+            padding: 2rem 1rem;
+            text-align: center;
+            border-bottom: 2px solid var(--color-primary);
+        }
+
+        .hero h1 {
+            color: var(--color-primary);
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .hero h2 {
+            color: #555;
+            font-size: 1.4rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-bar-container {
+            max-width: 600px;
+            margin: 0 auto 1.5rem;
+            background: #eee;
+            border-radius: 10px;
+            height: 12px;
+            overflow: hidden;
+            border: 1px solid #ccc;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--color-primary);
+            width: 0%; /* JS will animate */
+            transition: width 0.5s ease;
+        }
+
+        .objectives {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            font-size: 0.95rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .obj-tag {
+            background: #eef;
+            padding: 4px 12px;
+            border-radius: 15px;
+            border: 1px solid #ccf;
+        }
+
+        .start-btn {
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-family: var(--font-main);
+            font-size: 1.2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #1a252f;
+            transition: transform 0.1s;
+        }
+
+        .start-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #1a252f;
+        }
+
+        /* --- Sticky Live Score Panel --- */
+        .score-panel {
+            position: sticky;
+            top: 0;
+            background: #fff;
+            border-bottom: 2px solid var(--color-primary);
+            padding: 10px;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .score-item {
+            text-align: center;
+        }
+        .score-val { font-size: 1.2rem; color: var(--color-primary); }
+        .score-label { font-size: 0.8rem; text-transform: uppercase; color: #777; }
+
+        /* --- Layout --- */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* --- Lecture / Notebook Sections --- */
+        .section-header {
+            background: var(--color-primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin: 40px 0 20px;
+            font-size: 1.4rem;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.2);
+        }
+
+        .notebook-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            background-image: linear-gradient(var(--notebook-line) 1px, transparent 1px);
+            background-size: 100% 2em; /* Ruled lines */
+            line-height: 2em;
+        }
+        
+        .notebook-card h3 {
+            background: #fff; /* Cover lines for header */
+            display: inline-block;
+            padding-right: 10px;
+            color: var(--color-primary);
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--color-accent);
+        }
+
+        .notebook-card p {
+            margin-bottom: 1em;
+        }
+
+        .example-box {
+            background: #fff8e1; /* Pastel yellow */
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .memory-tip {
+            background: #e8f5e9; /* Pastel green */
+            border-left: 5px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+
+        .static-image-box {
+            border: 2px dashed #bdc3c7;
+            background: #fdfdfd;
+            height: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            color: #7f8c8d;
+            text-align: center;
+            padding: 10px;
+        }
+        .static-image-box strong { display: block; margin-top: 10px; color: #333; }
+        .static-image-box .icon { font-size: 40px; }
+
+        /* --- Question Styles --- */
+        .question-block {
+            background: white;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .question-block.active {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 15px rgba(44, 62, 80, 0.1);
+        }
+
+        .q-text {
+            font-size: 1.15rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .option-btn {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            padding: 12px 15px;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            font-family: var(--font-main);
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover {
+            background: #e2e6ea;
+        }
+
+        .option-btn.correct {
+            background: var(--color-success-bg);
+            border-color: #28a745;
+            color: var(--color-success-text);
+        }
+
+        .option-btn.wrong {
+            background: var(--color-error-bg);
+            border-color: #dc3545;
+            color: var(--color-error-text);
+        }
+
+        .feedback-panel {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none; /* Hidden by default */
+            font-size: 0.95rem;
+        }
+        
+        .feedback-panel.show { display: block; animation: fadeIn 0.3s; }
+
+        .correct-feedback { background: var(--color-success-bg); color: var(--color-success-text); border: 1px solid #c3e6cb; }
+        .wrong-feedback { background: var(--color-error-bg); color: var(--color-error-text); border: 1px solid #f5c6cb; }
+
+        /* --- Long Question Styles --- */
+        .long-q-area textarea {
+            width: 100%;
+            height: 120px;
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            font-family: var(--font-main);
+            font-size: 1rem;
+            margin-bottom: 10px;
+            resize: vertical;
+        }
+
+        .check-btn {
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: var(--font-main);
+            font-size: 1rem;
+        }
+        
+        .model-answer {
+            margin-top: 15px;
+            padding: 15px;
+            background: #eff;
+            border-left: 4px solid var(--color-accent);
+            display: none;
+        }
+
+        .model-answer ul { margin-left: 20px; margin-top: 5px; }
+
+        /* --- Footer --- */
+        footer {
+            text-align: center;
+            padding: 30px;
+            background: #2c3e50;
+            color: white;
+            margin-top: 50px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive */
+        @media (min-width: 600px) {
+            .options-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. Header / Hero -->
+    <header class="hero">
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="levelProgress"></div>
+        </div>
+        <h1>Cognitive Science Lab – Session 02</h1>
+        <h2>Active Recall & Spaced Repetition Systems</h2>
+        <div class="objectives">
+            <span class="obj-tag">Basic: Concepts</span>
+            <span class="obj-tag">Medium: Forgetting Curve</span>
+            <span class="obj-tag">Advanced: Algorithms</span>
+            <span class="obj-tag">Expert: Mastery</span>
+        </div>
+        <p><strong>Duration:</strong> ~45 Minutes | <strong>Goal:</strong> Scientific Memory Architecture</p>
+        <br>
+        <button class="start-btn" id="startBtn">Start Memory Lab Session</button>
+    </header>
+
+    <!-- 2. Sticky Live Score Panel -->
+    <div class="score-panel" id="scorePanel">
+        <div class="score-item">
+            <div class="score-val" id="scoreCorrect">0</div>
+            <div class="score-label">Correct</div>
+        </div>
+        <div class="score-item">
+            <div class="score-val" id="scoreWrong">0</div>
+            <div class="score-label">Wrong</div>
+        </div>
+        <div class="score-item">
+            <div class="score-val" id="scoreTotal">0</div>
+            <div class="score-label">Attempted</div>
+        </div>
+        <div class="score-item">
+            <div class="score-val" id="scorePercent">0%</div>
+            <div class="score-label">Accuracy</div>
+        </div>
+    </div>
+
+    <div class="container" id="mainContainer">
+        <!-- Content will be injected here via JS -->
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>Designed & Created by SHRISHANT YADAV</p>
+        <p style="font-size: 0.9em; opacity: 0.8;">ShanEduHub</p>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- STATE MANAGEMENT ---
+            const state = {
+                correct: 0,
+                wrong: 0,
+                total: 0,
+                marks: 0
+            };
+
+            // --- DATA: LECTURE CONTENT ---
+            const lectureContent = [
+                {
+                    level: "BASIC",
+                    title: "Lecture 2.1: The Mechanism of Active Recall",
+                    content: `
+                        <h3>What is Active Recall?</h3>
+                        <p>Most students study by <strong>passive review</strong>: reading notes, highlighting text, or watching lectures repeatedly. Cognitive science proves this is the <em>least effective</em> way to learn.</p>
+                        <p><strong>Active Recall</strong> is the process of retrieving information from your brain without looking at the source. It is an act of <em>testing yourself</em>.</p>
+                        <div class="example-box">
+                            <strong>Indian Daily Life Example:</strong><br>
+                            Think of a "Kiran General Store" list. If you just read the list 10 times, you might forget half the items at the shop. But if you read it once, hide it, and try to write it down from memory, you force your brain to create stronger neural paths. That struggle to remember is where learning happens.
+                        </div>
+                        <div class="static-image-box">
+                            <span class="icon">🧠</span>
+                            <strong>Figure 2.1: Neural Pathway Strengthening</strong>
+                            <small>Diagram showing thin weak connections becoming thick strong cables during retrieval effort.</small>
+                        </div>
+                        <p><strong>Scientific Principle:</strong> Every time you retrieve a memory, you alter it. You make the path to that memory stronger (Long-Term Potentiation).</p>
+                    `
+                },
+                {
+                    level: "MEDIUM",
+                    title: "Lecture 2.2: The Forgetting Curve & Spacing",
+                    content: `
+                        <h3>The Problem: Memory Decay</h3>
+                        <p>Hermann Ebbinghaus discovered that we forget ~50% of what we learn within an hour and ~70% within 24 hours. This is the <strong>Forgetting Curve</strong>.</p>
+                        <h3>The Solution: Spaced Repetition</h3>
+                        <p>To stop the decay, you must interrupt the forgetting curve at specific intervals. This is called the <strong>Spacing Effect</strong>.</p>
+                        <div class="static-image-box">
+                            <span class="icon">📉 ➡️ 📈</span>
+                            <strong>Figure 2.2: The Ebbinghaus Forgetting Curve</strong>
+                            <small>Graph showing memory retention dropping sharply, then flattened by spaced reviews (Day 1, 3, 7).</small>
+                        </div>
+                        <div class="memory-tip">
+                            <strong>Memory Tip:</strong> Never cram for 5 hours in one day. Study 1 hour a day for 5 days. Same time, 10x better retention.
+                        </div>
+                    `
+                },
+                {
+                    level: "ADVANCED",
+                    title: "Lecture 2.3: Confidence-Based Systems",
+                    content: `
+                        <h3>The Mastery Threshold</h3>
+                        <p>Not all information needs the same schedule. Difficult concepts need frequent review; easy ones need rare review.</p>
+                        <p><strong>The Leitner System:</strong> A physical card box method.</p>
+                        <ul>
+                            <li><strong>Box 1:</strong> Every day (New/Hard items)</li>
+                            <li><strong>Box 2:</strong> Every 3 days (Known items)</li>
+                            <li><strong>Box 3:</strong> Every 7 days (Mastered items)</li>
+                        </ul>
+                        <div class="example-box">
+                            <strong>UPSC/JEE Context:</strong><br>
+                            If you know the "Date of Battle of Plassey" perfectly, reviewing it daily is a waste of time. Move it to a monthly review. If you keep forgetting "Quantum Numbers", keep that in the daily cycle.
+                        </div>
+                    `
+                },
+                {
+                    level: "EXPERT",
+                    title: "Lecture 2.4: Algorithmic Optimization",
+                    content: `
+                        <h3>Personal Spaced Algorithms</h3>
+                        <p>Modern software (like Anki or SuperMemo) automates the Leitner system using algorithms (like SM-2). They calculate the "optimal interval" based on your ease of answering.</p>
+                        <p><strong>Goal Tracking Integration:</strong></p>
+                        <p>High-performance learning requires linking memory to goals. "I need 90% retention on Organic Chemistry by March 1st." The algorithm adjusts the spacing to meet that deadline.</p>
+                        <div class="static-image-box">
+                            <span class="icon">⚙️</span>
+                            <strong>Figure 2.3: The SuperMemo SM-2 Algorithm Logic</strong>
+                            <small>Flowchart showing: Input Grade (0-5) -> Calculate New Interval -> Schedule Next Review.</small>
+                        </div>
+                    `
+                }
+            ];
+
+            // --- DATA: 30 IMPORTANT QUESTIONS (Exam-Oriented) ---
+            const importantQuestions = [
+                { q: "What is the primary difference between recognition and recall?", a: "Recognition uses cues (seeing the answer); Recall requires retrieval without cues." },
+                { q: "Who discovered the Forgetting Curve?", a: "Hermann Ebbinghaus." },
+                { q: "What is the 'Testing Effect'?", a: "The finding that long-term memory is increased when some of the learning period is devoted to retrieving the to-be-remembered information." },
+                { q: "Define 'Desirable Difficulty'.", a: "A learning task that requires a considerable but desirable amount of effort, thereby improving long-term performance." },
+                { q: "What is the optimal first review interval after learning new material?", a: "Within 24 hours." },
+                { q: "In the Leitner system, what happens when you answer a card incorrectly?", a: "It moves back to Box 1 (Daily review)." },
+                { q: "What biological process strengthens synapses during active recall?", a: "Long-Term Potentiation (LTP)." },
+                { q: "Why is rereading considered a 'low utility' study technique?", a: "It creates a fluctuating illusion of competence without strengthening neural retrieval paths." },
+                { q: "What is 'Interleaving'?", a: "Mixing different topics or forms of practice in order to facilitate learning." },
+                { q: "How does sleep affect Spaced Repetition?", a: "Sleep consolidates short-term memories into long-term storage, making spacing effective." },
+                { q: "What is the 'Illusion of Competence'?", a: "Thinking you know material because it seems familiar when reading, but failing to retrieve it later." },
+                { q: "What is the SM-2 Algorithm?", a: "The specific algorithm used by SuperMemo (and Anki) to calculate optimal review intervals." },
+                { q: "Define 'Metacognition' in the context of memory.", a: "Thinking about one's own thinking; assessing how well you actually know a topic." },
+                { q: "What is 'Massed Practice' commonly known as?", a: "Cramming." },
+                { q: "Why does cramming fail for long-term retention?", a: "It relies on short-term memory limits and doesn't allow time for synaptic consolidation." },
+                { q: "What is 'Elaborative Interrogation'?", a: "Asking 'why' a fact is true to create more neural connections." },
+                { q: "How does 'Dual Coding' help memory?", a: "Combining verbal and visual information creates two pathways for retrieval." },
+                { q: "What is the 'Serial Position Effect'?", a: "The tendency to recall the first and last items in a series best, and the middle items worst." },
+                { q: "What represents the vertical axis of the Forgetting Curve?", a: "Retention (Percentage of knowledge remembered)." },
+                { q: "What represents the horizontal axis of the Forgetting Curve?", a: "Time (Days/Weeks elapsed)." },
+                { q: "What is 'Overlearning'?", a: "Continuing to practice beyond the point of initial mastery." },
+                { q: "Is 'Highlighting' an active or passive strategy?", a: "Passive." },
+                { q: "What is the 'Generation Effect'?", a: "Information is better remembered if it is generated from one's own mind rather than simply read." },
+                { q: "How does stress affect memory retrieval?", a: "High cortisol levels can block access to memory consolidation and retrieval." },
+                { q: "What is a 'Mnemonic Device'?", a: "A tool that helps you remember an idea or phrase (like acronyms)." },
+                { q: "What is the role of the Hippocampus in this process?", a: "It is essential for converting short-term memories into long-term memories." },
+                { q: "Can Spaced Repetition be used for motor skills?", a: "Yes, spacing physical practice is more effective than massed practice." },
+                { q: "What is 'Distributed Practice'?", a: "Another term for Spaced Repetition." },
+                { q: "What happens to the forgetting curve after each review?", a: "It flattens out, meaning memory decays much slower." },
+                { q: "What is the ultimate goal of Spaced Repetition?", a: "To maximize retention while minimizing study time." }
+            ];
+
+            // --- DATA: 70 PRACTICE QUESTIONS (Heavy Advanced) ---
+            // Generating logically to ensure 70 distinct items without massive code bloat, but maintaining quality.
+            const practiceQuestions = [
+                // BASIC (1-10)
+                { q: "Active Recall involves ____ info from memory.", opts: ["Reading", "Retrieving", "Highlighting", "Ignoring"], a: "Retrieving", exp: "It is the act of pulling info out." },
+                { q: "Spaced Repetition prevents ____.", opts: ["Learning", "Forgetting", "Sleeping", "Eating"], a: "Forgetting", exp: "It counters the forgetting curve." },
+                { q: "Who created the Forgetting Curve?", opts: ["Pavlov", "Skinner", "Ebbinghaus", "Freud"], a: "Ebbinghaus", exp: "Hermann Ebbinghaus, 1885." },
+                { q: "Cramming is also called ____ practice.", opts: ["Spaced", "Massed", "Interleaved", "Retrieval"], a: "Massed", exp: "Massed practice is grouping all study into one block." },
+                { q: "Which is better?", opts: ["Rereading", "Self-Testing", "Underlining", "Copying"], a: "Self-Testing", exp: "Testing strengthens connections." },
+                { q: "Box 1 in Leitner system is for ____ review.", opts: ["Daily", "Weekly", "Monthly", "Never"], a: "Daily", exp: "New or hard items go in Box 1." },
+                { q: "Active Recall requires ____ effort.", opts: ["Zero", "Mental", "Physical", "No"], a: "Mental", exp: "The strain is good for learning." },
+                { q: "Does sleep help memory?", opts: ["Yes", "No", "Maybe", "Only for kids"], a: "Yes", exp: "Sleep consolidates memory." },
+                { q: "Flashcards are a tool for?", opts: ["Drawing", "Active Recall", "Writing", "Sleeping"], a: "Active Recall", exp: "They force you to answer before looking." },
+                { q: "Is highlighting effective?", opts: ["Very", "The Best", "Low Utility", "Essential"], a: "Low Utility", exp: "It is passive processing." },
+
+                // MEDIUM (11-30)
+                { q: "The spacing effect suggests studying is best when ____ over time.", opts: ["Spread out", "Grouped", "Hidden", "Rushed"], a: "Spread out", exp: "Gaps allow for forgetting and re-strengthening." },
+                { q: "Retrieval practice induces ____.", opts: ["LTP", "Sleep", "Hunger", "Boredom"], a: "LTP", exp: "Long-Term Potentiation." },
+                { q: "If you know a card well, you should review it ____.", opts: ["More often", "Less often", "Never", "Immediately"], a: "Less often", exp: "Efficiency dictates focusing on weak areas." },
+                { q: "Reviewing immediately after reading is ____.", opts: ["Ineffective", "Crucial", "Dangerous", "Hard"], a: "Ineffective", exp: "You need to allow some forgetting to occur first." },
+                { q: "Which interval is part of a standard Fibonacci spacing schedule?", opts: ["1, 2, 3, 5", "1, 1, 1, 1", "10, 20, 30", "5, 5, 5"], a: "1, 2, 3, 5", exp: "Fibonacci is often used for expanding intervals." },
+                { q: "Anki is software for ____.", opts: ["Writing", "Spaced Repetition", "Math", "Drawing"], a: "Spaced Repetition", exp: "It digitizes flashcards." },
+                { q: "The 'Illusion of Competence' happens when?", opts: ["You test yourself", "You read notes", "You sleep", "You run"], a: "You read notes", exp: "Recognition feels like knowledge." },
+                { q: "Ebbinghaus used ____ to test memory.", opts: ["Poems", "Nonsense Syllables", "Pictures", "Faces"], a: "Nonsense Syllables", exp: "To avoid pre-existing associations." },
+                { q: "What percentage is lost after 20 mins approx?", opts: ["10%", "40%", "90%", "0%"], a: "40%", exp: "Steep initial drop." },
+                { q: "Interleaving means?", opts: ["Mixing topics", "Focusing on one", "Sleeping", "Eating"], a: "Mixing topics", exp: "Study A, then B, then C, not AAA BBB CCC." },
+                { q: "Desirable Difficulty means the task should be?", opts: ["Impossible", "Easy", "Challenging", "Boring"], a: "Challenging", exp: "Hard enough to trigger adaptation." },
+                { q: "Feedback is crucial because?", opts: ["It feels good", "It corrects errors", "It costs money", "It is slow"], a: "It corrects errors", exp: "Recall without feedback cements errors." },
+                { q: "Forgetting is ____ for learning.", opts: ["Bad", "Essential", "Neutral", "Fatal"], a: "Essential", exp: "It signals the brain to reinforce importance upon retrieval." },
+                { q: "What is the best time to review?", opts: ["Just before forgetting", "After forgetting", "Immediately", "Never"], a: "Just before forgetting", exp: "Maximum strengthening occurs here." },
+                { q: "Leitner System uses how many boxes typically?", opts: ["1", "3 to 5", "100", "0"], a: "3 to 5", exp: "Usually 3 or 5 stages of mastery." },
+                { q: "Context-dependent memory means?", opts: ["Environment matters", "Time matters", "Food matters", "Nothing matters"], a: "Environment matters", exp: "Recall is better in the environment you learned in." },
+                { q: "State-dependent memory relates to?", opts: ["Mood/Physiology", "Geography", "Politics", "Weather"], a: "Mood/Physiology", exp: "Internal state affects retrieval." },
+                { q: "A 'Savings Score' in Ebbinghaus terms is?", opts: ["Money saved", "Time saved relearning", "Data saved", "Lives saved"], a: "Time saved relearning", exp: "It takes less time to relearn forgotten material." },
+                { q: "Passive learning relies on?", opts: ["Recognition", "Recall", "Generation", "Construction"], a: "Recognition", exp: "Seeing and nodding." },
+                { q: "Active learning relies on?", opts: ["Recognition", "Recall", "Ignoring", "Sleeping"], a: "Recall", exp: "Pulling out info." },
+
+                // ADVANCED (31-70) - 40 Questions
+                { q: "The SM-2 algorithm uses a grade scale of?", opts: ["0-5", "1-10", "A-F", "1-100"], a: "0-5", exp: "0=blackout, 5=perfect." },
+                { q: "Concept: 'Ease Factor' in algorithms determines?", opts: ["Interval multiplier", "Font size", "Color", "Volume"], a: "Interval multiplier", exp: "How fast the interval grows." },
+                { q: "If Ease Factor drops below 1.3, what happens?", opts: ["Intervals shrink", "Intervals grow", "App crashes", "Nothing"], a: "Intervals shrink", exp: "You are stuck in 'low retention hell'." },
+                { q: "Spaced Repetition applies to Procedural Memory?", opts: ["Yes", "No", "Only Declarative", "Only Visual"], a: "Yes", exp: "Musicians use it for practice." },
+                { q: "The 'Generation Effect' supports Active Recall because?", opts: ["Creating implies understanding", "It is faster", "It is easier", "It is passive"], a: "Creating implies understanding", exp: "You build the path yourself." },
+                { q: "Metacognitive judgment of learning is often?", opts: ["Accurate", "Inaccurate", "Perfect", "Irrelevant"], a: "Inaccurate", exp: "We are bad at judging what we know." },
+                { q: "In exam prep, 'blocked practice' leads to?", opts: ["False confidence", "Mastery", "Speed", "Agility"], a: "False confidence", exp: "You memorize the pattern, not the solution." },
+                { q: "Neurogenesis is linked to?", opts: ["New memories", "Forgetting", "Sleep loss", "Aging"], a: "New memories", exp: "Creation of new neurons in hippocampus." },
+                { q: "Synaptic plasticity refers to?", opts: ["Strength change", "Brain size", "Fluidity", "Surgery"], a: "Strength change", exp: "Connections get stronger/weaker." },
+                { q: "Consolidation theory suggests memories need ____ to stabilize.", opts: ["Time", "Food", "Light", "Sound"], a: "Time", exp: "Stabilization takes hours/days." },
+                { q: "Retroactive Interference is?", opts: ["New blocks old", "Old blocks new", "Both", "Neither"], a: "New blocks old", exp: "New learning overwrites old memory." },
+                { q: "Proactive Interference is?", opts: ["Old blocks new", "New blocks old", "Both", "Neither"], a: "Old blocks new", exp: "Old habits make learning new ones hard." },
+                { q: "Spacing reduces interference by?", opts: ["Distinct contexts", "Deleting memory", "Speeding up", "Slowing down"], a: "Distinct contexts", exp: "Separating events makes them distinct." },
+                { q: "The 'Primacy Effect' is due to?", opts: ["LTM transfer", "STM limits", "Fatigue", "Boredom"], a: "LTM transfer", exp: "First items got rehearsed most." },
+                { q: "The 'Recency Effect' is due to?", opts: ["STM availability", "LTM transfer", "Intelligence", "Luck"], a: "STM availability", exp: "Last items are still in working memory." },
+                { q: "To move Recency items to LTM, you must?", opts: ["Delay recall", "Recall instantly", "Ignore them", "Sing them"], a: "Delay recall", exp: "Wait for STM to fade." },
+                { q: "Elaborative Rehearsal involves?", opts: ["Meaning/Association", "Repetition", "Sound", "Rhythm"], a: "Meaning/Association", exp: "Connecting to known concepts." },
+                { q: "Maintenance Rehearsal involves?", opts: ["Rote repetition", "Deep thinking", "Analysis", "Logic"], a: "Rote repetition", exp: "Keeping it in mind temporarily." },
+                { q: "Which is better for LTM?", opts: ["Elaborative", "Maintenance", "Passive", "None"], a: "Elaborative", exp: "Deep processing." },
+                { q: "Dual Coding Theory suggests combining?", opts: ["Verbal + Visual", "Audio + Smell", "Taste + Touch", "Math + Art"], a: "Verbal + Visual", exp: "Allan Paivio's theory." },
+                { q: "The 'Testing Effect' is robust across?", opts: ["Ages/Subjects", "Only Math", "Only History", "Only Children"], a: "Ages/Subjects", exp: "It works universally." },
+                { q: "Reviewing too early (before forgetting) results in?", opts: ["Low efficiency", "High efficiency", "Perfect memory", "Total loss"], a: "Low efficiency", exp: "Brain doesn't work hard enough." },
+                { q: "Reviewing too late results in?", opts: ["Relearning needed", "Consolidation", "Mastery", "Success"], a: "Relearning needed", exp: "The trace is gone." },
+                { q: "An 'Expanding Schedule' means?", opts: ["Intervals get longer", "Intervals get shorter", "Intervals stay same", "Random intervals"], a: "Intervals get longer", exp: "1, 3, 7, 16, 35 days..." },
+                { q: "Fixed Interval Schedules are?", opts: ["Less optimal", "More optimal", "Perfect", "Required"], a: "Less optimal", exp: "They don't account for increasing strength." },
+                { q: "The forgetting curve allows us to predict?", opts: ["Review dates", "Lottery numbers", "Weather", "Stock market"], a: "Review dates", exp: "Mathematical predictability of decay." },
+                { q: "Adaptive algorithms prioritize?", opts: ["Weakest items", "Strongest items", "Newest items", "Oldest items"], a: "Weakest items", exp: "Focus where failure is likely." },
+                { q: "What is 'Churn' in flashcards?", opts: ["Deleting cards", "Adding too many", "Mixing cards", "Losing cards"], a: "Adding too many", exp: "Review load exceeds time available." },
+                { q: "Leech cards are?", opts: ["Cards you always fail", "Cards you know", "Blank cards", "New cards"], a: "Cards you always fail", exp: "They suck time and should be deleted/reformulated." },
+                { q: "The 'Minimum Information Principle' says?", opts: ["Keep Qs simple", "Write essays", "Combine topics", "Be vague"], a: "Keep Qs simple", exp: "1 card = 1 fact." },
+                { q: "Complex items should be?", opts: ["Broken down", "Memorized whole", "Ignored", "Skipped"], a: "Broken down", exp: "Chunking into atomic facts." },
+                { q: "Implicit memory is?", opts: ["Unconscious", "Conscious", "Declared", "Verbal"], a: "Unconscious", exp: "Skills, habits." },
+                { q: "Explicit memory is?", opts: ["Conscious", "Unconscious", "Muscle", "Reflex"], a: "Conscious", exp: "Facts, events." },
+                { q: "Active Recall mainly targets?", opts: ["Explicit Memory", "Implicit Memory", "Reflexes", "None"], a: "Explicit Memory", exp: "Declarative knowledge retrieval." },
+                { q: "Cognitive Load Theory warns against?", opts: ["Overloading working memory", "Underloading", "Sleeping", "Studying"], a: "Overloading working memory", exp: "Too much at once kills learning." },
+                { q: "Intrinsic load is?", opts: ["Subject difficulty", "Distractions", "Teaching style", "Noise"], a: "Subject difficulty", exp: "Calculus is harder than addition." },
+                { q: "Extraneous load is?", opts: ["Bad teaching/materials", "Subject difficulty", "Schema", "IQ"], a: "Bad teaching/materials", exp: "Poorly designed flashcards." },
+                { q: "Germane load is?", opts: ["Effort to learn", "Noise", "Distraction", "Waste"], a: "Effort to learn", exp: "The good effort of building schemas." },
+                { q: "Active Recall increases ____ load.", opts: ["Germane", "Extraneous", "Bad", "Wasteful"], a: "Germane", exp: "It is the effort that creates schemas." },
+                { q: "Final Q: What is the key to memory?", opts: ["Effortful Retrieval", "Easy Reading", "Expensive Books", "Good Pens"], a: "Effortful Retrieval", exp: "No pain, no gain." }
+            ];
+
+            // --- DATA: 10 ADVANCED LONG QUESTIONS (Keyword Evaluation) ---
+            const longQuestions = [
+                {
+                    q: "Design a basic Spaced Repetition Schedule for a student with an exam in 30 days.",
+                    keywords: ["1", "3", "7", "21", "review", "interval", "increasing"],
+                    model: ["Study Day 0", "Review Day 1", "Review Day 3", "Review Day 7", "Review Day 21", "Final Review Day 29"]
+                },
+                {
+                    q: "Explain why the Forgetting Curve is exponential and not linear.",
+                    keywords: ["fast", "initial", "drop", "decay", "slows", "down", "logarithmic", "exponential"],
+                    model: ["Memory loss is fastest immediately after learning", "50% lost in an hour", "Decay slows down over time", "Curve flattens"]
+                },
+                {
+                    q: "Differentiate between Active Recall and Passive Review with examples.",
+                    keywords: ["retrieval", "testing", "reading", "highlighting", "recognition", "generation"],
+                    model: ["Active Recall = Testing/Retrieving (Flashcards)", "Passive = Reading/Highlighting", "Active builds neural paths", "Passive relies on recognition"]
+                },
+                {
+                    q: "How would you handle 'Leech' cards (cards you keep forgetting) in a spaced system?",
+                    keywords: ["delete", "rewrite", "break", "simplify", "mnemonics", "context"],
+                    model: ["Identify the leech", "Do not keep reviewing", "Delete or Reformulate", "Break into smaller chunks", "Use mnemonics"]
+                },
+                {
+                    q: "Explain the biological basis of Spaced Repetition (Synaptic Level).",
+                    keywords: ["neuron", "synapse", "strength", "ltp", "consolidation", "protein"],
+                    model: ["Neurons fire together wire together", "Long-Term Potentiation (LTP)", "Consolidation takes time", "Repeated firing strengthens synaptic efficiency"]
+                },
+                {
+                    q: "Why is 'Interleaving' often difficult for students to accept despite its benefits?",
+                    keywords: ["hard", "confusing", "blocked", "illusion", "competence", " frustration"],
+                    model: ["Interleaving feels harder", "Blocked practice feels smoother", "Students mistake ease for learning", "Desirable difficulty is uncomfortable"]
+                },
+                {
+                    q: "Design a memory strategy for a medical student memorizing drug names.",
+                    keywords: ["anki", "flashcards", "image", "mnemonic", "active", "spacing"],
+                    model: ["Use Anki/Digital SRS", "Use Mnemonics for names", "Use Images for association", "Daily active recall"]
+                },
+                {
+                    q: "Analyze the relationship between Confidence and Retention intervals.",
+                    keywords: ["high", "confidence", "long", "interval", "low", "short"],
+                    model: ["High confidence = Longer interval", "Low confidence = Shorter interval", "Algorithm adjusts based on ease"]
+                },
+                {
+                    q: "What is the 'Illusion of Competence' and how does Active Recall destroy it?",
+                    keywords: ["familiarity", "recognition", "proof", "fail", "reality", "check"],
+                    model: ["Illusion = Thinking you know because you recognize it", "Active Recall reveals ignorance", "You fail to retrieve, proving you don't know"]
+                },
+                {
+                    q: "Construct a daily workflow for a competitive aspirant using these techniques.",
+                    keywords: ["morning", "review", "new", "night", "recall", "sleep"],
+                    model: ["Morning: Review backlog (Spaced Repetition)", "Day: Study new material", "Evening: Quick active recall of new material", "Sleep: Consolidation"]
+                }
+            ];
+
+            // --- UI RENDERING FUNCTIONS ---
+            const container = document.getElementById('mainContainer');
+
+            function render() {
+                // 1. Render Lecture Sections
+                lectureContent.forEach(section => {
+                    const sectionDiv = document.createElement('div');
+                    sectionDiv.innerHTML = `<h2 class="section-header">${section.level}</h2>`;
+                    
+                    const card = document.createElement('div');
+                    card.className = 'notebook-card';
+                    card.innerHTML = section.title + section.content;
+                    
+                    sectionDiv.appendChild(card);
+                    container.appendChild(sectionDiv);
+                });
+
+                // 2. Render Important Questions
+                const impHeader = document.createElement('h2');
+                impHeader.className = 'section-header';
+                impHeader.innerText = "30 IMPORTANT CONCEPTS";
+                container.appendChild(impHeader);
+
+                importantQuestions.forEach((item, index) => {
+                    const qBox = document.createElement('div');
+                    qBox.className = 'notebook-card';
+                    qBox.innerHTML = `
+                        <div style="color:var(--color-primary); font-weight:bold;">Q${index+1}: ${item.q}</div>
+                        <div style="margin-top:10px; color:#555;">A: ${item.a}</div>
+                    `;
+                    container.appendChild(qBox);
+                });
+
+                // 3. Render Practice Questions
+                const pracHeader = document.createElement('h2');
+                pracHeader.className = 'section-header';
+                pracHeader.innerText = "70 PRACTICE QUESTIONS (LAB DRILL)";
+                container.appendChild(pracHeader);
+
+                practiceQuestions.forEach((item, index) => {
+                    const qBlock = document.createElement('div');
+                    qBlock.className = 'question-block';
+                    qBlock.id = `pq-${index}`;
+                    
+                    let html = `<div class="q-text">${index+1}. ${item.q}</div><div class="options-grid">`;
+                    item.opts.forEach(opt => {
+                        html += `<button class="option-btn" onclick="checkPractice(${index}, '${opt}', this)">${opt}</button>`;
+                    });
+                    html += `</div>
+                        <div class="feedback-panel" id="fb-${index}">
+                            <strong>Reasoning:</strong> ${item.exp}
+                        </div>`;
+                    
+                    qBlock.innerHTML = html;
+                    container.appendChild(qBlock);
+                });
+
+                // 4. Render Long Questions
+                const longHeader = document.createElement('h2');
+                longHeader.className = 'section-header';
+                longHeader.innerText = "10 ADVANCED ANALYSIS SCENARIOS";
+                container.appendChild(longHeader);
+
+                longQuestions.forEach((item, index) => {
+                    const lBlock = document.createElement('div');
+                    lBlock.className = 'notebook-card';
+                    lBlock.innerHTML = `
+                        <div class="q-text">Scenario ${index+1}: ${item.q}</div>
+                        <div class="long-q-area">
+                            <textarea id="lq-in-${index}" placeholder="Type your analysis here..."></textarea>
+                            <button class="check-btn" onclick="checkLong(${index})">Submit Analysis</button>
+                        </div>
+                        <div class="model-answer" id="lq-mod-${index}">
+                            <strong>Evaluation:</strong> <span id="lq-score-${index}"></span>
+                            <br><br>
+                            <strong>Key Points Required:</strong>
+                            <ul>${item.model.map(m => `<li>${m}</li>`).join('')}</ul>
+                        </div>
+                    `;
+                    container.appendChild(lBlock);
+                });
+
+                // 5. Revision Section
+                const revHeader = document.createElement('h2');
+                revHeader.className = 'section-header';
+                revHeader.innerText = "FINAL REVISION";
+                container.appendChild(revHeader);
+                
+                const revCard = document.createElement('div');
+                revCard.className = 'notebook-card';
+                revCard.innerHTML = `
+                    <h3>Quick Recall Summary</h3>
+                    <ul>
+                        <li><strong>Active Recall:</strong> Testing > Rereading.</li>
+                        <li><strong>Spacing:</strong> Review at 1, 3, 7, 21 days.</li>
+                        <li><strong>Forgetting Curve:</strong> Decay is exponential; spacing flattens it.</li>
+                        <li><strong>Difficulty:</strong> Must be desirable. If it's too easy, you aren't learning.</li>
+                    </ul>
+                    <button class="start-btn" onclick="window.scrollTo(0,0)" style="margin-top:20px; font-size:1rem;">Restart Session</button>
+                `;
+                container.appendChild(revCard);
+            }
+
+            // --- INTERACTION LOGIC ---
+            
+            // Practice Question Logic
+            window.checkPractice = (index, selected, btn) => {
+                const q = practiceQuestions[index];
+                const fb = document.getElementById(`fb-${index}`);
+                const parent = document.getElementById(`pq-${index}`);
+                
+                // Prevent multiple clicks
+                if(parent.classList.contains('answered')) return;
+                parent.classList.add('answered');
+
+                state.total++;
+
+                if(selected === q.a) {
+                    state.correct++;
+                    state.marks += 2; // Arbitrary scoring
+                    btn.classList.add('correct');
+                    fb.classList.add('show', 'correct-feedback');
+                    fb.innerHTML = `<strong>Correct! Excellent.</strong><br>${q.exp}`;
+                } else {
+                    state.wrong++;
+                    btn.classList.add('wrong');
+                    
+                    // Highlight correct
+                    const buttons = parent.querySelectorAll('.option-btn');
+                    buttons.forEach(b => {
+                        if(b.innerText === q.a) b.classList.add('correct');
+                    });
+
+                    fb.classList.add('show', 'wrong-feedback');
+                    fb.innerHTML = `<strong>Incorrect.</strong><br>Answer: ${q.a}<br>${q.exp}`;
+                }
+                updateScore();
+            };
+
+            // Long Question Logic
+            window.checkLong = (index) => {
+                const input = document.getElementById(`lq-in-${index}`).value.toLowerCase();
+                const model = document.getElementById(`lq-mod-${index}`);
+                const scoreSpan = document.getElementById(`lq-score-${index}`);
+                const q = longQuestions[index];
+                
+                if(input.length < 5) {
+                    alert("Please write a detailed answer.");
+                    return;
+                }
+
+                state.total++;
+                
+                // Keyword matching
+                let hits = 0;
+                q.keywords.forEach(k => {
+                    if(input.includes(k)) hits++;
+                });
+
+                let resultText = "";
+                if(hits >= 3) {
+                    state.correct++;
+                    state.marks += 5;
+                    resultText = `<span style="color:green">Acceptable Analysis (${hits} keywords found)</span>`;
+                } else {
+                    state.wrong++;
+                    resultText = `<span style="color:red">Needs Improvement (${hits} keywords found)</span>`;
+                }
+
+                model.style.display = "block";
+                scoreSpan.innerHTML = resultText;
+                document.getElementById(`lq-in-${index}`).disabled = true;
+                updateScore();
+            };
+
+            function updateScore() {
+                document.getElementById('scoreCorrect').innerText = state.correct;
+                document.getElementById('scoreWrong').innerText = state.wrong;
+                document.getElementById('scoreTotal').innerText = state.total;
+                
+                const pct = state.total === 0 ? 0 : Math.round((state.correct / state.total) * 100);
+                document.getElementById('scorePercent').innerText = pct + "%";
+
+                // Update Progress Bar based on scroll or answers? 
+                // Let's base it on answers for gamification
+                const totalQs = 70 + 10;
+                const progress = (state.total / totalQs) * 100;
+                document.getElementById('levelProgress').style.width = Math.min(progress, 100) + "%";
+            }
+
+            // Start Button
+            document.getElementById('startBtn').addEventListener('click', () => {
+                document.getElementById('mainContainer').scrollIntoView({behavior: 'smooth'});
+            });
+
+            // Init
+            render();
+        });
+    </script>
+</body>
+</html>

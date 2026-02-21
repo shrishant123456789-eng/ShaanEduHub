@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShanEduHub | Corporate Simulation Arena</title>
+    <style>
+        :root {
+            --bg-body: #ffffff;
+            --bg-panel: #f8f9fa;
+            --bg-card: #ffffff;
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+            --border-color: #e5e7eb;
+            --accent-color: #2563eb;
+            --accent-hover: #1d4ed8;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --font-main: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+        
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            line-height: 1.5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.025em; color: var(--text-primary); }
+        h1 { font-size: 2rem; }
+        h2 { font-size: 1.5rem; }
+        p { color: var(--text-secondary); margin-bottom: 1rem; }
+        .small-text { font-size: 0.875rem; color: var(--text-secondary); }
+
+        /* Layout */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            width: 100%;
+        }
+
+        header {
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem 0;
+            background: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .header-content { display: flex; justify-content: space-between; align-items: center; }
+        .brand { font-size: 1.25rem; font-weight: 800; color: var(--text-primary); letter-spacing: -0.5px; }
+        .brand span { color: var(--accent-color); }
+
+        /* Sections */
+        .game-section { display: none; padding: 2rem 0; min-height: 60vh; }
+        .game-section.active { display: block; }
+
+        /* Hero */
+        .hero { text-align: center; max-width: 800px; margin: 4rem auto; }
+        .hero h1 { margin-bottom: 1rem; font-size: 2.5rem; }
+        .hero p { font-size: 1.125rem; margin-bottom: 2rem; }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border: 1px solid var(--border-color);
+            background: white;
+            color: var(--text-primary);
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+        .btn:hover { background: var(--bg-panel); border-color: #d1d5db; }
+        .btn-primary { background: var(--text-primary); color: white; border-color: var(--text-primary); }
+        .btn-primary:hover { background: #000000; }
+        .btn-block { width: 100%; }
+
+        /* Forms */
+        .form-group { margin-bottom: 1.5rem; text-align: left; }
+        .form-label { display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.875rem; }
+        .form-input, .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1rem;
+            outline: none;
+        }
+        .form-input:focus, .form-select:focus { border-color: var(--accent-color); ring: 2px solid var(--accent-color); }
+
+        /* Setup Grid */
+        .setup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem; }
+        @media (max-width: 768px) { .setup-grid { grid-template-columns: 1fr; } }
+
+        /* Game Arena */
+        .arena-layout { display: grid; grid-template-columns: 300px 1fr 300px; gap: 2rem; }
+        @media (max-width: 1024px) { .arena-layout { grid-template-columns: 1fr; } }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Player Stats */
+        .player-card { background: var(--bg-panel); border-left: 4px solid transparent; }
+        .player-card.active-turn { border-left-color: var(--accent-color); background: white; box-shadow: var(--shadow-md); }
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.875rem; }
+        .stat-val { font-weight: 700; }
+
+        /* Scenario Area */
+        .scenario-header { margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; }
+        .scenario-tag { 
+            display: inline-block; padding: 0.25rem 0.75rem; 
+            background: var(--bg-panel); border: 1px solid var(--border-color); 
+            border-radius: 100px; font-size: 0.75rem; font-weight: 700; 
+            text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;
+        }
+        .scenario-text { font-size: 1.125rem; font-weight: 500; color: var(--text-primary); margin-bottom: 2rem; }
+        
+        .option-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: border 0.2s, background 0.2s;
+        }
+        .option-btn:hover { border-color: var(--accent-color); background: #f0f7ff; }
+        .option-btn strong { display: block; margin-bottom: 0.25rem; color: var(--text-primary); }
+        .option-btn span { font-size: 0.875rem; color: var(--text-secondary); }
+
+        /* Dashboard/Footer */
+        .dashboard-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 2rem; }
+        .metric-box { text-align: center; padding: 1rem; background: var(--bg-panel); border-radius: 6px; }
+        .metric-val { display: block; font-size: 1.5rem; font-weight: 800; color: var(--text-primary); }
+        .metric-label { font-size: 0.75rem; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.05em; }
+
+        footer { margin-top: auto; border-top: 1px solid var(--border-color); padding: 3rem 0; background: var(--bg-panel); }
+        .footer-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+        .footer-col h4 { font-size: 0.875rem; text-transform: uppercase; margin-bottom: 1rem; color: var(--text-primary); }
+        .footer-col ul { list-style: none; }
+        .footer-col li { margin-bottom: 0.5rem; font-size: 0.875rem; color: var(--text-secondary); }
+        .copyright { margin-top: 2rem; text-align: center; font-size: 0.75rem; color: #9ca3af; }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 50;
+        }
+        .modal { background: white; width: 100%; max-width: 500px; padding: 2rem; border-radius: 12px; box-shadow: var(--shadow-md); }
+        .turn-indicator { font-size: 0.75rem; font-weight: 700; color: var(--accent-color); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+
+        /* Responsiveness */
+        @media (max-width: 640px) {
+            .footer-grid { grid-template-columns: 1fr; text-align: center; }
+            .dashboard-grid { grid-template-columns: 1fr 1fr; }
+            h1 { font-size: 1.75rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <div class="brand">Shan<span>EduHub</span></div>
+            <div class="small-text">Corporate Simulation Arena v1.0</div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero" class="game-section active">
+        <div class="container">
+            <div class="hero">
+                <h1>Professional Corporate<br>Battle Arena</h1>
+                <p>A strategic decision-making simulation for emerging leaders. Compete in real-world scenarios ranging from ethical dilemmas to high-stakes negotiations.</p>
+                <button class="btn btn-primary" onclick="app.toSetup()">Initialize Simulation</button>
+            </div>
+            
+            <div class="card" style="max-width: 800px; margin: 0 auto;">
+                <h3>Simulation Parameters</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1.5rem; text-align: left;">
+                    <div>
+                        <h4 style="font-size: 0.875rem; margin-bottom: 0.5rem;">Core Competencies</h4>
+                        <ul style="list-style-position: inside; color: var(--text-secondary); font-size: 0.9rem;">
+                            <li>Ethical Decision Frameworks</li>
+                            <li>Risk Mitigation Strategy</li>
+                            <li>Stakeholder Communication</li>
+                            <li>Operational Efficiency</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 0.875rem; margin-bottom: 0.5rem;">Winning Criteria</h4>
+                        <p class="small-text">Victory is determined by the <strong>Corporate Maturity Index (CMI)</strong>, a weighted aggregate of strategic clarity, ethical integrity, and professional tone.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Setup Section -->
+    <section id="setup" class="game-section">
+        <div class="container">
+            <h2 style="text-align: center; margin-bottom: 2rem;">Simulation Configuration</h2>
+            <div class="setup-grid">
+                <!-- Player 1 -->
+                <div class="card">
+                    <h3>Player 1 Configuration</h3>
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <label class="form-label">Executive Name</label>
+                        <input type="text" id="p1-name" class="form-input" placeholder="e.g. A. Smith">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Designation Role</label>
+                        <select id="p1-role" class="form-select">
+                            <option value="Senior Manager">Senior Manager</option>
+                            <option value="HR Director">HR Director</option>
+                            <option value="Strategy Consultant">Strategy Consultant</option>
+                            <option value="Operations Lead">Operations Lead</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Player 2 -->
+                <div class="card">
+                    <h3>Player 2 Configuration</h3>
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <label class="form-label">Executive Name</label>
+                        <input type="text" id="p2-name" class="form-input" placeholder="e.g. B. Jones">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Designation Role</label>
+                        <select id="p2-role" class="form-select">
+                            <option value="Senior Manager">Senior Manager</option>
+                            <option value="HR Director">HR Director</option>
+                            <option value="Strategy Consultant">Strategy Consultant</option>
+                            <option value="Operations Lead">Operations Lead</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 3rem;">
+                <button class="btn btn-primary" onclick="app.startGame()">Enter Arena</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Game Arena -->
+    <section id="arena" class="game-section">
+        <div class="container">
+            <div class="arena-layout">
+                <!-- P1 Stats -->
+                <div id="p1-card" class="card player-card">
+                    <h3 id="p1-display-name">Player 1</h3>
+                    <p id="p1-display-role" class="small-text">Role</p>
+                    <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 1rem 0;">
+                    <div class="stat-row"><span>Maturity Index</span><span id="p1-cmi" class="stat-val">0.0</span></div>
+                    <div class="stat-row"><span>Strategic Clarity</span><span id="p1-strat" class="stat-val">0</span></div>
+                    <div class="stat-row"><span>Ethical Integrity</span><span id="p1-ethic" class="stat-val">0</span></div>
+                    <div class="stat-row"><span>Risk Control</span><span id="p1-risk" class="stat-val">0</span></div>
+                </div>
+
+                <!-- Central Interaction Area -->
+                <div class="card">
+                    <div class="turn-indicator">Current Decision Maker: <span id="current-player-name">Player 1</span></div>
+                    <div id="scenario-container">
+                        <!-- Dynamic Content -->
+                    </div>
+                </div>
+
+                <!-- P2 Stats -->
+                <div id="p2-card" class="card player-card">
+                    <h3 id="p2-display-name">Player 2</h3>
+                    <p id="p2-display-role" class="small-text">Role</p>
+                    <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 1rem 0;">
+                    <div class="stat-row"><span>Maturity Index</span><span id="p2-cmi" class="stat-val">0.0</span></div>
+                    <div class="stat-row"><span>Strategic Clarity</span><span id="p2-strat" class="stat-val">0</span></div>
+                    <div class="stat-row"><span>Ethical Integrity</span><span id="p2-ethic" class="stat-val">0</span></div>
+                    <div class="stat-row"><span>Risk Control</span><span id="p2-risk" class="stat-val">0</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section id="results" class="game-section">
+        <div class="container" style="text-align: center; max-width: 800px;">
+            <h2>Simulation Concluded</h2>
+            <p>Performance Analysis Report</p>
+            
+            <div class="card" style="margin: 2rem 0; padding: 3rem;">
+                <h1 id="winner-name" style="color: var(--accent-color); font-size: 3rem; margin-bottom: 0.5rem;">Winner Name</h1>
+                <p>Demonstrated Superior Corporate Maturity</p>
+                <div class="dashboard-grid">
+                    <div class="metric-box">
+                        <span id="final-cmi" class="metric-val">0.0</span>
+                        <span class="metric-label">Final CMI</span>
+                    </div>
+                    <div class="metric-box">
+                        <span id="final-strat" class="metric-val">0</span>
+                        <span class="metric-label">Strategy</span>
+                    </div>
+                    <div class="metric-box">
+                        <span id="final-ethic" class="metric-val">0</span>
+                        <span class="metric-label">Ethics</span>
+                    </div>
+                    <div class="metric-box">
+                        <span id="final-risk" class="metric-val">0</span>
+                        <span class="metric-label">Risk Mgmt</span>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="location.reload()">Initialize New Session</button>
+        </div>
+    </section>
+
+    <!-- Feedback Modal -->
+    <div id="feedback-modal" class="modal-overlay">
+        <div class="modal">
+            <h3>Decision Analysis</h3>
+            <p id="feedback-text" style="margin: 1rem 0; color: var(--text-primary);"></p>
+            <div style="background: var(--bg-panel); padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem;">
+                <div class="stat-row"><span>Strategy Impact:</span><span id="fb-strat" class="stat-val">+0</span></div>
+                <div class="stat-row"><span>Ethics Impact:</span><span id="fb-ethic" class="stat-val">+0</span></div>
+                <div class="stat-row"><span>Risk Assessment:</span><span id="fb-risk" class="stat-val">+0</span></div>
+            </div>
+            <button class="btn btn-primary btn-block" onclick="app.nextTurn()">Proceed to Next Scenario</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>ShanEduHub</h4>
+                    <ul>
+                        <li>Corporate Skill Training Platform</li>
+                        <li>Career Acceleration Systems</li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Modules</h4>
+                    <ul>
+                        <li>Simulation Games</li>
+                        <li>Professional Labs</li>
+                        <li>Skill Engineering Modules</li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Domains</h4>
+                    <ul>
+                        <li>Corporate Strategy</li>
+                        <li>Interview Mastery</li>
+                        <li>Analytics & Automation</li>
+                        <li>Career Architecture</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                Designed & Developed by SHRISHANT YADAV | ShanEduHub
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 50 Unique Corporate Scenarios
+        // Structure: ID, Category, Context, Question, Options[4]
+        // Scoring: Strat(egy), Ethic, Risk, Tone
+        const SCENARIOS = [
+            // EMAIL CRISIS (1-5)
+            {
+                id: 1, type: "Crisis Management", context: "Urgent Email - 10:45 AM",
+                q: "A server outage has impacted 20% of enterprise clients during peak hours. The CTO is unreachable.",
+                opts: [
+                    { t: "Send a generic 'maintenance' email to all clients immediately.", s: {st: 2, et: 4, ri: 8, to: 5} },
+                    { t: "Email affected clients only, acknowledging issue with 1-hour ETA.", s: {st: 9, et: 9, ri: 3, to: 9} },
+                    { t: "Wait for CTO response before communicating to avoid false info.", s: {st: 1, et: 5, ri: 10, to: 3} },
+                    { t: "Blame the cloud provider in a public statement.", s: {st: 0, et: 1, ri: 9, to: 0} }
+                ]
+            },
+            {
+                id: 2, type: "Crisis Management", context: "Data Leak Suspicion",
+                q: "An anonymous email claims employee payroll data is visible on a public forum.",
+                opts: [
+                    { t: "Ignore it as phishing.", s: {st: 0, et: 0, ri: 10, to: 0} },
+                    { t: "Immediately shut down all external network access.", s: {st: 5, et: 8, ri: 2, to: 4} },
+                    { t: "Engage InfoSec for rapid verification before action.", s: {st: 9, et: 9, ri: 4, to: 8} },
+                    { t: "Email all employees to change passwords instantly.", s: {st: 4, et: 6, ri: 7, to: 5} }
+                ]
+            },
+            {
+                id: 3, type: "Crisis Management", context: "Client Escalation",
+                q: "Key Account 'Alpha' threatens to leave due to a missed deadline by your team.",
+                opts: [
+                    { t: "Offer a 20% discount immediately.", s: {st: 4, et: 5, ri: 8, to: 6} },
+                    { t: "Apologize and provide a detailed root-cause analysis & recovery plan.", s: {st: 10, et: 9, ri: 2, to: 10} },
+                    { t: "Blame the vendor who delayed the supply.", s: {st: 1, et: 2, ri: 9, to: 2} },
+                    { t: "Forward the email to Legal.", s: {st: 0, et: 5, ri: 6, to: 1} }
+                ]
+            },
+            {
+                id: 4, type: "Communication", context: "Reply-All Disaster",
+                q: "An intern accidentally hit 'Reply-All' with sensitive internal mockery of a client.",
+                opts: [
+                    { t: "Fire the intern immediately to show zero tolerance.", s: {st: 3, et: 4, ri: 5, to: 2} },
+                    { t: "Call the client immediately to apologize and handle internally.", s: {st: 9, et: 8, ri: 3, to: 9} },
+                    { t: "Recall the message (if possible) and ignore.", s: {st: 2, et: 3, ri: 9, to: 4} },
+                    { t: "Claim the intern's account was hacked.", s: {st: 0, et: 0, ri: 10, to: 0} }
+                ]
+            },
+            {
+                id: 5, type: "Crisis Management", context: "PR Fallout",
+                q: "A negative viral tweet about your company culture is trending.",
+                opts: [
+                    { t: "Reply aggressively defending the company.", s: {st: 0, et: 2, ri: 10, to: 0} },
+                    { t: "Issue a standard 'we are listening' template response.", s: {st: 5, et: 5, ri: 5, to: 5} },
+                    { t: "Ignore it, it will pass.", s: {st: 2, et: 4, ri: 8, to: 4} },
+                    { t: "Investigate validity and issue a transparent, human response.", s: {st: 9, et: 9, ri: 2, to: 9} }
+                ]
+            },
+            // ETHICAL DILEMMAS (6-15)
+            {
+                id: 6, type: "Ethics", context: "Vendor Gift",
+                q: "A software vendor offers you VIP tickets to the Super Bowl right before contract renewal.",
+                opts: [
+                    { t: "Accept the tickets, it's just relationship building.", s: {st: 2, et: 0, ri: 9, to: 4} },
+                    { t: "Decline politely citing company policy.", s: {st: 8, et: 10, ri: 0, to: 10} },
+                    { t: "Accept but disclose it to HR.", s: {st: 5, et: 6, ri: 4, to: 7} },
+                    { t: "Ask for tickets for the whole team instead.", s: {st: 1, et: 1, ri: 8, to: 2} }
+                ]
+            },
+            {
+                id: 7, type: "Ethics", context: "Hiring Bias",
+                q: "Your boss asks you to hire his nephew, who is underqualified.",
+                opts: [
+                    { t: "Hire him to please the boss.", s: {st: 2, et: 0, ri: 8, to: 3} },
+                    { t: "Interview him but reject objectively based on criteria.", s: {st: 9, et: 9, ri: 2, to: 9} },
+                    { t: "Refuse to interview him at all.", s: {st: 5, et: 8, ri: 7, to: 4} },
+                    { t: "Hire him as an intern instead.", s: {st: 6, et: 4, ri: 5, to: 6} }
+                ]
+            },
+            {
+                id: 8, type: "Ethics", context: "Data Reporting",
+                q: "Q3 results are 1% short of targets. CFO suggests 'shifting' some Q4 expenses to hit the target.",
+                opts: [
+                    { t: "Agree, it's standard practice.", s: {st: 1, et: 0, ri: 10, to: 2} },
+                    { t: "Refuse and report the actual numbers.", s: {st: 8, et: 10, ri: 2, to: 9} },
+                    { t: "Ask for the request in writing.", s: {st: 6, et: 7, ri: 6, to: 5} },
+                    { t: "Report the CFO to the board immediately.", s: {st: 4, et: 9, ri: 9, to: 4} }
+                ]
+            },
+            {
+                id: 9, type: "Ethics", context: "Competitor Intel",
+                q: "A new hire uploads a competitor's confidential roadmap to the shared drive.",
+                opts: [
+                    { t: "Use it to adjust strategy.", s: {st: 7, et: 0, ri: 10, to: 2} },
+                    { t: "Delete it and reprimand the employee.", s: {st: 8, et: 10, ri: 1, to: 9} },
+                    { t: "Keep it but don't tell anyone.", s: {st: 4, et: 2, ri: 9, to: 3} },
+                    { t: "Inform Legal immediately.", s: {st: 9, et: 10, ri: 0, to: 10} }
+                ]
+            },
+            {
+                id: 10, type: "Ethics", context: "Environmental Regs",
+                q: "A factory waste disposal is slightly above legal limits. Upgrading costs $1M.",
+                opts: [
+                    { t: "Hide the data.", s: {st: 0, et: 0, ri: 10, to: 0} },
+                    { t: "Plan the upgrade for next year's budget.", s: {st: 6, et: 6, ri: 5, to: 7} },
+                    { t: "Approve upgrade immediately, citing compliance risk.", s: {st: 9, et: 9, ri: 1, to: 9} },
+                    { t: "Pay the fine if caught.", s: {st: 2, et: 2, ri: 8, to: 3} }
+                ]
+            },
+            // HR & MANAGEMENT (11-20)
+            {
+                id: 11, type: "Human Resources", context: "Star Performer Toxicity",
+                q: "Top sales rep is hitting 200% quota but bullying support staff.",
+                opts: [
+                    { t: "Ignore behavior, sales are priority.", s: {st: 2, et: 1, ri: 9, to: 2} },
+                    { t: "Fire immediately.", s: {st: 4, et: 7, ri: 6, to: 3} },
+                    { t: "Formal warning + mandatory coaching plan.", s: {st: 9, et: 8, ri: 3, to: 9} },
+                    { t: "Transfer the support staff.", s: {st: 1, et: 0, ri: 8, to: 1} }
+                ]
+            },
+            {
+                id: 12, type: "Human Resources", context: "Remote Work",
+                q: "Team productivity dropped 15% after shifting to full remote.",
+                opts: [
+                    { t: "Mandate return to office immediately.", s: {st: 5, et: 4, ri: 6, to: 4} },
+                    { t: "Install surveillance software on laptops.", s: {st: 2, et: 1, ri: 9, to: 1} },
+                    { t: "Implement better async workflows and clear KPIs.", s: {st: 10, et: 8, ri: 2, to: 9} },
+                    { t: "Cut salaries by 15%.", s: {st: 0, et: 0, ri: 10, to: 0} }
+                ]
+            },
+            {
+                id: 13, type: "Human Resources", context: "Layoffs",
+                q: "Company must cut 10% staff. You need to deliver the news.",
+                opts: [
+                    { t: "Send a mass email on Friday evening.", s: {st: 1, et: 0, ri: 9, to: 0} },
+                    { t: "Have 1:1 meetings with empathy and severance packages.", s: {st: 9, et: 10, ri: 2, to: 10} },
+                    { t: "Delegate it to junior managers.", s: {st: 3, et: 2, ri: 7, to: 3} },
+                    { t: "Do it over a Zoom webinar with disabled chat.", s: {st: 2, et: 1, ri: 10, to: 1} }
+                ]
+            },
+            {
+                id: 14, type: "Human Resources", context: "Salary Negotiation",
+                q: "A key engineer has a competing offer for 30% more.",
+                opts: [
+                    { t: "Match it immediately.", s: {st: 5, et: 6, ri: 5, to: 6} },
+                    { t: "Let them go.", s: {st: 4, et: 5, ri: 6, to: 5} },
+                    { t: "Offer 15% raise + equity + career growth plan.", s: {st: 9, et: 8, ri: 3, to: 9} },
+                    { t: "Guilt trip them about loyalty.", s: {st: 1, et: 1, ri: 8, to: 1} }
+                ]
+            },
+            {
+                id: 15, type: "Human Resources", context: "Diversity Initiative",
+                q: "The board demands better diversity stats by Q4.",
+                opts: [
+                    { t: "Set strict quotas for hiring.", s: {st: 6, et: 6, ri: 7, to: 5} },
+                    { t: "Revamp hiring pipeline to reduce bias and widen sourcing.", s: {st: 10, et: 9, ri: 2, to: 10} },
+                    { t: "Fudge the numbers.", s: {st: 0, et: 0, ri: 10, to: 0} },
+                    { t: "Hire random diverse candidates regardless of skill.", s: {st: 2, et: 3, ri: 9, to: 2} }
+                ]
+            },
+            // STRATEGY (16-25)
+            {
+                id: 16, type: "Strategy", context: "Market Entry",
+                q: "Competitor launched a feature you planned for next year.",
+                opts: [
+                    { t: "Rush a buggy version out next week.", s: {st: 3, et: 4, ri: 9, to: 3} },
+                    { t: "Pivot to a differentiator they don't have.", s: {st: 9, et: 8, ri: 3, to: 9} },
+                    { t: "Sue them for copyright.", s: {st: 2, et: 3, ri: 8, to: 2} },
+                    { t: "Ignore and stick to roadmap.", s: {st: 6, et: 6, ri: 5, to: 6} }
+                ]
+            },
+            {
+                id: 17, type: "Strategy", context: "Automation",
+                q: "New AI tool can replace 5 junior analysts.",
+                opts: [
+                    { t: "Fire analysts, buy tool.", s: {st: 6, et: 3, ri: 6, to: 4} },
+                    { t: "Retrain analysts to manage the AI and do higher-value work.", s: {st: 10, et: 9, ri: 2, to: 10} },
+                    { t: "Ignore AI, trust humans only.", s: {st: 3, et: 5, ri: 7, to: 4} },
+                    { t: "Wait for competitors to try it first.", s: {st: 5, et: 6, ri: 4, to: 5} }
+                ]
+            },
+            {
+                id: 18, type: "Strategy", context: "Budget Cut",
+                q: "10% budget cut required across the department.",
+                opts: [
+                    { t: "Cut training and R&D.", s: {st: 3, et: 5, ri: 8, to: 4} },
+                    { t: "Reduce marketing spend on low-ROI channels.", s: {st: 9, et: 8, ri: 2, to: 9} },
+                    { t: "Fire the highest paid person.", s: {st: 4, et: 3, ri: 7, to: 2} },
+                    { t: "Switch to cheaper, lower quality coffee.", s: {st: 2, et: 4, ri: 1, to: 2} }
+                ]
+            },
+            {
+                id: 19, type: "Strategy", context: "Acquisition",
+                q: "A smaller competitor is available for purchase.",
+                opts: [
+                    { t: "Buy them to kill their product.", s: {st: 5, et: 4, ri: 5, to: 5} },
+                    { t: "Buy for talent and IP integration.", s: {st: 9, et: 8, ri: 3, to: 9} },
+                    { t: "Ignore, build it yourself.", s: {st: 6, et: 6, ri: 4, to: 6} },
+                    { t: "Spread rumors to lower their stock price.", s: {st: 1, et: 0, ri: 10, to: 0} }
+                ]
+            },
+            {
+                id: 20, type: "Strategy", context: "Pricing Model",
+                q: "Customers demand a monthly subscription instead of annual.",
+                opts: [
+                    { t: "Refuse, annual is better for cash flow.", s: {st: 4, et: 5, ri: 7, to: 4} },
+                    { t: "Introduce monthly at a 20% premium.", s: {st: 9, et: 8, ri: 2, to: 9} },
+                    { t: "Switch everyone to monthly immediately.", s: {st: 5, et: 6, ri: 8, to: 5} },
+                    { t: "Ignore the feedback.", s: {st: 2, et: 3, ri: 9, to: 2} }
+                ]
+            },
+            // CLIENT & SALES (21-30)
+            {
+                id: 21, type: "Sales", context: "Unrealistic Promise",
+                q: "Sales rep promised a feature that doesn't exist to close a deal.",
+                opts: [
+                    { t: "Build it, delaying other projects.", s: {st: 4, et: 5, ri: 7, to: 5} },
+                    { t: "Be honest with client, offer alternative or refund.", s: {st: 9, et: 10, ri: 3, to: 9} },
+                    { t: "Fake the demo.", s: {st: 0, et: 0, ri: 10, to: 0} },
+                    { t: "Fire the sales rep.", s: {st: 5, et: 5, ri: 4, to: 4} }
+                ]
+            },
+            {
+                id: 22, type: "Sales", context: "Discount War",
+                q: "Client plays you against a competitor for lower price.",
+                opts: [
+                    { t: "Drop price to zero margin to win.", s: {st: 2, et: 5, ri: 9, to: 3} },
+                    { t: "Stand firm on value, offer service add-ons.", s: {st: 9, et: 8, ri: 2, to: 9} },
+                    { t: "Badmouth the competitor.", s: {st: 1, et: 2, ri: 8, to: 1} },
+                    { t: "Walk away immediately.", s: {st: 6, et: 7, ri: 4, to: 7} }
+                ]
+            },
+            {
+                id: 23, type: "Client Success", context: "Legacy Client",
+                q: "A loyal client uses old tech that costs $50k/yr to maintain.",
+                opts: [
+                    { t: "Force upgrade or terminate contract.", s: {st: 5, et: 4, ri: 7, to: 3} },
+                    { t: "Keep maintaining it forever.", s: {st: 2, et: 6, ri: 8, to: 4} },
+                    { t: "Develop migration plan with incentives.", s: {st: 10, et: 9, ri: 1, to: 10} },
+                    { t: "Secretly degrade service to force them out.", s: {st: 0, et: 1, ri: 9, to: 0} }
+                ]
+            },
+            {
+                id: 24, type: "Sales", context: "Scope Creep",
+                q: "Client keeps asking for small 'favors' outside contract.",
+                opts: [
+                    { t: "Do them to be nice.", s: {st: 3, et: 6, ri: 7, to: 5} },
+                    { t: "Refuse everything aggressively.", s: {st: 4, et: 3, ri: 6, to: 2} },
+                    { t: "Formalize change request process with costs.", s: {st: 9, et: 8, ri: 2, to: 9} },
+                    { t: "Ghost the client.", s: {st: 0, et: 0, ri: 10, to: 0} }
+                ]
+            },
+            {
+                id: 25, type: "Sales", context: "Gift Policy",
+                q: "Client sends you an iPad as a thank you.",
+                opts: [
+                    { t: "Keep it.", s: {st: 2, et: 2, ri: 8, to: 3} },
+                    { t: "Return it.", s: {st: 7, et: 9, ri: 1, to: 8} },
+                    { t: "Accept on behalf of company for raffle.", s: {st: 9, et: 10, ri: 0, to: 9} },
+                    { t: "Ask for cash instead.", s: {st: 0, et: 0, ri: 10, to: 0} }
+                ]
+            },
+            // OPERATIONS (26-35)
+            {
+                id: 26, type: "Operations", context: "Supply Chain",
+                q: "Primary supplier raised prices by 15% without notice.",
+                opts: [
+                    { t: "Pay it and pass cost to customer.", s: {st: 4, et: 5, ri: 6, to: 4} },
+                    { t: "Negotiate while sourcing backup suppliers.", s: {st: 9, et: 8, ri: 2, to: 9} },
+                    { t: "Sue them.", s: {st: 3, et: 4, ri: 8, to: 2} },
+                    { t: "Stop production.", s: {st: 1, et: 2, ri: 9, to: 1} }
+                ]
+            },
+            {
+                id: 27, type: "Operations", context: "Office Space",
+                q: "Lease is up. 40% of desks are empty daily.",
+                opts: [
+                    { t: "Renew same space just in case.", s: {st: 2, et: 5, ri: 4, to: 4} },
+                    { t: "Downsize to hot-desking hub.", s: {st: 9, et: 8, ri: 2, to: 8} },
+                    { t: "Go 100% remote and close office.", s: {st: 6, et: 6, ri: 7, to: 5} },
+                    { t: "Sublease illegally.", s: {st: 1, et: 0, ri: 10, to: 0} }
+                ]
+            },
+            {
+                id: 28, type: "Operations", context: "Software Bloat",
+                q: "Team uses Slack, Teams, Zoom, and Asana chaotically.",
+                opts: [
+                    { t: "Let them use whatever they want.", s: {st: 2, et: 5, ri: 6, to: 4} },
+                    { t: "Standardize on one stack, migrate data.", s: {st: 9, et: 7, ri: 3, to: 8} },
+                    { t: "Block all apps except Email.", s: {st: 1, et: 2, ri: 8, to: 1} },
+                    { t: "Buy another tool to manage the tools.", s: {st: 2, et: 4, ri: 5, to: 3} }
+                ]
+            },
+            {
+                id: 29, type: "Operations", context: "Travel Budget",
+                q: "Sales team overspent travel budget by 50%.",
+                opts: [
+                    { t: "Cancel all future travel.", s: {st: 4, et: 5, ri: 6, to: 3} },
+                    { t: "Audit expenses, implement strict policy.", s: {st: 9, et: 8, ri: 2, to: 9} },
+                    { t: "Deduct from their commissions.", s: {st: 3, et: 1, ri: 9, to: 2} },
+                    { t: "Ignore it if they sold enough.", s: {st: 5, et: 3, ri: 7, to: 4} }
+                ]
+            },
+            {
+                id: 30, type: "Operations", context: "Document Management",
+                q: "Critical files are stored on personal laptops.",
+                opts: [
+                    { t: "Ignore until someone quits.", s: {st: 1, et: 2, ri: 10, to: 1} },
+                    { t: "Implement cloud storage with enforcement.", s: {st: 9, et: 9, ri: 1, to: 9} },
+                    { t: "Confiscate laptops daily.", s: {st: 2, et: 3, ri: 8, to: 1} },
+                    { t: "Email everyone to 'please stop'.", s: {st: 3, et: 4, ri: 7, to: 4} }
+                ]
+            },
+            // LEADERSHIP (31-40)
+            {
+                id: 31, type: "Leadership", context: "Burnout",
+                q: "Key project manager looks exhausted and is making errors.",
+                opts: [
+                    { t: "Tell them to toughen up.", s: {st: 1, et: 0, ri: 8, to: 1} },
+                    { t: "Mandate time off and redistribute load.", s: {st: 9, et: 10, ri: 2, to: 9} },
+                    { t: "Fire them before they crash.", s: {st: 2, et: 1, ri: 7, to: 2} },
+                    { t: "Buy them a coffee.", s: {st: 4, et: 5, ri: 5, to: 6} }
+                ]
+            },
+            {
+                id: 32, type: "Leadership", context: "Credit Stealing",
+                q: "A manager presents their team's idea as their own.",
+                opts: [
+                    { t: "Call them out publicly in the meeting.", s: {st: 4, et: 6, ri: 8, to: 3} },
+                    { t: "Privately correct record and coach manager.", s: {st: 9, et: 9, ri: 2, to: 9} },
+                    { t: "Do nothing.", s: {st: 2, et: 1, ri: 5, to: 2} },
+                    { t: "Fire the manager.", s: {st: 5, et: 5, ri: 6, to: 4} }
+                ]
+            },
+            {
+                id: 33, type: "Leadership", context: "Succession",
+                q: "You are promoted. Who takes your role?",
+                opts: [
+                    { t: "The one who is most like me.", s: {st: 3, et: 4, ri: 6, to: 3} },
+                    { t: "The one with best skills and leadership potential.", s: {st: 9, et: 9, ri: 1, to: 9} },
+                    { t: "My best friend at work.", s: {st: 1, et: 1, ri: 8, to: 1} },
+                    { t: "Hire external only.", s: {st: 5, et: 6, ri: 4, to: 6} }
+                ]
+            },
+            {
+                id: 34, type: "Leadership", context: "Conflict",
+                q: "Two department heads refuse to speak to each other.",
+                opts: [
+                    { t: "Lock them in a room until fixed.", s: {st: 3, et: 3, ri: 7, to: 2} },
+                    { t: "Mediate a resolution focused on shared goals.", s: {st: 9, et: 9, ri: 2, to: 9} },
+                    { t: "Fire one of them randomly.", s: {st: 0, et: 0, ri: 10, to: 0} },
+                    { t: "Keep them separated forever.", s: {st: 2, et: 4, ri: 6, to: 3} }
+                ]
+            },
+            {
+                id: 35, type: "Leadership", context: "Vision",
+                q: "Team doesn't understand the new 5-year strategy.",
+                opts: [
+                    { t: "Email the PDF again.", s: {st: 2, et: 4, ri: 5, to: 3} },
+                    { t: "Hold townhall Q&A and connect to daily work.", s: {st: 9, et: 9, ri: 1, to: 9} },
+                    { t: "Tell them they don't need to understand.", s: {st: 1, et: 1, ri: 8, to: 1} },
+                    { t: "Change the strategy.", s: {st: 3, et: 5, ri: 6, to: 4} }
+                ]
+            },
+            // LEGAL & COMPLIANCE (36-40)
+            {
+                id: 36, type: "Legal", context: "Copyright",
+                q: "Marketing used a copyrighted image in a campaign.",
+                opts: [
+                    { t: "Take it down immediately and settle.", s: {st: 9, et: 9, ri: 1, to: 9} },
+                    { t: "Claim Fair Use and fight.", s: {st: 3, et: 4, ri: 8, to: 4} },
+                    { t: "Ignore until sued.", s: {st: 0, et: 0, ri: 10, to: 0} },
+                    { t: "Blame the intern.", s: {st: 1, et: 1, ri: 7, to: 1} }
+                ]
+            },
+            {
+                id: 37, type: "Legal", context: "Contract Error",
+                q: "You signed a contract with a typo costing $10k.",
+                opts: [
+                    { t: "Hide it in the budget.", s: {st: 2, et: 1, ri: 8, to: 2} },
+                    { t: "Own up, renegotiate or pay.", s: {st: 9, et: 10, ri: 2, to: 9} },
+                    { t: "Alter the PDF after signing.", s: {st: 0, et: 0, ri: 10, to: 0} },
+                    { t: "Quit.", s: {st: 1, et: 2, ri: 5, to: 1} }
+                ]
+            },
+            {
+                id: 38, type: "Legal", context: "Safety",
+                q: "Warehouse floor is slippery. No accidents yet.",
+                opts: [
+                    { t: "Wait for an accident.", s: {st: 0, et: 0, ri: 10, to: 0} },
+                    { t: "Put up signs and fix surfacing immediately.", s: {st: 9, et: 10, ri: 1, to: 9} },
+                    { t: "Tell workers to walk slow.", s: {st: 3, et: 4, ri: 7, to: 4} },
+                    { t: "Buy better insurance.", s: {st: 4, et: 3, ri: 6, to: 4} }
+                ]
+            },
+            {
+                id: 39, type: "Legal", context: "GDPR",
+                q: "European customer demands data deletion.",
+                opts: [
+                    { t: "Delete it immediately.", s: {st: 9, et: 10, ri: 0, to: 9} },
+                    { t: "Ignore, we are in the US.", s: {st: 2, et: 3, ri: 9, to: 3} },
+                    { t: "Ask them why.", s: {st: 4, et: 5, ri: 6, to: 4} },
+                    { t: "Charge them a fee.", s: {st: 0, et: 0, ri: 10, to: 0} }
+                ]
+            },
+            {
+                id: 40, type: "Legal", context: "Harassment",
+                q: "Verbal report of harassment, no written proof.",
+                opts: [
+                    { t: "Ignore without proof.", s: {st: 1, et: 0, ri: 10, to: 1} },
+                    { t: "Initiate formal investigation protocol.", s: {st: 10, et: 10, ri: 1, to: 9} },
+                    { t: "Move the accuser to a new team.", s: {st: 3, et: 4, ri: 8, to: 3} },
+                    { t: "Tell them to work it out.", s: {st: 0, et: 0, ri: 9, to: 0} }
+                ]
+            },
+            // INNOVATION (41-45)
+            {
+                id: 41, type: "Innovation", context: "Failures",
+                q: "Experimental project failed, costing $50k.",
+                opts: [
+                    { t: "Fire the team lead.", s: {st: 2, et: 3, ri: 6, to: 2} },
+                    { t: "Conduct retrospective, share learnings.", s: {st: 10, et: 9, ri: 1, to: 10} },
+                    { t: "Hide the loss.", s: {st: 1, et: 1, ri: 9, to: 1} },
+                    { t: "Never innovate again.", s: {st: 0, et: 0, ri: 8, to: 0} }
+                ]
+            },
+            {
+                id: 42, type: "Innovation", context: "Feedback",
+                q: "Customer suggests a weird feature.",
+                opts: [
+                    { t: "Laugh at it.", s: {st: 0, et: 1, ri: 5, to: 0} },
+                    { t: "Validate need vs market size.", s: {st: 9, et: 8, ri: 2, to: 9} },
+                    { t: "Build it immediately.", s: {st: 3, et: 4, ri: 7, to: 4} },
+                    { t: "Say yes but don't do it.", s: {st: 2, et: 1, ri: 6, to: 2} }
+                ]
+            },
+            {
+                id: 43, type: "Innovation", context: "Legacy Code",
+                q: "Core product runs on 10-year old code.",
+                opts: [
+                    { t: "Rewrite from scratch (2 years).", s: {st: 4, et: 5, ri: 9, to: 5} },
+                    { t: "Refactor incrementally.", s: {st: 10, et: 8, ri: 3, to: 9} },
+                    { t: "Wrap it in an API and forget.", s: {st: 6, et: 6, ri: 5, to: 6} },
+                    { t: "Wait for it to break.", s: {st: 1, et: 2, ri: 10, to: 1} }
+                ]
+            },
+            {
+                id: 44, type: "Innovation", context: "Blockchain",
+                q: "Board asks: 'Should we use Blockchain?'",
+                opts: [
+                    { t: "Yes, it's the future!", s: {st: 2, et: 5, ri: 8, to: 4} },
+                    { t: "Only if it solves a specific problem better.", s: {st: 10, et: 9, ri: 1, to: 10} },
+                    { t: "No, it's a scam.", s: {st: 5, et: 5, ri: 3, to: 4} },
+                    { t: "Hire a consultant to stall.", s: {st: 4, et: 4, ri: 2, to: 5} }
+                ]
+            },
+            {
+                id: 45, type: "Innovation", context: "Open Source",
+                q: "Devs want to open source a non-core library.",
+                opts: [
+                    { t: "No, protect all IP.", s: {st: 4, et: 5, ri: 2, to: 3} },
+                    { t: "Yes, boosts employer brand and quality.", s: {st: 9, et: 9, ri: 2, to: 9} },
+                    { t: "Sell it instead.", s: {st: 3, et: 4, ri: 6, to: 3} },
+                    { t: "Ignore the request.", s: {st: 2, et: 2, ri: 5, to: 2} }
+                ]
+            },
+            // NEGOTIATION (46-50)
+            {
+                id: 46, type: "Negotiation", context: "Vendor Lock-in",
+                q: "Vendor knows you can't switch and raises price.",
+                opts: [
+                    { t: "Accept it.", s: {st: 1, et: 3, ri: 8, to: 3} },
+                    { t: "Pay now, build exit strategy for next year.", s: {st: 9, et: 9, ri: 2, to: 9} },
+                    { t: "Threaten to sue.", s: {st: 2, et: 2, ri: 7, to: 1} },
+                    { t: "Stop paying.", s: {st: 0, et: 1, ri: 10, to: 0} }
+                ]
+            },
+            {
+                id: 47, type: "Negotiation", context: "Internal Budget",
+                q: "Fighting another VP for the same budget pool.",
+                opts: [
+                    { t: "Sabotage their proposal.", s: {st: 1, et: 0, ri: 9, to: 0} },
+                    { t: "Propose a joint initiative.", s: {st: 10, et: 9, ri: 1, to: 10} },
+                    { t: "Complain to CEO.", s: {st: 3, et: 2, ri: 6, to: 2} },
+                    { t: "Give up.", s: {st: 2, et: 3, ri: 4, to: 3} }
+                ]
+            },
+            {
+                id: 48, type: "Negotiation", context: "Salary Band",
+                q: "New hire wants title above their experience level.",
+                opts: [
+                    { t: "Give title, it's free.", s: {st: 2, et: 4, ri: 7, to: 3} },
+                    { t: "Hold firm on title, offer performance review in 6mo.", s: {st: 9, et: 9, ri: 1, to: 9} },
+                    { t: "Reject candidate.", s: {st: 5, et: 6, ri: 3, to: 5} },
+                    { t: "Create a fake title.", s: {st: 1, et: 2, ri: 6, to: 1} }
+                ]
+            },
+            {
+                id: 49, type: "Negotiation", context: "Deadline",
+                q: "Client wants delivery in 2 weeks (needs 4).",
+                opts: [
+                    { t: "Say yes and burn out team.", s: {st: 2, et: 1, ri: 9, to: 2} },
+                    { t: "Say no.", s: {st: 5, et: 6, ri: 4, to: 4} },
+                    { t: "Offer MVP in 2 weeks, full in 4.", s: {st: 10, et: 9, ri: 2, to: 10} },
+                    { t: "Ghost them until week 3.", s: {st: 0, et: 0, ri: 10, to: 0} }
+                ]
+            },
+            {
+                id: 50, type: "Negotiation", context: "Refund",
+                q: "Client demands refund for service used 6 months ago.",
+                opts: [
+                    { t: "Refuse citing contract terms.", s: {st: 8, et: 9, ri: 2, to: 7} },
+                    { t: "Give refund to keep peace.", s: {st: 2, et: 4, ri: 6, to: 5} },
+                    { t: "Offer future credit instead.", s: {st: 9, et: 8, ri: 3, to: 9} },
+                    { t: "Ignore email.", s: {st: 1, et: 1, ri: 8, to: 1} }
+                ]
+            }
+        ];
+
+        // App Logic
+        const app = {
+            state: {
+                p1: { name: "", role: "", cmi: 0, st: 0, et: 0, ri: 0, turns: 0 },
+                p2: { name: "", role: "", cmi: 0, st: 0, et: 0, ri: 0, turns: 0 },
+                currentTurn: 1, // 1 or 2
+                round: 0,
+                maxRounds: 10, // 5 rounds each
+                usedScenarios: [],
+                currentScenario: null
+            },
+
+            init: () => {
+                document.getElementById('p1-name').value = "";
+                document.getElementById('p2-name').value = "";
+            },
+
+            toSetup: () => {
+                app.switchSection('setup');
+            },
+
+            startGame: () => {
+                const p1Name = document.getElementById('p1-name').value.trim() || "Player 1";
+                const p2Name = document.getElementById('p2-name').value.trim() || "Player 2";
+                const p1Role = document.getElementById('p1-role').value;
+                const p2Role = document.getElementById('p2-role').value;
+
+                app.state.p1.name = p1Name;
+                app.state.p1.role = p1Role;
+                app.state.p2.name = p2Name;
+                app.state.p2.role = p2Role;
+
+                // Update UI
+                document.getElementById('p1-display-name').innerText = p1Name;
+                document.getElementById('p1-display-role').innerText = p1Role;
+                document.getElementById('p2-display-name').innerText = p2Name;
+                document.getElementById('p2-display-role').innerText = p2Role;
+
+                app.switchSection('arena');
+                app.nextRound();
+            },
+
+            nextRound: () => {
+                if (app.state.round >= app.state.maxRounds) {
+                    app.endGame();
+                    return;
+                }
+
+                app.state.round++;
+                app.state.currentTurn = (app.state.round % 2 !== 0) ? 1 : 2; // P1 odd, P2 even
+                
+                // Highlight active player
+                document.getElementById('p1-card').classList.toggle('active-turn', app.state.currentTurn === 1);
+                document.getElementById('p2-card').classList.toggle('active-turn', app.state.currentTurn === 2);
+                
+                const activeName = app.state.currentTurn === 1 ? app.state.p1.name : app.state.p2.name;
+                document.getElementById('current-player-name').innerText = activeName;
+
+                // Get random scenario
+                let scenario;
+                do {
+                    const idx = Math.floor(Math.random() * SCENARIOS.length);
+                    scenario = SCENARIOS[idx];
+                } while (app.state.usedScenarios.includes(scenario.id));
+                
+                app.state.usedScenarios.push(scenario.id);
+                app.state.currentScenario = scenario;
+                app.renderScenario(scenario);
+            },
+
+            renderScenario: (s) => {
+                const container = document.getElementById('scenario-container');
+                let html = `
+                    <div class="scenario-header">
+                        <span class="scenario-tag">${s.type}</span>
+                        <div class="small-text">${s.context}</div>
+                    </div>
+                    <div class="scenario-text">${s.q}</div>
+                    <div class="options-list">
+                `;
+
+                // Shuffle options slightly for variation
+                const shuffledOpts = [...s.opts].sort(() => Math.random() - 0.5);
+
+                shuffledOpts.forEach((opt, idx) => {
+                    html += `
+                        <button class="option-btn" onclick="app.handleChoice(${idx}, '${opt.t.replace(/'/g, "\\'")}')">
+                            <strong>${opt.t}</strong>
+                            <span>Select Strategic Action</span>
+                        </button>
+                    `;
+                });
+                
+                html += `</div>`;
+                container.innerHTML = html;
+                
+                // Store shuffled options mapping to original scores
+                app.state.currentOptions = shuffledOpts;
+            },
+
+            handleChoice: (idx, text) => {
+                const choice = app.state.currentOptions[idx];
+                const scores = choice.s;
+                const player = app.state.currentTurn === 1 ? app.state.p1 : app.state.p2;
+
+                // Update Player Stats
+                player.st += scores.st;
+                player.et += scores.et;
+                player.ri += scores.ri;
+                
+                // Calculate Maturity Index (Weighted Average)
+                // Strategy 40%, Ethic 40%, Tone 20% - Risk is a penalty factor
+                const baseScore = ((player.st + player.et) / (player.turns + 1) * 5); // Rough scale
+                // Simplified Index Calc
+                player.cmi = ((player.st + player.et + scores.to) / 3).toFixed(1); 
+                
+                player.turns++;
+
+                app.updateStats();
+                app.showFeedback(scores, text);
+            },
+
+            updateStats: () => {
+                ['p1', 'p2'].forEach(p => {
+                    const data = app.state[p];
+                    document.getElementById(`${p}-cmi`).innerText = (data.cmi * 1).toFixed(1); // Simple scale
+                    document.getElementById(`${p}-strat`).innerText = data.st;
+                    document.getElementById(`${p}-ethic`).innerText = data.et;
+                    document.getElementById(`${p}-risk`).innerText = data.ri;
+                });
+            },
+
+            showFeedback: (scores, text) => {
+                document.getElementById('feedback-text').innerText = "Action Logged: " + text;
+                document.getElementById('fb-strat').innerText = "+" + scores.st;
+                document.getElementById('fb-ethic').innerText = "+" + scores.et;
+                document.getElementById('fb-risk').innerText = (scores.ri > 5 ? "HIGH" : "LOW");
+                
+                document.getElementById('feedback-modal').style.display = 'flex';
+            },
+
+            nextTurn: () => {
+                document.getElementById('feedback-modal').style.display = 'none';
+                app.nextRound();
+            },
+
+            endGame: () => {
+                app.switchSection('results');
+                const p1 = app.state.p1;
+                const p2 = app.state.p2;
+                
+                // Calculate Final Score (Total Points)
+                const s1 = p1.st + p1.et + (50 - p1.ri); // Less risk is better
+                const s2 = p2.st + p2.et + (50 - p2.ri);
+
+                let winner = s1 > s2 ? p1 : p2;
+                if(s1 === s2) winner = { name: "Draw - Equal Maturity" };
+
+                document.getElementById('winner-name').innerText = winner.name;
+                
+                // Display Winner Stats
+                document.getElementById('final-cmi').innerText = winner === p1 ? document.getElementById('p1-cmi').innerText : document.getElementById('p2-cmi').innerText;
+                if(winner.name.includes("Draw")) document.getElementById('final-cmi').innerText = "N/A";
+
+                document.getElementById('final-strat').innerText = winner.st || 0;
+                document.getElementById('final-ethic').innerText = winner.et || 0;
+                document.getElementById('final-risk').innerText = winner.ri || 0;
+            },
+
+            switchSection: (id) => {
+                document.querySelectorAll('.game-section').forEach(el => el.classList.remove('active'));
+                document.getElementById(id).classList.add('active');
+                window.scrollTo(0, 0);
+            }
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            app.init();
+        });
+
+    </script>
+</body>
+</html>

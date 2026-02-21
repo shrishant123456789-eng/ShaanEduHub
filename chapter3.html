@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 3: Advanced Audio Editing & Mixing | ShanEduHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #0a2342; /* Deep Blue */
+            --panel-grey: #f0f2f5;   /* Soft Grey */
+            --pure-white: #ffffff;
+            --success-green: #2ecc71;
+            --error-red: #e74c3c;
+            --alert-orange: #f39c12;
+            --text-dark: #2c3e50;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Patrick Hand', cursive;
+            background-color: var(--pure-white);
+            color: var(--text-dark);
+            font-weight: 700; /* STRICT RULE: ALL TEXT BOLD */
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        /* --- LAYOUT UTILITIES --- */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .section-divider {
+            height: 4px;
+            background: var(--panel-grey);
+            margin: 40px 0;
+            border-radius: 2px;
+        }
+
+        /* --- HEADER / HERO --- */
+        header {
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .badges {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .badge {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        /* --- STICKY SCORE PANEL --- */
+        #sticky-score {
+            position: sticky;
+            top: 10px;
+            z-index: 1000;
+            background: var(--primary-blue);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            margin: 0 10px 30px 10px;
+            font-size: 1.1rem;
+            border: 2px solid var(--alert-orange);
+        }
+
+        .score-item span {
+            color: var(--alert-orange);
+        }
+
+        /* --- NOTES SECTION --- */
+        .module-header {
+            background: var(--primary-blue);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+
+        .note-card {
+            background: var(--panel-grey);
+            border-left: 5px solid var(--primary-blue);
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            transition: transform 0.2s;
+        }
+
+        .note-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .note-title {
+            font-size: 1.4rem;
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .context-box {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 2px dashed #ccc;
+        }
+
+        .indian-context {
+            border-color: var(--alert-orange);
+        }
+
+        .indian-context::before {
+            content: "🇮🇳 Desi Context: ";
+            color: var(--alert-orange);
+        }
+
+        .studio-context {
+            border-color: var(--primary-blue);
+        }
+
+        .studio-context::before {
+            content: "🎙️ Studio Standard: ";
+            color: var(--primary-blue);
+        }
+
+        .tool-box {
+            background: #e8f4fc;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        .diagram-placeholder {
+            height: 120px;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            margin: 15px 0;
+            border-radius: 5px;
+            border: 2px solid #bbb;
+            text-align: center;
+            padding: 10px;
+        }
+
+        /* --- QUESTIONS COMMON --- */
+        .q-section-title {
+            text-align: center;
+            color: var(--primary-blue);
+            margin: 40px 0 20px 0;
+            font-size: 2rem;
+            text-decoration: underline;
+            text-decoration-color: var(--alert-orange);
+        }
+
+        /* --- IMPORTANT QUESTIONS (ACCORDION) --- */
+        .imp-q-card {
+            background: white;
+            border: 2px solid var(--panel-grey);
+            margin-bottom: 15px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .imp-q-header {
+            padding: 15px;
+            background: var(--panel-grey);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .imp-q-body {
+            padding: 15px;
+            display: none;
+            background: white;
+            color: var(--text-dark);
+        }
+
+        .imp-q-body.show {
+            display: block;
+        }
+
+        /* --- PRACTICE QUESTIONS (MCQ) --- */
+        .mcq-container {
+            display: grid;
+            gap: 20px;
+        }
+
+        .mcq-card {
+            background: white;
+            border: 2px solid var(--panel-grey);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .options-grid { grid-template-columns: 1fr; }
+        }
+
+        .option-btn {
+            padding: 12px;
+            background: var(--panel-grey);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            font-size: 1rem;
+            text-align: left;
+            transition: 0.2s;
+        }
+
+        .option-btn:hover {
+            background: #e2e6ea;
+        }
+
+        .option-btn.correct {
+            background: var(--success-green);
+            color: white;
+        }
+
+        .option-btn.wrong {
+            background: var(--error-red);
+            color: white;
+        }
+
+        .feedback-box {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        /* --- LONG ANSWERS --- */
+        .long-q-card {
+            background: #fff8e1; /* Light yellow for notebook feel */
+            padding: 20px;
+            border: 2px solid #ffe082;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-top: 10px;
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            font-family: inherit;
+            font-weight: bold;
+        }
+
+        .check-btn {
+            margin-top: 10px;
+            padding: 10px 25px;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background: var(--primary-blue);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+        }
+
+        .footer-credit {
+            color: var(--alert-orange);
+            font-size: 1.2rem;
+            margin-top: 10px;
+        }
+
+        /* --- REVISION --- */
+        .revision-card {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 2px solid #2196f3;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- 1. HEADER / HERO -->
+    <header>
+        <div class="badges">
+            <span class="badge">Chapter 3</span>
+            <span class="badge">Advanced Audio</span>
+            <span class="badge">Duration: 4 Hrs</span>
+            <span class="badge">Level: Expert</span>
+        </div>
+        <h1>Audio Editing, Mixing & Sound Design</h1>
+        <div class="subtitle">"Master the Art of Invisible Audio Engineering"</div>
+        <p>From cleaning a noisy wedding clip to mixing a cinematic trailer.</p>
+    </header>
+
+    <!-- 2. LIVE SCORE PANEL (STICKY) -->
+    <div id="sticky-score">
+        <div class="score-item">Correct: <span id="score-correct">0</span></div>
+        <div class="score-item">Wrong: <span id="score-wrong">0</span></div>
+        <div class="score-item">Marks: <span id="score-marks">0</span></div>
+        <div class="score-item">Rank: <span id="score-rank">Newbie</span></div>
+    </div>
+
+    <div class="container">
+
+        <!-- 3. NOTES SECTION (BASIC -> MEDIUM -> ADVANCED -> EXPERT) -->
+        
+        <!-- BASIC -->
+        <h2 class="module-header">🎧 LEVEL 1: STUDIO FUNDAMENTALS</h2>
+        
+        <div class="note-card">
+            <div class="note-title">1.1 Signal Flow & Waveforms</div>
+            <p>Audio isn't magic; it's voltage. A waveform represents air pressure changes over time. The louder the sound, the taller the wave (Amplitude). The higher the pitch, the faster the wave cycles (Frequency).</p>
+            <div class="diagram-placeholder">
+                [DIAGRAM: Sine Wave showing Amplitude (Volume) vs Frequency (Pitch)]
+            </div>
+            <div class="context-box indian-context">
+                Ideally, recording a podcast in a quiet room creates a clean wave. In India, fan noise or a pressure cooker whistle creates "jagged" interference in your waveform.
+            </div>
+            <div class="tool-box">🛠 Tool: Audacity / GarageBand - Use 'Zoom' to see these jagged edges.</div>
+        </div>
+
+        <div class="note-card">
+            <div class="note-title">1.2 Clean vs Dirty Signals (S/N Ratio)</div>
+            <p>Signal-to-Noise Ratio (SNR) is critical. You want high signal (voice) and low noise (hiss). A "dirty" signal has a high noise floor.</p>
+            <div class="context-box studio-context">
+                Professional mics need "Phantom Power (+48V)" to boost signal cleanly. Without it, you get a weak signal and lots of static.
+            </div>
+        </div>
+
+        <div class="note-card">
+            <div class="note-title">1.3 Normalization vs Gain</div>
+            <p>Gain adds volume (and noise). Normalization mathematically raises the highest peak to a set limit (e.g., -1dB) without changing the dynamic range.</p>
+            <div class="tool-box">🛠 Rule: Normalize AFTER cleaning noise, not before.</div>
+        </div>
+
+        <!-- MEDIUM -->
+        <h2 class="module-header">🎚️ LEVEL 2: MIXING & SCULPTING</h2>
+
+        <div class="note-card">
+            <div class="note-title">2.1 EQ (Equalization) Logic</div>
+            <p>EQ is volume control for specific frequencies.
+            <br>• Low Cut (High Pass): Remove rumbles (< 80Hz).
+            <br>• Mud: Cut around 200-400Hz to clear clarity.
+            <br>• Presence: Boost 3k-5kHz for vocal clarity.</p>
+            <div class="context-box indian-context">
+                Recording a lecture in a hall? You will have too much "boom" (Low Mids). Use EQ to CUT 300Hz to make the teacher's voice clear.
+            </div>
+        </div>
+
+        <div class="note-card">
+            <div class="note-title">2.2 Compression (The Glue)</div>
+            <p>Compression reduces the dynamic range. It makes quiet sounds louder and loud sounds quieter, keeping levels consistent.</p>
+            <ul>
+                <li><strong>Threshold:</strong> When does it start working?</li>
+                <li><strong>Ratio:</strong> How hard does it squash? (4:1 is standard for vocals).</li>
+            </ul>
+            <div class="context-box studio-context">
+                Radio DJs sound "thick" and constant because of heavy compression.
+            </div>
+        </div>
+
+        <div class="note-card">
+            <div class="note-title">2.3 Noise Reduction (Spectral)</div>
+            <p>Don't just use a noise gate. Spectral repair removes specific sounds (like a phone ring) without killing the voice.</p>
+            <div class="tool-box">🛠 Tool: Adobe Audition 'Heal' brush or Izotope RX.</div>
+        </div>
+
+        <!-- ADVANCED -->
+        <h2 class="module-header">🔊 LEVEL 3: SOUND DESIGN & SPATIAL</h2>
+
+        <div class="note-card">
+            <div class="note-title">3.1 Foley & SFX Layering</div>
+            <p>Real sounds are fake. The sound of bones breaking in movies is usually celery snapping. This is Foley. Layering (Sub + Impact + Highs) creates "Punch".</p>
+            <div class="diagram-placeholder">
+                [DIAGRAM: Layering Stack - Low Frequency Layer + Textural Layer + Transient Click]
+            </div>
+        </div>
+
+        <div class="note-card">
+            <div class="note-title">3.2 Automation</div>
+            <p>Static mixes are boring. Automation is drawing the volume/pan moves over time. Ride the fader on vocals to keep them on top of the music.</p>
+        </div>
+
+        <!-- EXPERT -->
+        <h2 class="module-header">🏆 LEVEL 4: MASTERING & BROADCAST</h2>
+
+        <div class="note-card">
+            <div class="note-title">4.1 LUFS & Loudness Standards</div>
+            <p>You cannot just "make it loud". Platforms have rules.
+            <br>• Spotify: -14 LUFS
+            <br>• YouTube: -14 LUFS
+            <br>• Broadcast (TV): -23 or -24 LUFS</p>
+            <div class="context-box indian-context">
+                If you upload a -8 LUFS (very loud) track to YouTube, YouTube will forcibly turn it down, making it sound weak compared to others.
+            </div>
+        </div>
+
+        <div class="note-card">
+            <div class="note-title">4.2 The Master Bus Chain</div>
+            <p>EQ (Polish) -> Multiband Compression (Glue) -> Saturation (Warmth) -> Limiter (Safety ceiling at -0.1dB).</p>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <!-- 4. IMPORTANT QUESTIONS (30) -->
+        <h2 class="q-section-title">📌 30 VIVA VOCE QUESTIONS</h2>
+        <div id="important-questions-container">
+            <!-- JS will populate this -->
+        </div>
+
+        <div class="section-divider"></div>
+
+        <!-- 5. PRACTICE QUESTIONS (70) -->
+        <h2 class="q-section-title">🧪 70 QUESTION PRACTICE DRILL</h2>
+        <div class="mcq-container" id="practice-questions-container">
+            <!-- JS will populate this -->
+        </div>
+
+        <div class="section-divider"></div>
+
+        <!-- 6. LONG ANSWER QUESTIONS (10) -->
+        <h2 class="q-section-title">🧠 ADVANCED STUDIO SCENARIOS</h2>
+        <div id="long-questions-container">
+            <!-- JS will populate this -->
+        </div>
+
+        <!-- 7. REVISION -->
+        <div class="section-divider"></div>
+        <h2 class="q-section-title">🔄 QUICK REVISION</h2>
+        <div class="revision-card">
+            <h3>🎛 Signal Chain Recap:</h3>
+            <p>Mic ➡ Preamp ➡ AD Converter ➡ DAW ➡ EQ (Subtractive) ➡ Compressor ➡ EQ (Additive) ➡ Saturation ➡ Limiter ➡ DA Converter ➡ Speakers.</p>
+            <br>
+            <h3>📉 Essential Numbers:</h3>
+            <p><strong>-14 LUFS:</strong> YouTube Standard<br>
+            <strong>-6dB:</strong> Good mixing headroom<br>
+            <strong>48kHz / 24-bit:</strong> Video standard sample rate</p>
+        </div>
+
+    </div>
+
+    <!-- 8. FOOTER -->
+    <footer>
+        <h3>ShanEduHub Audio Academy</h3>
+        <p>Advanced Curriculum for Modern Creators</p>
+        <div class="footer-credit">Designed & Created by SHRISHANT YADAV</div>
+        <p style="margin-top:10px; font-size: 0.8rem; opacity: 0.7;">© 2025 ShanEduHub Pvt Ltd. All Rights Reserved.</p>
+    </footer>
+
+    <!-- LOGIC SCRIPT -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- DATASETS ---
+
+            const importantQuestions = [
+                { q: "What is the difference between Gain and Volume?", a: "Gain is input sensitivity (tone shaping), Volume is output level (loudness)." },
+                { q: "Define 'Headroom'.", a: "The safety space between your highest peak and 0dB (clipping point)." },
+                { q: "What is Phantom Power?", a: "+48V DC power required for condenser microphones to operate." },
+                { q: "What does a High Pass Filter do?", a: "Cuts low frequencies and allows high frequencies to pass (removes rumble)." },
+                { q: "Explain 'Sibilance'.", a: "Harsh 'S' or 'T' sounds, usually around 5kHz-8kHz." },
+                { q: "What tool fixes Sibilance?", a: "A De-Esser." },
+                { q: "What is the standard sample rate for video?", a: "48kHz." },
+                { q: "What is 'Clipping'?", a: "Digital distortion occurring when a signal exceeds 0dBFS." },
+                { q: "What is a 'Transients'?", a: "The initial high-energy burst of a sound (like the crack of a snare)." },
+                { q: "Difference between Mono and Stereo?", a: "Mono is one channel (center), Stereo is two channels (Left/Right)." },
+                { q: "What is 'Panning'?", a: "Placing a sound in the stereo field (Left to Right)." },
+                { q: "What does a Compressor Ratio of 4:1 mean?", a: "For every 4dB exceeding the threshold, only 1dB is allowed out." },
+                { q: "What is 'Make-up Gain'?", a: "Volume added after compression to compensate for level reduction." },
+                { q: "What is 'Reverb'?", a: "The persistence of sound after the source stops (room ambience)." },
+                { q: "What is 'Delay'?", a: "A distinct echo/repetition of the signal." },
+                { q: "Define 'Noise Floor'.", a: "The level of background noise in a system when no signal is present." },
+                { q: "What is 'Sidechaining'?", a: "Using one signal to control an effect on another (e.g., Bass ducks when Kick hits)." },
+                { q: "What is 'Normalization'?", a: "Increasing the peak volume of a clip to a target level uniformly." },
+                { q: "What is 'Destructive Editing'?", a: "Editing that permanently alters the original file (unlike non-destructive DAW editing)." },
+                { q: "What is an XLR cable?", a: "A balanced 3-pin cable used for professional microphones." },
+                { q: "What is 'Latency'?", a: "The delay between inputting audio and hearing it back." },
+                { q: "What is 'Bit Depth'?", a: "Determines dynamic range (16-bit = 96dB, 24-bit = 144dB)." },
+                { q: "What is 'Foley'?", a: "Creating everyday sound effects (footsteps, cloth) in post-production." },
+                { q: "What is 'ADR'?", a: "Automated Dialogue Replacement (dubbing dialogue in studio)." },
+                { q: "What is 'Room Tone'?", a: "The natural silence/ambience of a recording location." },
+                { q: "What is a 'Limiter'?", a: "A compressor with a very high ratio (infinity:1) used to prevent clipping." },
+                { q: "What is LUFS?", a: "Loudness Units Full Scale – measures perceived loudness over time." },
+                { q: "What frequency is 'Mud' usually found at?", a: "200Hz - 400Hz." },
+                { q: "What is 'Parallel Compression'?", a: "Mixing a heavily compressed signal with the dry signal for punch + dynamics." },
+                { q: "What is the 'Proximity Effect'?", a: "Bass boost occurring when a directional mic is placed very close to the source." }
+            ];
+
+            // 70 MCQs - Generated efficiently
+            const practiceQuestions = [
+                // BASIC
+                { q: "Which unit measures frequency?", options: ["Decibel", "Hertz", "Volt", "Ampere"], correct: 1 },
+                { q: "Red lining in a DAW means:", options: ["Good Volume", "Clipping", "Low Battery", "Stereo Mode"], correct: 1 },
+                { q: "Which file format is uncompressed?", options: ["MP3", "WAV", "AAC", "OGG"], correct: 1 },
+                { q: "Standard CD sample rate is:", options: ["44.1kHz", "48kHz", "96kHz", "22kHz"], correct: 0 },
+                { q: "Phantom power voltage is:", options: ["12V", "24V", "48V", "110V"], correct: 2 },
+                { q: "A dynamic mic requires phantom power.", options: ["True", "False"], correct: 1 },
+                { q: "Visual representation of sound is:", options: ["Waveform", "JPEG", "Vector", "Bitmap"], correct: 0 },
+                { q: "To remove low rumble, use a:", options: ["Low Pass Filter", "High Pass Filter", "Reverb", "Delay"], correct: 1 },
+                { q: "The loudness of a sound is:", options: ["Pitch", "Amplitude", "Timbre", "Phase"], correct: 1 },
+                { q: "Standard audio connector for phones:", options: ["XLR", "3.5mm Jack", "RCA", "SpeakOn"], correct: 1 },
+                // MEDIUM
+                { q: "Compression ______ dynamic range.", options: ["Increases", "Reduces", "Does not change", "Inverts"], correct: 1 },
+                { q: "Which EQ shape cuts specific frequencies?", options: ["Shelf", "Bell/Notch", "Pass", "Tilt"], correct: 1 },
+                { q: "Attack time determines:", options: ["How fast compression starts", "How fast it ends", "The ratio", "The gain"], correct: 0 },
+                { q: "To clarify vocals, boost around:", options: ["100Hz", "500Hz", "3kHz-5kHz", "15kHz"], correct: 2 },
+                { q: "A 'Dry' signal has:", options: ["Lots of Reverb", "No Effects", "Only Delay", "High Distortion"], correct: 1 },
+                { q: "Which tool fixes timing issues?", options: ["Quantize", "Normalize", "Limit", "Dither"], correct: 0 },
+                { q: "Panning L50 means:", options: ["50% Right", "Center", "50% Left", "Muted"], correct: 2 },
+                { q: "A Noise Gate:", options: ["Adds noise", "Silences quiet sounds", "Compresses loud sounds", "Boosts treble"], correct: 1 },
+                { q: "De-Esser targets:", options: ["Bass", "Mids", "High Frequencies", "Sub-bass"], correct: 2 },
+                { q: "Ratio 1:1 means:", options: ["No compression", "Full compression", "Limiting", "Expansion"], correct: 0 },
+                // ADVANCED
+                { q: "The 'Haas Effect' relates to:", options: ["Pitch", "Stereo perception & delay", "Volume", "Distortion"], correct: 1 },
+                { q: "Nyquist Theorem states sample rate must be:", options: ["Equal to frequency", "2x max frequency", "3x max frequency", "Half frequency"], correct: 1 },
+                { q: "Phase cancellation results in:", options: ["Louder sound", "Silence/Thin sound", "More bass", "Distortion"], correct: 1 },
+                { q: "Pink noise has equal energy per:", options: ["Octave", "Frequency", "Second", "Sample"], correct: 0 },
+                { q: "Dithering is used when:", options: ["Recording", "Reducing bit-depth", "Increasing volume", "Panning"], correct: 1 },
+                { q: "Sidechain compression is common in:", options: ["Classical", "EDM", "Folk", "Jazz"], correct: 1 },
+                { q: "Impulse Response (IR) is used for:", options: ["Convolution Reverb", "Delay", "EQ", "Compression"], correct: 0 },
+                { q: "M/S processing stands for:", options: ["Mono/Stereo", "Mid/Side", "Mix/Sub", "Main/Secondary"], correct: 1 },
+                { q: "LFE channel stands for:", options: ["Low Frequency Effects", "Loud Frequency Emitter", "Left Front Ear", "Low Filter EQ"], correct: 0 },
+                { q: "Standard headroom for mastering:", options: ["-1dB", "-3 to -6dB", "0dB", "+3dB"], correct: 1 },
+                // EXPERT & SCENARIO
+                { q: "YouTube target loudness:", options: ["-23 LUFS", "-14 LUFS", "-9 LUFS", "0 LUFS"], correct: 1 },
+                { q: "True Peak limiting prevents:", options: ["Inter-sample peaks", "Digital black", "Analog hiss", "DC offset"], correct: 0 },
+                { q: "A 'Bus' in a DAW is:", options: ["A vehicle", "A routing path for multiple signals", "A plugin", "A file type"], correct: 1 },
+                { q: "Parallel processing is also called:", options: ["New York Compression", "LA Compression", "London EQ", "Tokyo Reverb"], correct: 0 },
+                { q: "Fletcher-Munson curves describe:", options: ["Microphone patterns", "Human hearing sensitivity", "Speaker voltage", "Cable resistance"], correct: 1 },
+                { q: "Which mic pattern picks up front and back?", options: ["Cardioid", "Omni", "Figure-8", "Hypercardioid"], correct: 2 },
+                { q: "Proximity effect happens with:", options: ["Omni mics", "Directional mics", "Digital mics", "Contact mics"], correct: 1 },
+                { q: "Balanced cables reject noise using:", options: ["Shielding only", "Phase cancellation", "Gold plating", "Thick rubber"], correct: 1 },
+                { q: "Jitter is a timing error in:", options: ["Analog tape", "Digital conversion", "Vinyl playback", "Microphones"], correct: 1 },
+                { q: "What removes DC Offset?", options: ["High Pass Filter", "Low Pass Filter", "Limiter", "Expander"], correct: 0 },
+                // FILLERS TO REACH 70 (Short & Fast)
+                { q: "MP3 eliminates data using:", options: ["Perceptual coding", "Linear coding", "Wave coding", "Hex coding"], correct: 0 },
+                { q: "Sample rate determines:", options: ["Dynamic range", "Frequency response", "Stereo width", "Volume"], correct: 1 },
+                { q: "Bit depth determines:", options: ["Dynamic range", "Frequency response", "Speed", "Pitch"], correct: 0 },
+                { q: "Ideally, vocals should be:", options: ["Stereo", "Mono", "Out of phase", "Panned hard left"], correct: 1 },
+                { q: "Best reverb for vocals often:", options: ["Plate", "Spring", "Gate", "Reverse"], correct: 0 },
+                { q: "High shelf EQ affects:", options: ["Only one frequency", "All freq above a point", "All freq below a point", "Mids only"], correct: 1 },
+                { q: "Exciter plugin adds:", options: ["Bass", "Harmonic distortion", "Reverb", "Delay"], correct: 1 },
+                { q: "Gain staging ensures:", options: ["Max volume", "Optimal signal level", "Max distortion", "Min volume"], correct: 1 },
+                { q: "Feedback is caused by:", options: ["Loop between mic and speaker", "Broken cable", "Bad software", "Low power"], correct: 0 },
+                { q: "Pop filter stops:", options: ["Plosives", "Sibilance", "Hiss", "Rumble"], correct: 0 },
+                { q: "Shock mount reduces:", options: ["Wind noise", "Vibration noise", "Electrical noise", "Voice noise"], correct: 1 },
+                { q: "DI Box converts:", options: ["Mic to Line", "Hi-Z to Lo-Z", "Digital to Analog", "Stereo to Mono"], correct: 1 },
+                { q: "TRS stands for:", options: ["Tip Ring Sleeve", "Top Right Side", "Tape Record System", "Tone Resonant Sound"], correct: 0 },
+                { q: "TS cables are usually:", options: ["Balanced", "Unbalanced", "Digital", "Optical"], correct: 1 },
+                { q: "Optical cables use:", options: ["Copper", "Light", "Gold", "Silver"], correct: 1 },
+                { q: "MIDI transmits:", options: ["Audio", "Performance data", "Electricity", "Video"], correct: 1 },
+                { q: "VST stands for:", options: ["Virtual Studio Technology", "Very Sound Tone", "Video Sync Tool", "Voice Standard Tech"], correct: 0 },
+                { q: "DAW stands for:", options: ["Digital Audio Workstation", "Digital Analog Wave", "Direct Audio Wire", "Dual Audio Way"], correct: 0 },
+                { q: "BPM stands for:", options: ["Beats Per Minute", "Bits Per Millisecond", "Bass Power Max", "Band Pass Mod"], correct: 0 },
+                { q: "Transient shaper affects:", options: ["Pitch", "Attack/Sustain", "Reverb", "Panning"], correct: 1 },
+                { q: "Lookahead is a feature of:", options: ["EQ", "Limiters", "Reverb", "Distortion"], correct: 1 },
+                { q: "Soft Knee compression is:", options: ["Gradual", "Abrupt", "Fast", "Slow"], correct: 0 },
+                { q: "Hard Knee compression is:", options: ["Gradual", "Abrupt", "Fast", "Slow"], correct: 1 },
+                { q: "Automating Pan creates:", options: ["Movement", "Loudness", "Depth", "Height"], correct: 0 },
+                { q: "Automating Volume creates:", options: ["Movement", "Dynamics", "Pitch shift", "Phase"], correct: 1 },
+                { q: "Bouncing means:", options: ["Deleting", "Exporting", "Recording", "Playing"], correct: 1 },
+                { q: "Stem mixing involves:", options: ["Mixing individual tracks", "Mixing groups of tracks", "Mastering", "Recording"], correct: 1 },
+                { q: "Reference track is:", options: ["A hidden track", "A pro track to compare with", "A metronome", "A muted track"], correct: 1 },
+                { q: "A pad sound is usually:", options: ["Short", "Sustained/Atmospheric", "Percussive", "Loud"], correct: 1 },
+                { q: "White noise has:", options: ["Equal energy per freq", "Equal energy per octave", "More bass", "More treble"], correct: 0 }
+            ];
+
+            const longQuestions = [
+                { id: 1, q: "Explain the correct order of a vocal plugin chain and WHY.", keywords: ["subtractive eq", "compressor", "additive eq", "de-esser", "limiter", "cleanup", "control"] },
+                { id: 2, q: "A podcast recording has a loud air conditioner hum. How do you fix it using Adobe Audition/Audacity?", keywords: ["noise print", "capture", "spectral", "reduction", "process", "threshold"] },
+                { id: 3, q: "Explain the difference between Compression and Limiting in a broadcast context.", keywords: ["ratio", "infinity", "ceiling", "brickwall", "safety", "leveling"] },
+                { id: 4, q: "You are mixing a short film. The dialogue is drowned out by the background music. What techniques do you use?", keywords: ["sidechain", "ducking", "eq carve", "volume automation", "fader", "mid range"] },
+                { id: 5, q: "Describe the 'Proximity Effect' and how you would use it creatively for a radio trailer voiceover.", keywords: ["bass boost", "close", "directional", "cardioid", "warmth", "intimacy"] },
+                { id: 6, q: "What is the difference between Insert effects and Send/Return effects? When do you use each?", keywords: ["direct", "parallel", "reverb", "delay", "cpu", "blend", "bus"] },
+                { id: 7, q: "Explain 'Gain Staging' from microphone to master fader.", keywords: ["preamp", "clipping", "headroom", "unity", "input", "output", "clean"] },
+                { id: 8, q: "Why is -14 LUFS the standard for streaming, and what happens if you upload a -8 LUFS track?", keywords: ["normalization", "penalty", "dynamic range", "louder", "turned down", "penalty"] },
+                { id: 9, q: "How do you treat 'Plosives' (P and B sounds) in post-production if they were recorded?", keywords: ["high pass", "low cut", "spectral", "volume automation", "fade", "eq"] },
+                { id: 10, q: "Describe a mastering chain for a commercial advertisement.", keywords: ["eq", "multiband", "compression", "saturation", "limiting", "loudness", "broadcast"] }
+            ];
+
+            // --- STATE MANAGEMENT ---
+            let state = {
+                correct: 0,
+                wrong: 0,
+                marks: 0,
+                totalAttempted: 0
+            };
+
+            // --- RENDER FUNCTIONS ---
+
+            function renderImportantQuestions() {
+                const container = document.getElementById('important-questions-container');
+                importantQuestions.forEach((item, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'imp-q-card';
+                    card.innerHTML = `
+                        <div class="imp-q-header" onclick="toggleAccordion(this)">
+                            <strong>Q${index + 1}: ${item.q}</strong>
+                            <span>▼</span>
+                        </div>
+                        <div class="imp-q-body">
+                            <p><strong>Answer:</strong> ${item.a}</p>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            }
+
+            function renderPracticeQuestions() {
+                const container = document.getElementById('practice-questions-container');
+                practiceQuestions.forEach((item, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'mcq-card';
+                    card.innerHTML = `
+                        <p><strong>Q${index + 1}: ${item.q}</strong></p>
+                        <div class="options-grid">
+                            ${item.options.map((opt, i) => `
+                                <button class="option-btn" onclick="checkMCQ(this, ${index}, ${i})">${opt}</button>
+                            `).join('')}
+                        </div>
+                        <div class="feedback-box" id="feedback-${index}"></div>
+                    `;
+                    container.appendChild(card);
+                });
+            }
+
+            function renderLongQuestions() {
+                const container = document.getElementById('long-questions-container');
+                longQuestions.forEach((item, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'long-q-card';
+                    card.innerHTML = `
+                        <p><strong>Scenario ${index + 1}:</strong> ${item.q}</p>
+                        <textarea id="long-ans-${index}" placeholder="Type your professional analysis here..."></textarea>
+                        <button class="check-btn" onclick="checkLongAnswer(${index})">Submit Analysis</button>
+                        <div class="feedback-box" id="long-feedback-${index}"></div>
+                    `;
+                    container.appendChild(card);
+                });
+            }
+
+            // --- LOGIC FUNCTIONS ---
+
+            window.toggleAccordion = function(header) {
+                const body = header.nextElementSibling;
+                body.classList.toggle('show');
+                const icon = header.querySelector('span');
+                icon.innerText = body.classList.contains('show') ? '▲' : '▼';
+            }
+
+            window.checkMCQ = function(btn, qIndex, optIndex) {
+                const question = practiceQuestions[qIndex];
+                const feedbackBox = document.getElementById(`feedback-${qIndex}`);
+                const allBtns = btn.parentElement.querySelectorAll('.option-btn');
+                
+                // Disable all buttons for this question
+                allBtns.forEach(b => b.disabled = true);
+
+                state.totalAttempted++;
+
+                if (optIndex === question.correct) {
+                    btn.classList.add('correct');
+                    feedbackBox.style.display = 'block';
+                    feedbackBox.style.background = '#d4edda';
+                    feedbackBox.style.color = '#155724';
+                    feedbackBox.innerText = "Excellent! Correct Industry Standard.";
+                    state.correct++;
+                    state.marks += 1;
+                } else {
+                    btn.classList.add('wrong');
+                    // Highlight correct one
+                    allBtns[question.correct].classList.add('correct');
+                    feedbackBox.style.display = 'block';
+                    feedbackBox.style.background = '#f8d7da';
+                    feedbackBox.style.color = '#721c24';
+                    feedbackBox.innerText = "Incorrect. Review the correct answer highlighted.";
+                    state.wrong++;
+                }
+                updateScoreBoard();
+            }
+
+            window.checkLongAnswer = function(index) {
+                const input = document.getElementById(`long-ans-${index}`).value.toLowerCase();
+                const question = longQuestions[index];
+                const feedbackBox = document.getElementById(`long-feedback-${index}`);
+                const btn = feedbackBox.previousElementSibling;
+
+                if (input.length < 10) {
+                    alert("Please write a detailed answer.");
+                    return;
+                }
+
+                btn.disabled = true;
+                state.totalAttempted++;
+
+                // Keyword matching logic
+                let matches = 0;
+                question.keywords.forEach(key => {
+                    if (input.includes(key)) matches++;
+                });
+
+                let score = 0;
+                if (matches >= 3) {
+                    score = 5;
+                    feedbackBox.style.background = '#d4edda';
+                    feedbackBox.style.color = '#155724';
+                    feedbackBox.innerHTML = `<strong>Professional Grade!</strong><br>You used key industry terms: ${question.keywords.join(', ')}.`;
+                    state.correct++;
+                } else if (matches >= 1) {
+                    score = 2;
+                    feedbackBox.style.background = '#fff3cd';
+                    feedbackBox.style.color = '#856404';
+                    feedbackBox.innerHTML = `<strong>Partial Credit.</strong><br>You missed some key concepts. Expected keywords: ${question.keywords.join(', ')}.`;
+                } else {
+                    score = 0;
+                    feedbackBox.style.background = '#f8d7da';
+                    feedbackBox.style.color = '#721c24';
+                    feedbackBox.innerHTML = `<strong>Revision Needed.</strong><br>Your answer lacked technical depth. Key terms needed: ${question.keywords.join(', ')}.`;
+                    state.wrong++;
+                }
+
+                feedbackBox.style.display = 'block';
+                state.marks += score;
+                updateScoreBoard();
+            }
+
+            function updateScoreBoard() {
+                document.getElementById('score-correct').innerText = state.correct;
+                document.getElementById('score-wrong').innerText = state.wrong;
+                document.getElementById('score-marks').innerText = state.marks;
+
+                const rankEl = document.getElementById('score-rank');
+                if (state.marks > 80) rankEl.innerText = "Studio Master 🏆";
+                else if (state.marks > 50) rankEl.innerText = "Sound Engineer 🎧";
+                else if (state.marks > 20) rankEl.innerText = "Intern 🎤";
+                else rankEl.innerText = "Newbie";
+            }
+
+            // --- INITIALIZATION ---
+            renderImportantQuestions();
+            renderPracticeQuestions();
+            renderLongQuestions();
+
+        });
+    </script>
+</body>
+</html>

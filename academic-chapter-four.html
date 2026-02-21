@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cognitive Science Lab – Session 04: Memory Optimization</title>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #1a237e;
+            --accent-green: #2e7d32;
+            --accent-red: #c62828;
+            --accent-orange: #ef6c00;
+            --bg-pastel: #f5f7fa;
+            --panel-bg: #ffffff;
+            --panel-border: #e0e0e0;
+            --note-yellow: #fff9c4;
+            --note-blue: #e3f2fd;
+            --note-green: #e8f5e9;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Patrick Hand', cursive;
+            background-color: var(--bg-pastel);
+            color: #333;
+            line-height: 1.6;
+            font-size: 18px;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--primary-blue);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            background: linear-gradient(135deg, #1a237e, #283593);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 4px solid #000051;
+        }
+
+        .hero h1 { color: white; margin-bottom: 10px; font-size: 2.2rem; }
+        .hero .subtitle { color: #bbdefb; font-size: 1.2rem; margin-bottom: 20px; }
+        .hero .meta { font-size: 1rem; opacity: 0.9; margin-bottom: 20px; }
+        
+        .start-btn {
+            background: #ffca28;
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.2rem;
+            font-family: inherit;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #c79100;
+            transition: transform 0.1s;
+        }
+        .start-btn:active { transform: translateY(4px); box-shadow: none; }
+
+        /* --- STICKY SCORE PANEL --- */
+        .score-panel {
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 1000;
+            padding: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            font-weight: bold;
+            border-bottom: 2px solid var(--primary-blue);
+            font-size: 0.9rem;
+            flex-wrap: wrap;
+        }
+        
+        .score-item { text-align: center; margin: 0 5px; }
+        .score-val { display: block; font-size: 1.2rem; color: var(--primary-blue); }
+
+        /* --- CONTENT CONTAINERS --- */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .section {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .lecture-block {
+            background: var(--note-blue);
+            border-left: 5px solid var(--primary-blue);
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .experiment-box {
+            background: var(--note-yellow);
+            border: 2px dashed #fbc02d;
+            padding: 15px;
+            margin: 15px 0;
+            position: relative;
+        }
+        
+        .static-image-box {
+            background: #eee;
+            border: 2px solid #bdbdbd;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #757575;
+            font-weight: bold;
+            margin: 20px 0;
+            text-align: center;
+            padding: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: white;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th { background: #e8eaf6; color: var(--primary-blue); }
+
+        /* --- QUESTION STYLES --- */
+        .important-q-list { list-style: none; }
+        .important-q-item {
+            background: white;
+            border-left: 4px solid var(--accent-orange);
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .q-question { font-weight: bold; color: #333; margin-bottom: 8px; display: block; }
+        .q-answer { color: var(--primary-blue); font-size: 0.95rem; }
+
+        .quiz-card {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+        .quiz-options { display: grid; gap: 10px; margin-top: 15px; }
+        .quiz-btn {
+            background: #f5f5f5;
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+            font-family: inherit;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .quiz-btn:hover { background: #e0e0e0; }
+        .quiz-btn.correct { background: var(--note-green); border-color: var(--accent-green); color: var(--accent-green); }
+        .quiz-btn.wrong { background: #ffebee; border-color: var(--accent-red); color: var(--accent-red); }
+
+        .feedback-box {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+            font-size: 0.9rem;
+        }
+        .feedback-correct { background: var(--note-green); color: var(--accent-green); border: 1px solid var(--accent-green); }
+        .feedback-wrong { background: #ffebee; color: var(--accent-red); border: 1px solid var(--accent-red); }
+
+        /* --- LONG ANSWER --- */
+        .long-answer-area {
+            width: 100%;
+            height: 120px;
+            padding: 10px;
+            font-family: inherit;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            margin: 10px 0;
+            resize: vertical;
+        }
+        .check-long-btn {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+        }
+
+        /* --- REVISION PANEL --- */
+        .revision-panel {
+            background: #263238;
+            color: white;
+            padding: 20px;
+            margin-top: 40px;
+            border-radius: 8px;
+        }
+        .revision-toggle {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-family: inherit;
+            margin-bottom: 10px;
+        }
+        .revision-content { display: none; }
+        .revision-content.active { display: block; }
+        .revision-list li { margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px solid #37474f; }
+
+        /* --- FOOTER --- */
+        .footer {
+            background: #000;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            font-size: 0.9rem;
+        }
+        .footer span { color: #ffd54f; }
+
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 1.8rem; }
+            .score-panel { font-size: 0.8rem; padding: 5px; }
+            .section { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HERO SECTION -->
+    <header class="hero">
+        <h1>Cognitive Science Lab – Session 04</h1>
+        <div class="subtitle">Memory Optimization & Long-Term Retention</div>
+        <div class="meta">
+            <span>Basic → Medium → Advanced → Expert</span> | 
+            <span>Est. Duration: 90 Mins</span>
+        </div>
+        <button class="start-btn" onclick="document.getElementById('lab-start').scrollIntoView({behavior: 'smooth'})">Start Memory Engineering Lab</button>
+    </header>
+
+    <!-- SCORE PANEL -->
+    <div class="score-panel">
+        <div class="score-item">Correct <span class="score-val" id="score-correct">0</span></div>
+        <div class="score-item">Wrong <span class="score-val" id="score-wrong">0</span></div>
+        <div class="score-item">Attempted <span class="score-val" id="score-attempted">0/80</span></div>
+        <div class="score-item">Accuracy <span class="score-val" id="score-percent">0%</span></div>
+    </div>
+
+    <div class="container" id="lab-start">
+
+        <!-- ========================================== -->
+        <!-- LEVEL 1: BASIC - ROTE LEARNING LIMITATIONS -->
+        <!-- ========================================== -->
+        <section class="section">
+            <h2>4.1 Lecture: Limits of Mechanical Repetition</h2>
+            <div class="lecture-block">
+                <p><strong>Definition:</strong> Rote learning is the memorization of information based on repetition without understanding the reasoning or relationships behind it.</p>
+                <br>
+                <p><strong>The Failure Mechanism:</strong></p>
+                <ul>
+                    <li><strong>Weak Encoding:</strong> Creates shallow neural traces.</li>
+                    <li><strong>No Retrieval Cues:</strong> Hard to find the memory later because it's not connected to anything.</li>
+                    <li><strong>Illusion of Competence:</strong> You feel you know it because you just said it, but it fades in hours.</li>
+                </ul>
+            </div>
+
+            <div class="static-image-box">
+                [ DIAGRAM: EBBINGHAUS FORGETTING CURVE ]<br>
+                Show steep drop: 70% lost in 24 hours without review.
+            </div>
+
+            <div class="experiment-box">
+                <h3>Cognitive Experiment 1: The Nonsense Syllabus</h3>
+                <p>Try to memorize this sequence: <strong>XEJ, QUZ, VOK, YAW, JIB</strong>.</p>
+                <p>Now memorize this: <strong>RED, DOG, RUN, SUN, BIG</strong>.</p>
+                <p><strong>Result:</strong> The second list is instantly encoded because it has semantic meaning. The first requires brute repetition.</p>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- LEVEL 2: MEDIUM - MNEMONIC DEVICES -->
+        <!-- ========================================== -->
+        <section class="section">
+            <h2>4.2 Lecture: Mnemonic Architecture</h2>
+            <p>Mnemonics act as "zip files" for the brain. They compress complex data into retrieval keys.</p>
+
+            <table>
+                <tr>
+                    <th>Type</th>
+                    <th>Mechanism</th>
+                    <th>Example</th>
+                </tr>
+                <tr>
+                    <td>Acronyms</td>
+                    <td>First letters form a word</td>
+                    <td>VIBGYOR (Rainbow colors)</td>
+                </tr>
+                <tr>
+                    <td>Acrostics</td>
+                    <td>First letters form a sentence</td>
+                    <td>"My Very Educated Mother Just Served Us Noodles" (Planets)</td>
+                </tr>
+                <tr>
+                    <td>Visual Imagery</td>
+                    <td>Mental pictures</td>
+                    <td>Imagining a giant "Apple" sitting on the "Eiffel Tower"</td>
+                </tr>
+            </table>
+
+            <div class="static-image-box">
+                [ VISUAL: MNEMONIC CHAINING ]<br>
+                Diagram linking disparate items via a visual chain.
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- LEVEL 3: ADVANCED - CHUNKING & DUAL CODING -->
+        <!-- ========================================== -->
+        <section class="section">
+            <h2>4.3 Lecture: High-Capacity Processing</h2>
+            
+            <div class="lecture-block">
+                <h3>1. Chunking</h3>
+                <p><strong>Concept:</strong> Grouping individual bits of data into meaningful larger units.</p>
+                <p><strong>Brain Limit:</strong> Working memory holds 7 ± 2 items. Chunking bypasses this.</p>
+                <p><strong>Example:</strong> 194720231857 -> 1947 | 2023 | 1857 (Three historical dates instead of 12 digits).</p>
+            </div>
+
+            <div class="lecture-block">
+                <h3>2. Dual Coding Theory</h3>
+                <p><strong>Concept:</strong> Humans process information through two channels: Verbal (Text/Audio) and Visual (Images).</p>
+                <p><strong>Application:</strong> Studying a biology diagram while reading the label creates <strong>two</strong> memory traces for the same concept. Double the retention probability.</p>
+            </div>
+
+            <div class="static-image-box">
+                [ INFOGRAPHIC: DUAL CODING MODEL ]<br>
+                Visual Channel + Verbal Channel = Strong Long-Term Memory
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- LEVEL 4: EXPERT - METHOD OF LOCI & RETRIEVAL -->
+        <!-- ========================================== -->
+        <section class="section">
+            <h2>4.4 Lecture: The Memory Palace & Context</h2>
+            
+            <div class="lecture-block">
+                <h3>The Method of Loci (Memory Palace)</h3>
+                <p>The most powerful spatial memory technique known to science.</p>
+                <ol>
+                    <li>Select a familiar location (e.g., your house).</li>
+                    <li>Select specific "waypoints" (Front door, sofa, kitchen sink).</li>
+                    <li>Place the items you need to remember onto these waypoints using vivid imagery.</li>
+                    <li>To retrieve, mentally "walk" through the house.</li>
+                </ol>
+            </div>
+
+            <div class="experiment-box">
+                <h3>Encoding-Retrieval Match</h3>
+                <p><strong>Context-Dependent Memory:</strong> You recall best in the environment where you learned. (Studying in exam-like silence helps exam performance).</p>
+                <p><strong>State-Dependent Memory:</strong> Your internal state (calm, caffeinated) acts as a retrieval cue.</p>
+            </div>
+
+            <div class="static-image-box">
+                [ DIAGRAM: HOUSE FLOOR PLAN WITH OBJECTS ]<br>
+                Visualizing "Constitutional Articles" placed on furniture.
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- IMPORTANT QUESTIONS (30) -->
+        <!-- ========================================== -->
+        <section class="section">
+            <h2>Core Concepts Review (30 Key Points)</h2>
+            <ul class="important-q-list" id="important-qs-container">
+                <!-- JS will populate this -->
+            </ul>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- PRACTICE QUESTIONS (70) -->
+        <!-- ========================================== -->
+        <section class="section">
+            <h2>Practice Laboratory (70 Questions)</h2>
+            <p>Test your encoding. Interactive feedback enabled.</p>
+            <div id="quiz-container">
+                <!-- JS will populate interactive questions here -->
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- LONG QUESTIONS (10) -->
+        <!-- ========================================== -->
+        <section class="section">
+            <h2>Advanced Analytical Module (10 Scenarios)</h2>
+            <p>Design memory systems. Keywords are analyzed for scoring.</p>
+            <div id="long-answer-container">
+                <!-- JS will populate long answer questions here -->
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- REVISION PANEL -->
+        <!-- ========================================== -->
+        <div class="revision-panel">
+            <button class="revision-toggle" onclick="toggleRevision()">▼ Open Quick Revision Sheet</button>
+            <div class="revision-content" id="revision-content">
+                <ul class="revision-list">
+                    <li><strong>Rote Learning:</strong> Mechanical, shallow, prone to rapid decay.</li>
+                    <li><strong>Encoding:</strong> The process of transforming input into a memory trace.</li>
+                    <li><strong>Mnemonics:</strong> Artificial scaffolds (Acronyms, Acrostics) for retrieval.</li>
+                    <li><strong>Chunking:</strong> Grouping items to bypass working memory limits (7±2).</li>
+                    <li><strong>Dual Coding:</strong> Combining Visual + Verbal inputs for double retention strength.</li>
+                    <li><strong>Method of Loci:</strong> Spatial mapping of information to familiar locations.</li>
+                    <li><strong>Context-Dependent:</strong> Environment acts as a cue (Study where you test).</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <footer class="footer">
+        Designed & Created by <span>SHRISHANT YADAV</span><br>
+        ShanEduHub
+    </footer>
+
+    <script>
+        // --- DATA & STATE ---
+        const gameState = {
+            correct: 0,
+            wrong: 0,
+            attempted: 0,
+            total: 80, // 70 Practice + 10 Long
+            practiceQIndex: 0
+        };
+
+        // --- IMPORTANT QUESTIONS (30) ---
+        const importantQuestions = [
+            { q: "What is the primary flaw of rote learning?", a: "It creates weak neural traces lacking semantic depth." },
+            { q: "Define 'Encoding'.", a: "The process of converting sensory input into a construct that can be stored." },
+            { q: "What is the 'Illusion of Competence'?", a: "Believing you know material because you are looking at it, despite no actual retention." },
+            { q: "How does Dual Coding improve memory?", a: "It creates two separate mental representations (verbal and visual), doubling retrieval chances." },
+            { q: "What is the limit of Working Memory?", a: "7 plus or minus 2 items (Miller's Law)." },
+            { q: "What is 'Chunking'?", a: "Grouping individual pieces of information into larger, meaningful units." },
+            { q: "Explain the 'Method of Loci'.", a: "Associating items to be remembered with physical locations in a visualized space." },
+            { q: "What is an Acronym?", a: "A word formed from the first letters of other words (e.g., NASA)." },
+            { q: "What is an Acrostic?", a: "A sentence where the first letter of each word cues a memory (e.g., Every Good Boy Deserves Fruit)." },
+            { q: "What is Context-Dependent Memory?", a: "Recall is better when the retrieval environment matches the encoding environment." },
+            { q: "What is State-Dependent Memory?", a: "Recall is better when the internal physiological state matches the state during learning." },
+            { q: "What is the 'Forgetting Curve'?", a: "A graph showing how information is lost over time when there is no attempt to retain it." },
+            { q: "What is 'Elaborative Rehearsal'?", a: "Connecting new information to existing knowledge to strengthen encoding." },
+            { q: "Why is spacing effect important?", a: "Learning is more effective when study sessions are spaced out over time." },
+            { q: "What is semantic encoding?", a: "Encoding the meaning of something rather than just its sound or image." },
+            { q: "How does 'Testing Effect' work?", a: "The act of retrieving memory changes how it is stored, making it more retrievable." },
+            { q: "What is 'Interleaving'?", a: "Mixing different topics during study to improve discrimination and retention." },
+            { q: "What is a 'Peg Word System'?", a: "Associating numbers with rhyming words (One-Bun, Two-Shoe) to hang memories on." },
+            { q: "Why do emotions affect memory?", a: " The amygdala modulates memory consolidation, often making emotional events more memorable." },
+            { q: "What is 'Proactive Interference'?", a: "Old memories interfering with the retrieval of new ones." },
+            { q: "What is 'Retroactive Interference'?", a: "New learning interfering with the recall of old information." },
+            { q: "What is the 'Serial Position Effect'?", a: "Tendency to recall the first and last items in a series best." },
+            { q: "What is the 'Primacy Effect'?", a: "Better recall of items at the beginning of a list." },
+            { q: "What is the 'Recency Effect'?", a: "Better recall of items at the end of a list." },
+            { q: "What is 'Metacognition' in memory?", a: "Thinking about one's own memory processes and strategies." },
+            { q: "How does sleep affect memory?", a: "Sleep is crucial for the consolidation of memories from short-term to long-term." },
+            { q: "What is 'Maintenance Rehearsal'?", a: "Repeating information to keep it in working memory (rote)." },
+            { q: "What is a 'Retrieval Cue'?", a: "A stimulus that helps you access information stored in long-term memory." },
+            { q: "Define 'Consolidation'.", a: "The process by which memories become stable in the brain." },
+            { q: "What is 'Flashbulb Memory'?", a: "A vivid, enduring memory associated with a personally significant and emotional event." }
+        ];
+
+        // --- PRACTICE QUESTIONS (70) ---
+        // Generating via code pattern to ensure 70 distinct items without massive file bloat
+        const practiceQuestions = [
+            // BASIC (1-10)
+            { q: "Rote learning relies primarily on:", options: ["Understanding", "Mechanical Repetition", "Visuals", "Logic"], correct: 1, exp: "Rote is purely mechanical repetition." },
+            { q: "Which memory curve shows rapid loss of data?", options: ["Learning Curve", "Forgetting Curve", "Growth Curve", "Bell Curve"], correct: 1, exp: "Ebbinghaus Forgetting Curve shows steep decay." },
+            { q: "Short-term memory duration is approx:", options: ["30 seconds", "5 minutes", "1 hour", "1 day"], correct: 0, exp: "Without rehearsal, STM lasts 15-30 seconds." },
+            { q: "The illusion of competence happens when:", options: ["You test yourself", "You read passively", "You teach others", "You write summaries"], correct: 1, exp: "Passive reading creates a false sense of mastery." },
+            { q: "Rote learning leads to:", options: ["Deep Encoding", "Shallow Encoding", "Permanent Storage", "Complex Association"], correct: 1, exp: "It lacks semantic hooks." },
+            { q: "Which is NOT a rote method?", options: ["Flashcards (Active)", "Re-reading", "Highlighting", "Cramming"], correct: 0, exp: "Flashcards use active recall, others are passive." },
+            { q: "Massed practice is also known as:", options: ["Spacing", "Cramming", "Interleaving", "Testing"], correct: 1, exp: "Cramming is doing it all at once." },
+            { q: "Which is better for long term?", options: ["Rote", "Elaboration", "Ignoring", "Sleeping only"], correct: 1, exp: "Elaboration connects new info to old info." },
+            { q: "Working memory capacity is:", options: ["Unlimited", "7 ± 2 items", "100 items", "2 items"], correct: 1, exp: "Miller's Law." },
+            { q: "Forgetting is fastest during:", options: ["First hour", "Second day", "Third week", "First month"], correct: 0, exp: "Most data is lost immediately after learning." },
+
+            // MEDIUM (11-30) - Mnemonics
+            { q: "VIBGYOR is an example of:", options: ["Acrostic", "Acronym", "Peg Word", "Loci"], correct: 1, exp: "It is a pronounceable word made of initials." },
+            { q: "Using 'King Phillip Came Over' for taxonomy is:", options: ["Acronym", "Acrostic", "Chunking", "Loci"], correct: 1, exp: "Sentences using initials are Acrostics." },
+            { q: "Visual imagery works best if images are:", options: ["Boring", "Bizarre/Vivid", "Small", "Black & White"], correct: 1, exp: "The brain prioritizes novel and vivid stimuli." },
+            { q: "Linking 'Apple' to 'Shoe' by imagining a shoe kicking an apple is:", options: ["Chaining", "Rote", "Filtering", "Dumping"], correct: 0, exp: "Creating a narrative chain." },
+            { q: "The Peg Word system relies on:", options: ["Rhyming words", "Random words", "Alphabet", "Colors"], correct: 0, exp: "One-Bun, Two-Shoe..." },
+            { q: "Mnemonics are essentially:", options: ["Retrieval Cues", "Cheating", "False Memories", "Storage Bins"], correct: 0, exp: "They provide a hook to pull memory out." },
+            { q: "To remember a list in order, use:", options: ["Flashcards", "Chain Method", "Randomizing", "Highlighting"], correct: 1, exp: "Chaining links item A to B to C." },
+            { q: "HOMES for Great Lakes is an:", options: ["Acronym", "Acrostic", "Essay", "Image"], correct: 0, exp: "Huron, Ontario, Michigan, Erie, Superior." },
+            { q: "Mnemonics work by adding:", options: ["Noise", "Meaning/Structure", "Confusion", "Time"], correct: 1, exp: "They impose structure on random data." },
+            { q: "Which is a visual mnemonic?", options: ["Singing", "Method of Loci", "Writing", "Speaking"], correct: 1, exp: "Loci relies on visual spatial maps." },
+            { q: "Mnemonics require:", options: ["Initial effort", "Zero effort", "High IQ", "Money"], correct: 0, exp: "You must invest effort to create the mnemonic." },
+            { q: "Association is key to:", options: ["Forgetting", "Memory", "Sleep", "Hunger"], correct: 1, exp: "Memory is a network of associations." },
+            { q: "A rhyme scheme is a type of:", options: ["Visual aid", "Acoustic Mnemonic", "Spatial Mnemonic", "Kinesthetic"], correct: 1, exp: "It uses sound patterns." },
+            { q: "Keyword method is often used for:", options: ["Math", "Language Vocabulary", "Physics", "History"], correct: 1, exp: "Linking foreign words to similar sounding native words." },
+            { q: "Which is NOT a mnemonic?", options: ["Acronym", "Loci", "Rote Repetition", "Chunking"], correct: 2, exp: "Rote is the absence of technique." },
+            { q: "Improving memory requires:", options: ["Passive input", "Active encoding", "Less sleep", "More food"], correct: 1, exp: "Active engagement is crucial." },
+            { q: "Visualizing a 'Memory Palace' uses:", options: ["Spatial Memory", "Muscle Memory", "Short Term Memory", "Sensory Memory"], correct: 0, exp: "It leverages our evolutionary spatial navigation." },
+            { q: "The 'Baker/baker' paradox illustrates:", options: ["Visuals", "Contextual depth", "Sound", "Taste"], correct: 1, exp: "Remembering a profession (baker) is easier than a name (Baker) due to associations." },
+            { q: "Imagery is processed in the:", options: ["Occipital Lobe", "Motor Cortex", "Brain stem", "Ear"], correct: 0, exp: "Visual processing center." },
+            { q: "Acronyms reduce:", options: ["Memory load", "Understanding", "Time", "Effort"], correct: 0, exp: "They compress information." },
+
+            // ADVANCED (31-50) - Chunking/Dual Coding
+            { q: "Chunking increases capacity of:", options: ["LTM", "Working Memory", "Sensory Memory", "Implicit Memory"], correct: 1, exp: "It allows more 'bits' to fit in the 7 slots." },
+            { q: "9988776655 is easier as 99-88-77-66-55. This is:", options: ["Chunking", "Loci", "Rote", "Pegging"], correct: 0, exp: "Breaking stream into groups." },
+            { q: "Dual Coding theory was proposed by:", options: ["Paivio", "Freud", "Skinner", "Pavlov"], correct: 0, exp: "Allan Paivio." },
+            { q: "Dual Coding suggests we have:", options: ["1 system", "2 independent systems", "3 systems", "No systems"], correct: 1, exp: "Verbal and Visual systems." },
+            { q: "Chunking works best based on:", options: ["Randomness", "Prior Knowledge", "Colors", "Sounds"], correct: 1, exp: "You chunk based on patterns you already know." },
+            { q: "Drawing a diagram while explaining it uses:", options: ["Dual Coding", "Interference", "Decay", "Repression"], correct: 0, exp: "Visual + Verbal." },
+            { q: "Chess masters remember boards due to:", options: ["Photographic memory", "Chunking patterns", "Luck", "Magic"], correct: 1, exp: "They recognize clusters of pieces." },
+            { q: "Which prevents effective chunking?", options: ["Knowledge", "Lack of understanding", "Practice", "Focus"], correct: 1, exp: "If you don't understand the pattern, you can't chunk it." },
+            { q: "Dual coding creates:", options: ["Redundancy", "Confusion", "Forgetfulness", "Sleep"], correct: 0, exp: "Redundancy is good here; multiple paths to the memory." },
+            { q: "To chunk a speech, you group by:", options: ["Words", "Themes/Topics", "Letters", "Sentences"], correct: 1, exp: "Thematic grouping." },
+            { q: "Multimedia learning principle aligns with:", options: ["Dual Coding", "Rote", "Silence", "Darkness"], correct: 0, exp: "Images + Text is better than text alone." },
+            { q: "Chunking reduces:", options: ["Cognitive Load", "Intelligence", "Vision", "Hearing"], correct: 0, exp: "Frees up working memory resources." },
+            { q: "A 'Super-chunk' is:", options: ["A big rock", "Chunks of chunks", "A mistake", "A bias"], correct: 1, exp: "Hierarchical organization of memory." },
+            { q: "Dual coding implies images are:", options: ["Distractions", "Enhancers", "Useless", "Dangerous"], correct: 1, exp: "They enhance verbal recall." },
+            { q: "Grouping dates by century is:", options: ["Chunking", "Rote", "Loci", "Pegging"], correct: 0, exp: "Categorical chunking." },
+            { q: "Concrete words are easier than abstract because:", options: ["They are shorter", "They can be imaged", "They sound better", "They are new"], correct: 1, exp: "You can dual code 'Table' (Image+Word), but 'Truth' is harder to image." },
+            { q: "Expertise allows for:", options: ["Larger chunks", "Smaller chunks", "No chunks", "Slow chunks"], correct: 0, exp: "Experts see big patterns." },
+            { q: "Processing a word visually and acoustically is:", options: ["Deep processing", "Shallow processing", "Wrong", "Impossible"], correct: 0, exp: "Deep levels of processing." },
+            { q: "Story method links items via:", options: ["Narrative structure", "Randomness", "Alphabet", "Numbers"], correct: 0, exp: "Creating a plot connects items." },
+            { q: "Narrative chaining relies on:", options: ["Causality", "Isolation", "Silence", "Repetition"], correct: 0, exp: "A causes B causes C..." },
+
+            // EXPERT (51-70) - Loci/Context
+            { q: "Method of Loci uses:", options: ["Auditory Loop", "Visuospatial Sketchpad", "Amygdala", "Reflexes"], correct: 1, exp: "It uses the brain's navigation system." },
+            { q: "Memory Palaces work because:", options: ["We are spatial creatures", "We like castles", "It is magic", "It is easy"], correct: 0, exp: "Evolution prioritized spatial navigation." },
+            { q: "If you study drunk, you test better:", options: ["Sober", "Drunk", "Asleep", "Running"], correct: 1, exp: "State-dependent learning (though not recommended!)." },
+            { q: "Divers in water recalled lists better:", options: ["On land", "In water", "In air", "In space"], correct: 1, exp: "Godden & Baddeley's classic context experiment." },
+            { q: "To maximize exam recall:", options: ["Study in bed", "Study in exam conditions", "Study with music", "Study at parties"], correct: 1, exp: "Match the context." },
+            { q: "Loci method order is preserved by:", options: ["The route", "The alphabet", "The colors", "The time"], correct: 0, exp: "The sequence of the path keeps order." },
+            { q: "Bizarre imagery in Loci:", options: ["Hurts recall", "Aids recall", "Does nothing", "Erases memory"], correct: 1, exp: "Distinctiveness aids memory." },
+            { q: "Encoding Specificity Principle states:", options: ["Cues matter", "Cues are useless", "Brains are computers", "Memory is permanent"], correct: 0, exp: "Retrieval depends on match between encoding and retrieval cues." },
+            { q: "The 'Doorway Effect' (forgetting when entering a room) is:", options: ["Context shift", "Dementia", "Laziness", "Hunger"], correct: 0, exp: "Changing context flushes working memory." },
+            { q: "Mental retracing helps because:", options: ["It reinstates context", "It is exercise", "It is boring", "It is fast"], correct: 0, exp: "It brings back the encoding cues." },
+            { q: "Method of Loci is also known as:", options: ["Roman Room", "Greek Hall", "French House", "German Wall"], correct: 0, exp: "Or Journey Method." },
+            { q: "To memorize 50 cards, champions use:", options: ["Rote", "Loci", "Writing", "Singing"], correct: 1, exp: "Loci is standard for memory sports." },
+            { q: "State-dependent memory includes:", options: ["Mood", "Clothing", "Weather", "Time"], correct: 0, exp: "Mood/Internal physiological state." },
+            { q: "Environmental context is:", options: ["Exogenous", "Endogenous", "Useless", "Internal"], correct: 0, exp: "External cues." },
+            { q: "Mood-congruent memory means:", options: ["Sad people recall sad things", "Sad people recall happy things", "Mood doesn't matter", "Memory creates mood"], correct: 0, exp: "We recall memories matching our current mood." },
+            { q: "A 'Memory Journey' must be:", options: ["New", "Familiar", "Random", "Changing"], correct: 1, exp: "You must know the path perfectly." },
+            { q: "Spacing out study sessions utilizes:", options: ["Context variation", "Context fixation", "Rote", "None"], correct: 0, exp: "Variable contexts during encoding strengthen the trace." },
+            { q: "The primary key to Loci is:", options: ["Location + Image", "Sound + Image", "Word + Word", "Number + Number"], correct: 0, exp: "Binding an object to a place." },
+            { q: "Retrieval failure is often due to:", options: ["Missing cues", "Deleted file", "Brain damage", "Age"], correct: 0, exp: "The memory is there, but accessible path is lost." },
+            { q: "The ultimate goal of memory engineering is:", options: ["Rote speed", "Understanding + Retrieval", "Forgetting", "Illusion"], correct: 1, exp: "Efficient storage and reliable access." }
+        ];
+
+        // --- LONG ANSWER QUESTIONS (10) ---
+        const longQuestions = [
+            {
+                id: 1,
+                q: "Design a Method of Loci path for the first 5 Prime Ministers of India. Describe the location and the associative image.",
+                keywords: ["Nehru", "Shastri", "Indira", "Desai", "Charan", "location", "image", "visual", "place"],
+                points: 5
+            },
+            {
+                id: 2,
+                q: "Analyze why 'Rattafication' (Rote) fails for UPSC/JEE preparation based on the Levels of Processing theory.",
+                keywords: ["shallow", "deep", "meaning", "semantic", "forgetting", "curve", "understanding"],
+                points: 5
+            },
+            {
+                id: 3,
+                q: "Create a Dual Coding strategy for learning the 'Parts of a Plant Cell'.",
+                keywords: ["diagram", "label", "visual", "verbal", "draw", "text", "image"],
+                points: 5
+            },
+            {
+                id: 4,
+                q: "Explain how you would use Chunking to memorize a 12-digit Aadhaar number.",
+                keywords: ["group", "4 digits", "split", "pattern", "segment", "working memory"],
+                points: 5
+            },
+            {
+                id: 5,
+                q: "Compare Acronyms vs Acrostics with one original example for each.",
+                keywords: ["first letter", "sentence", "word", "initials", "example", "difference"],
+                points: 5
+            },
+            {
+                id: 6,
+                q: "Evaluate the role of 'Context-Dependent Memory' in exam hall performance.",
+                keywords: ["environment", "cue", "setting", "match", "encoding", "retrieval", "simulat"],
+                points: 5
+            },
+            {
+                id: 7,
+                q: "Design a story-based association to remember these dates: 1947, 1950, 1991.",
+                keywords: ["independence", "republic", "liberalization", "story", "connect", "narrative", "plot"],
+                points: 5
+            },
+            {
+                id: 8,
+                q: "Critique the 'Illusion of Competence' in passive reading.",
+                keywords: ["familiarity", "recognition", "recall", "active", "testing", "false"],
+                points: 5
+            },
+            {
+                id: 9,
+                q: "Construct a 'Peg Word' list for numbers 1 to 5.",
+                keywords: ["bun", "shoe", "tree", "door", "hive", "rhyme", "associate"],
+                points: 5
+            },
+            {
+                id: 10,
+                q: "Synthesize a revision plan using Spaced Repetition and Mnemonics.",
+                keywords: ["intervals", "review", "technique", "time", "schedule", "forgetting"],
+                points: 5
+            }
+        ];
+
+        // --- DOM ELEMENTS ---
+        const importantContainer = document.getElementById('important-qs-container');
+        const quizContainer = document.getElementById('quiz-container');
+        const longAnswerContainer = document.getElementById('long-answer-container');
+        
+        // --- INITIALIZATION ---
+        window.addEventListener('DOMContentLoaded', () => {
+            initImportantQuestions();
+            initPracticeQuiz();
+            initLongQuestions();
+            updateScoreBoard();
+        });
+
+        // --- FUNCTIONS ---
+
+        function updateScoreBoard() {
+            document.getElementById('score-correct').innerText = gameState.correct;
+            document.getElementById('score-wrong').innerText = gameState.wrong;
+            document.getElementById('score-attempted').innerText = `${gameState.attempted}/${gameState.total}`;
+            
+            let percent = 0;
+            if (gameState.attempted > 0) {
+                percent = Math.round((gameState.correct / gameState.attempted) * 100);
+            }
+            document.getElementById('score-percent').innerText = `${percent}%`;
+        }
+
+        function initImportantQuestions() {
+            importantQuestions.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.className = 'important-q-item';
+                li.innerHTML = `
+                    <span class="q-question">Q${index + 1}: ${item.q}</span>
+                    <span class="q-answer">A: ${item.a}</span>
+                `;
+                importantContainer.appendChild(li);
+            });
+        }
+
+        function initPracticeQuiz() {
+            practiceQuestions.forEach((q, index) => {
+                const card = document.createElement('div');
+                card.className = 'quiz-card';
+                card.innerHTML = `
+                    <p><strong>Q${index + 1}:</strong> ${q.q}</p>
+                    <div class="quiz-options">
+                        ${q.options.map((opt, i) => `
+                            <button class="quiz-btn" onclick="handleMCQ(this, ${index}, ${i})">${String.fromCharCode(65+i)}. ${opt}</button>
+                        `).join('')}
+                    </div>
+                    <div class="feedback-box" id="fb-${index}"></div>
+                `;
+                quizContainer.appendChild(card);
+            });
+        }
+
+        function handleMCQ(btn, qIndex, optIndex) {
+            // Prevent re-answering
+            const card = btn.closest('.quiz-card');
+            if (card.getAttribute('data-answered') === 'true') return;
+            card.setAttribute('data-answered', 'true');
+
+            const q = practiceQuestions[qIndex];
+            const feedbackBox = document.getElementById(`fb-${qIndex}`);
+            const allBtns = card.querySelectorAll('.quiz-btn');
+
+            gameState.attempted++;
+
+            if (optIndex === q.correct) {
+                // Correct
+                gameState.correct++;
+                btn.classList.add('correct');
+                feedbackBox.className = 'feedback-box feedback-correct';
+                feedbackBox.innerHTML = `<strong>Excellent ⭐</strong><br>${q.exp}`;
+            } else {
+                // Wrong
+                gameState.wrong++;
+                btn.classList.add('wrong');
+                // Highlight correct
+                allBtns[q.correct].classList.add('correct');
+                feedbackBox.className = 'feedback-box feedback-wrong';
+                feedbackBox.innerHTML = `<strong>Try Again</strong><br>Correct: ${String.fromCharCode(65+q.correct)}. ${q.options[q.correct]}<br><em>${q.exp}</em>`;
+            }
+
+            feedbackBox.style.display = 'block';
+            updateScoreBoard();
+        }
+
+        function initLongQuestions() {
+            longQuestions.forEach((q, index) => {
+                const card = document.createElement('div');
+                card.className = 'quiz-card';
+                card.innerHTML = `
+                    <p><strong>Advanced Q${index + 1}:</strong> ${q.q}</p>
+                    <textarea class="long-answer-area" placeholder="Type your analysis here..."></textarea>
+                    <button class="check-long-btn" onclick="checkLongAnswer(this, ${index})">Submit Analysis</button>
+                    <div class="feedback-box" id="lfb-${index}"></div>
+                `;
+                longAnswerContainer.appendChild(card);
+            });
+        }
+
+        function checkLongAnswer(btn, index) {
+            const card = btn.closest('.quiz-card');
+            if (card.getAttribute('data-answered') === 'true') return;
+            
+            const textarea = card.querySelector('textarea');
+            const userText = textarea.value.toLowerCase();
+            if (userText.length < 10) {
+                alert("Please write a detailed answer.");
+                return;
+            }
+
+            card.setAttribute('data-answered', 'true');
+            gameState.attempted++;
+            btn.disabled = true;
+            btn.style.opacity = "0.6";
+
+            const q = longQuestions[index];
+            const matches = q.keywords.filter(kw => userText.includes(kw.toLowerCase()));
+            const score = matches.length; 
+            
+            // Simple scoring logic: need at least 2 keywords for 'correct' in this binary system
+            // In a real app, this would be more nuanced. 
+            // Here, we treat > 30% keyword match as a "point" for the scoreboard
+            
+            const isPass = matches.length >= 2;
+            const feedbackBox = document.getElementById(`lfb-${index}`);
+            
+            if (isPass) {
+                gameState.correct++;
+                feedbackBox.className = 'feedback-box feedback-correct';
+                feedbackBox.innerHTML = `<strong>Analysis Accepted</strong><br>Keywords detected: ${matches.join(', ')}.<br>Good conceptual coverage.`;
+            } else {
+                gameState.wrong++;
+                feedbackBox.className = 'feedback-box feedback-wrong';
+                feedbackBox.innerHTML = `<strong>Revise Concept</strong><br>Missing key concepts: ${q.keywords.slice(0, 3).join(', ')}...<br>Try to connect the theory more explicitly.`;
+            }
+            
+            feedbackBox.style.display = 'block';
+            updateScoreBoard();
+        }
+
+        function toggleRevision() {
+            const content = document.getElementById('revision-content');
+            const btn = document.querySelector('.revision-toggle');
+            if (content.classList.contains('active')) {
+                content.classList.remove('active');
+                btn.innerText = "▼ Open Quick Revision Sheet";
+            } else {
+                content.classList.add('active');
+                btn.innerText = "▲ Close Quick Revision Sheet";
+            }
+        }
+
+    </script>
+</body>
+</html>

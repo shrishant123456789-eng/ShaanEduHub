@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>High-Impact Communication Mastery - Practice</title>
+    <style>
+        :root {
+            --primary: #4A90E2; /* Blue */
+            --secondary: #50E3C2; /* Teal/Green */
+            --accent: #FF9F1C; /* Orange */
+            --highlight: #F8E71C; /* Yellow */
+            --danger: #FF6B6B; /* Red */
+            --dark: #2C3E50;
+            --light: #F7F9FC;
+            --white: #ffffff;
+            --radius: 16px;
+            --shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Verdana', 'Segoe UI', sans-serif; /* Clean, non-cursive */
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            padding-bottom: 60px;
+        }
+
+        /* --- HEADER & SCOREBOARD --- */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white);
+            padding: 20px;
+            text-align: center;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+            font-weight: 800;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        #score-panel {
+            position: sticky;
+            top: 10px;
+            z-index: 1000;
+            background: var(--white);
+            border-radius: 50px;
+            padding: 10px 20px;
+            margin: 0 auto 20px auto;
+            width: 90%;
+            max-width: 600px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            border: 2px solid var(--primary);
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .score-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .score-val {
+            font-size: 1.1rem;
+            color: var(--primary);
+        }
+
+        /* --- NAVIGATION & REVISION --- */
+        .controls {
+            padding: 0 15px;
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn-set {
+            background: var(--white);
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 8px 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .btn-set.active {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-rev {
+            background: var(--accent);
+            color: var(--white);
+            border: none;
+            width: 100%;
+            max-width: 300px;
+            padding: 12px;
+            border-radius: var(--radius);
+            margin: 10px auto;
+            display: block;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #revision-content {
+            display: none;
+            background: var(--white);
+            padding: 20px;
+            margin: 10px 15px;
+            border-radius: var(--radius);
+            border-left: 5px solid var(--accent);
+            line-height: 1.6;
+        }
+
+        /* --- QUESTION CARD --- */
+        #quiz-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 15px;
+            min-height: 400px;
+        }
+
+        .question-card {
+            background: var(--white);
+            padding: 25px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border-top: 6px solid var(--secondary);
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .q-header {
+            display: flex;
+            justify-content: space-between;
+            color: #777;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .q-text {
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+            color: var(--dark);
+            line-height: 1.5;
+        }
+
+        /* --- INPUT TYPES --- */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background: #f0f4f8;
+            border: 2px solid #e1e8ed;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+
+        .option-btn:hover {
+            background: #e6f0fa;
+            border-color: var(--primary);
+        }
+
+        .input-box {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+
+        .input-box:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        textarea.input-box {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .action-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: block;
+            margin-top: 10px;
+        }
+
+        /* --- FEEDBACK --- */
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+        }
+
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .feedback.wrong {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: 2px solid #ccc;
+            color: #777;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        .nav-btn:hover {
+            border-color: var(--dark);
+            color: var(--dark);
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            font-size: 0.9rem;
+            color: #666;
+            background: #fff;
+            border-top: 1px solid #eee;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.2rem; }
+            #score-panel { font-size: 0.8rem; width: 95%; padding: 8px; }
+            .score-val { font-size: 1rem; }
+            .btn-set { padding: 6px 10px; font-size: 0.85rem; }
+            .q-text { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>📘 Mastery Course: Communication & Leadership</h1>
+        <div class="subtitle">Interactive Practice for Future Leaders</div>
+    </header>
+
+    <div id="score-panel">
+        <div class="score-item">
+            <span>✅ Correct</span>
+            <span class="score-val" id="score-correct">0</span>
+        </div>
+        <div class="score-item">
+            <span>❌ Wrong</span>
+            <span class="score-val" id="score-wrong">0</span>
+        </div>
+        <div class="score-item">
+            <span>📊 %</span>
+            <span class="score-val" id="score-percent">0%</span>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn-rev" onclick="toggleRevision()">📖 Toggle Quick Revision</button>
+        <div id="revision-content">
+            <h3>Quick Revision Key Points:</h3>
+            <ul>
+                <li><strong>PREP:</strong> Point, Reason, Example, Point.</li>
+                <li><strong>STAR:</strong> Situation, Task, Action, Result.</li>
+                <li><strong>7-Second Rule:</strong> Time to make a first impression.</li>
+                <li><strong>Amy Cuddy:</strong> Power Posing research.</li>
+                <li><strong>Growth Mindset:</strong> Carol Dweck (Skills can be built).</li>
+                <li><strong>Pareto Principle:</strong> 80% results come from 20% efforts.</li>
+                <li><strong>Deep Work:</strong> Cal Newport (Distraction-free focus).</li>
+                <li><strong>EQ:</strong> Self-awareness, Regulation, Empathy, Social Skills.</li>
+            </ul>
+        </div>
+        <div style="width: 100%; text-align: center; margin-bottom: 10px; color: #555; font-size: 0.9rem;">Select Practice Set:</div>
+        <div id="set-buttons" style="display: flex; gap: 5px; flex-wrap: wrap; justify-content: center;">
+            <!-- Buttons generated by JS -->
+        </div>
+    </div>
+
+    <div id="quiz-container">
+        <!-- Questions load here -->
+    </div>
+
+    <footer>
+        Designed & Created by SHRISHANT YADAV, ShanEduHub
+    </footer>
+
+    <script>
+        // --- DATA STORAGE ---
+        // 10 Sets x 30 Questions = 300 Questions Total
+        // Types: mcq, fib (fill in blank), bool (true/false), short, long
+
+        const setsData = {
+            1: { title: "Foundations of Communication", questions: [] },
+            2: { title: "Applied Frameworks (PREP/STAR)", questions: [] },
+            3: { title: "Advanced Persuasion & AI", questions: [] },
+            4: { title: "Confidence & Branding", questions: [] },
+            5: { title: "Stage Presence & Authority", questions: [] },
+            6: { title: "Leadership & EQ Basics", questions: [] },
+            7: { title: "High-Stakes Leadership", questions: [] },
+            8: { title: "Decision Making Logic", questions: [] },
+            9: { title: "Discipline & Stress", questions: [] },
+            10: { title: "Expert Review & Trends", questions: [] }
+        };
+
+        // --- HELPER TO GENERATE QUESTIONS ---
+        // To adhere to file size and efficiency, we generate questions using arrays and loop construction where possible, 
+        // but for high quality, I will define them explicitly in blocks.
+
+        const qBank = [
+            // SET 1: Foundations (30 Qs)
+            { s: 1, t: 'mcq', q: "In the communication process, who initiates the message?", o: ["Receiver", "Sender", "Medium", "Feedback"], a: "Sender" },
+            { s: 1, t: 'bool', q: "Non-verbal communication accounts for less than 10% of overall impact.", a: "false" },
+            { s: 1, t: 'fib', q: "The barrier to communication involving loud noises is a _____ barrier.", a: "physical" },
+            { s: 1, t: 'mcq', q: "Which of these is NOT a component of voice tone?", o: ["Pitch", "Pace", "Clarity", "Height"], a: "Height" },
+            { s: 1, t: 'short', q: "Define 'Active Listening' in one sentence.", a: "listening to understand" }, // partial match
+            { s: 1, t: 'mcq', q: "Interpersonal communication happens between:", o: ["One person", "Two or more people", "Large groups only", "Machines"], a: "Two or more people" },
+            { s: 1, t: 'long', q: "Explain the difference between Hearing and Listening.", keywords: ["processing", "understanding", "psychological", "active", "passive"] },
+            { s: 1, t: 'fib', q: "_____ contact is a key part of body language indicating confidence.", a: "eye" },
+            { s: 1, t: 'mcq', q: "Cross-cultural communication requires:", o: ["Ignoring differences", "Cultural sensitivity", "Speaking loudly", "Using slang"], a: "Cultural sensitivity" },
+            { s: 1, t: 'bool', q: "Encoding is the process of interpreting the message.", a: "false" },
+            { s: 1, t: 'mcq', q: "Which posture suggests defensiveness?", o: ["Open arms", "Crossed arms", "Leaning forward", "Nodding"], a: "Crossed arms" },
+            { s: 1, t: 'fib', q: "Digital communication includes emails and _____ messages.", a: "instant" },
+            { s: 1, t: 'mcq', q: "The alignment of facial expressions with your words is called:", o: ["Congruence", "Divergence", "Masking", "Encoding"], a: "Congruence" },
+            { s: 1, t: 'short', q: "What does 'noise' mean in communication theory?", a: "interference" },
+            { s: 1, t: 'long', q: "Describe three barriers to effective communication.", keywords: ["physical", "language", "emotional", "cultural", "noise"] },
+            { s: 1, t: 'mcq', q: "Reflective listening involves:", o: ["Paraphrasing", "Ignoring", "Judging", "Interrupting"], a: "Paraphrasing" },
+            { s: 1, t: 'bool', q: "Public speaking is a form of mass communication.", a: "true" },
+            { s: 1, t: 'fib', q: "Pitch refers to the _____ or lowness of the voice.", a: "highness" },
+            { s: 1, t: 'mcq', q: "Which is a non-verbal cue?", o: ["Words", "Gestures", "Email", "Speech"], a: "Gestures" },
+            { s: 1, t: 'short', q: "What is the 'Receiver's' role?", a: "decode" },
+            { s: 1, t: 'mcq', q: "Effective communication minimizes:", o: ["Understanding", "Clarity", "Misunderstanding", "Feedback"], a: "Misunderstanding" },
+            { s: 1, t: 'bool', q: "Smiling is a universal non-verbal signal.", a: "true" },
+            { s: 1, t: 'fib', q: "Feedback completes the _____ loop.", a: "communication" },
+            { s: 1, t: 'mcq', q: "In 2026, professional emails should be:", o: ["Long", "Concise", "Informal", "Handwritten"], a: "Concise" },
+            { s: 1, t: 'long', q: "Why is posture important in a professional setting?", keywords: ["confidence", "authority", "respect", "engagement", "impression"] },
+            { s: 1, t: 'mcq', q: "Proxemics refers to the study of:", o: ["Time", "Space/Distance", "Touch", "Eye movement"], a: "Space/Distance" },
+            { s: 1, t: 'bool', q: "Slouching communicates high energy.", a: "false" },
+            { s: 1, t: 'fib', q: "Clarification helps ensure the message was _____ correctly.", a: "understood" },
+            { s: 1, t: 'mcq', q: "Visual aids help to:", o: ["Distract", "Reinforce message", "Replace speech", "Confuse"], a: "Reinforce message" },
+            { s: 1, t: 'short', q: "Give one example of written communication.", a: "email" },
+
+            // SET 2: Applied Frameworks (30 Qs)
+            { s: 2, t: 'mcq', q: "What does 'P' stand for in PREP?", o: ["Plan", "Point", "Prepare", "Process"], a: "Point" },
+            { s: 2, t: 'fib', q: "The STAR method is used mainly for _____ interviews.", a: "behavioral" },
+            { s: 2, t: 'mcq', q: "Who developed the Pyramid Principle?", o: ["Amy Cuddy", "Barbara Minto", "Simon Sinek", "James Clear"], a: "Barbara Minto" },
+            { s: 2, t: 'bool', q: "In PREP, the 'E' stands for End.", a: "false" },
+            { s: 2, t: 'mcq', q: "An Elevator Pitch should typically last:", o: ["10 minutes", "30-60 seconds", "1 hour", "5 seconds"], a: "30-60 seconds" },
+            { s: 2, t: 'long', q: "Explain the STAR framework components.", keywords: ["situation", "task", "action", "result"] },
+            { s: 2, t: 'mcq', q: "Emotional Mirroring is a technique for:", o: ["Mocking", "Rapport building", "Ignoring", "Debating"], a: "Rapport building" },
+            { s: 2, t: 'fib', q: "The 'Result' in STAR should be positive and _____.", a: "measurable" },
+            { s: 2, t: 'mcq', q: "Slack or Teams etiquette suggests avoiding:", o: ["Clear status", "Threading replies", "Spamming @channel", "Emojis"], a: "Spamming @channel" },
+            { s: 2, t: 'bool', q: "The Pyramid Principle starts with the main conclusion first.", a: "true" },
+            { s: 2, t: 'short', q: "What is the purpose of a 'Clarification Loop'?", a: "confirm understanding" },
+            { s: 2, t: 'mcq', q: "In a hybrid meeting, you should:", o: ["Ignore remote users", "Look at the camera", "Mute everyone", "Turn off video"], a: "Look at the camera" },
+            { s: 2, t: 'fib', q: "AI-assisted drafting helps improve _____ and tone.", a: "clarity" },
+            { s: 2, t: 'mcq', q: "Reflective listening validates the speaker's:", o: ["Logic only", "Emotions", "Mistakes", "Accent"], a: "Emotions" },
+            { s: 2, t: 'long', q: "Draft a short PREP statement about why time management is important.", keywords: ["point", "reason", "example", "conclusion"] },
+            { s: 2, t: 'mcq', q: "Which is a 'Reason' in PREP?", o: ["I like it", "Because it saves time", "For example", "In conclusion"], a: "Because it saves time" },
+            { s: 2, t: 'bool', q: "You should use 'Reply All' for every email.", a: "false" },
+            { s: 2, t: 'fib', q: "The Pyramid Principle groups supporting arguments _____ the main idea.", a: "under" },
+            { s: 2, t: 'mcq', q: "Action in STAR refers to:", o: ["What the team did", "What you specifically did", "The problem", "The outcome"], a: "What you specifically did" },
+            { s: 2, t: 'short', q: "What is an 'Elevator Pitch'?", a: "short summary" },
+            { s: 2, t: 'mcq', q: "Effective subject lines in 2026 emails are:", o: ["Vague", "Specific & Actionable", "Blank", "Clickbait"], a: "Specific & Actionable" },
+            { s: 2, t: 'bool', q: "Reflective listening involves repeating words exactly like a parrot.", a: "false" },
+            { s: 2, t: 'fib', q: "Use _____ lists to make emails readable.", a: "bullet" },
+            { s: 2, t: 'mcq', q: "Situation in STAR describes the:", o: ["Context", "Results", "Future", "Salary"], a: "Context" },
+            { s: 2, t: 'long', q: "Why is the 'Action' part of STAR the most important?", keywords: ["contribution", "skills", "behavior", "specific", "role"] },
+            { s: 2, t: 'mcq', q: "Hybrid meetings require good:", o: ["Audio", "Catering", "Decor", "Silence"], a: "Audio" },
+            { s: 2, t: 'short', q: "Name one tool for async communication.", a: "loom" },
+            { s: 2, t: 'mcq', q: "To close a PREP statement, you:", o: ["Introduce new ideas", "Restate the Point", "Ask a question", "Leave abruptly"], a: "Restate the Point" },
+            { s: 2, t: 'bool', q: "AI tools can summarize meetings automatically.", a: "true" },
+            { s: 2, t: 'fib', q: "The P in PREP stands for _____.", a: "point" },
+
+            // SET 3: Advanced Persuasion & AI (30 Qs)
+            { s: 3, t: 'mcq', q: "Who is famous for the 'Principles of Influence'?", o: ["Robert Cialdini", "Tony Robbins", "Elon Musk", "Sigmund Freud"], a: "Robert Cialdini" },
+            { s: 3, t: 'fib', q: "_____ is a principle where people follow the lead of similar others.", a: "social proof" },
+            { s: 3, t: 'mcq', q: "Framing effects bias our decisions based on:", o: ["Facts", "How info is presented", "Timing", "Cost"], a: "How info is presented" },
+            { s: 3, t: 'bool', q: "Reciprocity means you feel obliged to give back when you receive.", a: "true" },
+            { s: 3, t: 'long', q: "Explain the 'Scarcity' principle of influence.", keywords: ["limited", "exclusive", "fear of missing out", "value", "demand"] },
+            { s: 3, t: 'mcq', q: "Effective AI prompts should be:", o: ["Vague", "Specific & Contextual", "One word", "Polite only"], a: "Specific & Contextual" },
+            { s: 3, t: 'fib', q: "Cognitive _____ are systematic errors in thinking.", a: "biases" },
+            { s: 3, t: 'mcq', q: "In Crisis Communication, the priority is:", o: ["Hiding facts", "Transparency & Speed", "Blaming others", "Silence"], a: "Transparency & Speed" },
+            { s: 3, t: 'short', q: "What is 'Behavioral Economics'?", a: "psychology of decision making" },
+            { s: 3, t: 'mcq', q: "Which is NOT a Cialdini principle?", o: ["Authority", "Liking", "Consistency", "Aggression"], a: "Aggression" },
+            { s: 3, t: 'bool', q: "You should blindly trust AI-generated communication.", a: "false" },
+            { s: 3, t: 'fib', q: "Reputation-sensitive messaging protects the brand's _____.", a: "image" },
+            { s: 3, t: 'mcq', q: "Conflict resolution often requires finding a:", o: ["Winner", "Win-Win solution", "Loophole", "Lawyer"], a: "Win-Win solution" },
+            { s: 3, t: 'long', q: "How does 'Authority' influence persuasion?", keywords: ["expert", "credentials", "trust", "obedience", "status"] },
+            { s: 3, t: 'mcq', q: "Prompt Engineering is a skill for:", o: ["Construction", "AI interaction", "Time management", "Public speaking"], a: "AI interaction" },
+            { s: 3, t: 'bool', q: "Loss aversion means we prefer avoiding losses over acquiring gains.", a: "true" },
+            { s: 3, t: 'fib', q: "_____ involves adjusting the message to the audience's mental state.", a: "framing" },
+            { s: 3, t: 'mcq', q: "High-pressure communication requires:", o: ["Panic", "Emotional Control", "Shouting", "Speed only"], a: "Emotional Control" },
+            { s: 3, t: 'short', q: "Define 'Cognitive Bias'.", a: "error in thinking" },
+            { s: 3, t: 'mcq', q: "Which tool helps with AI speech analysis?", o: ["Excel", "Yoodli/Speeko", "Paint", "Calculator"], a: "Yoodli/Speeko" },
+            { s: 3, t: 'long', q: "Describe the 'Consistency' principle.", keywords: ["commitment", "past behavior", "align", "promise", "follow through"] },
+            { s: 3, t: 'mcq', q: "In AI collaboration, the human role is:", o: ["Obsolete", "Editor & Strategist", "Data entry", "Passive"], a: "Editor & Strategist" },
+            { s: 3, t: 'bool', q: "Crisis plans should be made *during* the crisis.", a: "false" },
+            { s: 3, t: 'fib', q: "The 'Liking' principle suggests we say yes to people we _____.", a: "like" },
+            { s: 3, t: 'mcq', q: "Anchoring bias relies on:", o: ["The first piece of info", "The last piece of info", "Emotions", "Logic"], a: "The first piece of info" },
+            { s: 3, t: 'short', q: "What is 'Social Proof'?", a: "following others" },
+            { s: 3, t: 'mcq', q: "Reputation is considered:", o: ["Useless", "Capital/Asset", "Liquid", "Liability"], a: "Capital/Asset" },
+            { s: 3, t: 'bool', q: "Human-AI collaboration is a key 2026 skill.", a: "true" },
+            { s: 3, t: 'fib', q: "Refining AI output is called _____.", a: "curation" },
+            { s: 3, t: 'mcq', q: "For negotiation, which Cialdini principle uses 'give and take'?", o: ["Reciprocity", "Scarcity", "Authority", "Unity"], a: "Reciprocity" },
+
+            // SET 4: Confidence & Branding (30 Qs)
+            { s: 4, t: 'mcq', q: "Confidence is different from arrogance because confidence is:", o: ["Loud", "Grounded in reality", "Insulting", "Fake"], a: "Grounded in reality" },
+            { s: 4, t: 'fib', q: "Carol Dweck is famous for the _____ mindset theory.", a: "growth" },
+            { s: 4, t: 'mcq', q: "The 'First Impression' rule states you have roughly:", o: ["1 minute", "7 seconds", "1 hour", "1 day"], a: "7 seconds" },
+            { s: 4, t: 'bool', q: "A 'Fixed Mindset' believes intelligence cannot change.", a: "true" },
+            { s: 4, t: 'long', q: "Differentiate between Growth and Fixed Mindset.", keywords: ["learn", "static", "effort", "challenge", "potential"] },
+            { s: 4, t: 'mcq', q: "Exposure therapy helps build confidence by:", o: ["Avoiding fear", "Facing fear gradually", "Sleeping", "Medication"], a: "Facing fear gradually" },
+            { s: 4, t: 'fib', q: "Self-talk restructuring changes negative thoughts to _____ ones.", a: "positive" },
+            { s: 4, t: 'mcq', q: "Which attire suggests high professionalism?", o: ["Pajamas", "Business Formal/Casual", "Gym wear", "Costume"], a: "Business Formal/Casual" },
+            { s: 4, t: 'short', q: "What is the 'Micro-win' framework?", a: "small victories" },
+            { s: 4, t: 'mcq', q: "Imposter Syndrome is the feeling of:", o: ["Being a fraud", "Being superior", "Being tired", "Being hungry"], a: "Being a fraud" },
+            { s: 4, t: 'bool', q: "Digital presence does not affect professional reputation.", a: "false" },
+            { s: 4, t: 'fib', q: "Identity shift modeling involves acting like the person you want to _____.", a: "become" },
+            { s: 4, t: 'mcq', q: "Fear of judgment is often rooted in:", o: ["Reality", "Social anxiety", "Logic", "Success"], a: "Social anxiety" },
+            { s: 4, t: 'long', q: "How can you apply the '7-second rule'?", keywords: ["appearance", "smile", "posture", "eye contact", "greeting"] },
+            { s: 4, t: 'mcq', q: "Personal Branding is:", o: ["A logo", "How people perceive you", "Selling products", "Lying"], a: "How people perceive you" },
+            { s: 4, t: 'bool', q: "Arrogance usually comes from insecurity.", a: "true" },
+            { s: 4, t: 'fib', q: "_____ psychology explores how we see ourselves.", a: "self-image" },
+            { s: 4, t: 'mcq', q: "To build confidence, you should focus on:", o: ["Failures", "Progress", "Others' opinions", "Luck"], a: "Progress" },
+            { s: 4, t: 'short', q: "What is 'Self-Talk'?", a: "internal dialogue" },
+            { s: 4, t: 'mcq', q: "Which is a 'Micro-win'?", o: ["Winning lottery", "Making bed/Sending email", "Buying a house", "Becoming CEO"], a: "Making bed/Sending email" },
+            { s: 4, t: 'long', q: "Why is Digital Presence alignment important?", keywords: ["consistency", "reputation", "recruitment", "brand", "trust"] },
+            { s: 4, t: 'mcq', q: "The Growth Mindset views failure as:", o: ["Final", "Learning opportunity", "Shameful", "Fatal"], a: "Learning opportunity" },
+            { s: 4, t: 'bool', q: "You can change your personality traits over time.", a: "true" },
+            { s: 4, t: 'fib', q: "Professional _____ includes grooming and clothing.", a: "attire" },
+            { s: 4, t: 'mcq', q: "Visualizing success is a technique for:", o: ["Dreaming", "Performance preparation", "Wasting time", "Sleeping"], a: "Performance preparation" },
+            { s: 4, t: 'short', q: "Who researched the 'Growth Mindset'?", a: "carol dweck" },
+            { s: 4, t: 'mcq', q: "A strong personal brand creates:", o: ["Confusion", "Trust & Opportunity", "Enemies", "Privacy"], a: "Trust & Opportunity" },
+            { s: 4, t: 'bool', q: "Confidence is purely genetic.", a: "false" },
+            { s: 4, t: 'fib', q: "Confidence comes from _____ and preparation.", a: "competence" },
+            { s: 4, t: 'mcq', q: "Which tool helps with video voice editing?", o: ["Descript", "Word", "Excel", "Outlook"], a: "Descript" },
+
+            // SET 5: Stage Presence & Authority (30 Qs)
+            { s: 5, t: 'mcq', q: "Who is associated with 'Power Posing' research?", o: ["Amy Cuddy", "Brené Brown", "Mel Robbins", "Oprah"], a: "Amy Cuddy" },
+            { s: 5, t: 'fib', q: "Voice _____ ensures your audience can hear you clearly.", a: "projection" },
+            { s: 5, t: 'mcq', q: "A 'Narrative Hook' is used to:", o: ["End a speech", "Grab attention", "Confuse", "Bore"], a: "Grab attention" },
+            { s: 5, t: 'bool', q: "Silence in a speech shows nervousness.", a: "false" },
+            { s: 5, t: 'long', q: "Explain the concept of 'Power Posing'.", keywords: ["body language", "hormones", "confidence", "posture", "testosterone"] },
+            { s: 5, t: 'mcq', q: "For camera confidence, look at the:", o: ["Screen", "Lens", "Keyboard", "Ceiling"], a: "Lens" },
+            { s: 5, t: 'fib', q: "Use a _____ to read scripts while looking at the camera.", a: "teleprompter" },
+            { s: 5, t: 'mcq', q: "Thought Leadership positions you as an:", o: ["Follower", "Expert/Authority", "Observer", "Intern"], a: "Expert/Authority" },
+            { s: 5, t: 'short', q: "What is a 'Signature Talk'?", a: "core presentation" },
+            { s: 5, t: 'mcq', q: "Reputation Compounding means:", o: ["Reputation grows over time", "Reputation disappears", "Reputation is static", "Reputation is fake"], a: "Reputation grows over time" },
+            { s: 5, t: 'bool', q: "Virtual presentations require more energy than in-person ones.", a: "true" },
+            { s: 5, t: 'fib', q: "_____ control is a powerful rhetorical device.", a: "silence" },
+            { s: 5, t: 'mcq', q: "To monetize a personal brand, you need:", o: ["An audience", "A computer only", "Luck", "Government permission"], a: "An audience" },
+            { s: 5, t: 'long', q: "How do you maintain eye contact in a virtual presentation?", keywords: ["camera", "lens", "post-it", "level", "focus"] },
+            { s: 5, t: 'mcq', q: "Which is a 'Narrative Hook'?", o: ["My name is...", "Imagine a world where...", "I am tired...", "Okay let's start"], a: "Imagine a world where..." },
+            { s: 5, t: 'bool', q: "Monotone voice keeps the audience engaged.", a: "false" },
+            { s: 5, t: 'fib', q: "Creator-Professional hybrid careers combine work and _____ creation.", a: "content" },
+            { s: 5, t: 'mcq', q: "AI-generated avatars can be used for:", o: ["Presentations", "Cooking", "Cleaning", "Driving"], a: "Presentations" },
+            { s: 5, t: 'short', q: "Name one platform for thought leadership.", a: "linkedin" },
+            { s: 5, t: 'mcq', q: "Amy Cuddy suggests power posing changes your:", o: ["Height", "Chemistry/Mindset", "Eye color", "Hair"], a: "Chemistry/Mindset" },
+            { s: 5, t: 'long', q: "Why is 'Silence' effective in public speaking?", keywords: ["emphasis", "process", "tension", "authority", "confidence"] },
+            { s: 5, t: 'mcq', q: "A 'Hook' should appear:", o: ["At the end", "At the start", "In the middle", "Never"], a: "At the start" },
+            { s: 5, t: 'bool', q: "You should memorize every word of your speech.", a: "false" },
+            { s: 5, t: 'fib', q: "Voice projection comes from the _____.", a: "diaphragm" },
+            { s: 5, t: 'mcq', q: "Teleprompter optimization involves:", o: ["Reading robotically", "Natural pacing", "Squinting", "Speed reading"], a: "Natural pacing" },
+            { s: 5, t: 'short', q: "What is 'Voice Projection'?", a: "volume control" },
+            { s: 5, t: 'mcq', q: "The 'High Power' pose is:", o: ["Expansive", "Contracted", "Small", "Hidden"], a: "Expansive" },
+            { s: 5, t: 'bool', q: "Descript is a tool for video editing.", a: "true" },
+            { s: 5, t: 'fib', q: "_____ allows you to edit video by editing text.", a: "descript" },
+            { s: 5, t: 'mcq', q: "Authority Development requires:", o: ["Consistency", "Silence", "Following", "Copying"], a: "Consistency" },
+
+            // SET 6: Leadership & EQ Basics (30 Qs)
+            { s: 6, t: 'mcq', q: "Who popularized Emotional Intelligence (EQ)?", o: ["Daniel Goleman", "Steve Jobs", "Bill Gates", "Freud"], a: "Daniel Goleman" },
+            { s: 6, t: 'fib', q: "Leadership is about influence; Management is about _____.", a: "control" },
+            { s: 6, t: 'mcq', q: "Which is NOT a pillar of EQ?", o: ["Self-awareness", "Empathy", "Social Skills", "IQ"], a: "IQ" },
+            { s: 6, t: 'bool', q: "Servant leadership focuses on the leader's needs first.", a: "false" },
+            { s: 6, t: 'long', q: "List the four main components of Emotional Intelligence.", keywords: ["self-awareness", "self-management", "social awareness", "relationship management"] },
+            { s: 6, t: 'mcq', q: "Transformational leadership involves:", o: ["Inspiring change", "Routine tasks", "Punishment", "Micro-management"], a: "Inspiring change" },
+            { s: 6, t: 'fib', q: "_____ Safety allows teams to take risks without fear.", a: "psychological" },
+            { s: 6, t: 'mcq', q: "Maslow's hierarchy places what at the top?", o: ["Safety", "Self-actualization", "Food", "Social"], a: "Self-actualization" },
+            { s: 6, t: 'short', q: "What is 'Servant Leadership'?", a: "serving others" },
+            { s: 6, t: 'mcq', q: "Transactional leadership relies on:", o: ["Rewards & Punishments", "Inspiration", "Vision", "Empathy"], a: "Rewards & Punishments" },
+            { s: 6, t: 'bool', q: "Empathy is the ability to feel what others feel.", a: "true" },
+            { s: 6, t: 'fib', q: "Herzberg's theory separates motivators from _____ factors.", a: "hygiene" },
+            { s: 6, t: 'mcq', q: "Situational Leadership means:", o: ["Adapting style", "Being rigid", "Ignoring context", "Quitting"], a: "Adapting style" },
+            { s: 6, t: 'long', q: "Why is Psychological Safety important in teams?", keywords: ["innovation", "mistakes", "trust", "learning", "fear"] },
+            { s: 6, t: 'mcq', q: "Feedback systems should be:", o: ["Continuous", "Yearly only", "Harsh", "Secret"], a: "Continuous" },
+            { s: 6, t: 'bool', q: "Leaders must have high IQ but don't need EQ.", a: "false" },
+            { s: 6, t: 'fib', q: "_____ refers to understanding your own emotions.", a: "self-awareness" },
+            { s: 6, t: 'mcq', q: "Which is a 'Hygiene Factor' (Herzberg)?", o: ["Achievement", "Salary", "Recognition", "Growth"], a: "Salary" },
+            { s: 6, t: 'short', q: "Define 'Empathy'.", a: "understanding others emotions" },
+            { s: 6, t: 'mcq', q: "Servant leaders prioritize:", o: ["Team growth", "Profits only", "Their title", "Power"], a: "Team growth" },
+            { s: 6, t: 'long', q: "Difference between Transformational and Transactional leadership.", keywords: ["inspiration", "exchange", "vision", "reward", "change"] },
+            { s: 6, t: 'mcq', q: "Self-regulation helps leaders:", o: ["Explode", "Stay calm", "Panic", "Ignore"], a: "Stay calm" },
+            { s: 6, t: 'bool', q: "Social skills are part of EQ.", a: "true" },
+            { s: 6, t: 'fib', q: "Maslow's bottom level is _____ needs.", a: "physiological" },
+            { s: 6, t: 'mcq', q: "A 360-degree feedback includes input from:", o: ["Boss only", "Everyone around you", "Self only", "Customers only"], a: "Everyone around you" },
+            { s: 6, t: 'short', q: "Who created the Hierarchy of Needs?", a: "abraham maslow" },
+            { s: 6, t: 'mcq', q: "Effective feedback is:", o: ["Specific", "Vague", "Personal", "Delayed"], a: "Specific" },
+            { s: 6, t: 'bool', q: "Micro-management builds trust.", a: "false" },
+            { s: 6, t: 'fib', q: "_____ leadership adapts to the readiness of the team.", a: "situational" },
+            { s: 6, t: 'mcq', q: "Motivation theories help leaders:", o: ["Manipulate", "Inspire performance", "Bore teams", "Cut costs"], a: "Inspire performance" },
+
+            // SET 7: High-Stakes Leadership & AI (30 Qs)
+            { s: 7, t: 'mcq', q: "Emotional Regulation involves:", o: ["Suppressing feelings", "Managing reactions", "Yelling", "Ignoring feelings"], a: "Managing reactions" },
+            { s: 7, t: 'fib', q: "_____ Reappraisal is reframing a situation to change emotional response.", a: "cognitive" },
+            { s: 7, t: 'mcq', q: "Influence without authority relies on:", o: ["Relationships", "Commands", "Title", "Force"], a: "Relationships" },
+            { s: 7, t: 'bool', q: "Stress leadership means transferring stress to the team.", a: "false" },
+            { s: 7, t: 'long', q: "How do you handle a 'Difficult Conversation'?", keywords: ["facts", "emotions", "listen", "solution", "calm"] },
+            { s: 7, t: 'mcq', q: "Negotiation Psychology focuses on:", o: ["Interests", "Positions", "Winning only", "Cheating"], a: "Interests" },
+            { s: 7, t: 'fib', q: "In AI workplaces, leaders manage Human + _____ collaboration.", a: "ai" },
+            { s: 7, t: 'mcq', q: "Ethical leadership in automation concerns:", o: ["Speed", "Fairness/Bias", "Cost", "Code"], a: "Fairness/Bias" },
+            { s: 7, t: 'short', q: "What is 'Cognitive Reappraisal'?", a: "reframing thoughts" },
+            { s: 7, t: 'mcq', q: "Remote team leadership requires extra:", o: ["Communication", "Monitoring", "Silence", "Money"], a: "Communication" },
+            { s: 7, t: 'bool', q: "Burnout is a personal failure, not a systemic issue.", a: "false" },
+            { s: 7, t: 'fib', q: "Digital workforce often suffers from emotional _____.", a: "fatigue" },
+            { s: 7, t: 'mcq', q: "BATNA in negotiation stands for:", o: ["Best Alternative", "Bad Alternative", "Best Action", "Big Action"], a: "Best Alternative" },
+            { s: 7, t: 'long', q: "Explain 'Influence Without Authority'.", keywords: ["persuasion", "trust", "network", "value", "expertise"] },
+            { s: 7, t: 'mcq', q: "Leadership Analytics Dashboards track:", o: ["Performance/Health", "Weather", "Stock market", "Traffic"], a: "Performance/Health" },
+            { s: 7, t: 'bool', q: "Leaders should ignore AI inputs in decision making.", a: "false" },
+            { s: 7, t: 'fib', q: "_____ leadership protects the team from external pressure.", a: "shielding" },
+            { s: 7, t: 'mcq', q: "Conflict Dynamics usually follow a:", o: ["Cycle", "Line", "Random path", "Circle"], a: "Cycle" },
+            { s: 7, t: 'short', q: "What is 'Burnout'?", a: "chronic workplace stress" },
+            { s: 7, t: 'mcq', q: "Which is a tool for performance tracking?", o: ["Lattice", "Spotify", "Netflix", "Uber"], a: "Lattice" },
+            { s: 7, t: 'long', q: "Why is 'Ethical Leadership' critical in the AI era?", keywords: ["bias", "job displacement", "transparency", "responsibility", "trust"] },
+            { s: 7, t: 'mcq', q: "High-stakes environments require:", o: ["Panic", "Resilience", "Speed only", "Aggression"], a: "Resilience" },
+            { s: 7, t: 'bool', q: "Cognitive Reappraisal creates a positive outcome from negative triggers.", a: "true" },
+            { s: 7, t: 'fib', q: "Negotiation is finding a mutual _____.", a: "agreement" },
+            { s: 7, t: 'mcq', q: "Remote leadership faces the crisis of:", o: ["Disconnection", "Too much bonding", "Commuting", "Office rent"], a: "Disconnection" },
+            { s: 7, t: 'short', q: "What is 'BATNA'?", a: "best alternative to negotiated agreement" },
+            { s: 7, t: 'mcq', q: "Power dynamics in meetings often favor:", o: ["Loudest voice", "Wisest voice", "Newest member", "Remote users"], a: "Loudest voice" },
+            { s: 7, t: 'bool', q: "AI can help remove bias from decisions.", a: "true" },
+            { s: 7, t: 'fib', q: "Leaders must address _____ fatigue in digital teams.", a: "zoom" },
+            { s: 7, t: 'mcq', q: "Stress leadership is about:", o: ["Creating stress", "Leading under stress", "Ignoring stress", "Stress eating"], a: "Leading under stress" },
+
+            // SET 8: Decision Making (30 Qs)
+            { s: 8, t: 'mcq', q: "Confirmation Bias is:", o: ["Seeking confirming info", "Checking facts", "Being neutral", "Hating info"], a: "Seeking confirming info" },
+            { s: 8, t: 'fib', q: "SWOT stands for Strengths, Weaknesses, Opportunities, _____.", a: "threats" },
+            { s: 8, t: 'mcq', q: "The Pareto Principle is also known as:", o: ["50/50 Rule", "80/20 Rule", "10/90 Rule", "100% Rule"], a: "80/20 Rule" },
+            { s: 8, t: 'bool', q: "Anchoring bias occurs when we rely too heavily on the first piece of info.", a: "true" },
+            { s: 8, t: 'long', q: "Explain the '5 Whys' method.", keywords: ["root cause", "drill down", "problem solving", "why", "layer"] },
+            { s: 8, t: 'mcq', q: "Cost-Benefit Analysis compares:", o: ["Pros and Cons", "Prices only", "Time only", "Feelings"], a: "Pros and Cons" },
+            { s: 8, t: 'fib', q: "_____ thinking looks at the whole ecosystem, not just parts.", a: "systems" },
+            { s: 8, t: 'mcq', q: "A Black Swan event is:", o: ["Predictable", "Rare & High Impact", "Common", "Impossible"], a: "Rare & High Impact" },
+            { s: 8, t: 'short', q: "What is 'First Principles Thinking'?", a: "breaking down to basics" },
+            { s: 8, t: 'mcq', q: "Second-order consequences are:", o: ["Immediate results", "Effects of effects", "Unimportant", "Past results"], a: "Effects of effects" },
+            { s: 8, t: 'bool', q: "Decision fatigue leads to better choices.", a: "false" },
+            { s: 8, t: 'fib', q: "AI _____ refers to AI making up false information.", a: "hallucination" },
+            { s: 8, t: 'mcq', q: "A Risk Matrix evaluates:", o: ["Probability & Impact", "Cost & Time", "People & Places", "Loss & Gain"], a: "Probability & Impact" },
+            { s: 8, t: 'long', q: "How does 'Confirmation Bias' affect decisions?", keywords: ["ignore", "contradicting", "support", "beliefs", "error"] },
+            { s: 8, t: 'mcq', q: "Logical reasoning avoids:", o: ["Facts", "Fallacies", "Truth", "Evidence"], a: "Fallacies" },
+            { s: 8, t: 'short', q: "What does SWOT stand for?", a: "strengths weaknesses opportunities threats" },
+            { s: 8, t: 'mcq', q: "Scenario Planning helps prepare for:", o: ["The past", "Multiple futures", "One outcome", "Dinner"], a: "Multiple futures" },
+            { s: 8, t: 'bool', q: "Data-backed decisions are always 100% correct.", a: "false" },
+            { s: 8, t: 'fib', q: "_____ Analysis helps visualize decision paths.", a: "tree" },
+            { s: 8, t: 'mcq', q: "Information Overload leads to:", o: ["Clarity", "Paralysis", "Speed", "Happiness"], a: "Paralysis" },
+            { s: 8, t: 'long', q: "Describe 'Second-Order Thinking'.", keywords: ["consequences", "future", "long-term", "chain reaction", "impact"] },
+            { s: 8, t: 'mcq', q: "First-Principles thinking involves:", o: ["Copying others", "Boiling things down to truths", "Guessing", "Voting"], a: "Boiling things down to truths" },
+            { s: 8, t: 'bool', q: "The 80/20 rule says 20% of causes cause 80% of effects.", a: "true" },
+            { s: 8, t: 'fib', q: "Always verify AI outputs to avoid _____.", a: "errors" },
+            { s: 8, t: 'mcq', q: "Automation Risk Assessment checks if:", o: ["Robots are cool", "Automation is safe/reliable", "It is cheap", "It is fast"], a: "Automation is safe/reliable" },
+            { s: 8, t: 'short', q: "What is 'Decision Fatigue'?", a: "tiredness from making choices" },
+            { s: 8, t: 'mcq', q: "Systems Thinking sees:", o: ["Isolated events", "Interconnected patterns", "Linear lines", "Chaos"], a: "Interconnected patterns" },
+            { s: 8, t: 'bool', q: "Black Swan events have low impact.", a: "false" },
+            { s: 8, t: 'fib', q: "Use a Decision _____ to score options objectively.", a: "matrix" },
+            { s: 8, t: 'mcq', q: "Which bias makes us rely on the first price we see?", o: ["Anchoring", "Recency", "Halo", "Horns"], a: "Anchoring" },
+
+            // SET 9: Discipline & Stress (30 Qs)
+            { s: 9, t: 'mcq', q: "James Clear is known for:", o: ["Atomic Habits", "Deep Work", "Grit", "Flow"], a: "Atomic Habits" },
+            { s: 9, t: 'fib', q: "Discipline is doing what needs to be done even when you don't feel _____.", a: "motivated" },
+            { s: 9, t: 'mcq', q: "Deep Work (Cal Newport) requires:", o: ["Multitasking", "Distraction-free concentration", "Open offices", "Social media"], a: "Distraction-free concentration" },
+            { s: 9, t: 'bool', q: "Cortisol is known as the stress hormone.", a: "true" },
+            { s: 9, t: 'long', q: "Explain the concept of 'Flow State'.", keywords: ["immersion", "focus", "challenge", "skill", "time"] },
+            { s: 9, t: 'mcq', q: "Time Blocking involves:", o: ["Stopping clocks", "Scheduling specific tasks", "Wasting time", "Blocking people"], a: "Scheduling specific tasks" },
+            { s: 9, t: 'fib', q: "_____ management is more important than time management.", a: "energy" },
+            { s: 9, t: 'mcq', q: "Resilience is the ability to:", o: ["Avoid stress", "Bounce back", "Ignore pain", "Quit"], a: "Bounce back" },
+            { s: 9, t: 'short', q: "What is 'Deep Work'?", a: "focused concentration" },
+            { s: 9, t: 'mcq', q: "Breathing techniques help regulate:", o: ["Cortisol/Stress", "Hunger", "Income", "Height"], a: "Cortisol/Stress" },
+            { s: 9, t: 'bool', q: "Motivation is more reliable than discipline.", a: "false" },
+            { s: 9, t: 'fib', q: "Small habits _____ over time to create big results.", a: "compound" },
+            { s: 9, t: 'mcq', q: "A 'Work-Rest' cycle prevents:", o: ["Success", "Burnout", "Sleep", "Focus"], a: "Burnout" },
+            { s: 9, t: 'long', q: "How does 'Habit Stacking' work?", keywords: ["existing habit", "new habit", "trigger", "link", "sequence"] },
+            { s: 9, t: 'mcq', q: "Professional credibility is built through:", o: ["Lying", "Consistency", "Speed", "Luck"], a: "Consistency" },
+            { s: 9, t: 'short', q: "Name the stress hormone.", a: "cortisol" },
+            { s: 9, t: 'mcq', q: "Performance under pressure requires:", o: ["Panic", "Mental Regulation", "Luck", "Anger"], a: "Mental Regulation" },
+            { s: 9, t: 'bool', q: "Multitasking increases productivity.", a: "false" },
+            { s: 9, t: 'fib', q: "_____ Stacking is adding a new skill to an existing one.", a: "skill" },
+            { s: 9, t: 'mcq', q: "Digital Reputation Management protects your:", o: ["Computer", "Online Brand", "Wifi", "Password"], a: "Online Brand" },
+            { s: 9, t: 'long', q: "Why is 'Energy Management' critical?", keywords: ["rhythms", "productivity", "exhaustion", "recharge", "sustainability"] },
+            { s: 9, t: 'mcq', q: "To build a legacy, you need:", o: ["Long-term vision", "Short-term wins", "Money only", "Fame"], a: "Long-term vision" },
+            { s: 9, t: 'bool', q: "Stress is always bad for you.", a: "false" },
+            { s: 9, t: 'fib', q: "The Pomodoro technique uses _____ minute intervals.", a: "25" },
+            { s: 9, t: 'mcq', q: "Biofeedback devices track:", o: ["Physiological signs", "Emails", "Stock prices", "Calories only"], a: "Physiological signs" },
+            { s: 9, t: 'short', q: "What is 'Skill Stacking'?", a: "combining skills" },
+            { s: 9, t: 'mcq', q: "Which helps mental resilience?", o: ["Isolation", "Support & Mindset", "Overworking", "Caffeine"], a: "Support & Mindset" },
+            { s: 9, t: 'bool', q: "Consistency is key to credibility.", a: "true" },
+            { s: 9, t: 'fib', q: "_____ prevention is a key 2026 corporate trend.", a: "burnout" },
+            { s: 9, t: 'mcq', q: "Habit formation relies on:", o: ["Cue, Routine, Reward", "Willpower only", "Magic", "Force"], a: "Cue, Routine, Reward" },
+
+            // SET 10: Mixed Bag & Trends (30 Qs)
+            { s: 10, t: 'mcq', q: "Which tool is for Async Communication?", o: ["Zoom", "Loom", "Skype", "Phone"], a: "Loom" },
+            { s: 10, t: 'fib', q: "GrammarlyGO is an _____ writing assistant.", a: "ai" },
+            { s: 10, t: 'mcq', q: "Notion AI helps with:", o: ["Driving", "Organizing & Writing", "Cooking", "Singing"], a: "Organizing & Writing" },
+            { s: 10, t: 'bool', q: "LinkedIn is just for finding jobs, not building authority.", a: "false" },
+            { s: 10, t: 'long', q: "What defines an 'Expert' in the 2026 workplace?", keywords: ["authority", "adaptability", "ai", "eq", "brand"] },
+            { s: 10, t: 'mcq', q: "Hybrid Productivity Models mix:", o: ["Home & Office", "Work & Sleep", "Day & Night", "Food & Drink"], a: "Home & Office" },
+            { s: 10, t: 'fib', q: "Reputation _____ creates long-term career capital.", a: "compounding" },
+            { s: 10, t: 'mcq', q: "A key trend in 2026 is:", o: ["Fax machines", "Remote-first leadership", "Typewriters", "Pagers"], a: "Remote-first leadership" },
+            { s: 10, t: 'short', q: "Name one AI meeting summarizer.", a: "otter/fireflies" },
+            { s: 10, t: 'mcq', q: "Ethical professionalism means:", o: ["Following rules & morals", "Doing whatever works", "Cheating", "Hiding errors"], a: "Following rules & morals" },
+            { s: 10, t: 'bool', q: "Mental resilience is a corporate KPI in 2026.", a: "true" },
+            { s: 10, t: 'fib', q: "_____ presence is your digital reputation.", a: "online" },
+            { s: 10, t: 'mcq', q: "Investor pitch psychology focuses on:", o: ["Trust & ROI", "Begging", "Charity", "Luck"], a: "Trust & ROI" },
+            { s: 10, t: 'long', q: "How has Leadership changed with AI?", keywords: ["collaboration", "ethics", "data", "empathy", "augmentation"] },
+            { s: 10, t: 'mcq', q: "Media communication control involves:", o: ["Spinning lies", "Managing the narrative", "Deleting internet", "Bribing"], a: "Managing the narrative" },
+            { s: 10, t: 'short', q: "What is 'Notion' used for?", a: "productivity/organization" },
+            { s: 10, t: 'mcq', q: "Asynchronous communication means:", o: ["Real-time", "Not at the same time", "Face to face", "Instant"], a: "Not at the same time" },
+            { s: 10, t: 'bool', q: "You should ignore cross-cultural differences in global business.", a: "false" },
+            { s: 10, t: 'fib', q: "Board-level speaking requires high _____.", a: "gravitas" },
+            { s: 10, t: 'mcq', q: "Which is a barrier to communication?", o: ["Clarity", "Jargon", "Listening", "Feedback"], a: "Jargon" },
+            { s: 10, t: 'long', q: "Why is 'Adaptability' the ultimate skill?", keywords: ["change", "survival", "learning", "resilience", "growth"] },
+            { s: 10, t: 'mcq', q: "Emotional fatigue comes from:", o: ["Too much digital interaction", "Sleeping", "Eating", "Walking"], a: "Too much digital interaction" },
+            { s: 10, t: 'bool', q: "A 'Black Swan' event is easy to predict.", a: "false" },
+            { s: 10, t: 'fib', q: "The S in SWOT stands for _____.", a: "strengths" },
+            { s: 10, t: 'mcq', q: "To influence without authority, use:", o: ["Currency of exchange", "Threats", "Tears", "Silence"], a: "Currency of exchange" },
+            { s: 10, t: 'short', q: "What is 'Loom'?", a: "video messaging tool" },
+            { s: 10, t: 'mcq', q: "Credibility Capital is:", o: ["Money", "Trust banked over time", "Bitcoin", "Loans"], a: "Trust banked over time" },
+            { s: 10, t: 'bool', q: "AI Speech Analysis can improve your speaking skills.", a: "true" },
+            { s: 10, t: 'fib', q: "_____ bias makes us think we knew it all along.", a: "hindsight" },
+            { s: 10, t: 'mcq', q: "The final goal of this course is:", o: ["Authority & Leadership", "Confusion", "Retirement", "Sleep"], a: "Authority & Leadership" }
+        ];
+
+        // --- STATE MANAGEMENT ---
+        let currentSet = 1;
+        let currentQuestionIdx = 0;
+        let score = { correct: 0, wrong: 0, total: 0 };
+        let activeQuestions = [];
+
+        // --- DOM ELEMENTS ---
+        const container = document.getElementById('quiz-container');
+        const setBtnsContainer = document.getElementById('set-buttons');
+        const scoreCorrect = document.getElementById('score-correct');
+        const scoreWrong = document.getElementById('score-wrong');
+        const scorePercent = document.getElementById('score-percent');
+
+        // --- INITIALIZATION ---
+        function init() {
+            // Populate Data Object
+            qBank.forEach(q => {
+                if(setsData[q.s]) setsData[q.s].questions.push(q);
+            });
+
+            // Create Set Buttons
+            for(let i=1; i<=10; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'btn-set';
+                btn.innerText = `Set ${i}`;
+                btn.onclick = () => loadSet(i);
+                setBtnsContainer.appendChild(btn);
+            }
+
+            loadSet(1);
+        }
+
+        function toggleRevision() {
+            const content = document.getElementById('revision-content');
+            content.style.display = content.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // --- LOAD SET ---
+        function loadSet(setNum) {
+            currentSet = setNum;
+            currentQuestionIdx = 0;
+            activeQuestions = setsData[setNum].questions;
+            
+            // Update Buttons UI
+            document.querySelectorAll('.btn-set').forEach((btn, idx) => {
+                btn.classList.toggle('active', (idx + 1) === setNum);
+            });
+
+            renderQuestion();
+        }
+
+        // --- RENDER QUESTION ---
+        function renderQuestion() {
+            container.innerHTML = '';
+            const q = activeQuestions[currentQuestionIdx];
+            
+            if (!q) {
+                container.innerHTML = `<div class="question-card" style="text-align:center"><h3>Set Completed! 🎉</h3><p>Select another set above.</p></div>`;
+                return;
+            }
+
+            const card = document.createElement('div');
+            card.className = 'question-card';
+
+            let inputHTML = '';
+            
+            // LOGIC FOR DIFFERENT TYPES
+            if (q.t === 'mcq') {
+                // Randomize options specifically for display, keep track of correct one
+                // We create an array of objects {text: "Option", isCorrect: true/false}
+                let opts = q.o.map(opt => ({ text: opt, isCorrect: opt === q.a }));
+                opts = shuffleArray(opts);
+
+                inputHTML = `<div class="options-grid">`;
+                opts.forEach(opt => {
+                    // Escape quotes for safety
+                    const safeText = opt.text.replace(/'/g, "&#39;");
+                    inputHTML += `<div class="option-btn" onclick="checkMCQ(this, ${opt.isCorrect})">${safeText}</div>`;
+                });
+                inputHTML += `</div>`;
+
+            } else if (q.t === 'bool') {
+                inputHTML = `
+                    <div class="options-grid">
+                        <div class="option-btn" onclick="checkMCQ(this, ${q.a === 'true'})">True</div>
+                        <div class="option-btn" onclick="checkMCQ(this, ${q.a === 'false'})">False</div>
+                    </div>
+                `;
+
+            } else if (q.t === 'fib' || q.t === 'short') {
+                inputHTML = `
+                    <input type="text" class="input-box" id="ans-input" placeholder="Type your answer here...">
+                    <button class="action-btn" onclick="checkTextAnswer('${q.a.replace(/'/g, "\\'")}')">Submit Answer</button>
+                `;
+
+            } else if (q.t === 'long') {
+                inputHTML = `
+                    <textarea class="input-box" id="ans-input" placeholder="Explain your answer..."></textarea>
+                    <button class="action-btn" onclick="checkLongAnswer()">Check Evaluation</button>
+                `;
+            }
+
+            // PICTURE PLACEHOLDER (Randomly insert for visual variety if desired, but syllabus is text heavy. 
+            // We will add a small icon based on type)
+            let icon = '❓';
+            if(q.t === 'long') icon = '📝';
+            if(q.t === 'mcq') icon = '🤔';
+
+            card.innerHTML = `
+                <div class="q-header">
+                    <span>SET ${currentSet} • Q ${currentQuestionIdx + 1}/${activeQuestions.length}</span>
+                    <span>${setsData[currentSet].title}</span>
+                </div>
+                <div class="q-text">${icon} ${q.q}</div>
+                ${inputHTML}
+                <div class="feedback" id="feedback-box"></div>
+                <div class="nav-buttons">
+                    <button class="nav-btn" onclick="prevQ()" ${currentQuestionIdx === 0 ? 'disabled' : ''}>Previous</button>
+                    <button class="nav-btn" onclick="nextQ()">Next ➡</button>
+                </div>
+            `;
+
+            container.appendChild(card);
+        }
+
+        // --- CHECKING LOGIC ---
+
+        function updateScore(isCorrect) {
+            score.total++;
+            if(isCorrect) score.correct++;
+            else score.wrong++;
+
+            scoreCorrect.innerText = score.correct;
+            scoreWrong.innerText = score.wrong;
+            scorePercent.innerText = Math.round((score.correct / score.total) * 100) + '%';
+        }
+
+        function showFeedback(isCorrect, msg) {
+            const fb = document.getElementById('feedback-box');
+            fb.style.display = 'block';
+            fb.className = `feedback ${isCorrect ? 'correct' : 'wrong'}`;
+            fb.innerHTML = isCorrect ? 'बहुत बढ़िया ⭐<br>' + msg : 'फिर से प्रयास करें ❌<br>' + msg;
+            
+            // Disable inputs after answer
+            const inputs = document.querySelectorAll('input, textarea, .option-btn');
+            inputs.forEach(el => {
+                el.disabled = true;
+                el.style.pointerEvents = 'none';
+            });
+        }
+
+        function checkMCQ(btn, isCorrect) {
+            if(btn.classList.contains('processed')) return; // prevent double click
+            
+            // Mark all processed
+            document.querySelectorAll('.option-btn').forEach(b => b.classList.add('processed'));
+
+            if(isCorrect) {
+                btn.style.background = '#d4edda';
+                btn.style.borderColor = '#28a745';
+                showFeedback(true, "Correct Answer!");
+            } else {
+                btn.style.background = '#f8d7da';
+                btn.style.borderColor = '#dc3545';
+                showFeedback(false, "That was incorrect.");
+            }
+            updateScore(isCorrect);
+        }
+
+        function checkTextAnswer(correctVal) {
+            const userVal = document.getElementById('ans-input').value.trim().toLowerCase();
+            const correct = correctVal.toLowerCase();
+            
+            // Simple match or includes
+            const isCorrect = userVal === correct || (userVal.length > 3 && correct.includes(userVal));
+            
+            showFeedback(isCorrect, isCorrect ? "" : `Correct answer: <strong>${correctVal}</strong>`);
+            updateScore(isCorrect);
+        }
+
+        function checkLongAnswer() {
+            const userVal = document.getElementById('ans-input').value.toLowerCase();
+            const keywords = activeQuestions[currentQuestionIdx].keywords;
+            
+            let matchCount = 0;
+            keywords.forEach(k => {
+                if(userVal.includes(k.toLowerCase())) matchCount++;
+            });
+
+            // Evaluation Logic: Need at least 2 keywords for partial, half for correct
+            const threshold = Math.ceil(keywords.length / 2);
+            let isCorrect = matchCount >= threshold;
+            
+            let msg = `Keywords found: ${matchCount}/${keywords.length}.<br>Try to include: ${keywords.join(', ')}`;
+            
+            showFeedback(isCorrect, msg);
+            updateScore(isCorrect);
+        }
+
+        // --- NAVIGATION ---
+        function nextQ() {
+            if(currentQuestionIdx < activeQuestions.length - 1) {
+                currentQuestionIdx++;
+                renderQuestion();
+            } else {
+                alert("Set Finished! Try the next set.");
+            }
+        }
+
+        function prevQ() {
+            if(currentQuestionIdx > 0) {
+                currentQuestionIdx--;
+                renderQuestion();
+            }
+        }
+
+        // Run Init
+        document.addEventListener('DOMContentLoaded', init);
+
+    </script>
+</body>
+</html>

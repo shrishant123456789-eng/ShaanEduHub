@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Mastery Practice Lab</title>
+    <style>
+        :root {
+            --bg-base: #0f172a;
+            --bg-panel: #1e293b;
+            --bg-hover: #334155;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #eab308;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --font-main: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            line-height: 1.6;
+            background-image: 
+                linear-gradient(to right, rgba(30, 41, 59, 0.5) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(30, 41, 59, 0.5) 1px, transparent 1px);
+            background-size: 40px 40px;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .hidden { display: none !important; }
+
+        /* Typography */
+        h1, h2, h3 { font-weight: 700; letter-spacing: -0.025em; }
+        .text-accent { color: var(--accent); }
+        .text-muted { color: var(--text-muted); }
+        
+        /* Buttons */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 0.75rem 1.5rem; border-radius: 0.5rem;
+            font-weight: 600; cursor: pointer; transition: all 0.2s;
+            border: none; outline: none; text-transform: uppercase; letter-spacing: 0.05em;
+        }
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
+        .btn-outline:hover { background: var(--bg-hover); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        /* Layout & Containers */
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; width: 100%; flex: 1; }
+        
+        /* Entry Screen */
+        #entry-screen {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100vh; text-align: center; animation: fadeIn 1s ease-out;
+        }
+        #entry-screen h1 { font-size: 3.5rem; margin-bottom: 0.5rem; }
+        #entry-screen p { font-size: 1.25rem; color: var(--text-muted); margin-bottom: 2rem; }
+
+        /* Sticky Performance Panel */
+        #sticky-header {
+            position: sticky; top: 0; z-index: 50;
+            background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border); padding: 1rem 0;
+        }
+        .header-content {
+            display: flex; justify-content: space-between; align-items: center;
+            max-width: 1200px; margin: 0 auto; padding: 0 2rem;
+        }
+        .stats-group { display: flex; gap: 2rem; }
+        .stat-item { display: flex; flex-direction: column; }
+        .stat-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; }
+        .stat-value { font-size: 1.25rem; font-weight: 700; }
+        .tier-badge {
+            padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 600;
+            background: var(--bg-panel); border: 1px solid var(--border);
+        }
+
+        /* Progress Bar */
+        .progress-container { width: 100%; height: 4px; background: var(--bg-panel); position: absolute; bottom: 0; left: 0; }
+        .progress-bar { height: 100%; background: var(--accent); width: 0%; transition: width 0.3s ease; }
+
+        /* Dashboard */
+        .dashboard-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem;
+        }
+        .test-card {
+            background: var(--bg-panel); border: 1px solid var(--border); border-radius: 1rem;
+            padding: 1.5rem; display: flex; flex-direction: column; transition: transform 0.2s;
+        }
+        .test-card:hover { transform: translateY(-4px); border-color: var(--accent); }
+        .test-card h3 { font-size: 1.25rem; margin-bottom: 0.5rem; }
+        .test-card p { color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.5rem; flex: 1; }
+        .test-meta { display: flex; justify-content: space-between; font-size: 0.875rem; margin-bottom: 1rem; color: var(--text-muted); }
+        .status-badge { padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.75rem; font-weight: bold; }
+        .status-pending { background: rgba(148, 163, 184, 0.1); color: var(--text-muted); }
+        .status-completed { background: rgba(34, 197, 94, 0.1); color: var(--success); }
+
+        /* Test View */
+        .test-header { margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .question-container {
+            background: var(--bg-panel); border: 1px solid var(--border); border-radius: 1rem;
+            padding: 2.5rem; margin-bottom: 1.5rem; animation: slideUp 0.3s ease-out;
+        }
+        .question-type-badge {
+            display: inline-block; padding: 0.25rem 0.75rem; border-radius: 9999px;
+            font-size: 0.75rem; font-weight: 600; background: var(--bg-hover); color: var(--text-muted); margin-bottom: 1rem;
+        }
+        .question-text { font-size: 1.25rem; font-weight: 500; margin-bottom: 2rem; }
+        
+        /* Options */
+        .options-grid { display: grid; gap: 1rem; }
+        .option-item {
+            background: var(--bg-base); border: 1px solid var(--border); border-radius: 0.5rem;
+            padding: 1rem 1.5rem; cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; font-size: 1rem;
+        }
+        .option-item:hover { border-color: var(--text-muted); }
+        .option-item.selected { border-color: var(--accent); background: rgba(37, 99, 235, 0.1); }
+        .option-item.correct { border-color: var(--success); background: rgba(34, 197, 94, 0.1); }
+        .option-item.wrong { border-color: var(--danger); background: rgba(239, 68, 68, 0.1); }
+        .option-item.disabled { pointer-events: none; }
+
+        /* Short Answer Input */
+        .short-answer-input {
+            width: 100%; background: var(--bg-base); border: 1px solid var(--border);
+            color: var(--text-main); padding: 1rem 1.5rem; border-radius: 0.5rem;
+            font-size: 1rem; font-family: inherit; transition: border-color 0.2s;
+        }
+        .short-answer-input:focus { outline: none; border-color: var(--accent); }
+
+        /* Feedback Box */
+        .feedback-box {
+            margin-top: 1.5rem; padding: 1.5rem; border-radius: 0.5rem; display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .feedback-box.show { display: block; }
+        .feedback-success { background: rgba(34, 197, 94, 0.1); border-left: 4px solid var(--success); }
+        .feedback-danger { background: rgba(239, 68, 68, 0.1); border-left: 4px solid var(--danger); }
+        .feedback-warning { background: rgba(234, 179, 8, 0.1); border-left: 4px solid var(--warning); }
+        .feedback-title { font-weight: 700; margin-bottom: 0.5rem; }
+        
+        .action-row { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; }
+
+        /* Final Report */
+        #final-report { text-align: center; padding: 4rem 0; }
+        .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; margin: 3rem 0; text-align: left; }
+        .report-card { background: var(--bg-panel); padding: 2rem; border-radius: 1rem; border: 1px solid var(--border); }
+        .report-card h4 { color: var(--text-muted); text-transform: uppercase; font-size: 0.875rem; margin-bottom: 0.5rem; }
+        .report-card p { font-size: 1.5rem; font-weight: bold; }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border); padding: 2rem; text-align: center;
+            color: var(--text-muted); font-size: 0.875rem; margin-top: auto; background: var(--bg-base);
+        }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content { flex-direction: column; gap: 1rem; align-items: flex-start; }
+            .stats-group { flex-wrap: wrap; }
+            .report-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ENTRY SCREEN -->
+    <div id="entry-screen">
+        <h1 class="text-accent">Academic Mastery Practice Lab</h1>
+        <p>Performance Simulation Environment</p>
+        <button class="btn btn-primary" onclick="enterLab()">Enter Lab</button>
+    </div>
+
+    <!-- STICKY PERFORMANCE PANEL -->
+    <div id="sticky-header" class="hidden">
+        <div class="header-content">
+            <div>
+                <span style="font-weight: bold; letter-spacing: 1px;">LAB DASHBOARD</span>
+            </div>
+            <div class="stats-group">
+                <div class="stat-item">
+                    <span class="stat-label">Tasks</span>
+                    <span class="stat-value" id="hdr-tasks">0 / 255</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Accuracy</span>
+                    <span class="stat-value text-accent" id="hdr-accuracy">0%</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Tier</span>
+                    <span class="stat-value tier-badge" id="hdr-tier">Foundational</span>
+                </div>
+            </div>
+        </div>
+        <div class="progress-container"><div class="progress-bar" id="global-progress"></div></div>
+    </div>
+
+    <div class="container hidden" id="main-container">
+        
+        <!-- DASHBOARD -->
+        <div id="dashboard">
+            <h2 style="margin-bottom: 0.5rem;">Available Simulations</h2>
+            <p class="text-muted">Select a testing block to begin. Strict evaluation enabled.</p>
+            <div class="dashboard-grid" id="test-grid"></div>
+            <div style="text-align: center; margin-top: 3rem; display: none;" id="finish-lab-container">
+                <button class="btn btn-primary" onclick="showFinalReport()" style="padding: 1rem 3rem; font-size: 1.1rem;">Generate Master Report</button>
+            </div>
+        </div>
+
+        <!-- TEST VIEW -->
+        <div id="test-view" class="hidden">
+            <div class="test-header">
+                <div>
+                    <h2 id="tv-title">Test Title</h2>
+                    <p class="text-muted" id="tv-progress">Task 1 of 25</p>
+                </div>
+                <button class="btn btn-outline" onclick="exitTest()">Abort Test</button>
+            </div>
+
+            <div class="question-container">
+                <div class="question-type-badge" id="q-type-badge">Multiple Choice</div>
+                <h3 class="question-text" id="q-text">Question text goes here?</h3>
+                
+                <!-- Dynamic Input Area -->
+                <div id="q-input-area"></div>
+
+                <div class="feedback-box" id="feedback-box">
+                    <div class="feedback-title" id="feedback-title">Correct</div>
+                    <p id="feedback-text">Explanation goes here.</p>
+                </div>
+
+                <div class="action-row">
+                    <div id="error-msg" class="text-danger" style="color: var(--danger); font-weight: bold; font-size: 0.9rem;"></div>
+                    <div>
+                        <button class="btn btn-primary" id="btn-submit" onclick="submitAnswer()">Submit Answer</button>
+                        <button class="btn btn-outline hidden" id="btn-next" onclick="nextQuestion()">Next Task →</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FINAL REPORT -->
+        <div id="final-report" class="hidden">
+            <h1 class="text-accent" style="font-size: 3rem; margin-bottom: 1rem;">Practice Cycle Completed</h1>
+            <p style="font-size: 1.25rem; color: var(--text-muted);">Master Simulation Results</p>
+            
+            <div class="report-grid">
+                <div class="report-card">
+                    <h4>Total Tasks Attempted</h4>
+                    <p id="fr-attempted">0</p>
+                </div>
+                <div class="report-card">
+                    <h4>Overall Accuracy</h4>
+                    <p id="fr-accuracy" class="text-accent">0%</p>
+                </div>
+                <div class="report-card">
+                    <h4>Performance Tier</h4>
+                    <p id="fr-tier">Beginner</p>
+                </div>
+                <div class="report-card">
+                    <h4>Strongest Area</h4>
+                    <p id="fr-strongest">-</p>
+                </div>
+                <div class="report-card">
+                    <h4>Weakest Area</h4>
+                    <p id="fr-weakest">-</p>
+                </div>
+                <div class="report-card">
+                    <h4>Recommended Action</h4>
+                    <p id="fr-action" style="font-size: 1.1rem; color: var(--warning);">-</p>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="location.reload()">Restart Laboratory Simulation</button>
+        </div>
+
+    </div>
+
+    <footer>
+        <div>Academic Mastery System | Version 1.0.0 | &copy; 2024</div>
+        <div style="margin-top: 0.5rem; font-weight: bold;">Built for Performance Discipline</div>
+    </footer>
+
+    <script>
+        /**
+         * COMPRESSED QUESTION DATABASE
+         * Format: [ Type (1=MCQ, 2=Short), "Question", [Options] or [Keywords], CorrectIndex (for MCQ), "Explanation" ]
+         * Guaranteed strictly 25+ per test. 
+         */
+        const rawData = {
+            t1: [ // 25 Tasks - Cognitive Foundations
+                [1, "What type of cognitive load relates to the inherent difficulty of the material?", ["Extraneous", "Germane", "Intrinsic", "Working"], 2, "Intrinsic load is determined by the natural complexity of the information."],
+                [1, "Which practice involves studying different but related concepts in a single session?", ["Spaced Practice", "Interleaving", "Massed Practice", "Dual Coding"], 1, "Interleaving mixes topics to improve discrimination and transfer."],
+                [2, "What term defines the mental frameworks we use to organize and interpret information?", ["schema", "schemata"], 0, "Schemas act as cognitive blueprints for processing new data."],
+                [1, "According to memory models, what is the strict bottleneck in human cognition?", ["Sensory register", "Working memory", "Long-term retrieval", "Semantic memory"], 1, "Working memory can only hold ~4-7 items simultaneously."],
+                [1, "What strategy combines verbal and visual materials to enhance encoding?", ["Elaboration", "Concrete Examples", "Dual Coding", "Retrieval"], 2, "Dual coding leverages both visual and verbal pathways."],
+                [1, "Which concept refers to thinking about one's own thinking?", ["Metacognition", "Neuroplasticity", "Encoding", "Consolidation"], 0, "Metacognition allows you to monitor and adjust your learning strategies."],
+                [2, "What biological process allows the brain to reorganize itself by forming new neural connections?", ["neuroplasticity", "plasticity"], 0, "Neuroplasticity is the foundation of learning and habit formation."],
+                [1, "What is the primary goal of germane cognitive load?", ["Minimize distraction", "Create schemas", "Hold information", "Forget obsolete data"], 1, "Germane load is the effort dedicated to processing and schema construction."],
+                [1, "Which of the following creates extraneous cognitive load?", ["Complex concepts", "Poorly formatted slides", "Spaced reviews", "Deep questioning"], 1, "Extraneous load comes from poor instructional design or distractions."],
+                [2, "What memory effect explains why we remember the first items in a list better?", ["primacy", "primacy effect"], 0, "The primacy effect occurs because initial items enter long-term memory."],
+                [1, "Elaborative interrogation involves:", ["Reading repeatedly", "Asking 'how' and 'why' questions", "Drawing diagrams", "Taking verbatim notes"], 1, "It forces you to connect new facts to existing knowledge."],
+                [1, "What is the optimal strategy when intrinsic load is too high?", ["Increase extraneous load", "Use massed practice", "Break down the task (segmenting)", "Rely on rote memorization"], 2, "Segmenting breaks complex tasks into manageable working memory chunks."],
+                [2, "What learning illusion occurs when text familiarity is mistaken for actual mastery?", ["fluency", "illusion of fluency", "fluency illusion"], 0, "Fluency illusion often results from passive re-reading."],
+                [1, "Which of these is a passive learning strategy?", ["Flashcards", "Practice testing", "Highlighting textbook text", "Teaching the concept"], 2, "Highlighting requires minimal cognitive processing."],
+                [1, "What does the Ebbinghaus Forgetting Curve demonstrate?", ["Memory improves over time", "Information is lost exponentially unless reviewed", "Cramming is effective", "Visuals are forgotten faster than text"], 1, "Without spaced review, retention drops drastically within days."],
+                [2, "What technique combats the forgetting curve by scheduling reviews at increasing intervals?", ["spaced repetition", "spacing effect", "spaced practice"], 0, "Spaced repetition optimizes retrieval strength over time."],
+                [1, "Why are concrete examples effective in learning?", ["They reduce intrinsic load", "They provide abstract theories", "They anchor abstract ideas to specific realities", "They increase extraneous load"], 2, "Concrete examples make abstract concepts easier to encode."],
+                [1, "What happens during memory consolidation?", ["Immediate sensory input", "Information transfer from working to long-term memory", "Forgetting unused data", "Retrieving old memories"], 1, "Consolidation stabilizes a memory trace after initial acquisition."],
+                [2, "What type of memory stores general world knowledge and facts?", ["semantic", "semantic memory"], 0, "Semantic memory is your database of facts, distinct from personal experiences."],
+                [1, "What is 'desirable difficulty'?", ["A badly designed test", "Struggle that enhances long-term retention", "Physical stress during study", "Information overload"], 1, "Adding friction (like testing instead of reading) strengthens memory."],
+                [1, "Which limits working memory capacity?", ["Age only", "Attention span and chunking ability", "Diet", "Long-term memory size"], 1, "Working memory is strictly limited by attention and how data is chunked."],
+                [2, "Grouping individual pieces of information into larger, meaningful units is called:", ["chunking", "chunk"], 0, "Chunking bypasses working memory limits (e.g., phone numbers)."],
+                [1, "Which statement about neuroplasticity is true?", ["It stops at age 25", "It requires focused attention and practice", "It happens only during sleep", "It reduces cognitive load"], 1, "Focused, effortful practice physically alters brain structure."],
+                [1, "When does the 'Testing Effect' occur?", ["When testing causes anxiety", "When retrieving information makes it easier to recall later", "When tests are multiple-choice", "When studying is skipped"], 1, "The act of retrieval alters and strengthens the memory pathway."],
+                [2, "What memory system temporarily holds acoustic/verbal information? (Hint: loop)", ["phonological loop", "phonological"], 0, "The phonological loop handles inner speech and auditory data."]
+            ],
+            t2: [ // 25 Tasks - Memory Systems Simulation
+                [1, "Which memory component is responsible for holding visual and spatial information?", ["Phonological loop", "Visuospatial sketchpad", "Central executive", "Episodic buffer"], 1, "The visuospatial sketchpad processes imagery and spatial mapping."],
+                [1, "You can ride a bicycle effortlessly. What type of memory is this?", ["Episodic", "Semantic", "Implicit (Procedural)", "Explicit"], 2, "Procedural memory involves motor skills performed unconsciously."],
+                [2, "What is the process of accessing stored information from long-term memory?", ["retrieval", "recall"], 0, "Retrieval brings information back into working memory."],
+                [1, "What happens in proactive interference?", ["New memories disrupt old ones", "Old memories disrupt the learning of new ones", "Trauma causes forgetting", "Lack of sleep prevents encoding"], 1, "Proactive = Past interferes with Present."],
+                [1, "State-dependent memory suggests you will recall information best if:", ["You study in various states", "Your physical/mental state matches the state during encoding", "You are highly caffeinated", "You are completely relaxed"], 1, "Context and state act as powerful retrieval cues."],
+                [2, "What type of explicit memory involves your personal experiences and specific events?", ["episodic", "episodic memory"], 0, "Episodic memory is the 'mental diary' of your life."],
+                [1, "Which part of the brain is critical for consolidating explicit memories?", ["Amygdala", "Cerebellum", "Hippocampus", "Prefrontal cortex"], 2, "The hippocampus is the brain's 'save button' for facts and events."],
+                [1, "What does the 'generation effect' state?", ["Reading text generates schemas", "Creating material yourself improves memory compared to reading it", "Gen Z learns differently", "Memory decreases across generations"], 1, "Generating answers (even if wrong initially) boosts retention."],
+                [2, "A trigger that helps you access a memory is called a retrieval ___.", ["cue", "cues"], 0, "Retrieval cues activate neural pathways associated with the target memory."],
+                [1, "Retroactive interference occurs when:", ["Old information blocks new", "New learning disrupts the recall of old information", "Memory decays over time", "Retrieval cues are absent"], 1, "Retroactive = Recent interferes with Past."],
+                [1, "What is the purpose of the 'Central Executive' in working memory?", ["Storing visual data", "Storing audio data", "Directing attention and coordinating subsystems", "Permanent storage"], 2, "It acts as the 'boss', controlling focus and data flow."],
+                [2, "What memory stage lasts less than a second and holds raw environmental data?", ["sensory", "sensory memory"], 0, "Sensory memory acts as a rapid filter before attention is applied."],
+                [1, "Which is an example of semantic memory?", ["Remembering your 10th birthday", "Knowing that Paris is the capital of France", "Typing on a keyboard", "Feeling anxious in an exam"], 1, "Semantic memory contains context-free facts."],
+                [1, "Why is cramming (massed practice) biologically inefficient?", ["It overloads the hippocampus without allowing sleep-based consolidation", "It increases germane load", "It prevents implicit memory formation", "It reduces working memory capacity"], 0, "Consolidation requires time and sleep, which cramming ignores."],
+                [2, "The strengthening of synapses based on recent patterns of activity is known as Long-Term ___.", ["potentiation", "ltp"], 0, "LTP is the cellular mechanism behind learning and memory."],
+                [1, "Flashbulb memories are:", ["Always 100% accurate", "Vivid memories of emotionally significant events", "Memories formed during sleep", "Implicit motor skills"], 1, "Emotional intensity makes them vivid, though not always perfectly accurate."],
+                [1, "What is 'Encoding Specificity'?", ["Encoding only visual data", "Memory is best when cues present at encoding are present at retrieval", "Encoding specifically for multiple choice", "Using specific mnemonics"], 1, "Matching conditions improves recall success."],
+                [2, "A memory device, such as an acronym or method of loci, is called a ___.", ["mnemonic", "mnemonics"], 0, "Mnemonics structure data to make it highly memorable."],
+                [1, "What role does sleep play in memory?", ["Erases short-term memory", "Consolidates and organizes memories, clearing toxic brain waste", "Only affects procedural memory", "No active role"], 1, "Sleep actively processes memories and optimizes neural networks."],
+                [1, "Which memory component integrates visual, spatial, and verbal info with time sequencing?", ["Episodic buffer", "Phonological loop", "Sensory register", "Cerebellum"], 0, "The episodic buffer creates chronological scenes in working memory."],
+                [2, "Information you intentionally try to learn and recall is called ___ memory.", ["explicit", "declarative"], 0, "Explicit (declarative) memory requires conscious effort."],
+                [1, "What is memory decay?", ["Forgetting due to interference", "Fading of a memory trace due to passage of time without use", "Brain damage", "Failure to encode"], 1, "Use it or lose it: neural pathways weaken if not activated."],
+                [1, "How does 'distributed practice' affect the memory trace?", ["Weakens it", "Requires less total time", "Creates multiple, distinct contextual retrieval pathways", "Only helps short-term recall"], 2, "Studying across different times/contexts creates robust neural links."],
+                [2, "The inability to form new long-term memories after trauma is called ___ amnesia.", ["anterograde", "anterograde amnesia"], 0, "Anterograde means moving forward; new data cannot be saved."],
+                [1, "When you experience the 'tip-of-the-tongue' phenomenon, what is failing?", ["Sensory encoding", "Storage capacity", "Retrieval access", "Working memory"], 2, "The memory is stored, but the retrieval pathway is temporarily blocked."]
+            ],
+            t3: [ // 25 Tasks - Note-Making
+                [1, "What is the primary defining feature of the Cornell Note-Taking System?", ["Drawing mind maps", "Dividing the page into cues, notes, and summary sections", "Using multiple highlighters", "Transcribing verbatim"], 1, "The layout forces active recall and synthesis."],
+                [1, "Why is verbatim transcription (writing exactly what is said) ineffective?", ["It takes too much paper", "It bypasses working memory processing and synthesis", "It causes hand cramps", "It is too fast"], 1, "Without synthesis, the brain acts as a passive funnel, not processing data."],
+                [2, "The Zettelkasten method relies heavily on connecting small notes. What are these links called?", ["backlinks", "links", "cross-references"], 0, "Linking ideas creates a web of knowledge rather than isolated facts."],
+                [1, "What is the main advantage of Mind Mapping?", ["Linear structure", "Shows hierarchical and lateral relationships between concepts", "Easy to type", "Best for memorizing dates"], 1, "Mind maps mimic the brain's associative networking."],
+                [1, "When using the Outline method, what does indentation represent?", ["A new topic", "A change in speaker", "A subordinate/supporting point to the concept above it", "A question"], 2, "Indentation visually structures hierarchy and logical flow."],
+                [2, "Creating a brief, consolidated version of a larger text is called ___.", ["summarization", "summarizing", "summary"], 0, "Summarization forces you to identify core principles."],
+                [1, "In the Cornell system, when should the 'Summary' section be filled out?", ["Before the lecture", "During the lecture", "Immediately after the lecture or during review", "Right before the exam"], 2, "It serves as an immediate review and synthesis exercise."],
+                [1, "Which note-taking method is best for comparing attributes of multiple items (e.g., pros/cons of theories)?", ["Charting/Matrix method", "Mind mapping", "Cornell", "Sentence method"], 0, "Charting organizes data into structured columns for direct comparison."],
+                [2, "Taking notes actively requires you to put concepts into your own ___.", ["words", "language"], 0, "Paraphrasing forces cognitive engagement and schema matching."],
+                [1, "What is the primary flaw of passive highlighting?", ["It makes pages messy", "It creates the illusion of learning without actual encoding", "Highlighters are expensive", "It slows down reading"], 1, "Recognizing highlighted text is not the same as recalling it."],
+                [1, "What is 'Progressive Summarization'?", ["Reading a book slowly", "Highlighting, then bolding highlights, then summarizing the bolded parts", "Writing longer summaries over time", "Ignoring details completely"], 1, "It builds layers of focus, allowing rapid review of key insights later."],
+                [2, "To make notes useful for spaced repetition, they should be formatted as ___ and answers.", ["questions", "prompts"], 0, "Questions trigger active recall rather than passive reading."],
+                [1, "Why should you review notes within 24 hours of making them?", ["To rewrite them neatly", "To halt the steep initial drop of the forgetting curve", "To prepare for a pop quiz", "To memorize them perfectly"], 1, "The first review is critical for stabilizing the memory trace."],
+                [1, "What is the main drawback of the 'Sentence Method' of note-taking?", ["Too much structure", "Difficult to see relationships and hierarchy between ideas", "Requires drawing skills", "Takes too much space"], 1, "It is purely linear and lacks visual organization."],
+                [2, "In a mind map, the main concept is placed in the ___.", ["center", "middle"], 0, "All subordinate ideas branch out radially from the center."],
+                [1, "How does note-taking by hand (longhand) compare to typing on a laptop?", ["Typing is universally better", "Longhand forces synthesis because it's slower, improving conceptual recall", "Longhand is faster", "There is no difference"], 1, "Typers tend to transcribe verbatim; writers must synthesize."],
+                [1, "What goes in the left-hand 'Cue' column of Cornell notes?", ["Detailed explanations", "Questions, keywords, and prompts for self-testing", "The summary", "Instructor's exact quotes"], 1, "Cues are used to cover the right side and practice active recall."],
+                [2, "The process of combining ideas from multiple sources into a new cohesive structure is ___.", ["synthesis", "synthesizing"], 0, "Synthesis represents a high level of critical thinking and mastery."],
+                [1, "If a lecture is highly disorganized, which note-taking method is riskiest to use live?", ["Mind mapping", "Charting", "Sentence method", "Strict Outlining"], 3, "Outlining requires a clear, predictable hierarchy which disorganized speakers lack."],
+                [1, "What is the 'Q/E/C' note-taking framework?", ["Questions, Evidence, Conclusions", "Quick, Easy, Clear", "Quotes, Errors, Corrections", "Quantity, Effectiveness, Clarity"], 0, "It structures arguments logically for research and essays."],
+                [2, "Using symbols or abbreviations in notes increases ___ of capture.", ["speed", "efficiency"], 0, "Shorthand keeps you engaged with the speaker, not the writing process."],
+                [1, "What is the primary purpose of a 'Zettelkasten' or slip-box?", ["To store flashcards", "To build a connected web of permanent notes for future output (writing)", "To memorize vocabulary", "To organize lecture slides"], 1, "It acts as a 'second brain' for writers and researchers."],
+                [1, "When reviewing notes, what is the most effective action?", ["Re-reading them multiple times", "Highlighting them in different colors", "Covering the notes and attempting to recall the main points", "Rewriting them exactly"], 2, "Active recall strengthens neural pathways; re-reading does not."],
+                [2, "A visual note-taking method combining doodles, text, and layout is called ___.", ["sketchnoting", "visual notes"], 0, "Sketchnoting utilizes dual coding theory inherently."],
+                [1, "Which is a sign of poor note-making strategy?", ["Using abbreviations", "Having distinct headers", "Everything looks equally important", "Including questions"], 2, "Good notes must visually distinguish core concepts from supporting details."]
+            ],
+            t4: [ // 25 Tasks - Focus
+                [1, "What is the 'Pomodoro Technique'?", ["A diet plan", "Working for 25 minutes followed by a 5-minute break", "Working non-stop for 4 hours", "Multitasking efficiently"], 1, "It uses time constraints to boost focus and prevent burnout."],
+                [1, "According to Cal Newport, what defines 'Deep Work'?", ["Checking email quickly", "Working in a state of distraction-free concentration that pushes cognitive limits", "Working for 12 hours a day", "Collaborating in an open office"], 1, "Deep work generates high-value output and improves skills."],
+                [2, "The cognitive cost of shifting attention from one task to another is called task-switching ___.", ["penalty", "cost", "friction"], 0, "Every switch drains working memory and energy."],
+                [1, "What is 'Attention Residue'?", ["Focus left over for the next day", "Thoughts about a previous task that linger and disrupt focus on the current task", "The ability to multitask", "A type of meditation"], 1, "Even glancing at an email leaves residue that lowers current cognitive capacity."],
+                [1, "Which brain wave state is most associated with deep focus and flow?", ["Delta", "Alpha / Low Beta", "Gamma", "High Beta"], 1, "Alpha/Low Beta indicates a relaxed but highly engaged state."],
+                [2, "The psychological state of complete absorption in an activity is called ___.", ["flow", "flow state"], 0, "Coined by Csikszentmihalyi, it occurs when challenge perfectly matches skill."],
+                [1, "What is Time-Blocking?", ["Blocking distractions", "Scheduling every minute of your day into specific, predefined task blocks", "Working only when inspired", "Using a stopwatch"], 1, "It transforms passive intentions into concrete execution plans."],
+                [1, "How do Ultradian Rhythms affect focus?", ["They dictate sleep cycles only", "They create cycles of high focus and fatigue roughly every 90-120 minutes during the day", "They increase focus at night", "They are disrupted by sugar"], 1, "Aligning deep work with peak ultradian phases maximizes output."],
+                [2, "A predefined routine to trigger the start of a deep work session is a focus ___.", ["ritual", "habit"], 0, "Rituals condition the brain to enter focus mode automatically."],
+                [1, "What is the primary danger of the 'Open Office' plan?", ["Lack of space", "Constant ambient distraction preventing deep work", "Poor lighting", "Too much collaboration"], 1, "Unpredictable interruptions destroy flow states."],
+                [1, "What does 'Digital Minimalism' advocate?", ["Using no technology", "Intentionally using technology only when it supports your deep values and goals", "Deleting all social media", "Buying minimal hardware"], 1, "It shifts tech from a master to a carefully deployed tool."],
+                [2, "The illusion that you can effectively do two cognitive tasks simultaneously is called ___.", ["multitasking", "context switching"], 0, "The brain actually rapid-switches, degrading performance on both tasks."],
+                [1, "Why is your smartphone a distraction even when turned off and face down on your desk?", ["It emits radiation", "Your brain uses working memory to actively inhibit the urge to check it", "It reflects light", "It isn't; it's totally safe"], 1, "The 'brain drain' effect occurs just by having the device in visual proximity."],
+                [1, "What is the 'Two-Minute Rule' in getting things done?", ["Work for only two minutes", "Take a two-minute break every hour", "If a task takes less than two minutes, do it immediately", "Plan for two minutes a day"], 2, "It prevents small administrative tasks from cluttering your system."],
+                [2, "Designing your physical space to remove distractions is called ___ design.", ["environment", "environmental"], 0, "Willpower fails; environment design is a permanent fix."],
+                [1, "Which of these is considered 'Shallow Work'?", ["Writing a research paper", "Learning a new programming language", "Replying to routine administrative emails", "Synthesizing a complex dataset"], 2, "Shallow work requires low cognitive effort and is easily replicated."],
+                [1, "How does physiological arousal (stress) relate to focus according to Yerkes-Dodson?", ["More stress always equals more focus", "Less stress always equals more focus", "Optimal focus requires moderate arousal; too much or too little degrades performance", "No relationship"], 2, "It forms an inverted-U curve of performance."],
+                [2, "The tendency to seek out novel, immediate rewards (like checking social media) is driven by the neurotransmitter ___.", ["dopamine", "dopaminergic"], 0, "Tech companies exploit dopamine loops to hijack attention."],
+                [1, "What is a 'Distraction List' used for during deep work?", ["To list sites to visit later", "To park distracting thoughts and sudden to-dos so you can return to the main task immediately", "To block websites", "To list your goals"], 1, "It offloads intrusive thoughts from working memory."],
+                [1, "Why is 'Parkinson’s Law' relevant to focus?", ["It states work expands to fill the time allotted; tight deadlines force focus", "It causes diseases", "It relates to sleep", "It explains memory loss"], 0, "Artificial constraints eliminate procrastination and shallow work."],
+                [2, "Working intensely for 90 minutes followed by 20 minutes of rest aligns with ___ rhythms.", ["ultradian", "circadian"], 0, "This matches the brain's natural energy cycle."],
+                [1, "What happens to the Prefrontal Cortex when you are sleep-deprived?", ["It grows stronger", "Its ability to exert executive control and maintain focus is severely impaired", "It shifts to deep work", "Nothing"], 1, "Sleep deprivation destroys top-down attentional control."],
+                [1, "Which type of music is generally best for deep reading or writing?", ["Lyrical pop music", "Heavy metal", "Instrumental, ambient, or video game soundtracks", "Talk radio"], 2, "Lyrics engage the brain's language centers, causing interference with reading/writing."],
+                [2, "The feeling of fatigue caused by making too many choices throughout the day is ___ fatigue.", ["decision", "choice"], 0, "Routine automates choices, saving cognitive energy for focus."],
+                [1, "What is 'White Space' in scheduling?", ["Blank paper", "Unscheduled blocks of time left for rest, reflection, or spillover", "Time spent daydreaming", "Wasted time"], 1, "White space prevents cascading delays and burnout."]
+            ],
+            t5: [ // 25 Tasks - Exam Strategy
+                [1, "What is the 'Triage' method in exams?", ["Answering questions in order", "Scanning the test and answering the easiest questions first, leaving the hardest for last", "Guessing on all questions", "Reading the test twice"], 1, "Triage secures easy points early and builds momentum."],
+                [1, "When faced with an MCQ where you don't know the answer, what is the best first step?", ["Choose C", "Use process of elimination to cross out definitively wrong options", "Leave it blank immediately", "Ask the proctor"], 1, "Elimination statistically increases your odds of guessing correctly."],
+                [2, "The strategy of reading an exam entirely before writing anything is called the ___ pass.", ["first", "initial"], 0, "A quick scan primes the brain and helps allocate time."],
+                [1, "If an exam has a 'guessing penalty' (negative marking), when should you guess?", ["Always", "Never", "Only when you can eliminate at least one or two options to shift probability in your favor", "Only on the last question"], 2, "Calculated risk based on expected value is mathematically sound."],
+                [1, "What is the purpose of an 'Error Log' after a mock exam?", ["To punish yourself", "To systematically categorize mistakes (e.g., calculation, conceptual, misread) to target weaknesses", "To complain to the teacher", "To calculate the final grade"], 1, "Data-driven review is the fastest way to improve scores."],
+                [2, "A mental block caused by high stress during an exam is often called test ___.", ["anxiety", "choking"], 0, "High cortisol can block retrieval pathways in the hippocampus."],
+                [1, "Which of these is a 'distractor' in an MCQ?", ["The correct answer", "A plausible but incorrect option designed to test precision of knowledge", "A typo", "The question stem"], 1, "Distractors exploit common misconceptions or partial knowledge."],
+                [1, "How should you allocate time on a 100-mark exam lasting 120 minutes?", ["1 minute per mark, leaving 20 minutes for review", "Divide equally by number of pages", "Spend 60 minutes on the first half", "Work until time runs out"], 0, "Creating a strict marks-per-minute budget prevents running out of time."],
+                [2, "Words like 'always', 'never', or 'must' in a true/false question are known as absolute ___.", ["qualifiers", "modifiers"], 0, "Absolute statements are mathematically harder to prove and often false."],
+                [1, "What should you do if you experience a panic blank during an exam?", ["Quit and leave", "Close your eyes, take deep box breaths to lower cortisol, and switch to an easier question", "Stare at the clock", "Write random words"], 1, "Physiological reset restores access to the prefrontal cortex."],
+                [1, "What does 'RTFQ' stand for in exam strategy?", ["Read The Final Question", "Read The Full Question", "Rate The First Question", "Review The Failed Questions"], 1, "Misreading the prompt is a leading cause of unforced errors."],
+                [2, "Practicing under the exact timing and environmental constraints of the real exam is called a ___ test.", ["mock", "simulation"], 0, "Simulation reduces novelty stress on exam day."],
+                [1, "In essay exams, what is the most important thing to do in the first 5 minutes?", ["Start writing the introduction immediately", "Outline your thesis, core arguments, and structure", "Sharpen your pencils", "Read other people's papers"], 1, "An outline prevents structural collapse mid-essay."],
+                [1, "If two MCQ options are exact opposites, what is generally true?", ["Both are wrong", "One of them is highly likely to be the correct answer", "They cancel each other out", "It's a trick question"], 1, "Test makers often use the direct opposite as the primary distractor."],
+                [2, "Checking your work for unforced errors like missed negative signs is called ___.", ["review", "reviewing", "proofreading"], 0, "Systematic review prevents throwing away secured points."],
+                [1, "Why is 'brain dumping' useful at the start of a memory-heavy exam?", ["To waste time", "To immediately write down formulas or mnemonics on scratch paper to reduce working memory load", "To cheat", "To calm down"], 1, "It transfers data from limited working memory to paper instantly."],
+                [1, "What is a 'Double Negative' in a question stem?", ["A grammar mistake", "Using phrasing like 'Which is NOT an inaccurate statement', which requires cognitive inversion", "Two wrong options", "A minus sign"], 1, "Rewording double negatives into positive statements prevents logical errors."],
+                [2, "The part of the MCQ that presents the problem or question is called the ___.", ["stem", "prompt"], 0, "Read the stem fully before looking at the options to prevent bias."],
+                [1, "When reviewing a completed mock test, which questions require the most analysis?", ["The ones you got right easily", "The ones you guessed right AND the ones you got wrong", "Only the blank ones", "Only the last 5"], 1, "Guessed-right questions are hidden weaknesses."],
+                [1, "What is 'State-Dependent' recall applied to exam day?", ["Studying in a panic", "Replicating your study environment (caffeine, time of day) for the exam to trigger cues", "Testing in a different state", "Relying on state laws"], 1, "Matching physiological states aids memory retrieval."],
+                [2, "The strategy of jumping over a question that takes too long and returning later is called ___.", ["skipping", "flagging", "triage"], 0, "Never let one hard question consume the time meant for three easy ones."],
+                [1, "Which modifier makes a statement more likely to be TRUE?", ["Always", "Never", "Sometimes / Often", "Impossible"], 2, "Relative qualifiers accommodate exceptions in complex academic subjects."],
+                [1, "What is the danger of changing your initial answer on an MCQ?", ["It's always a bad idea", "It's usually correct", "Statistically, changing from a considered answer to a new one based on doubt lowers scores; only change if you find concrete new evidence", "It breaks the scantron"], 2, "Second-guessing without new logic is driven by anxiety, not recall."],
+                [2, "Writing 'Time = 30m, Marks = 20' next to a section is an example of a time ___.", ["budget", "allocation"], 0, "Budgets prevent catastrophic time mismanagement."],
+                [1, "What is the optimal study activity the night before a major exam?", ["Pulling an all-nighter to cram", "Light review, packing your bag, and getting 8+ hours of sleep for memory consolidation", "Taking a full mock test", "Learning entirely new material"], 1, "Sleep deprivation guarantees cognitive impairment on test day."]
+            ],
+            t6: [ // 25 Tasks - Time Management
+                [1, "In the Eisenhower Matrix, what defines Quadrant 1?", ["Urgent and Important", "Not Urgent but Important", "Urgent but Not Important", "Not Urgent and Not Important"], 0, "Q1 contains crises and strict deadlines requiring immediate action."],
+                [1, "Which quadrant of the Eisenhower Matrix is dedicated to deep work, planning, and long-term growth?", ["Quadrant 1", "Quadrant 2 (Important, Not Urgent)", "Quadrant 3", "Quadrant 4"], 1, "Q2 is the zone of strategic execution and prevention."],
+                [2, "The principle that 80% of results come from 20% of efforts is called the ___ Principle.", ["pareto", "pareto principle", "80/20"], 0, "Identifying the high-leverage 20% is key to efficiency."],
+                [1, "What does Parkinson's Law state?", ["Work expands so as to fill the time available for its completion", "Time is money", "Things take twice as long as expected", "Multitasking is a myth"], 0, "If you give yourself a week for a 2-hour task, it will take a week."],
+                [1, "What is 'Habit Stacking'?", ["Doing multiple things at once", "Tying a new habit to an existing, established habit (e.g., 'After I brush my teeth, I will plan my day')", "Building physical stacks", "Breaking bad habits"], 1, "It uses existing neural pathways to install new behaviors frictionlessly."],
+                [2, "Grouping similar tasks together to reduce switching costs is called ___.", ["batching", "task batching"], 0, "Batching emails or errands saves massive cognitive load."],
+                [1, "What does the 'S' in SMART goals stand for?", ["Simple", "Specific", "Strategic", "Systematic"], 1, "A goal must be explicitly defined to be actionable."],
+                [1, "Why is 'Energy Management' sometimes more critical than Time Management?", ["Time is infinite", "You can have 4 hours of free time, but if you have zero energy, your output is zero", "Energy drinks are cheap", "Energy doesn't matter"], 1, "Matching task difficulty to energy levels optimizes productivity."],
+                [2, "Delaying a task despite knowing it will have negative consequences is called ___.", ["procrastination", "procrastinating"], 0, "Procrastination is an emotional regulation problem, not a time problem."],
+                [1, "What is the 'Two-Minute Rule' (David Allen)?", ["Plan for 2 minutes", "If an action takes less than two minutes, do it immediately rather than deferring it", "Take a break every 2 minutes", "Read for 2 minutes"], 1, "It keeps your to-do list clear of micro-tasks."],
+                [1, "According to the Eisenhower Matrix, what should you do with Quadrant 3 tasks (Urgent, Not Important)?", ["Do them immediately", "Schedule them for later", "Delegate or automate them", "Ignore them completely"], 2, "Q3 tasks are often other people's emergencies, not yours."],
+                [2, "The false belief that you will have more time in the future than you do today is called the planning ___.", ["fallacy", "illusion"], 0, "We inherently underestimate task duration and overestimate future capacity."],
+                [1, "What is a 'Time Audit'?", ["Paying taxes on time", "Tracking exactly how you spend every 15 minutes for a week to find wasted time", "Estimating time needed", "Speed reading"], 1, "You cannot optimize what you do not measure."],
+                [1, "Which of these is the best example of a 'Lead Measure' in goal setting?", ["Getting an A on the final", "Losing 10 pounds", "Studying for 2 hours every day", "Graduating"], 2, "Lead measures are daily actions you control; lag measures are the outcomes."],
+                [2, "A dedicated period of time scheduled on your calendar for a specific task is a time ___.", ["block", "blocking"], 0, "If it's not on the calendar, it doesn't exist."],
+                [1, "What is 'Procrastination by preparation'?", ["Good planning", "Spending hours organizing notes or cleaning a desk instead of actually studying", "Preparing meals", "A focus technique"], 1, "It is a disguised form of avoidance behavior."],
+                [1, "How does the 'Pomodoro Technique' help with procrastination?", ["It makes the task fun", "It lowers the barrier to entry by committing to only 25 minutes of work, not the whole project", "It uses tomatoes", "It forces you to work faster"], 1, "Starting is the hardest part; Pomodoro bypasses the friction."],
+                [2, "Tasks in Quadrant 4 (Not Urgent, Not Important) like doom-scrolling should be ___.", ["eliminated", "deleted", "dropped"], 0, "They offer zero value and drain time/energy."],
+                [1, "What is the concept of 'Eat the Frog'?", ["A diet trend", "Doing your most difficult, high-friction task first thing in the morning", "Procrastinating", "Multitasking"], 1, "It utilizes peak morning willpower and creates psychological momentum."],
+                [1, "Which defines 'Artificial Deadlines'?", ["Deadlines set by professors", "Setting a personal, earlier deadline to trigger Parkinson's Law and prevent last-minute panic", "Missing a deadline", "Flexible dates"], 1, "They act as a buffer against the planning fallacy."],
+                [2, "The friction required to start a task is called ___ energy.", ["activation", "startup"], 0, "Lowering activation energy (e.g., leaving a book open) increases follow-through."],
+                [1, "Why are 'To-Do Lists' often less effective than 'Calendars'?", ["They are too short", "They don't account for the reality of time or constraints, leading to endless piling up", "Calendars are digital", "They don't work"], 1, "A calendar forces you to confront the limits of a 24-hour day."],
+                [1, "What is the 'Zeigarnik Effect' and how does it relate to productivity?", ["People remember uncompleted tasks better than completed ones, causing mental clutter until written down", "People forget quickly", "A way to read faster", "A type of matrix"], 0, "Writing tasks down closes the loop and restores focus."],
+                [2, "Reviewing your systems and goals at the end of every week is a Weekly ___.", ["review", "reflection"], 0, "It resets your system and prepares you for the strategic week ahead."],
+                [1, "What is 'Asynchronous Communication'?", ["Talking face-to-face", "Communication that does not require an immediate response (like email), allowing for batching", "Phone calls", "Zoom meetings"], 1, "It protects deep work by removing instant interruptions."]
+            ],
+            t7: [ // 25 Tasks - Stress & Resilience
+                [1, "What is the difference between Eustress and Distress?", ["They are the same", "Eustress is positive, motivating stress; distress is overwhelming, harmful stress", "Eustress causes panic", "Distress improves performance"], 1, "Stress is not inherently bad; the dosage and perception matter."],
+                [1, "According to the Yerkes-Dodson Law, what happens to performance when arousal (stress) is extremely high?", ["It peaks", "It stays flat", "It degrades rapidly, causing panic and mental blanks", "It turns into eustress"], 2, "High cognitive tasks collapse under extreme sympathetic nervous system activation."],
+                [2, "The primary stress hormone released by the adrenal glands is ___.", ["cortisol", "adrenaline"], 0, "Chronic high cortisol shrinks the hippocampus, impairing memory."],
+                [1, "What is 'Cognitive Reframing'?", ["Changing your glasses", "Changing the way you interpret a stressful event (e.g., from 'threat' to 'challenge')", "Ignoring the problem", "Complaining"], 1, "Reframing directly alters the physiological stress response."],
+                [1, "According to Carol Dweck, a 'Growth Mindset' is the belief that:", ["Intelligence is fixed at birth", "Talent alone brings success", "Abilities and intelligence can be developed through dedication and hard work", "Failure is permanent"], 2, "A growth mindset views failure as data for improvement."],
+                [2, "The ability to bounce back from setbacks and adapt to challenges is called ___.", ["resilience", "grit"], 0, "Resilience is a trainable psychological skill, not an innate trait."],
+                [1, "Which physiological technique immediately down-regulates the sympathetic nervous system?", ["Drinking coffee", "Rapid chest breathing", "Slow diaphragmatic breathing with extended exhales (e.g., box breathing)", "Pacing"], 2, "Extended exhales stimulate the vagus nerve, triggering the 'rest and digest' state."],
+                [1, "What is the 'Negativity Bias'?", ["Being a pessimist", "The brain's evolutionary tendency to register and dwell on negative stimuli more than positive ones", "Hating tests", "A mental illness"], 1, "It evolved for survival but causes unnecessary anxiety in modern life."],
+                [2, "The psychological state of emotional exhaustion and reduced efficacy is called ___.", ["burnout", "fatigue"], 0, "Burnout results from chronic distress without adequate recovery phases."],
+                [1, "How does chronic lack of sleep affect emotional regulation?", ["It improves it", "It severs the connection between the rational prefrontal cortex and the emotional amygdala, leading to reactivity", "It has no effect", "It makes you calmer"], 1, "Sleep-deprived brains are hyper-reactive to minor stressors."],
+                [1, "What does 'Locus of Control' refer to?", ["Where you study", "Whether you believe you control your outcomes (Internal) or external forces do (External)", "Eye movement", "Controlling others"], 1, "An internal locus of control is heavily correlated with academic resilience."],
+                [2, "Focusing non-judgmentally on the present moment is the practice of ___.", ["mindfulness", "meditation"], 0, "Mindfulness shrinks the amygdala and strengthens executive control."],
+                [1, "What is 'Catastrophizing'?", ["Building a catastrophe", "A cognitive distortion where you assume the absolute worst-case scenario will happen", "Studying intensely", "Failing a test"], 1, "Example: 'If I fail this quiz, I will never get a job and will end up homeless.'"],
+                [1, "Which of the following is an active coping strategy?", ["Binge-watching TV", "Ignoring the upcoming exam", "Creating a study schedule and seeking tutoring", "Complaining to friends"], 2, "Active coping addresses the root cause of the stress."],
+                [2, "The belief in your own ability to succeed in a specific situation is called self-___.", ["efficacy", "confidence"], 0, "High self-efficacy drives persistence in the face of difficulty."],
+                [1, "How does physical exercise improve stress resilience?", ["It doesn't", "It metabolizes stress hormones and releases BDNF, promoting neuroplasticity", "It tires you out so you don't care", "It increases cortisol permanently"], 1, "Exercise is a biological stress-buffer."],
+                [1, "What is the 'Imposter Syndrome'?", ["Faking a degree", "The persistent inability to believe that one's success is deserved, fearing being exposed as a 'fraud'", "A virus", "Cheating on a test"], 1, "Highly common among high-achievers transitioning to new environments."],
+                [2, "A cognitive distortion where things are seen in absolute, black-and-white terms is called all-or-___ thinking.", ["nothing", "none"], 0, "It ignores the reality of gradients and partial successes."],
+                [1, "What is 'Radical Acceptance' in stress management?", ["Giving up", "Acknowledging reality as it is without fighting it, so you can focus energy on what you can control", "Accepting bad grades", "Agreeing with everyone"], 1, "Fighting unchangeable facts drains energy needed for adaptation."],
+                [1, "Why is social support critical for resilience?", ["To borrow notes", "Oxytocin released during social bonding directly suppresses the cortisol stress response", "To party", "To complain"], 1, "Isolation amplifies the biological impact of stress."],
+                [2, "Viewing a stressful exam not as a threat, but as an opportunity to show what you know is a ___ appraisal.", ["challenge", "positive"], 0, "Challenge appraisals trigger eustress rather than distress."],
+                [1, "What is 'Toxic Positivity'?", ["Being too happy", "The dismissal of negative emotions with false reassurances, preventing genuine processing", "A chemical", "Caffeine overdose"], 1, "Emotions must be processed, not suppressed with forced smiles."],
+                [1, "Which sleep stage is most crucial for physical recovery and stress reduction?", ["REM", "Stage 1 Light Sleep", "Stage 3 Deep Sleep (Slow Wave Sleep)", "Waking"], 2, "Deep sleep clears metabolic waste and restores physiological balance."],
+                [2, "The psychological trait characterized by passion and perseverance for long-term goals is ___.", ["grit", "persistence"], 0, "Grit predicts success better than raw IQ in many challenging environments."],
+                [1, "What is a 'Boundary' in the context of academic stress?", ["A wall", "A clear limit set to protect time, energy, and mental health from excessive demands", "A geographic line", "A study limit"], 1, "Saying 'no' to non-essentials is a primary resilience tool."]
+            ],
+            t8: [ // 25 Tasks - Online Learning Mastery
+                [1, "What is the main difference between Synchronous and Asynchronous online learning?", ["Synchronous requires real-time participation; Asynchronous allows self-paced access", "Asynchronous is live on Zoom", "Synchronous has no deadlines", "There is no difference"], 0, "Asynchronous requires much higher self-regulation."],
+                [1, "What is a MOOC?", ["Massive Open Online Course", "Modern Online Operating Center", "Multiple Option Online Class", "Master of Online Computing"], 0, "MOOCs democratize access to elite university lectures."],
+                [2, "A digital system used by universities to deliver course materials and track progress is called an ___.", ["lms", "learning management system"], 0, "Examples include Canvas, Blackboard, and Moodle."],
+                [1, "What is the biggest challenge of self-paced asynchronous courses?", ["Too much interaction", "High reliance on intrinsic motivation and time management, leading to high dropout rates", "Exams are too hard", "Lack of videos"], 1, "Without structural friction, procrastination dominates."],
+                [1, "When evaluating an online source, what does the 'C' in the CRAAP test stand for?", ["Currency (timeliness)", "Clarity", "Coding", "Creativity"], 0, "Outdated science or statistics can invalidate an argument."],
+                [2, "The practice of managing your online environment to minimize distractions is called digital ___.", ["hygiene", "minimalism"], 0, "Using site blockers is a core tactic of digital hygiene."],
+                [1, "What is a 'Micro-credential'?", ["A fake degree", "A short, focused certification in a specific skill area, often stackable", "A one-hour video", "A small university"], 1, "They allow rapid upskilling in specific professional competencies."],
+                [1, "Why is 'Active Reading' crucial for digital texts?", ["To save battery", "Because screens naturally promote passive skimming; active annotation forces cognitive engagement", "To read faster", "To adjust brightness"], 1, "Digital interfaces encourage a superficial 'F-pattern' scanning behavior."],
+                [2, "Learning that occurs in real-time with an instructor is ___ learning.", ["synchronous", "live"], 0, "It mimics the traditional classroom environment online."],
+                [1, "What is the 'F-Pattern' in web reading?", ["Failing grades", "The tendency for eyes to scan the top, then down the left side, reading less as they go down", "Focus pattern", "A grading curve"], 1, "This explains why people miss critical details in long online texts."],
+                [1, "How can you combat 'Zoom Fatigue'?", ["Stare closer at the screen", "Hide your self-view to reduce cognitive load, and take visual breaks away from the screen", "Turn volume up", "Multitask during meetings"], 1, "Constant self-evaluation in a mirror-view drains mental energy."],
+                [2, "A forum where students post and reply to text-based questions over time is a ___ board.", ["discussion", "message"], 0, "A staple of asynchronous collaboration."],
+                [1, "Which tool is best for managing complex group projects online?", ["Text messaging", "Kanban boards (like Trello/Asana) to track task status and ownership", "A single shared Word doc", "Email chains"], 1, "Visual task management prevents duplicate work and missed deadlines."],
+                [1, "What is the purpose of 'Playback Speed' (e.g., 1.5x) in online lectures?", ["To make voices sound funny", "To match the speaker's pace to your cognitive processing speed, saving time without losing comprehension", "To skip material", "To test the video player"], 1, "Many speakers talk slower than our brains can process language."],
+                [2, "The gap between those with effective access to digital technology and those without is the digital ___.", ["divide", "gap"], 0, "It remains a massive barrier to educational equity."],
+                [1, "What makes Wikipedia a tricky source for academic research?", ["It costs money", "It is an excellent starting point for overviews and finding primary sources, but cannot be cited as a primary source itself", "It's always entirely wrong", "It is peer-reviewed"], 1, "Use its reference list, not its article text, for academic citations."],
+                [1, "In online learning, what is a 'Flipped Classroom'?", ["Desks are backwards", "Lectures are watched at home asynchronously, while live class time is used for interactive problem-solving", "Tests are given before teaching", "No teacher is present"], 1, "It maximizes the value of expensive synchronous time."],
+                [2, "A method of verifying identity and preventing cheating during online exams is called digital ___.", ["proctoring", "invigilation"], 0, "Often uses webcams and AI to monitor eye movement and browser activity."],
+                [1, "Why is creating a dedicated physical workspace vital for online learning?", ["To look professional on camera", "It utilizes context-dependent memory and creates a physical boundary that triggers 'focus mode'", "To hide mess", "It's a school rule"], 1, "Working in bed confuses the brain's sleep and work schemas."],
+                [1, "What is a major risk of algorithm-driven online research (like Google)?", ["It's too slow", "The Filter Bubble/Confirmation Bias, where the algorithm feeds you what you already agree with", "It charges fees", "It crashes often"], 1, "Algorithms optimize for engagement, not objective truth."],
+                [2, "Earning a digital representation of a skill or achievement is often called a digital ___.", ["badge", "credential"], 0, "Badges can be displayed on LinkedIn to prove competency."],
+                [1, "What does 'Netiquette' refer to?", ["Internet speed", "The correct or acceptable way of communicating on the Internet (e.g., in forums and emails)", "A fishing net", "Web design"], 1, "Professional tone is critical in text-only academic environments."],
+                [1, "How should you approach taking notes on a video lecture?", ["Transcribe every word", "Pause periodically to synthesize the main point, rather than trying to write while the video plays continuously", "Watch it without notes", "Only screenshot the slides"], 1, "Pausing allows working memory to clear and synthesis to occur."],
+                [2, "An online course environment where you are entirely responsible for your pacing is ___-directed learning.", ["self", "student"], 0, "Requires master-level time management skills."],
+                [1, "Which file format is the universal standard for submitting academic papers to preserve formatting?", ["TXT", "DOCX", "PDF (Portable Document Format)", "HTML"], 2, "PDFs ensure the document looks identical on the professor's screen."]
+            ],
+            t9: [ // 25 Tasks - Research & Critical Thinking
+                [1, "What is the primary purpose of the Peer Review process?", ["To fix grammar", "To ensure rigorous evaluation of methodology and claims by independent experts before publication", "To sell journals", "To censor ideas"], 1, "It is the gold standard for academic credibility."],
+                [1, "Which Boolean operator NARROWs a search by requiring all terms to be present?", ["OR", "NOT", "AND", "IF"], 2, "Searching 'Climate AND Policy' returns fewer, more specific results."],
+                [2, "A logical fallacy attacking the person rather than their argument is called ___.", ["ad hominem", "personal attack"], 0, "It is a distraction tactic indicating a weak argument."],
+                [1, "What is 'Confirmation Bias'?", ["Confirming a flight", "The tendency to search for, interpret, and favor information that confirms your pre-existing beliefs", "A statistical error", "A type of peer review"], 1, "It blinds researchers to contradictory evidence."],
+                [1, "In the CRAAP test for evaluating sources, what does 'Authority' refer to?", ["The visual design of the site", "The author's credentials, institutional affiliation, and expertise on the topic", "The length of the article", "The publication date"], 1, "A physics paper written by an economist lacks authority in physics."],
+                [2, "Using quotation marks around a phrase in a database search performs an ___ match search.", ["exact", "phrase"], 0, "Prevents the engine from splitting the words apart."],
+                [1, "What is the difference between Primary and Secondary sources?", ["Primary is older", "Primary provides raw data/firsthand accounts; Secondary interprets and analyzes primary sources", "Secondary is better", "Primary is a textbook"], 1, "A diary is primary; a history book about the diary is secondary."],
+                [1, "What logical fallacy misrepresents someone's argument to make it easier to attack?", ["Straw Man", "Slippery Slope", "False Dilemma", "Red Herring"], 0, "You build a weak 'straw man' and knock it down, claiming victory."],
+                [2, "The process of reasoning from specific observations to a general theory is ___ reasoning.", ["inductive", "induction"], 0, "Science heavily relies on inductive logic (data -> theory)."],
+                [1, "What does 'Correlation does not imply Causation' mean?", ["Statistics are useless", "Just because two variables move together doesn't mean one causes the other (there may be a confounding variable)", "Causes are correlated", "Everything is random"], 1, "Ice cream sales and shark attacks correlate, but one doesn't cause the other."],
+                [1, "What is a 'Literature Review' in a research paper?", ["A book report", "A comprehensive summary and synthesis of previous research on the topic to establish current context", "The reference list", "The abstract"], 1, "It proves you know what has already been done before you add to it."],
+                [2, "The tendency to rely too heavily on the first piece of information offered is the ___ bias.", ["anchoring", "anchor"], 0, "The first number mentioned in a negotiation anchors the rest of the conversation."],
+                [1, "What is a 'False Dilemma' (Black-or-White) fallacy?", ["A hard choice", "Presenting only two options as the only possibilities, when more exist", "A lie", "A paradox"], 1, "Example: 'Either you support this law, or you hate freedom.'"],
+                [1, "If you want to find an article about 'Apple' the fruit, but exclude the tech company, what search string is best?", ["Apple OR tech", "Apple NOT computer", "Apple AND phone", "Apple fruit only"], 1, "The NOT operator excludes specific terms."],
+                [2, "The section of a research paper that summarizes the entire study in ~250 words is the ___.", ["abstract", "summary"], 0, "Always read the abstract first to triage papers."],
+                [1, "What is 'Synthesis' in writing?", ["Summarizing one article", "Combining insights from multiple distinct sources to form a new, cohesive argument or perspective", "Quoting directly", "Plagiarism"], 1, "Summary is reporting; Synthesis is creating."],
+                [1, "Why are '.gov' and '.edu' domains generally considered more reliable than '.com'?", ["They have better graphics", "They are restricted to government and educational institutions, implying a baseline of factual oversight", "They are older", "They are private"], 1, "However, they must still be evaluated for bias."],
+                [2, "A flaw in logic that invalidates an argument is called a logical ___.", ["fallacy", "error"], 0, "Recognizing fallacies protects you from manipulation."],
+                [1, "What is 'Anecdotal Evidence'?", ["Data from a lab", "Evidence based on personal accounts or isolated examples rather than rigorous scientific statistics", "Historical evidence", "Mathematical proof"], 1, "'My grandfather smoked and lived to 90' is anecdotal and statistically irrelevant."],
+                [1, "Which of these constitutes Plagiarism?", ["Paraphrasing without citation", "Copying text verbatim without quotes/citation", "Submitting someone else's work as your own", "All of the above"], 3, "Plagiarism includes taking ideas, not just exact words."],
+                [2, "The logical fallacy that argues something is true simply because many people believe it is the ___ bandwagon fallacy.", ["bandwagon", "ad populum", "popular"], 0, "Popularity does not dictate truth (e.g., flat earth historically)."],
+                [1, "What is the role of an 'Annotated Bibliography'?", ["To list books", "To provide a citation followed by a brief descriptive and evaluative paragraph for each source", "To write an essay", "To buy books"], 1, "It forces you to evaluate sources before writing the paper."],
+                [1, "What is the 'Slippery Slope' fallacy?", ["Falling down", "Arguing that a small first step will inevitably lead to a chain of extreme negative events without evidence", "A physics concept", "A bad slope"], 1, "Example: 'If we ban this energy drink, soon they will ban coffee and tea!'"],
+                [2, "Reasoning from a general premise to a specific, logical conclusion is ___ reasoning.", ["deductive", "deduction"], 0, "If A=B and B=C, then A=C."],
+                [1, "Why is 'Blinding' used in scientific experiments (e.g., Double-Blind)?", ["To protect eyes", "To prevent the placebo effect and researcher bias from influencing the results", "To make it harder", "To save money"], 1, "If neither the subject nor the researcher knows who got the drug, bias is minimized."]
+            ],
+            t10: [ // 30 Tasks - Integrated Mastery Simulation
+                [1, "A student is stressed about an upcoming exam, causing poor sleep. The poor sleep impairs their working memory, leading to worse study sessions and more stress. This is an example of:", ["Negative Feedback Loop", "Positive Feedback Loop (Vicious Cycle)", "Cognitive Reframing", "Neuroplasticity"], 1, "Stress systems and cognitive systems are tightly integrated."],
+                [2, "To memorize a complex anatomical diagram, a student draws it while verbally explaining the pathways. This utilizes ___ coding.", ["dual", "dual coding"], 0, "Integrating visual and verbal channels maximizes encoding."],
+                [1, "During an open-book exam, what is the most critical time management strategy?", ["Reading the book cover to cover", "Having a highly organized, indexed set of notes/Zettelkasten to minimize search time", "Googling everything", "Writing long answers"], 1, "Open book tests search speed, not just knowledge."],
+                [1, "You have 3 exams in 2 weeks. What is the most scientifically sound study schedule?", ["Cram for Exam 1, then Exam 2, then Exam 3 sequentially", "Use interleaved, spaced practice: study a bit of all three subjects every day", "Study only the hardest one", "Study at night only"], 1, "Interleaving prevents fatigue and spacing builds permanent traces."],
+                [2, "Analyzing your mock exam to identify that you lost 10% due to misreading questions is called conducting an ___ log.", ["error", "mistake"], 0, "Data-driven metacognition."],
+                [1, "A student uses the Pomodoro technique to study a heavily peer-reviewed paper on neurobiology. What three concepts are interacting?", ["Focus Engineering, Critical Evaluation, Cognitive Load", "Procrastination, Nutrition, Sleep", "Mind Mapping, Cornell, Sketchnoting", "None"], 0, "Integrated application of systems."],
+                [1, "Which scenario demonstrates the 'Illusion of Fluency'?", ["Scoring 100% on a blind mock test", "Reading highlighted text easily and assuming you can write an essay on it from memory", "Struggling to remember a formula", "Creating a mind map from memory"], 1, "Recognition is infinitely easier than recall."],
+                [2, "The psychological friction you feel right before starting a hard task, which Parkinson's Law tries to overcome with artificial deadlines, is ___ energy.", ["activation", "startup"], 0, "Lower it by starting ridiculously small (e.g., 2 minutes)."],
+                [1, "If a researcher uses 'Straw Man' arguments against a rival theory, what does this indicate?", ["High academic rigor", "A failure of critical thinking and a red flag for bias in the research", "A valid deductive proof", "Good peer review"], 1, "Fallacies undermine the structural integrity of academic work."],
+                [1, "How does 'Habit Stacking' apply to online asynchronous learning?", ["Stacking books", "Tying the act of logging into the LMS to an existing daily anchor, like drinking morning coffee, to ensure consistency", "Opening many tabs", "Watching videos at 2x speed"], 1, "It automates the hardest part: showing up."],
+                [2, "Breaking a complex task (high intrinsic load) into smaller, manageable sub-tasks is called ___.", ["segmenting", "chunking"], 0, "It protects the working memory bottleneck."],
+                [1, "What happens when you combine 'Active Recall' with 'Spaced Repetition'?", ["Memory decays", "You achieve the most scientifically validated method for long-term knowledge retention", "You get stressed", "It wastes time"], 1, "Recall strengthens the trace; spacing optimizes the timing of the strengthening."],
+                [1, "A student faces an exam question on a topic they barely studied. They use process of elimination on absolute qualifiers ('always') to guess. What strategy is this?", ["Triage", "Error Analysis", "Tactical Guessing via Negative Elimination", "Cramming"], 2, "Using logic to compensate for knowledge gaps."],
+                [2, "The belief that your intelligence can grow with effort, protecting you against academic burnout, is a ___ mindset.", ["growth", "learning"], 0, "Essential for resilience in elite environments."],
+                [1, "Why is 'Multitasking' during a live Zoom lecture detrimental to learning?", ["It breaks the computer", "The brain cannot parallel process conscious attention; task-switching causes 'attention residue' and destroys schema formation", "It makes you type slower", "It is polite"], 1, "The central executive can only focus on one complex stream at a time."],
+                [1, "A student highlights their textbook, reads it three times, and feels highly confident. On the test, they blank. Why?", ["Test anxiety only", "They relied entirely on passive recognition strategies, creating an illusion of competence, but built no retrieval pathways", "The test was unfair", "They slept too much"], 1, "Input does not equal output."],
+                [2, "The final step of the Feynman Technique, where you simplify your explanation to the level of a beginner, forces deep ___.", ["synthesis", "understanding", "simplification"], 0, "If you can't explain it simply, you don't understand it well enough."],
+                [1, "When evaluating a scientific paper, what is the 'Methodology' section crucial for?", ["Seeing the pictures", "Determining if the study design (e.g., sample size, double-blinding) justifies the conclusions", "Reading the summary", "Finding the author's name"], 1, "Flawed methods produce invalid data, regardless of the results."],
+                [1, "How does 'Environment Design' interact with 'Willpower'?", ["It requires more willpower", "It outsources willpower to the physical space; a phone in another room requires zero willpower to resist", "They are unrelated", "It depletes willpower"], 1, "Systems > Willpower."],
+                [2, "Taking notes by synthesizing the lecture into your own words, rather than verbatim, reduces ___ cognitive load.", ["extraneous", "excess"], 0, "It shifts effort to germane load (schema building)."],
+                [1, "A student uses the Eisenhower matrix and realizes 40% of their day is spent in Quadrant 3 (Urgent, Not Important). What is the integrated solution?", ["Work faster", "Set boundaries, utilize asynchronous communication, and say 'no' to protect Quadrant 2 deep work", "Sleep less", "Do Q3 tasks better"], 1, "Q3 tasks are traps; they must be minimized, not optimized."],
+                [1, "How does acute stress (Eustress) during an exam affect the brain?", ["Causes panic blanks", "Slightly elevates cortisol and adrenaline, sharpening focus and optimizing retrieval speed (Yerkes-Dodson peak)", "Puts you to sleep", "Erases memory"], 1, "Optimal arousal is a performance enhancer."],
+                [2, "The cognitive bias where you seek out research that only supports your thesis is ___ bias.", ["confirmation", "confirm"], 0, "A master researcher actively seeks to disprove their own hypothesis."],
+                [1, "What is the ultimate goal of the 'Zettelkasten' note-making framework?", ["To pass a multiple choice test", "To build an interconnected web of knowledge that facilitates emergent ideas and synthesis for complex output (papers, books)", "To organize a backpack", "To memorize facts"], 1, "It is an engine for intellectual production, not just storage."],
+                [1, "During an exam, you encounter a devastatingly hard question first. What integrated strategy applies?", ["Panic and stay on it", "Apply triage, flag it, use box breathing to control the cortisol spike, and move to an easier question to build momentum", "Guess randomly and quit", "Complain"], 1, "Emotional regulation meets tactical exam strategy."],
+                [2, "Revisiting old material right before you are about to forget it is the core of ___ repetition.", ["spaced", "spacing"], 0, "The forgetting curve dictates the optimal algorithm."],
+                [1, "Which of these represents a 'Meta-Cognitive' failure?", ["Getting a math problem wrong", "Realizing you don't understand a concept", "Thinking you are fully prepared for an exam because you highlighted the book, without ever testing yourself", "Asking for help"], 2, "A failure to accurately monitor your own level of true competence."],
+                [1, "How does 'Sleep Hygiene' directly impact 'Online Learning Mastery'?", ["It doesn't", "Quality sleep consolidates schemas formed during asynchronous learning and restores the prefrontal cortex for self-regulated focus the next day", "It makes videos load faster", "It causes Zoom fatigue"], 1, "Biological foundations dictate digital performance."],
+                [2, "The technique of setting an artificial timer for 25 minutes of unbroken focus is the ___.", ["pomodoro", "pomodoro technique"], 0, "A tactical weapon against the activation energy of procrastination."],
+                [1, "What is the ultimate mark of 'Academic Mastery'?", ["Having a high IQ", "The ability to seamlessly integrate high-leverage systems (focus, memory, strategy) to learn any complex topic efficiently and perform under pressure", "Reading 100 books", "Never failing"], 1, "Mastery is systematic, adaptable, and process-driven."]
+            ]
+        };
+
+        const TEST_META = [
+            { id: 't1', title: 'Cognitive Foundations Drill', desc: 'Metacognition, Schemas, Memory Encoding.' },
+            { id: 't2', title: 'Memory Systems Simulation', desc: 'Working Memory, Long-term storage, Retrieval.' },
+            { id: 't3', title: 'Note-Making Framework Battle', desc: 'Cornell, Mind Maps, Zettelkasten synthesis.' },
+            { id: 't4', title: 'Focus Engineering Challenge', desc: 'Flow State, Pomodoro, Distraction Management.' },
+            { id: 't5', title: 'Exam Strategy Tactical Test', desc: 'Triage, Time Allocation, Elimination logic.' },
+            { id: 't6', title: 'Time Management Systems', desc: 'Eisenhower Matrix, Habit Stacking, Blocking.' },
+            { id: 't7', title: 'Stress & Resilience Calibration', desc: 'Reframing, Yerkes-Dodson, Burnout prevention.' },
+            { id: 't8', title: 'Online Learning Mastery', desc: 'Asynchronous discipline, LMS, Digital Hygiene.' },
+            { id: 't9', title: 'Research & Critical Thinking', desc: 'Fallacies, CRAAP test, Boolean logic.' },
+            { id: 't10', title: 'Integrated Mastery Simulation', desc: 'Complex, multi-disciplinary scenario applications.' }
+        ];
+
+        // --- STATE MANAGEMENT ---
+        let globalState = {
+            completedTests: [],
+            scores: {}, // { t1: { correct: 20, total: 25 }, ... }
+            totalTasksAttempted: 0,
+            totalTasksCorrect: 0
+        };
+
+        let currentTest = {
+            id: null,
+            questions: [],
+            currentIndex: 0,
+            correctCount: 0,
+            hasAnsweredCurrent: false
+        };
+
+        // --- UTILITIES ---
+        function shuffleArray(array) {
+            let curId = array.length;
+            while (0 !== curId) {
+                let randId = Math.floor(Math.random() * curId);
+                curId -= 1;
+                let tmp = array[curId];
+                array[curId] = array[randId];
+                array[randId] = tmp;
+            }
+            return array;
+        }
+
+        // --- INITIALIZATION ---
+        function initApp() {
+            renderDashboard();
+            updateGlobalHeader();
+        }
+
+        function enterLab() {
+            document.getElementById('entry-screen').classList.add('hidden');
+            document.getElementById('sticky-header').classList.remove('hidden');
+            document.getElementById('main-container').classList.remove('hidden');
+        }
+
+        // --- DASHBOARD ---
+        function renderDashboard() {
+            const grid = document.getElementById('test-grid');
+            grid.innerHTML = '';
+            
+            let allCompleted = true;
+
+            TEST_META.forEach(test => {
+                const isCompleted = globalState.completedTests.includes(test.id);
+                if (!isCompleted) allCompleted = false;
+
+                let statusHtml = isCompleted 
+                    ? `<span class="status-badge status-completed">Completed: ${Math.round((globalState.scores[test.id].correct / globalState.scores[test.id].total)*100)}%</span>`
+                    : `<span class="status-badge status-pending">Pending</span>`;
+
+                let btnHtml = isCompleted
+                    ? `<button class="btn btn-outline" disabled>Completed</button>`
+                    : `<button class="btn btn-primary" onclick="startTest('${test.id}')">Start Protocol</button>`;
+
+                grid.innerHTML += `
+                    <div class="test-card">
+                        <div class="test-meta">
+                            <span>ID: ${test.id.toUpperCase()}</span>
+                            ${statusHtml}
+                        </div>
+                        <h3>${test.title}</h3>
+                        <p>${test.desc}</p>
+                        <div>${btnHtml}</div>
+                    </div>
+                `;
+            });
+
+            if (allCompleted && TEST_META.length > 0) {
+                document.getElementById('finish-lab-container').style.display = 'block';
+            }
+        }
+
+        function updateGlobalHeader() {
+            document.getElementById('hdr-tasks').innerText = `${globalState.totalTasksAttempted} / 255`;
+            
+            let acc = 0;
+            if (globalState.totalTasksAttempted > 0) {
+                acc = Math.round((globalState.totalTasksCorrect / globalState.totalTasksAttempted) * 100);
+            }
+            document.getElementById('hdr-accuracy').innerText = `${acc}%`;
+
+            let tier = 'Foundational';
+            if (acc > 40) tier = 'Developing';
+            if (acc > 60) tier = 'Advanced';
+            if (acc > 80) tier = 'Elite';
+            
+            const tierEl = document.getElementById('hdr-tier');
+            tierEl.innerText = tier;
+            
+            // Tier colors
+            tierEl.style.color = 'white';
+            if(tier === 'Foundational') tierEl.style.background = 'var(--bg-hover)';
+            if(tier === 'Developing') tierEl.style.background = 'var(--warning)';
+            if(tier === 'Advanced') tierEl.style.background = 'var(--accent)';
+            if(tier === 'Elite') tierEl.style.background = 'var(--success)';
+
+            document.getElementById('global-progress').style.width = `${(globalState.totalTasksAttempted / 255) * 100}%`;
+        }
+
+        // --- TEST EXECUTION ---
+        function startTest(testId) {
+            const meta = TEST_META.find(t => t.id === testId);
+            currentTest.id = testId;
+            // Deep copy and map raw data into manageable objects
+            currentTest.questions = rawData[testId].map(q => {
+                if (q[0] === 1) { // MCQ
+                    return { type: 'mcq', q: q[1], options: [...q[2]], correctIdx: q[3], exp: q[4] };
+                } else { // Short Answer
+                    return { type: 'short', q: q[1], keywords: [...q[2]], exp: q[4] };
+                }
+            });
+            currentTest.currentIndex = 0;
+            currentTest.correctCount = 0;
+
+            document.getElementById('dashboard').classList.add('hidden');
+            document.getElementById('test-view').classList.remove('hidden');
+            document.getElementById('tv-title').innerText = meta.title;
+            
+            renderQuestion();
+        }
+
+        function exitTest() {
+            if(confirm("Abort current protocol? Progress for this block will be lost.")) {
+                document.getElementById('test-view').classList.add('hidden');
+                document.getElementById('dashboard').classList.remove('hidden');
+            }
+        }
+
+        function renderQuestion() {
+            currentTest.hasAnsweredCurrent = false;
+            const q = currentTest.questions[currentTest.currentIndex];
+            const total = currentTest.questions.length;
+            
+            document.getElementById('tv-progress').innerText = `Task ${currentTest.currentIndex + 1} of ${total}`;
+            document.getElementById('q-text').innerText = q.q;
+            
+            const inputArea = document.getElementById('q-input-area');
+            inputArea.innerHTML = '';
+            document.getElementById('error-msg').innerText = '';
+            document.getElementById('feedback-box').classList.remove('show');
+            document.getElementById('btn-submit').classList.remove('hidden');
+            document.getElementById('btn-next').classList.add('hidden');
+
+            if (q.type === 'mcq') {
+                document.getElementById('q-type-badge').innerText = 'Multiple Choice';
+                // Map options to keep track of original correct index
+                let optionsWithMeta = q.options.map((text, idx) => ({ text, isCorrect: idx === q.correctIdx, origIdx: idx }));
+                optionsWithMeta = shuffleArray(optionsWithMeta);
+                
+                const grid = document.createElement('div');
+                grid.className = 'options-grid';
+                
+                optionsWithMeta.forEach((opt, idx) => {
+                    const optDiv = document.createElement('div');
+                    optDiv.className = 'option-item';
+                    optDiv.innerText = opt.text;
+                    optDiv.dataset.isCorrect = opt.isCorrect;
+                    optDiv.onclick = () => selectOption(grid, optDiv);
+                    grid.appendChild(optDiv);
+                });
+                inputArea.appendChild(grid);
+            } else {
+                document.getElementById('q-type-badge').innerText = 'Constructed Response';
+                inputArea.innerHTML = `<input type="text" id="short-answer-input" class="short-answer-input" placeholder="Type your precise academic answer here..." autocomplete="off">`;
+                // Focus input
+                setTimeout(() => document.getElementById('short-answer-input').focus(), 100);
+            }
+        }
+
+        function selectOption(grid, selectedDiv) {
+            if (currentTest.hasAnsweredCurrent) return;
+            Array.from(grid.children).forEach(child => child.classList.remove('selected'));
+            selectedDiv.classList.add('selected');
+        }
+
+        function submitAnswer() {
+            if (currentTest.hasAnsweredCurrent) return;
+
+            const q = currentTest.questions[currentTest.currentIndex];
+            const inputArea = document.getElementById('q-input-area');
+            let isCorrect = false;
+            let scoreValue = 0; // 0 to 1
+
+            if (q.type === 'mcq') {
+                const selected = inputArea.querySelector('.option-item.selected');
+                if (!selected) {
+                    document.getElementById('error-msg').innerText = "ERROR: Selection required to proceed.";
+                    return;
+                }
+                document.getElementById('error-msg').innerText = '';
+                
+                isCorrect = selected.dataset.isCorrect === "true";
+                scoreValue = isCorrect ? 1 : 0;
+
+                // UI Feedback
+                Array.from(inputArea.querySelector('.options-grid').children).forEach(div => {
+                    div.classList.add('disabled');
+                    if (div.dataset.isCorrect === "true") div.classList.add('correct');
+                    else if (div === selected && !isCorrect) div.classList.add('wrong');
+                });
+
+            } else {
+                const input = document.getElementById('short-answer-input');
+                const val = input.value.trim().toLowerCase().replace(/[^\w\s]/gi, '');
+                if (val === '') {
+                    document.getElementById('error-msg').innerText = "ERROR: Input required to proceed.";
+                    return;
+                }
+                document.getElementById('error-msg').innerText = '';
+                input.disabled = true;
+
+                // Keyword check
+                let matchCount = 0;
+                q.keywords.forEach(kw => {
+                    if (val.includes(kw.toLowerCase())) matchCount++;
+                });
+                
+                if (matchCount > 0) {
+                    isCorrect = true; // Partial or full counts as 'correct' technically for flow, but we score proportionally
+                    scoreValue = matchCount / q.keywords.length;
+                }
+            }
+
+            // Update State
+            currentTest.hasAnsweredCurrent = true;
+            globalState.totalTasksAttempted++;
+            globalState.totalTasksCorrect += scoreValue; // Can add fractional points
+            currentTest.correctCount += scoreValue;
+
+            updateGlobalHeader();
+
+            // Show Feedback
+            const fBox = document.getElementById('feedback-box');
+            const fTitle = document.getElementById('feedback-title');
+            const fText = document.getElementById('feedback-text');
+            
+            fBox.className = 'feedback-box show';
+            if (scoreValue === 1) {
+                fBox.classList.add('feedback-success');
+                fTitle.innerText = 'Analysis Validated (Correct)';
+                fTitle.style.color = 'var(--success)';
+            } else if (scoreValue > 0) {
+                fBox.classList.add('feedback-warning');
+                fTitle.innerText = `Partial Match (${Math.round(scoreValue*100)}%)`;
+                fTitle.style.color = 'var(--warning)';
+            } else {
+                fBox.classList.add('feedback-danger');
+                fTitle.innerText = 'Analysis Flawed (Incorrect)';
+                fTitle.style.color = 'var(--danger)';
+            }
+            
+            let kwText = q.type === 'short' ? `<br><br><small style="color:var(--text-muted)">Target Keywords: ${q.keywords.join(', ')}</small>` : '';
+            fText.innerHTML = `<strong>Concept Reference:</strong> ${q.exp} ${kwText}`;
+
+            document.getElementById('btn-submit').classList.add('hidden');
+            document.getElementById('btn-next').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentTest.currentIndex++;
+            if (currentTest.currentIndex < currentTest.questions.length) {
+                renderQuestion();
+            } else {
+                finishTest();
+            }
+        }
+
+        function finishTest() {
+            // Save local test score
+            globalState.scores[currentTest.id] = {
+                correct: currentTest.correctCount,
+                total: currentTest.questions.length
+            };
+            globalState.completedTests.push(currentTest.id);
+            
+            document.getElementById('test-view').classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('hidden');
+            
+            renderDashboard();
+        }
+
+        // --- FINAL REPORT ---
+        function showFinalReport() {
+            document.getElementById('dashboard').classList.add('hidden');
+            document.getElementById('sticky-header').classList.add('hidden');
+            document.getElementById('final-report').classList.remove('hidden');
+
+            document.getElementById('fr-attempted').innerText = globalState.totalTasksAttempted;
+            
+            let acc = Math.round((globalState.totalTasksCorrect / globalState.totalTasksAttempted) * 100);
+            document.getElementById('fr-accuracy').innerText = `${acc}%`;
+
+            let tier = 'Foundational';
+            if (acc > 40) tier = 'Developing';
+            if (acc > 60) tier = 'Advanced';
+            if (acc > 80) tier = 'Elite';
+            
+            const frTier = document.getElementById('fr-tier');
+            frTier.innerText = tier;
+            if(tier === 'Elite') frTier.style.color = 'var(--success)';
+            else if(tier === 'Advanced') frTier.style.color = 'var(--accent)';
+            else frTier.style.color = 'var(--warning)';
+
+            // Calculate Strongest / Weakest
+            let maxP = -1; let minP = 101;
+            let strongName = ''; let weakName = '';
+            let weakId = '';
+
+            for (const [id, data] of Object.entries(globalState.scores)) {
+                let p = (data.correct / data.total) * 100;
+                if (p > maxP) { maxP = p; strongName = TEST_META.find(t=>t.id===id).title; }
+                if (p < minP) { minP = p; weakName = TEST_META.find(t=>t.id===id).title; weakId = id; }
+            }
+
+            document.getElementById('fr-strongest').innerText = strongName;
+            document.getElementById('fr-weakest').innerText = weakName;
+
+            let actionText = 'Continue standard practice cycles.';
+            if(acc < 60) actionText = `Mandatory schema rebuild required for: ${weakName}. Recommend spaced repetition protocol.`;
+            else if(acc < 80) actionText = `Targeted synthesis review needed for: ${weakName}.`;
+            else actionText = `Maintenance mode activated. Focus on complex multi-disciplinary scenarios.`;
+
+            document.getElementById('fr-action').innerText = actionText;
+        }
+
+        // Run Init
+        window.onload = initApp;
+
+        // Allow Enter key to submit short answer
+        document.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                const tv = document.getElementById('test-view');
+                if (!tv.classList.contains('hidden')) {
+                    const nextBtn = document.getElementById('btn-next');
+                    if(nextBtn.classList.contains('hidden')) {
+                         submitAnswer();
+                    } else {
+                         nextQuestion();
+                    }
+                }
+            }
+        });
+
+    </script>
+</body>
+</html>

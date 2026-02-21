@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Creator Economy Skills - Practice Hub</title>
+    <style>
+        :root {
+            --primary: #4A90E2;
+            --secondary: #50E3C2;
+            --accent: #F5A623;
+            --danger: #FF6B6B;
+            --dark: #2C3E50;
+            --light: #ECF0F1;
+            --white: #FFFFFF;
+            --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            transition: all 0.2s ease;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 0;
+            color: var(--dark);
+            padding-bottom: 60px; /* Space for footer */
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary), #357ABD);
+            color: var(--white);
+            padding: 20px;
+            text-align: center;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            font-size: 1rem;
+            font-weight: normal;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+
+        /* Sticky Score Panel */
+        #score-panel {
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+            background: var(--white);
+            width: 95%;
+            max-width: 600px;
+            margin: 0 auto 20px auto;
+            padding: 10px 20px;
+            border-radius: 50px;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border: 2px solid var(--primary);
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .score-item span {
+            display: block;
+            font-size: 0.7rem;
+            color: #7f8c8d;
+            text-transform: uppercase;
+        }
+
+        .score-val {
+            font-size: 1.1rem;
+            color: var(--primary);
+        }
+
+        #score-correct .score-val { color: var(--secondary); }
+        #score-wrong .score-val { color: var(--danger); }
+
+        /* Set Navigation */
+        #set-nav {
+            display: flex;
+            overflow-x: auto;
+            padding: 10px;
+            gap: 10px;
+            background: var(--white);
+            margin-bottom: 20px;
+            scrollbar-width: none; /* Firefox */
+        }
+        #set-nav::-webkit-scrollbar { display: none; }
+
+        .set-btn {
+            background: var(--light);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: var(--dark);
+            cursor: pointer;
+            white-space: nowrap;
+            border: 2px solid transparent;
+        }
+
+        .set-btn.active {
+            background: var(--primary);
+            color: var(--white);
+            transform: scale(1.05);
+        }
+
+        /* Question Container */
+        #question-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            min-height: 400px;
+            position: relative;
+        }
+
+        .question-card {
+            display: none; /* Hidden by default */
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .question-card.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .q-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            color: #95a5a6;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .q-text {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            color: #2c3e50;
+        }
+
+        /* Options / Inputs */
+        .options-grid {
+            display: grid;
+            gap: 10px;
+        }
+
+        .option-btn {
+            background: var(--light);
+            border: 2px solid #bdc3c7;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+
+        .option-btn:hover:not(.disabled) {
+            background: #e1f0fa;
+            border-color: var(--primary);
+        }
+
+        .option-btn.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .option-btn.wrong {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #bdc3c7;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        /* Feedback Section */
+        .feedback-box {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .feedback-box.show {
+            display: block;
+        }
+
+        .feedback-correct {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .feedback-wrong {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+
+        /* Controls */
+        .nav-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .nav-btn {
+            background: var(--dark);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Revisions */
+        #revision-section {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+            background: #fff9db; /* Yellowish notebook style */
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            display: none;
+        }
+        
+        .revision-toggle {
+            display: block;
+            margin: 20px auto;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: var(--white);
+            text-align: center;
+            padding: 15px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            font-size: 0.8rem;
+            z-index: 1000;
+        }
+
+        /* Utility */
+        .hidden { display: none; }
+        
+        /* Mobile specific adjustments */
+        @media (max-width: 480px) {
+            h1 { font-size: 1.4rem; }
+            #score-panel { font-size: 0.8rem; width: 98%; padding: 5px; }
+            .option-btn { padding: 10px; font-size: 0.9rem; }
+            #question-container { padding: 15px; margin: 10px; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Creative Skills Mastery 🚀</h1>
+        <h2>Advanced Creator Economy Syllabus</h2>
+    </header>
+
+    <!-- Live Score Panel -->
+    <div id="score-panel">
+        <div class="score-item">
+            <span>Attempted</span>
+            <div id="score-total" class="score-val">0</div>
+        </div>
+        <div class="score-item">
+            <span>Correct</span>
+            <div id="score-correct" class="score-val">0</div>
+        </div>
+        <div class="score-item">
+            <span>Wrong</span>
+            <div id="score-wrong" class="score-val">0</div>
+        </div>
+        <div class="score-item">
+            <span>Marks</span>
+            <div id="score-percent" class="score-val">0%</div>
+        </div>
+    </div>
+
+    <!-- Set Navigation -->
+    <nav id="set-nav">
+        <!-- Generated by JS -->
+    </nav>
+
+    <!-- Main Question Area -->
+    <main id="question-container">
+        <!-- Questions injected here -->
+        <div id="q-inject"></div>
+        
+        <!-- Navigation Buttons -->
+        <div class="nav-controls">
+            <button class="nav-btn" id="prev-btn" onclick="changeQuestion(-1)">⬅ Previous</button>
+            <button class="nav-btn" id="next-btn" onclick="changeQuestion(1)">Next ➡</button>
+        </div>
+    </main>
+
+    <button class="revision-toggle" onclick="toggleRevision()">📖 Quick Revision Notes</button>
+
+    <div id="revision-section">
+        <h3>⚡ Quick Revision Points</h3>
+        <ul>
+            <li><strong>Ideation:</strong> Use ICE scoring (Impact, Confidence, Ease) to prioritize ideas.</li>
+            <li><strong>Video:</strong> J-Cuts allow audio to precede video. Proxies help edit high-res footage smoothly.</li>
+            <li><strong>Audio:</strong> 'Compression' evens out loud and soft parts. 'Normalization' sets peak volume.</li>
+            <li><strong>Visuals:</strong> Rule of Thirds guides composition. High contrast thumbnails increase CTR.</li>
+            <li><strong>Strategy:</strong> Consistency > Virality. Use Analytics to refine hooks and retention.</li>
+        </ul>
+    </div>
+
+    <footer>
+        Designed & Created by SHRISHANT YADAV, ShanEduHub
+    </footer>
+
+    <script>
+        // --- DATA STRUCTURE ---
+        // Generating 30 questions per set x 10 sets = 300 questions total.
+        
+        const setsData = [];
+
+        const topics = [
+            "Content Ideation Basic", "Content Ideation Advanced", 
+            "Video Editing Basic", "Video Editing Advanced",
+            "Audio Editing", "Visual Design Basic",
+            "Visual Design Advanced", "Scriptwriting",
+            "Growth & Strategy", "Creator Masterclass"
+        ];
+
+        // Helper to create questions
+        function createQ(id, type, q, options, ans, hint, keywords=[]) {
+            return { id, type, q, options, ans, hint, keywords, userAns: null, checked: false, isCorrect: false };
+        }
+
+        // --- CONTENT GENERATION (Simulated for 300 unique questions) ---
+        // I will programmatically generate 10 sets of 30 questions each based on the syllabus.
+        
+        const syllabusContent = {
+            set1: [ // Ch 1 Basic/Medium
+                ["mcq", "What is the primary goal of the 'Awareness' stage?", ["Sales", "Visibility", "Loyalty", "Retention"], "Visibility", "Awareness is about getting discovered."],
+                ["tf", "A 'Persona' is a fictional representation of your ideal audience.", [], "true", "Personas help target content effectively."],
+                ["fib", "ICE scoring stands for Impact, Confidence, and ______.", [], "ease", "It helps prioritize ideas."],
+                ["short", "Define 'Evergreen Content'.", [], "Content that remains relevant for a long time", "Think: How-to guides vs News."],
+                ["mcq", "Which tool is best for search trend validation?", ["Google Trends", "Notion", "Premiere Pro", "Canva"], "Google Trends", "It shows search volume over time."],
+                ["mcq", "The 'Context' in content creation refers to:", ["The platform/environment", "The camera used", "The length", "The price"], "The platform/environment", "Content is King, Context is Queen."],
+                ["one", "What diagram type helps organize ideas hierarchically?", [], "Mind map", "Visual branching diagram."],
+                ["long", "Explain the difference between Content and Context.", [], "Content is what you say, context is where/how", ["platform", "environment", "message", "audience"]],
+                ["mcq", "Which metric best indicates 'Engagement'?", ["Views", "Comments/Shares", "Impressions", "Reach"], "Comments/Shares", "Active participation counts."],
+                ["mcq", "RICE scoring adds which factor to ICE?", ["Reach", "Revenue", "Risk", "Reward"], "Reach", "Reach, Impact, Confidence, Effort."],
+                ["tf", "Topic clustering helps in SEO authority.", [], "true", "Grouping related topics boosts search ranking."],
+                ["fib", "Using ChatGPT for ideation is an example of ______-assisted discovery.", [], "ai", "Artificial Intelligence."],
+                ["mcq", "AnswerThePublic is primarily used for:", ["Video editing", "Keyword research", "Audio mixing", "Color grading"], "Keyword research", "It visualizes search queries."],
+                ["short", "What is a 'Content Pillar'?", [], "Core topic or theme of the channel", "3-5 main topics you cover."],
+                ["mcq", "Social listening helps you understand:", ["Audience sentiment", "Camera settings", "Audio levels", "Export settings"], "Audience sentiment", "Hearing what people say about your niche."],
+                ["mcq", "Which phase comes after 'Engagement' in the funnel?", ["Awareness", "Conversion", "Ideation", "None"], "Conversion", "Moving users to action."],
+                ["tf", "You should only create timely/trending content.", [], "false", "Balance trending with evergreen."],
+                ["one", "Name a tool for organizing content calendars.", [], "Notion", "Also Trello, Asana, Google Sheets."],
+                ["mcq", "Validating an idea before filming saves:", ["Time", "Money", "Effort", "All of the above"], "All of the above", "Efficiency is key."],
+                ["mcq", "What is 'Persona Mapping'?", ["Drawing a face", "Defining audience traits", "Mapping a location", "Editing a video"], "Defining audience traits", "Demographics and psychographics."],
+                ["long", "Why is audience research important before filming?", [], "To ensure relevance and value", ["save time", "relevance", "value", "growth"]],
+                ["mcq", "Which is NOT an ideation technique?", ["Brainstorming", "Mind mapping", "Color Grading", "Social Listening"], "Color Grading", "That is post-production."],
+                ["fib", "A ________ diagram shows blocks of information.", [], "block", "Simple visual structure."],
+                ["mcq", "Content Goals align with:", ["Business Outcomes", "Camera Brand", "Editing Software", "Monitor Size"], "Business Outcomes", "Purpose driven creation."],
+                ["tf", "Miro is a digital whiteboard tool.", [], "true", "Great for visual planning."],
+                ["mcq", "Search trends help identify:", ["Demand", "Supply", "Colors", "Audio"], "Demand", "What people are looking for."],
+                ["short", "What is 'Concept Validation'?", [], "Checking if people want the content", "Using data to verify ideas."],
+                ["mcq", "Prioritization frameworks help you decide:", ["What to film first", "What camera to buy", "What music to use", "What font to pick"], "What to film first", "Managing resources."],
+                ["one", "What does 'S' stand for in SEO?", [], "Search", "Search Engine Optimization."],
+                ["mcq", "A 'Series' helps in building:", ["Habit/Retention", "One-time views", "Confusion", "Dislike"], "Habit/Retention", "Viewers come back for more."]
+            ],
+            set2: [ // Ch 1 Adv/Expert
+                ["long", "Describe a 'Content Strategy Canvas'.", [], "One page plan of goals audience and channels", ["goals", "audience", "channels", "metrics"]],
+                ["mcq", "Predictive trend analytics uses:", ["Historical data", "Random guesses", "Manual counting", "Luck"], "Historical data", "Forecasting future interest."],
+                ["mcq", "Cross-platform storytelling means:", ["Posting the same file everywhere", "Adapting the narrative per platform", "Only using Instagram", "Ignoring YouTube"], "Adapting the narrative per platform", "Context specific."],
+                ["fib", "Iterative feedback loops mean ______ your content based on data.", [], "improving", "Cycle of create-measure-learn."],
+                ["mcq", "HubSpot is a tool often used for:", ["CRM/Content Strategy", "Video Editing", "Sound Design", "VFX"], "CRM/Content Strategy", "Managing relationships and content."],
+                ["tf", "Monetization should dictate 100% of content planning.", [], "false", "Audience value must come first."],
+                ["mcq", "A 'Narrative Arc' usually includes:", ["Setup, Conflict, Resolution", "Intro only", "Outro only", "Just music"], "Setup, Conflict, Resolution", "Story structure."],
+                ["short", "What is an 'Engagement Prediction Model'?", [], "Estimating likes/comments before posting", "Using AI to guess performance."],
+                ["mcq", "SEO integration into ideation happens:", ["Before creating", "After publishing", "Never", "During export"], "Before creating", "Keyword research first."],
+                ["one", "Which platform is best for B2B creator strategies?", [], "LinkedIn", "Professional network."],
+                ["mcq", "Collaboration ecosystems involve:", ["Partnering with other creators", "Working alone", "Buying bots", "Hiding content"], "Partnering with other creators", "Shared audiences."],
+                ["long", "How do you optimize a theme based on data?", [], "Look at analytics and double down on what works", ["analytics", "metrics", "iterate", "performance"]],
+                ["mcq", "Strategist workflow templates ensure:", ["Consistency", "Chaos", "Virality", "Luck"], "Consistency", "Standard operating procedures."],
+                ["fib", "A ________ is a visual sequence of your video plan.", [], "storyboard", "Drawings of scenes."],
+                ["tf", "Creator economy mastery requires understanding business models.", [], "true", "It's not just art, it's business."],
+                ["mcq", "Keyword research tools include:", ["Ahrefs/SEMrush", "Paint", "Calculator", "Notepad"], "Ahrefs/SEMrush", "SEO giants."],
+                ["mcq", "The 'P' in SWOT analysis (related to strategy) isn't there. SWOT stands for:", ["Strengths Weaknesses Opportunities Threats", "Simple Wide Open Tech", "Social Web Online Tech", "None"], "Strengths Weaknesses Opportunities Threats", "Strategic planning tool."],
+                ["short", "Define 'Scale' in content strategy.", [], "Growing output without linear effort increase", "Systems to produce more."],
+                ["mcq", "Notion can be used for:", ["Scripting & Calendars", "Video Rendering", "Audio Mastering", "3D Modeling"], "Scripting & Calendars", "Productivity OS."],
+                ["one", "What does 'CTA' stand for?", [], "Call to Action", "Directing user behavior."],
+                ["mcq", "Discovery via AI helps in:", ["Finding gaps in the market", "Editing faster", "Recording audio", "Lighting"], "Finding gaps in the market", "Uncovering unseen topics."],
+                ["long", "Explain the benefit of 'Series Creation Logic'.", [], "Builds anticipation and recurring viewership", ["loyalty", "binge", "retention", "return"]],
+                ["mcq", "Multi-phase strategies involve:", ["Short, Medium, and Long term goals", "Only today", "Only next year", "No goals"], "Short, Medium, and Long term goals", "Evolution of the channel."],
+                ["fib", "Evergreen content provides ______ traffic.", [], "consistent", "Steady over time."],
+                ["mcq", "User feedback should be viewed as:", ["Data for improvement", "Personal insults", "Noise", "Unimportant"], "Data for improvement", "Listening to the audience."],
+                ["tf", "A strategist ignores the platform algorithm.", [], "false", "They optimize for it."],
+                ["mcq", "Which is a 'Monetization-led' plan?", ["Creating a course curriculum", "Random vlogging", "Posting memes only", "Silent videos"], "Creating a course curriculum", "Product focused content."],
+                ["short", "What is 'Churn' in audience terms?", [], "Subscribers leaving", "Loss of audience."],
+                ["mcq", "Data-driven optimization relies on:", ["Analytics", "Intuition", "Friends' opinions", "Horoscopes"], "Analytics", "Hard numbers."],
+                ["one", "Name one keyword research tool.", [], "Google Keyword Planner", "Also Ubersuggest, Moz."]
+            ],
+            set3: [ // Ch 2 Basic/Medium
+                ["mcq", "Which aspect ratio is standard for YouTube Long form?", ["16:9", "9:16", "1:1", "4:5"], "16:9", "Widescreen."],
+                ["mcq", "In editing, a 'Cut' refers to:", ["Switching from one clip to another", "Deleting the file", "Turning off the PC", "Lowering volume"], "Switching from one clip to another", "Basic transition."],
+                ["fib", "Resolution 1920x1080 is also known as ______.", [], "Full HD", "1080p."],
+                ["mcq", "Which is a free video editor?", ["CapCut", "Avid", "Nuke", "Cinema4D"], "CapCut", "Mobile/Desktop accessible."],
+                ["short", "What is 'B-Roll'?", [], "Supplementary footage", "Visuals shown while audio continues."],
+                ["mcq", "The timeline is where you:", ["Sequence your clips", "Write your script", "Export emails", "Design thumbnails"], "Sequence your clips", "The editor's canvas."],
+                ["tf", "Audio sync means matching sound to lip movement.", [], "true", "Critical for dialogue."],
+                ["long", "Explain the difference between a Jump Cut and a Match Cut.", [], "Jump cut skips time abruptly match cut links scenes visually", ["continuity", "time", "visual", "transition"]],
+                ["mcq", "Color correction is primarily about:", ["Fixing exposure/white balance", "Stylistic artistic look", "Adding explosions", "Changing speed"], "Fixing exposure/white balance", "Making it look natural."],
+                ["one", "What file format is most common for web video?", [], "MP4", "H.264 codec usually."],
+                ["mcq", "Trimming implies:", ["Shortening a clip's start or end", "Adding music", "Changing color", "Adding text"], "Shortening a clip's start or end", "Removing unwanted parts."],
+                ["mcq", "DaVinci Resolve is famous for:", ["Color Grading", "Audio only", "Text only", "Spreadsheets"], "Color Grading", "Industry standard for color."],
+                ["fib", "A 'lower third' is a graphic that appears in the lower ______ of the screen.", [], "part", "Usually name or title."],
+                ["mcq", "Collaboration file workflows might use:", ["Dropbox/Drive", "Floppy disks", "Printing frames", "Fax"], "Dropbox/Drive", "Cloud storage."],
+                ["short", "What is a 'Codec'?", [], "Software that compresses and decompresses video", "e.g., H.264, ProRes."],
+                ["mcq", "Sequencing fundamentals involves:", ["Story logic", "Random placement", "Alphabetical ordering", "File size ordering"], "Story logic", "Narrative flow."],
+                ["tf", "You should always edit audio last.", [], "false", "Audio often drives the cut."],
+                ["mcq", "Basic transitions include:", ["Dissolve/Fade", "Hologram", "3D Warp", "AI Gen"], "Dissolve/Fade", "Simple and effective."],
+                ["long", "Why are 'Captions' important in social video?", [], "Many watch without sound and accessibility", ["silent", "accessibility", "engagement", "text"]],
+                ["mcq", "Which tool is Adobe's main video editor?", ["Premiere Pro", "Photoshop", "Illustrator", "Excel"], "Premiere Pro", "Professional NLE."],
+                ["one", "What key trims the start of a clip in Premiere (usually)?", [], "Q", "Ripple trim previous."],
+                ["mcq", "A 'J-Cut' is when:", ["Audio starts before video", "Video starts before audio", "Both start together", "Video ends abruptly"], "Audio starts before video", "Leads the viewer in."],
+                ["fib", "______ sync logic ensures mouth moves with words.", [], "audio", "Lip sync."],
+                ["mcq", "Importing footage involves:", ["Bringing files into the software", "Exporting", "Deleting", "Coloring"], "Bringing files into the software", "Ingestion."],
+                ["tf", "4K resolution is 3840x2160.", [], "true", "Ultra HD."],
+                ["mcq", "What is 'Rendering'?", ["Processing the final video", "Drawing a sketch", "Writing a script", "Recording sound"], "Processing the final video", "Baking the edits."],
+                ["short", "Define 'Frame Rate' (FPS).", [], "Images displayed per second", "e.g., 24, 30, 60 fps."],
+                ["mcq", "iMovie is available on:", ["Apple devices", "Windows", "Android", "Linux"], "Apple devices", "Mac/iOS exclusive."],
+                ["one", "What aspect ratio is TikTok?", [], "9:16", "Vertical video."],
+                ["mcq", "Title insertion is used for:", ["Intros/Context", "Hiding bad footage", "Making file larger", "Nothing"], "Intros/Context", "Text on screen."]
+            ],
+            set4: [ // Ch 2 Adv/Expert
+                ["mcq", "What are 'Proxies' used for?", ["Smoother editing of high-res files", "Better color", "Better audio", "Final export"], "Smoother editing of high-res files", "Low res copies for editing."],
+                ["mcq", "Motion graphics are often created in:", ["After Effects", "Word", "Excel", "Audacity"], "After Effects", "Compositing software."],
+                ["fib", "LUT stands for ______ Up Table.", [], "look", "Used in color grading."],
+                ["long", "Explain 'Multicam Editing'.", [], "Editing multiple camera angles of the same event simultaneously", ["angles", "sync", "simultaneous", "switch"]],
+                ["mcq", "Cinematic color grading focuses on:", ["Mood and Atmosphere", "Making it bright", "Removing noise", "Syncing audio"], "Mood and Atmosphere", "Stylistic choice."],
+                ["tf", "Visual punch editing times cuts to music beats.", [], "true", "Increases energy."],
+                ["mcq", "Frame.io is used for:", ["Cloud collaboration & feedback", "Recording audio", "Designing logos", "Writing scripts"], "Cloud collaboration & feedback", "Review tool."],
+                ["short", "What is a 'Keyframe'?", [], "Point that defines start/end of a change", "Animation anchor."],
+                ["mcq", "Layered effects timing requires understanding:", ["Compositing", "Typing", "Singing", "Walking"], "Compositing", "Stacking visuals."],
+                ["one", "Which specific software is best for 'Node-based' grading?", [], "DaVinci Resolve", "Uses nodes instead of layers."],
+                ["mcq", "Visual narrative crafting implies:", ["Storytelling through imagery", "Writing subtitles", "Speaking loud", "Using expensive cameras"], "Storytelling through imagery", "Show, don't tell."],
+                ["long", "Why is 'Brand Cinematic Identity' important?", [], "Recognizability and professional consistency", ["style", "recognition", "trust", "consistency"]],
+                ["mcq", "Dynamic Link allows connection between:", ["Premiere and After Effects", "Word and Excel", "Paint and Notepad", "Spotify and YouTube"], "Premiere and After Effects", "Adobe ecosystem."],
+                ["fib", "Visual ______ editing matches cuts to audio transients.", [], "rhythm", "Or beat."],
+                ["mcq", "Masking in video is used to:", ["Hide/Reveal parts of a frame", "Wear a costume", "Protect content", "Clean audio"], "Hide/Reveal parts of a frame", "Isolating elements."],
+                ["tf", "Log footage looks flat before grading.", [], "true", "Retains dynamic range."],
+                ["mcq", "What is 'Rotoscoping'?", ["Tracing frame by frame", "Coloring", "Cutting", "Exporting"], "Tracing frame by frame", "Isolating subjects."],
+                ["short", "Define 'Visual Hierarchy' in video.", [], "Directing eye to most important element", "Focal points."],
+                ["mcq", "A 'Whip Pan' is a type of:", ["Transition", "Color", "Audio", "Title"], "Transition", "Fast camera movement."],
+                ["one", "Name a plugin suite for VFX.", [], "Red Giant", "Or Sapphire."],
+                ["mcq", "Dropbox Replay is similar to:", ["Frame.io", "Premiere", "Photoshop", "Canva"], "Frame.io", "Review tool."],
+                ["long", "Describe a 'Proxy Workflow'.", [], "Create low res files edit them toggle back to high res for export", ["low res", "link", "toggle", "performance"]],
+                ["mcq", "Nested sequences in Premiere help:", ["Organize complex timelines", "Delete files", "Crash the pc", "Lower quality"], "Organize complex timelines", "Grouping clips."],
+                ["fib", "______ adjustment layers apply effects to everything below them.", [], "global", "Or just 'Adjustment'."],
+                ["mcq", "Time remapping controls:", ["Speed of the clip", "Color", "Audio volume", "Size"], "Speed of the clip", "Slow mo / Fast mo."],
+                ["tf", "60fps is better for slow motion than 24fps.", [], "true", "More frames to stretch."],
+                ["mcq", "Vector motion graphics scale without:", ["Pixelation", "Loading", "Crashing", "Color change"], "Pixelation", "Lossless quality."],
+                ["short", "What is 'Color Space'?", [], "Range of colors a video can display", "e.g., Rec.709."],
+                ["mcq", "Advanced mastering ensures video meets:", ["Broadcast standards", "Personal taste", "Minimum size", "None"], "Broadcast standards", "Technical specs."],
+                ["one", "What effect removes a green screen?", [], "Keying", "Ultra Key / Chroma Key."]
+            ],
+            set5: [ // Ch 3 Audio
+                ["mcq", "A 'Waveform' visualizes:", ["Sound amplitude over time", "Video color", "Script words", "Internet speed"], "Sound amplitude over time", "The shape of sound."],
+                ["mcq", "Which tool is an industry standard for Audio Repair?", ["Izotope RX", "Paint", "Canva", "Word"], "Izotope RX", "Spectral repair."],
+                ["fib", "EQ stands for ______.", [], "equalization", "Frequency balancing."],
+                ["mcq", "Compression in audio helps to:", ["Reduce dynamic range", "Make files smaller (zip)", "Delete noise", "Add echo"], "Reduce dynamic range", "Even out levels."],
+                ["short", "What is 'Foley'?", [], "Reproducing everyday sound effects", "Footsteps, cloth rustle."],
+                ["mcq", "Normalization ensures:", ["Consistent peak volume", "Removal of noise", "Added reverb", "Stereo width"], "Consistent peak volume", "Setting the ceiling."],
+                ["tf", "A 'Dirty' signal contains background noise.", [], "true", "Clean is isolated."],
+                ["long", "Explain the difference between Mixing and Mastering.", [], "Mixing balances tracks mastering polishes final output", ["tracks", "balance", "final", "polish"]],
+                ["mcq", "Reaper and Pro Tools are types of:", ["DAWs", "Cameras", "Lights", "Microphones"], "DAWs", "Digital Audio Workstations."],
+                ["one", "What checks for 'Plosives' (Pop sounds)?", [], "Pop filter", "Hardware shield."],
+                ["mcq", "Spatial audio deals with:", ["360 degree / 3D sound", "Mono sound", "Volume only", "Bass only"], "360 degree / 3D sound", "Immersive experience."],
+                ["fib", "Use a ______ cut to transition audio smoothly.", [], "crossfade", "Blending sounds."],
+                ["mcq", "Audacity is best known for being:", ["Free and Open Source", "Expensive", "Video editor", "Photo editor"], "Free and Open Source", "Accessible audio tool."],
+                ["short", "What is 'Peaking'?", [], "Audio exceeding 0dB and distorting", "Red zone clipping."],
+                ["mcq", "Multitrack layering allows:", ["Stacking SFX, Music, Voice", "Only one sound", "Deleting video", "Text editing"], "Stacking SFX, Music, Voice", "Rich soundscapes."],
+                ["tf", "Sound design can influence viewer emotion.", [], "true", "Crucial for storytelling."],
+                ["mcq", "High-Pass Filter allows:", ["High frequencies to pass", "Low frequencies to pass", "No sound", "All sound"], "High frequencies to pass", "Cuts the bass/rumble."],
+                ["long", "Why is 'Room Tone' important?", [], "Fills silence gaps in dialogue editing", ["silence", "gaps", "consistent", "background"]],
+                ["mcq", "Sonic branding includes:", ["Audio logos / Mnemonics", "Visual logos", "Colors", "Fonts"], "Audio logos / Mnemonics", "Netflix 'Ta-dum'."],
+                ["one", "Unit used to measure sound intensity.", [], "Decibel", "dB."],
+                ["mcq", "De-Essing removes harsh sounds from which letter?", ["S", "B", "M", "P"], "S", "Sibilance."],
+                ["fib", "Adobe ______ is compatible with Premiere.", [], "audition", "Audio editor."],
+                ["mcq", "Lufs is a measure of:", ["Loudness perception", "File size", "Frequency", "Time"], "Loudness perception", "Broadcast standard."],
+                ["short", "What is 'Automation' in mixing?", [], "Programmed changes in settings over time", "Moving faders auto."],
+                ["mcq", "Sample rate for video is typically:", ["48kHz", "44.1kHz", "22kHz", "96kHz"], "48kHz", "Video standard."],
+                ["tf", "You should record audio as hot (loud) as possible without clipping.", [], "true", "Signal to noise ratio."],
+                ["mcq", "SFX Libraries provide:", ["Pre-recorded sounds", "Video clips", "Fonts", "Scripts"], "Pre-recorded sounds", "Assets."],
+                ["long", "Describe 'Dynamic Automation'.", [], "Changing volume or EQ during the clip playback", ["change", "time", "volume", "movement"]],
+                ["mcq", "XLR is a type of:", ["Audio cable/connector", "Video file", "Image", "Software"], "Audio cable/connector", "Professional mic cable."],
+                ["one", "What does a 'Limiter' do?", [], "Prevents audio from crossing a threshold", "Hard ceiling."]
+            ],
+            set6: [ // Ch 4 Basic/Medium
+                ["mcq", "Which tool is best for beginners to create thumbnails?", ["Canva", "Photoshop", "Paint", "Excel"], "Canva", "Templates and ease."],
+                ["mcq", "Color Theory helps in:", ["Evoking emotion", "Writing scripts", "Recording audio", "Exporting"], "Evoking emotion", "Red = Urgent, Blue = Trust."],
+                ["fib", "Typography refers to the style of ______.", [], "text", "Fonts and arrangement."],
+                ["mcq", "The 'Rule of Thirds' is a rule of:", ["Composition", "Audio", "Color", "Time"], "Composition", "Grid layout."],
+                ["short", "What is a 'Focal Point'?", [], "Where the eye looks first", "Main subject."],
+                ["mcq", "Thumbnails aim to increase:", ["CTR (Click Through Rate)", "Audio quality", "Video length", "Export speed"], "CTR (Click Through Rate)", "Getting the click."],
+                ["tf", "Yellow often signifies caution or energy.", [], "true", "Color psychology."],
+                ["long", "Why is 'Hierarchy' important in design?", [], "Guides viewer through information in order of importance", ["order", "importance", "flow", "guide"]],
+                ["mcq", "Figma is primarily a tool for:", ["UI/UX and Vector Design", "Audio", "Video", "3D"], "UI/UX and Vector Design", "Web and layout."],
+                ["one", "Which format supports transparency?", [], "PNG", "Portable Network Graphic."],
+                ["mcq", "Contrast is the difference between:", ["Light and Dark", "Loud and Quiet", "Fast and Slow", "New and Old"], "Light and Dark", "Makes things pop."],
+                ["fib", "Sans-Serif fonts do not have ______.", [], "feet", "Decorative lines."],
+                ["mcq", "Visual Balance can be:", ["Symmetrical or Asymmetrical", "Loud or Quiet", "Fast or Slow", "Red or Blue"], "Symmetrical or Asymmetrical", "Weight distribution."],
+                ["short", "What is 'White Space'?", [], "Empty space around elements", "Breathing room."],
+                ["mcq", "Click-driver logic focuses on:", ["Curiosity and Benefit", "Boredom", "Confusion", "Darkness"], "Curiosity and Benefit", "Why click?"],
+                ["tf", "You should use 10 different fonts in one thumbnail.", [], "false", "Cluttered. Use 1-2."],
+                ["mcq", "RGB is used for:", ["Screens/Digital", "Print", "Audio", "None"], "Screens/Digital", "Red Green Blue."],
+                ["long", "Explain 'Visual Consistency'.", [], "Using same colors fonts style across all content", ["brand", "recognition", "style", "same"]],
+                ["mcq", "Layout grids help align:", ["Elements", "Thoughts", "Audio tracks", "Video clips"], "Elements", "Structure."],
+                ["one", "What is the complementary color of Blue?", [], "Orange", "Opposite on wheel."],
+                ["mcq", "Saturation refers to:", ["Intensity of color", "Lightness", "Darkness", "Transparency"], "Intensity of color", "Vividness."],
+                ["fib", "A ______ image has no background.", [], "transparent", "PNG/SVG."],
+                ["mcq", "Canva 'Pro' features often include:", ["Background Remover", "Video Editing", "Audio Mastering", "Coding"], "Background Remover", "One click tool."],
+                ["short", "Define 'Legibility'.", [], "How easy it is to read text", "Clarity."],
+                ["mcq", "Visual perception basics study:", ["How eyes process images", "How ears hear", "How hands type", "How script works"], "How eyes process images", "Cognition."],
+                ["tf", "High contrast text is harder to read.", [], "false", "Easier usually."],
+                ["mcq", "Thumbnail text should be:", ["Short and Punchy", "A full paragraph", "Invisible", "Small"], "Short and Punchy", "< 5 words."],
+                ["long", "How do emotions in faces affect click rate?", [], "Expressive faces trigger mirror neurons and curiosity", ["emotion", "connection", "reaction", "curiosity"]],
+                ["mcq", "Alignment creates:", ["Order", "Chaos", "Noise", "Blur"], "Order", "Clean lines."],
+                ["one", "Resolution for a YouTube thumbnail?", [], "1280x720", "HD standard."]
+            ],
+            set7: [ // Ch 4 Adv/Expert
+                ["mcq", "UX stands for:", ["User Experience", "User Xylophone", "Under X-ray", "Unified X"], "User Experience", "How it feels."],
+                ["mcq", "Brand visual systems include:", ["Logos, Palettes, Typography", "Just a name", "A camera", "A desk"], "Logos, Palettes, Typography", "Guidelines."],
+                ["fib", "Vector graphics are based on ______.", [], "math", "Curves, not pixels."],
+                ["long", "Why is 'Accessibility' in design crucial?", [], "Ensures content is usable by people with disabilities", ["inclusive", "disabilities", "contrast", "readable"]],
+                ["mcq", "Adobe XD is used for:", ["Prototyping/UI", "Video", "Audio", "Coding"], "Prototyping/UI", "Interface design."],
+                ["tf", "Blue and Orange is a popular cinematic color scheme.", [], "true", "Complementary contrast."],
+                ["mcq", "Conversion-oriented design directs eye to:", ["The CTA", "The exit", "The background", "Nowhere"], "The CTA", "Action."],
+                ["short", "What is 'Visual Weight'?", [], "Perceived heaviness of an element", "Size/Color impact."],
+                ["mcq", "Responsive design logic means:", ["Adapts to screen size", "Responds to voice", "Fast loading", "Bright colors"], "Adapts to screen size", "Mobile vs Desktop."],
+                ["one", "File type best for logos (vector).", [], "SVG", "Scalable Vector Graphic."],
+                ["mcq", "Psychology of shapes: Circles suggest:", ["Community/Unity", "Danger", "Stability", "Structure"], "Community/Unity", "Soft, organic."],
+                ["fib", "Kerning is the spacing between ______ characters.", [], "individual", "Letter pairs."],
+                ["mcq", "Image optimization systems reduce:", ["File size without losing quality", "Image size", "Colors", "Content"], "File size without losing quality", "Load speed."],
+                ["long", "Explain 'Story Visuals Sequencing'.", [], "Arranging images to tell a narrative without words", ["narrative", "flow", "order", "story"]],
+                ["mcq", "A 'Style Guide' ensures:", ["Consistency", "Variety", "Randomness", "Errors"], "Consistency", "Rule book."],
+                ["tf", "Red often indicates urgency or error.", [], "true", "Alert color."],
+                ["mcq", "Visual focal points are created by:", ["Contrast, Size, Isolation", "Blending in", "Small text", "Grey color"], "Contrast, Size, Isolation", "Stand out."],
+                ["short", "What is 'Leading Lines'?", [], "Lines guiding eye to subject", "Composition tech."],
+                ["mcq", "UI stands for:", ["User Interface", "User Internet", "Under Inside", "United Icon"], "User Interface", "The look."],
+                ["one", "Tool for removing backgrounds in Photoshop.", [], "Select Subject", "Or Magic Wand."],
+                ["mcq", "Professional asset pipelines manage:", ["File naming/storage/access", "Water flow", "Electricity", "Money"], "File naming/storage/access", "Digital Asset Management."],
+                ["long", "How does 'Visual Psychology' impact branding?", [], "Colors and shapes trigger subconscious associations", ["trust", "feeling", "subconscious", "association"]],
+                ["mcq", "Monochromatic scheme uses:", ["One color, different shades", "Many colors", "No color", "Rainbow"], "One color, different shades", "Unified look."],
+                ["fib", "A ______ map simulates heat/attention on a design.", [], "heat", "Eye tracking."],
+                ["mcq", "Typography hierarchy: H1 is usually:", ["The largest/Main Title", "Smallest", "Body text", "Footer"], "The largest/Main Title", "Top level."],
+                ["tf", "Comic Sans is considered a professional corporate font.", [], "false", "Usually avoided."],
+                ["mcq", "Gradients add:", ["Depth/Dimension", "Flatness", "Noise", "Text"], "Depth/Dimension", "Modern look."],
+                ["short", "What is 'DPI'?", [], "Dots Per Inch", "Print resolution."],
+                ["mcq", "Figma 'Components' allow:", ["Reusing elements", "Deleting elements", "Drawing", "Writing"], "Reusing elements", "Efficiency."],
+                ["one", "Color mode for Print?", [], "CMYK", "Cyan Magenta Yellow Key."]
+            ],
+            set8: [ // Ch 5 Script/Strategy
+                ["mcq", "What is a 'Hook'?", ["The first few seconds", "The end", "The middle", "The music"], "The first few seconds", "Grab attention."],
+                ["mcq", "Scripts should include:", ["Visual cues and Audio cues", "Only text", "Only drawings", "Nothing"], "Visual cues and Audio cues", "A/V direction."],
+                ["fib", "CTA stands for Call To ______.", [], "action", "Subscribe/Buy."],
+                ["long", "Differentiate 'Short form' vs 'Long form' logic.", [], "Short is punchy loopable long is deep narrative", ["pace", "depth", "loop", "narrative"]],
+                ["mcq", "Notion is useful for script notes because:", ["It organizes databases", "It edits video", "It records audio", "It's a camera"], "It organizes databases", "Structured text."],
+                ["tf", "A narrative arc creates emotional investment.", [], "true", "Journey."],
+                ["mcq", "Retention rate measures:", ["How long people watch", "How many click", "How many comment", "How many dislike"], "How long people watch", "Drop off points."],
+                ["short", "What is a 'Pattern Interrupt'?", [], "Changing visuals to reset attention", "Keeps viewer engaged."],
+                ["mcq", "Final Draft is a tool for:", ["Professional Screenwriting", "Drawing", "Editing", "Email"], "Professional Screenwriting", "Industry standard format."],
+                ["one", "Best place for a CTA?", [], "End/Middle", "Or Contextual."],
+                ["mcq", "Storyboarding connects:", ["Script to Visuals", "Audio to Text", "File to Folder", "None"], "Script to Visuals", "Planning shots."],
+                ["fib", "The 'Hero's ______' is a classic story structure.", [], "journey", "Campbell."],
+                ["mcq", "Social platform formats dictate:", ["Video length/ratio", "Camera brand", "Mic type", "Lighting"], "Video length/ratio", "9:16 vs 16:9."],
+                ["long", "Why is 'Posting Consistency' important for growth?", [], "Algorithms favor regular activity and habit building", ["algorithm", "habit", "trust", "schedule"]],
+                ["mcq", "Engagement feedback loops involve:", ["Replying to comments", "Ignoring comments", "Deleting account", "Blocking everyone"], "Replying to comments", "Building community."],
+                ["tf", "You should script every single word for a vlog.", [], "false", "Bullet points often better."],
+                ["mcq", "Metricool is a tool for:", ["Social Analytics/Scheduling", "Cooling PC", "Measuring distance", "Editing"], "Social Analytics/Scheduling", "Management."],
+                ["short", "What is 'Trend Jacking'?", [], "Using a trending topic to gain views", "Riding the wave."],
+                ["mcq", "A 'Logline' is:", ["One sentence summary", "A piece of wood", "A graph", "A login"], "One sentence summary", "Pitch."],
+                ["one", "Platform famous for <60s videos.", [], "TikTok", "Shorts/Reels."],
+                ["mcq", "Community building requires:", ["Value and Interaction", "Asking for money only", "Silence", "Posting once a year"], "Value and Interaction", "Relationship."],
+                ["long", "Explain 'Monetization Mapping'.", [], "Planning products or ads around content themes", ["products", "ads", "revenue", "plan"]],
+                ["mcq", "A/B Testing in scripts means:", ["Testing two different hooks", "Using two cameras", "Writing two languages", "None"], "Testing two different hooks", "Seeing what works."],
+                ["fib", "Use the word '______' to address the audience directly.", [], "you", "Personal connection."],
+                ["mcq", "Hootsuite is used for:", ["Scheduling posts", "Editing video", "Making music", "Writing"], "Scheduling posts", "Social manager."],
+                ["short", "What is 'Evergreen Scripting'?", [], "Writing content that doesn't age", "Timeless."],
+                ["mcq", "Copyright & Fair Use systems protect:", ["Intellectual Property", "Cameras", "Desks", "Chairs"], "Intellectual Property", "Legal rights."],
+                ["tf", "Personal branding is about reputation.", [], "true", "What people say when you leave."],
+                ["mcq", "Engagement psychology uses:", ["Curiosity gaps", "Boredom", "Monotone", "Blank screens"], "Curiosity gaps", "Need to know."],
+                ["one", "Term for 'Fear Of Missing Out'.", [], "FOMO", "Urgency."]
+            ],
+            set9: [ // Growth/Biz Adv
+                ["mcq", "CRM stands for:", ["Customer Relationship Management", "Creator Role Model", "Camera Room Mate", "None"], "Customer Relationship Management", "Tracking fans/clients."],
+                ["mcq", "Diversification of revenue means:", ["Multiple income streams", "One paycheck", "No money", "Spending money"], "Multiple income streams", "Ads, Merch, Affiliates."],
+                ["fib", "An email ______ owns the audience contact info.", [], "list", "Platform independent."],
+                ["long", "Why is 'Narrative Identity' important for a personal brand?", [], "People connect with stories not just logos", ["story", "connection", "human", "relatable"]],
+                ["mcq", "Brand reputation tools monitor:", ["Mentions and Sentiment", "File sizes", "Internet speed", "Pixels"], "Mentions and Sentiment", "Public perception."],
+                ["tf", "Fair Use allows using any song you want.", [], "false", "Very specific legal criteria."],
+                ["mcq", "Algorithmic advantage usually favors:", ["Watch time", "Short clicks", "Fast scrolls", "Exits"], "Watch time", "Keeping users on app."],
+                ["short", "What is an 'Affiliate Link'?", [], "Link that earns commission on sales", "Monetization."],
+                ["mcq", "Planoly is visually designed for:", ["Instagram grid planning", "Audio", "Text", "Code"], "Instagram grid planning", "Visual aesthetic."],
+                ["one", "Platform for long-form search intent.", [], "YouTube", "2nd biggest search engine."],
+                ["mcq", "Sponsorship packages should include:", ["Deliverables and Rates", "Free work", "Promises", "Guesses"], "Deliverables and Rates", "Contract."],
+                ["fib", "______ Content Generation (UGC) is powerful social proof.", [], "user", "Fans making content."],
+                ["mcq", "Legal workflow templates help with:", ["Contracts/Release Forms", "Scripts", "Editing", "Lighting"], "Contracts/Release Forms", "Protection."],
+                ["long", "Explain the '1000 True Fans' theory.", [], "You need a small loyal base to sustain a career", ["loyal", "sustain", "direct", "support"]],
+                ["mcq", "Conversion Rate Optimization (CRO) improves:", ["Sales/Signups per visitor", "Views", "Likes", "Comments"], "Sales/Signups per visitor", "Efficiency."],
+                ["tf", "Burnout is a risk in the creator economy.", [], "true", "Pacing is key."],
+                ["mcq", "A Media Kit is:", ["A CV/Portfolio for creators", "A lens kit", "A software", "A computer"], "A CV/Portfolio for creators", "For brands."],
+                ["short", "What is 'Inbound Marketing'?", [], "Attracting customers via value content", "Pull vs Push."],
+                ["mcq", "LinkedIn algorithm favors:", ["Text/Conversations", "Dancing", "Pranks", "Silent video"], "Text/Conversations", "Professional discourse."],
+                ["one", "Term for paid collaboration.", [], "Sponsorship", "Brand deal."],
+                ["mcq", "Analytics: 'Demographics' tells you:", ["Age/Gender/Location", "Name", "Address", "Phone"], "Age/Gender/Location", "Who watches."],
+                ["long", "Why own your platform (website/email)?", [], "Social platforms can ban you or change algorithms", ["ownership", "risk", "algorithm", "ban"]],
+                ["mcq", "ROI stands for:", ["Return on Investment", "Rate of Interest", "Risk of Internet", "None"], "Return on Investment", "Value."],
+                ["fib", "______ marketing involves working with key leaders to drive brand message.", [], "influencer", "Creator economy core."],
+                ["mcq", "Posting rhythm consistency builds:", ["Expectation", "Anger", "Surprise", "Nothing"], "Expectation", "Appointment viewing."],
+                ["tf", "You need 1 Million subs to make money.", [], "false", "Niche audiences pay."],
+                ["mcq", "A 'Funnel' describes:", ["Customer journey", "A camera part", "A light", "A mic"], "Customer journey", "Top to bottom."],
+                ["short", "What is 'CPM'?", [], "Cost Per Mille (1000 views)", "Ad rate."],
+                ["mcq", "Trend advantage involves:", ["Speed to market", "Waiting a year", "Ignoring news", "Sleeping"], "Speed to market", "Being first."],
+                ["one", "Best tool for email newsletters?", [], "ConvertKit", "Or Mailchimp/Substack."]
+            ],
+            set10: [ // Mock Test / Mixed
+                ["mcq", "Which cut connects two similar shots?", ["Match Cut", "Jump Cut", "L Cut", "J Cut"], "Match Cut", "Visual continuity."],
+                ["fib", "______ is the king of content.", [], "context", "Or 'Content' (context is queen). Let's accept Content."],
+                ["mcq", "Bitrate affects:", ["Video quality/File size", "Audio pitch", "Script length", "Color"], "Video quality/File size", "Data per second."],
+                ["long", "Design a strategy for a new tech channel.", [], "Identify niche platform cadence and monetization", ["niche", "platform", "review", "tech"]],
+                ["mcq", "White Balance measures temperature in:", ["Kelvin", "Celsius", "Fahrenheit", "Watts"], "Kelvin", "Color temp."],
+                ["tf", "Shorts are good for discovery, Long form for community.", [], "true", "The hybrid model."],
+                ["mcq", "Which is a lossless audio format?", ["WAV", "MP3", "AAC", "OGG"], "WAV", "Uncompressed."],
+                ["short", "What is 'Golden Hour'?", [], "Hour after sunrise/before sunset", "Soft light."],
+                ["mcq", "Kerning adjusts space between:", ["Letters", "Lines", "Paragraphs", "Pages"], "Letters", "Typographic detail."],
+                ["one", "Program for vector illustration?", [], "Illustrator", "Adobe."],
+                ["mcq", "The 'Rule of 180' applies to:", ["Spatial continuity in film", "Color", "Audio", "Script"], "Spatial continuity in film", "Line of action."],
+                ["fib", "A ______ file contains alpha channel transparency.", [], "png", "Or Prores 4444."],
+                ["mcq", "Clickbait vs Click-worthy:", ["Deception vs Delivery", "Same thing", "Neither works", "Bad vs Good"], "Deception vs Delivery", "Promise kept."],
+                ["long", "Explain 'Parasocial Interaction'.", [], "One sided relationship where viewer feels they know creator", ["relationship", "one-sided", "friend", "connection"]],
+                ["mcq", "Deadcat/Windshield is used for:", ["Microphones", "Cameras", "Lights", "Cats"], "Microphones", "Wind noise."],
+                ["tf", "Raw photos allow more editing flexibility.", [], "true", "More data."],
+                ["mcq", "Which is NOT a transition?", ["Gain", "Wipe", "Dissolve", "Slide"], "Gain", "That is volume."],
+                ["short", "What is 'Evergreen'?", [], "Lasting relevance", "Not news."],
+                ["mcq", "Best practice for file backup:", ["3-2-1 Rule", "1 Copy", "Delete it", "Use floppy"], "3-2-1 Rule", "3 copies, 2 media, 1 offsite."],
+                ["one", "Standard frame rate for cinema?", [], "24fps", "23.976."],
+                ["mcq", "LUTs should be applied:", ["After correction", "Before anything", "During export", "Never"], "After correction", "Usually."],
+                ["fib", "______ noise is background hiss.", [], "white", "Or static."],
+                ["mcq", "SEO relies heavily on:", ["Keywords", "Colors", "Music", "Video"], "Keywords", "Search terms."],
+                ["long", "How do you handle negative feedback?", [], "Analyze for truth ignore hate respond to constructive", ["analyze", "constructive", "ignore", "improve"]],
+                ["mcq", "A 'Brief' is:", ["Project instructions", "Short video", "Underwear", "A file"], "Project instructions", "Client document."],
+                ["tf", "Consistency builds trust.", [], "true", "Reliability."],
+                ["mcq", "B-roll helps hide:", ["Cuts", "Audio", "Color", "Text"], "Cuts", "Visual bridge."],
+                ["short", "What is 'Dynamic Range'?", [], "Range between darkest and lightest parts", "Camera capability."],
+                ["mcq", "SaaS stands for:", ["Software as a Service", "Service as a Software", "Simple audio", "None"], "Software as a Service", "Business model."],
+                ["one", "What does '4K' refer to?", [], "Resolution", "Pixel count."]
+            ]
+        };
+
+        // Initialize Sets
+        let setCounter = 1;
+        for (const [key, questions] of Object.entries(syllabusContent)) {
+            const setObj = {
+                id: setCounter,
+                topic: topics[setCounter-1],
+                questions: questions.map((q, index) => {
+                    return createQ(`${setCounter}-${index}`, q[0], q[1], q[2], q[3], q[4], q[5] || []);
+                })
+            };
+            setsData.push(setObj);
+            setCounter++;
+        }
+
+        // --- STATE MANAGEMENT ---
+        let currentSetIndex = 0;
+        let currentQuestionIndex = 0;
+        let score = { correct: 0, wrong: 0, total: 0 };
+        
+        // --- DOM ELEMENTS ---
+        const setNav = document.getElementById('set-nav');
+        const qContainer = document.getElementById('q-inject');
+        const scoreTotal = document.getElementById('score-total');
+        const scoreCorrect = document.getElementById('score-correct');
+        const scoreWrong = document.getElementById('score-wrong');
+        const scorePercent = document.getElementById('score-percent');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+        // --- INITIALIZATION ---
+        function init() {
+            renderSetNav();
+            loadSet(0);
+        }
+
+        function renderSetNav() {
+            setNav.innerHTML = '';
+            setsData.forEach((set, index) => {
+                const btn = document.createElement('button');
+                btn.className = `set-btn ${index === 0 ? 'active' : ''}`;
+                btn.innerText = `Set ${set.id}`; // Compact name for mobile
+                btn.onclick = () => loadSet(index);
+                setNav.appendChild(btn);
+            });
+        }
+
+        function loadSet(index) {
+            currentSetIndex = index;
+            currentQuestionIndex = 0;
+            
+            // Update Nav UI
+            document.querySelectorAll('.set-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', i === index);
+            });
+
+            renderQuestions();
+            updateNavControls();
+        }
+
+        function renderQuestions() {
+            qContainer.innerHTML = '';
+            const set = setsData[currentSetIndex];
+            
+            set.questions.forEach((q, index) => {
+                const card = document.createElement('div');
+                card.className = `question-card ${index === 0 ? 'active' : ''}`;
+                card.id = `q-card-${index}`;
+
+                // Header
+                let html = `
+                    <div class="q-header">
+                        <span>Set ${set.id}: ${set.topic}</span>
+                        <span>Q${index + 1} / ${set.questions.length}</span>
+                    </div>
+                    <div class="q-text">${q.q}</div>
+                `;
+
+                // Body based on Type
+                if (q.type === 'mcq') {
+                    html += `<div class="options-grid">`;
+                    q.options.forEach(opt => {
+                        const isCorrect = opt === q.ans;
+                        // Check if already answered
+                        let statusClass = '';
+                        if (q.checked) {
+                            if (q.userAns === opt) statusClass = isCorrect ? 'correct' : 'wrong';
+                            else if (isCorrect) statusClass = 'correct'; // Show correct one too
+                            else statusClass = 'disabled';
+                        }
+
+                        html += `<button class="option-btn ${statusClass}" 
+                                onclick="checkMCQ(this, '${q.id}', '${opt.replace(/'/g, "\\'")}')" 
+                                ${q.checked ? 'disabled' : ''}>${opt}</button>`;
+                    });
+                    html += `</div>`;
+                } else if (q.type === 'tf') {
+                    html += `<div class="options-grid">`;
+                    ['True', 'False'].forEach(opt => {
+                        let statusClass = '';
+                        if (q.checked) {
+                             if (String(q.userAns).toLowerCase() === opt.toLowerCase()) statusClass = (String(q.userAns).toLowerCase() === String(q.ans).toLowerCase()) ? 'correct' : 'wrong';
+                             else if (String(opt).toLowerCase() === String(q.ans).toLowerCase()) statusClass = 'correct';
+                             else statusClass = 'disabled';
+                        }
+                        html += `<button class="option-btn ${statusClass}" 
+                                onclick="checkTF(this, '${q.id}', '${opt}')" 
+                                ${q.checked ? 'disabled' : ''}>${opt}</button>`;
+                    });
+                    html += `</div>`;
+                } else if (q.type === 'fib' || q.type === 'one' || q.type === 'short') {
+                    html += `
+                        <input type="text" id="input-${q.id}" placeholder="Type answer here..." ${q.checked ? 'disabled' : ''} value="${q.userAns || ''}">
+                        ${!q.checked ? `<button class="submit-btn" onclick="checkText('${q.id}')">Submit</button>` : ''}
+                    `;
+                } else if (q.type === 'long') {
+                    html += `
+                        <textarea id="input-${q.id}" placeholder="Type your detailed answer..." ${q.checked ? 'disabled' : ''}>${q.userAns || ''}</textarea>
+                        ${!q.checked ? `<button class="submit-btn" onclick="checkLong('${q.id}')">Check Answer</button>` : ''}
+                    `;
+                }
+
+                // Feedback Area
+                html += `
+                    <div class="feedback-box ${q.checked ? 'show' : ''} ${q.isCorrect ? 'feedback-correct' : 'feedback-wrong'}" id="feedback-${q.id}">
+                        <strong>${q.isCorrect ? 'बहुत बढ़िया ⭐' : 'फिर से प्रयास करें'}</strong><br>
+                        ${q.type === 'long' ? 'Keywords found: ' + (q.matches || 0) : 'Correct: ' + q.ans}<br>
+                        <small>${q.hint}</small>
+                    </div>
+                `;
+
+                card.innerHTML = html;
+                qContainer.appendChild(card);
+            });
+        }
+
+        // --- INTERACTION LOGIC ---
+
+        function changeQuestion(dir) {
+            const set = setsData[currentSetIndex];
+            const oldIndex = currentQuestionIndex;
+            const newIndex = currentQuestionIndex + dir;
+
+            if (newIndex >= 0 && newIndex < set.questions.length) {
+                document.getElementById(`q-card-${oldIndex}`).classList.remove('active');
+                document.getElementById(`q-card-${newIndex}`).classList.add('active');
+                currentQuestionIndex = newIndex;
+                updateNavControls();
+            }
+        }
+
+        function updateNavControls() {
+            const set = setsData[currentSetIndex];
+            prevBtn.disabled = currentQuestionIndex === 0;
+            nextBtn.disabled = currentQuestionIndex === set.questions.length - 1;
+        }
+
+        function updateScore(isCorrect) {
+            score.total++;
+            if (isCorrect) score.correct++;
+            else score.wrong++;
+
+            scoreTotal.innerText = score.total;
+            scoreCorrect.innerText = score.correct;
+            scoreWrong.innerText = score.wrong;
+            scorePercent.innerText = Math.round((score.correct / score.total) * 100) + "%";
+        }
+
+        // --- CHECKING LOGIC ---
+
+        function getQById(id) {
+            const parts = id.split('-');
+            // Optimization: we know current set
+            return setsData[parts[0]-1].questions[parts[1]];
+        }
+
+        function refreshCard(q) {
+            // Re-render just this card to show state (lazy way: reload set question logic or just DOM manipulation)
+            // For simplicity in this file, we modified the DOM classes in the check functions directly or re-rendered logic
+            // But since 'renderQuestions' redraws everything, let's just manipulate DOM for speed/UX
+        }
+
+        window.checkMCQ = (btn, id, selected) => {
+            const q = getQById(id);
+            if (q.checked) return;
+
+            q.checked = true;
+            q.userAns = selected;
+            q.isCorrect = (selected === q.ans);
+            
+            updateScore(q.isCorrect);
+            
+            // UI Update
+            const parent = btn.parentElement;
+            const buttons = parent.querySelectorAll('.option-btn');
+            buttons.forEach(b => {
+                b.disabled = true;
+                if (b.innerText === q.ans) b.classList.add('correct');
+                else if (b.innerText === selected && !q.isCorrect) b.classList.add('wrong');
+            });
+
+            showFeedback(id, q.isCorrect);
+        };
+
+        window.checkTF = (btn, id, selected) => {
+            const q = getQById(id);
+            if (q.checked) return;
+
+            q.checked = true;
+            q.userAns = selected;
+            q.isCorrect = (selected.toLowerCase() === String(q.ans).toLowerCase());
+
+            updateScore(q.isCorrect);
+
+            const parent = btn.parentElement;
+            const buttons = parent.querySelectorAll('.option-btn');
+            buttons.forEach(b => {
+                b.disabled = true;
+                if (b.innerText.toLowerCase() === String(q.ans).toLowerCase()) b.classList.add('correct');
+                else if (b.innerText === selected && !q.isCorrect) b.classList.add('wrong');
+            });
+
+            showFeedback(id, q.isCorrect);
+        };
+
+        window.checkText = (id) => {
+            const q = getQById(id);
+            const input = document.getElementById(`input-${id}`);
+            const val = input.value.trim().toLowerCase();
+            
+            if (!val) return;
+
+            q.checked = true;
+            q.userAns = input.value;
+            // Flexible matching for FIB/One word
+            q.isCorrect = val.includes(q.ans.toLowerCase()) || q.ans.toLowerCase().includes(val);
+
+            updateScore(q.isCorrect);
+            input.disabled = true;
+            
+            // Remove submit button
+            input.nextElementSibling.style.display = 'none';
+
+            showFeedback(id, q.isCorrect);
+        };
+
+        window.checkLong = (id) => {
+            const q = getQById(id);
+            const input = document.getElementById(`input-${id}`);
+            const val = input.value.toLowerCase();
+
+            if (!val) return;
+
+            q.checked = true;
+            q.userAns = input.value;
+
+            // Keyword matching logic
+            let matches = 0;
+            q.keywords.forEach(k => {
+                if (val.includes(k.toLowerCase())) matches++;
+            });
+            q.matches = matches + "/" + q.keywords.length;
+
+            // If 50% keywords matched, considered "Correct" for practice purpose
+            q.isCorrect = matches >= Math.ceil(q.keywords.length / 2);
+
+            updateScore(q.isCorrect);
+            input.disabled = true;
+            input.nextElementSibling.style.display = 'none';
+
+            showFeedback(id, q.isCorrect);
+        };
+
+        function showFeedback(id, isCorrect) {
+            const fb = document.getElementById(`feedback-${id}`);
+            fb.style.display = 'block';
+            fb.className = `feedback-box show ${isCorrect ? 'feedback-correct' : 'feedback-wrong'}`;
+            // Update text inside if needed dynamically, but it's rendered in create
+        }
+
+        function toggleRevision() {
+            const section = document.getElementById('revision-section');
+            if (section.style.display === 'block') {
+                section.style.display = 'none';
+            } else {
+                section.style.display = 'block';
+                section.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Start
+        init();
+
+    </script>
+</body>
+</html>

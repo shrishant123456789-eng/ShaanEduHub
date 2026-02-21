@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skill Mastery Simulation: Content Ideation</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- CORE VISUAL SYSTEM --- */
+        :root {
+            --primary: #0f172a; /* Deep Blue */
+            --secondary: #334155; /* Slate */
+            --accent: #0ea5e9; /* Sky Blue */
+            --success: #10b981; /* Emerald */
+            --warning: #f59e0b; /* Amber */
+            --danger: #ef4444; /* Red */
+            --bg: #f8fafc; /* Light Grey/White base */
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --font-main: 'Patrick Hand', cursive;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            /* PROMPT REQUIREMENT: ALL TEXT BOLD */
+            font-weight: 700; 
+            font-size: 18px;
+            overflow-x: hidden;
+        }
+
+        /* --- LAYOUT & UTILS --- */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 80px; /* Space for footer */
+        }
+
+        .hidden { display: none !important; }
+        .fade-in { animation: fadeIn 0.4s ease-in; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- UI COMPONENTS --- */
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-title {
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+        }
+
+        .stats-panel {
+            font-size: 1rem;
+            display: flex;
+            gap: 15px;
+        }
+
+        .stat-badge {
+            background: rgba(255,255,255,0.15);
+            padding: 4px 10px;
+            border-radius: 4px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-family: var(--font-main);
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+            transition: transform 0.1s, background 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn:active { transform: scale(0.98); }
+        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+        .btn-success { background: var(--success); }
+        .btn-nav { width: auto; display: inline-block; }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-left: 5px solid var(--primary);
+        }
+
+        /* --- PROGRESS MAP --- */
+        .map-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .level-node {
+            background: #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            position: relative;
+            cursor: not-allowed;
+            opacity: 0.7;
+            transition: all 0.3s;
+        }
+
+        .level-node.unlocked {
+            background: white;
+            border: 2px solid var(--primary);
+            cursor: pointer;
+            opacity: 1;
+        }
+
+        .level-node.completed {
+            border-color: var(--success);
+            background: #ecfdf5;
+        }
+
+        .level-title { font-size: 1.3rem; color: var(--primary); margin-bottom: 5px; }
+        .level-status { font-size: 0.9rem; color: var(--secondary); }
+
+        /* --- CONTENT MODULES --- */
+        .concept-block {
+            margin-bottom: 25px;
+            border-bottom: 2px dashed #cbd5e1;
+            padding-bottom: 20px;
+        }
+        
+        .concept-title { color: var(--primary); font-size: 1.5rem; margin-top: 0; }
+        .concept-tag { 
+            background: var(--accent); color: white; 
+            padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; 
+            text-transform: uppercase; letter-spacing: 1px;
+            margin-right: 8px;
+        }
+
+        .static-visual-box {
+            background: #f1f5f9;
+            border: 2px solid #cbd5e1;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+            color: var(--secondary);
+            font-style: italic;
+            border-radius: 8px;
+        }
+
+        .example-box {
+            background: #eff6ff;
+            border-left: 4px solid var(--accent);
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .indian-context {
+            background: #fff7ed;
+            border-left: 4px solid var(--warning);
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        /* --- SKILL DRILL ARENA --- */
+        .quiz-option {
+            background: #f1f5f9;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .quiz-option:hover { background: #e2e8f0; }
+        .quiz-option.selected { border-color: var(--primary); background: #e0f2fe; }
+        .quiz-option.correct { background: #d1fae5; border-color: var(--success); }
+        .quiz-option.wrong { background: #fee2e2; border-color: var(--danger); }
+
+        .feedback-panel {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        .feedback-panel.show { display: block; }
+        .feedback-good { background: #d1fae5; color: #065f46; }
+        .feedback-bad { background: #fee2e2; color: #991b1b; }
+
+        /* --- BOSS LEVEL --- */
+        textarea {
+            width: 100%;
+            height: 150px;
+            padding: 15px;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            font-family: var(--font-main);
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin: 15px 0;
+            resize: vertical;
+        }
+
+        .boss-feedback ul { margin: 0; padding-left: 20px; }
+
+        /* --- REVISION BLITZ --- */
+        .revision-card {
+            background: var(--primary);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        .revision-card h3 { color: var(--accent); margin-top: 0; }
+        .revision-card ul { padding-left: 20px; }
+
+        /* --- FOOTER/SCORE --- */
+        .score-sticky {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 10px 20px;
+            border-top: 2px solid #e2e8f0;
+            display: flex;
+            justify-content: space-around;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            z-index: 99;
+        }
+        .score-item span { color: var(--primary); font-size: 1.2rem; }
+
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="brand-title">SIMULATION LAB: CH1</div>
+        <div class="stats-panel">
+            <div class="stat-badge">XP: <span id="xp-display">0</span></div>
+            <div class="stat-badge" onclick="toggleRevision()">⚡ Revise</div>
+        </div>
+    </header>
+
+    <!-- Main Views -->
+    <div class="container">
+
+        <!-- VIEW: LOBBY -->
+        <div id="view-lobby" class="fade-in">
+            <div class="card" style="text-align: center; padding: 40px 20px;">
+                <h1 style="color: var(--primary); font-size: 2.5rem; margin-bottom: 10px;">CREATOR STRATEGY</h1>
+                <h2 style="color: var(--secondary); margin-bottom: 30px;">Chapter 1: Ideation & Strategic Frameworks</h2>
+                
+                <div style="text-align: left; background: #f1f5f9; padding: 20px; border-radius: 10px; margin-bottom: 30px;">
+                    <p><strong>MISSION BRIEF:</strong></p>
+                    <ul style="list-style: none; padding: 0;">
+                        <li>🎯 <strong>Goal:</strong> Master the art of generating high-ROI content ideas.</li>
+                        <li>⚙️ <strong>Tools:</strong> Notion, Google Trends, Miro, AI.</li>
+                        <li>📊 <strong>Output:</strong> 4 Certification Levels + 1 Boss Strategy Check.</li>
+                    </ul>
+                </div>
+
+                <button class="btn" onclick="startGame()">INITIALIZE SIMULATION</button>
+            </div>
+        </div>
+
+        <!-- VIEW: MAP -->
+        <div id="view-map" class="hidden fade-in">
+            <h2 style="text-align: center; margin-bottom: 20px;">SYSTEM PROGRESSION MAP</h2>
+            <div class="map-grid" id="level-grid">
+                <!-- Levels injected by JS -->
+            </div>
+        </div>
+
+        <!-- VIEW: CONTENT MODULE (Training) -->
+        <div id="view-content" class="hidden fade-in">
+            <button class="btn btn-outline btn-nav" onclick="showMap()">← Back to Map</button>
+            <div id="content-display-area">
+                <!-- Dynamic Content -->
+            </div>
+            <button class="btn" onclick="startQuiz()">ENTER SKILL DRILL ARENA</button>
+        </div>
+
+        <!-- VIEW: QUIZ ARENA -->
+        <div id="view-quiz" class="hidden fade-in">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <span id="quiz-progress">Q 1/5</span>
+                <button class="btn btn-outline btn-nav" style="padding: 5px 10px; font-size: 0.9rem;" onclick="quitLevel()">Abort</button>
+            </div>
+            
+            <div class="card">
+                <div id="question-text" style="font-size: 1.2rem; margin-bottom: 20px;">Loading...</div>
+                <div id="options-container">
+                    <!-- Options injected here -->
+                </div>
+            </div>
+
+            <div id="feedback-box" class="feedback-panel"></div>
+            
+            <button id="next-btn" class="btn hidden" onclick="nextQuestion()">NEXT CHALLENGE</button>
+        </div>
+
+        <!-- VIEW: BOSS LEVEL -->
+        <div id="view-boss" class="hidden fade-in">
+            <div class="card" style="border-left-color: var(--warning);">
+                <h2 style="color: var(--warning);">⚠️ BOSS LEVEL: STRATEGIC ANALYSIS</h2>
+                <p><strong>Scenario:</strong> You are the Head of Content for a new Fintech App in India ("RupeeSmart"). The goal is to drive <strong>App Installs</strong> (Conversion) but currently, no one knows the brand.</p>
+                <p><strong>Task:</strong> Outline a 3-stage Content Strategy (Awareness, Consideration, Conversion). Mention specific formats (Reels, Blogs, Webinars) and one tool you would use for research.</p>
+                
+                <textarea id="boss-input" placeholder="Type your strategic plan here..."></textarea>
+                
+                <button class="btn" onclick="evaluateBoss()">SUBMIT ANALYSIS</button>
+                
+                <div id="boss-feedback" class="feedback-panel boss-feedback" style="margin-top: 20px;"></div>
+                <button id="boss-finish-btn" class="btn hidden" onclick="finishBoss()">COMPLETE CERTIFICATION</button>
+            </div>
+        </div>
+
+        <!-- VIEW: REVISION BLITZ -->
+        <div id="view-revision" class="hidden fade-in">
+            <h2 style="text-align: center;">⚡ RAPID RECALL PROTOCOL</h2>
+            <div class="revision-card">
+                <h3>1. The Funnel</h3>
+                <ul>
+                    <li>Awareness: Viral views (Reels/Shorts)</li>
+                    <li>Engagement: Community trust (Stories/Polls)</li>
+                    <li>Conversion: Sales/Signups (Long-form/Email)</li>
+                </ul>
+            </div>
+            <div class="revision-card">
+                <h3>2. Research Tools</h3>
+                <ul>
+                    <li>Google Trends: Macro search volume</li>
+                    <li>AnswerThePublic: Specific user questions</li>
+                    <li>Social Listening: Sentiment analysis</li>
+                </ul>
+            </div>
+            <div class="revision-card">
+                <h3>3. Scoring Frameworks</h3>
+                <ul>
+                    <li>ICE: Impact, Confidence, Ease</li>
+                    <li>RICE: Reach, Impact, Confidence, Effort</li>
+                </ul>
+            </div>
+            <button class="btn btn-outline" style="background: white;" onclick="toggleRevision()">CLOSE REVISION</button>
+        </div>
+
+        <!-- VIEW: CERTIFICATION -->
+        <div id="view-cert" class="hidden fade-in" style="text-align: center;">
+            <div class="card" style="border-color: var(--success); padding: 40px;">
+                <h1 style="color: var(--success); font-size: 3rem;">SYSTEM CLEARED</h1>
+                <p style="font-size: 1.5rem;">Certification: <strong>CREATOR STRATEGIST LEVEL 1</strong></p>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 30px 0;">
+                    <div style="background: #f1f5f9; padding: 10px; border-radius: 8px;">
+                        <div>Final Score</div>
+                        <div id="final-score" style="font-size: 2rem; color: var(--primary);">0</div>
+                    </div>
+                    <div style="background: #f1f5f9; padding: 10px; border-radius: 8px;">
+                        <div>Accuracy</div>
+                        <div id="final-accuracy" style="font-size: 2rem; color: var(--primary);">0%</div>
+                    </div>
+                </div>
+
+                <div class="static-visual-box" style="border-color: var(--success); color: var(--success);">
+                    [ DIGITAL BADGE GENERATED ]
+                </div>
+                
+                <p>Ready for Chapter 2: Professional Video Workflows?</p>
+                <button class="btn" disabled style="opacity: 0.5;">CHAPTER 2 LOCKED</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Live Score Panel -->
+    <div class="score-sticky">
+        <div class="score-item">✅ <span id="score-correct">0</span></div>
+        <div class="score-item">❌ <span id="score-wrong">0</span></div>
+        <div class="score-item">📊 <span id="score-percent">0%</span></div>
+    </div>
+
+<script>
+/* -------------------------------------------------------------------------
+   GAME DATA ENGINE (Syllabus: Chapter 1)
+------------------------------------------------------------------------- */
+
+const gameData = [
+    {
+        id: 0,
+        title: "Level 1: The Foundation",
+        desc: "Ideation, Goals & Personas",
+        content: `
+            <div class="concept-block">
+                <h3 class="concept-title"><span class="concept-tag">CORE</span>What is Content Ideation?</h3>
+                <p>Ideation is not just "brainstorming". It is the strategic process of finding topics that sit at the intersection of <strong>What you know</strong>, <strong>What your audience wants</strong>, and <strong>What the market needs</strong>.</p>
+                <div class="static-visual-box">
+                    [ DIAGRAM: VENN DIAGRAM INTERSECTING 'PASSION', 'EXPERTISE', & 'DEMAND' ]
+                </div>
+            </div>
+
+            <div class="concept-block">
+                <h3 class="concept-title"><span class="concept-tag">FRAMEWORK</span>The A-E-C Funnel</h3>
+                <p>Every piece of content must have a job:</p>
+                <ul>
+                    <li><strong>Awareness (Top):</strong> Get attention. Broad topics. (e.g., "Top 5 Mistakes...")</li>
+                    <li><strong>Engagement (Middle):</strong> Build trust. Niche value. (e.g., "How I edit my videos...")</li>
+                    <li><strong>Conversion (Bottom):</strong> Sell/Action. Specific offer. (e.g., "Join my workshop...")</li>
+                </ul>
+                <div class="indian-context">
+                    <strong>🇮🇳 Indian Context:</strong> A Chai cafe brand (Chaayos) uses 'Monsoon weather' memes for Awareness, but 'Discounts on bun-maska' for Conversion.
+                </div>
+            </div>
+
+            <div class="concept-block">
+                <h3 class="concept-title"><span class="concept-tag">TOOL</span>Persona Mapping</h3>
+                <p>Don't create for "everyone". Create for "Rohan, 24, MBA aspirant, loves tech but is on a budget".</p>
+            </div>
+        `,
+        questions: [
+            {
+                q: "You are launching a course. Which content type fits the 'Awareness' stage best?",
+                a: ["Viral Reel about 'Student Life Struggles'", "A 40-minute webinar on syllabus", "A checkout page link", "A testimonial video"],
+                correct: 0,
+                info: "Awareness needs broad appeal. Student struggles relate to many, pulling them into the funnel."
+            },
+            {
+                q: "What is the primary goal of the 'Engagement' phase?",
+                a: ["Viral reach", "Building trust & retention", "Immediate sales", "Cold calling"],
+                correct: 1,
+                info: "Engagement bridges the gap between knowing you (Awareness) and buying from you (Conversion)."
+            },
+            {
+                q: "In Persona Mapping, what is the 'Pain Point'?",
+                a: ["The customer's budget", "The specific problem creating frustration", "The age of the customer", "The social media platform they use"],
+                correct: 1,
+                info: "Pain Points (e.g., 'I can't edit fast enough') drive the need for your solution."
+            },
+            {
+                q: "Which tool is best for visual Mind Mapping during ideation?",
+                a: ["Excel", "Miro / MindMeister", "Notepad", "Calculator"],
+                correct: 1,
+                info: "Miro is a standard industry tool for visual brainstorming and mind mapping."
+            },
+            {
+                q: "Context vs. Content: If Content is 'The King', what is Context?",
+                a: ["The Queen", "The Kingdom (Environment/Platform)", "The Jester", "The Castle"],
+                correct: 1,
+                info: "Gary Vaynerchuk says 'Context is God'. It's the nuance of where and how content appears."
+            }
+        ]
+    },
+    {
+        id: 1,
+        title: "Level 2: Structured Research",
+        desc: "Validation, Trends & Scoring",
+        content: `
+            <div class="concept-block">
+                <h3 class="concept-title"><span class="concept-tag">STRATEGY</span>Topic Clustering</h3>
+                <p>Don't post random topics. Create a 'Pillar' (Main topic: Digital Marketing) and 'Clusters' (Sub-topics: SEO, Social Media, Email).</p>
+                <div class="static-visual-box">
+                    [ DIAGRAM: CENTRAL HUB WITH SPOKES CONNECTING SUB-TOPICS ]
+                </div>
+            </div>
+
+            <div class="concept-block">
+                <h3 class="concept-title"><span class="concept-tag">FRAMEWORK</span>ICE Scoring</h3>
+                <p>Prioritize ideas using this formula:</p>
+                <ul>
+                    <li><strong>I</strong>mpact: How big will the result be? (1-10)</li>
+                    <li><strong>C</strong>onfidence: How sure am I it will work? (1-10)</li>
+                    <li><strong>E</strong>ase: How hard is it to make? (1-10)</li>
+                </ul>
+                <p><em>Formula: (I x C x E) = Score. Highest score wins.</em></p>
+            </div>
+
+            <div class="concept-block">
+                <h3 class="concept-title"><span class="concept-tag">TOOLS</span>Validation Stack</h3>
+                <div class="example-box">
+                    <p><strong>Google Trends:</strong> Compare 'Podcast' vs 'YouTube' search volume.</p>
+                    <p><strong>AnswerThePublic:</strong> See exact questions people type (Who, What, Where).</p>
+                </div>
+            </div>
+        `,
+        questions: [
+            {
+                q: "In the RICE scoring model (Reach, Impact, Confidence, Effort), which factor should be LOW for a good score?",
+                a: ["Reach", "Impact", "Confidence", "Effort"],
+                correct: 3,
+                info: "Effort acts as the denominator. You want High Impact with Low Effort."
+            },
+            {
+                q: "If you search 'Best Camera' on Google Trends, what are you validating?",
+                a: ["Competitor pricing", "Search volume interest over time", "Video quality", "The best camera to buy"],
+                correct: 1,
+                info: "Google Trends shows interest relative to time, helping you spot seasonality."
+            },
+            {
+                q: "What does 'Evergreen Content' mean?",
+                a: ["Content about nature", "Content relevant for years", "Breaking news", "Seasonal trends"],
+                correct: 1,
+                info: "Evergreen content (e.g., 'How to tie a tie') gets search traffic forever."
+            },
+            {
+                q: "AnswerThePublic is mainly used for?",
+                a: ["Video Editing", "Finding long-tail search queries", "Social listening", "Graphic Design"],
+                correct: 1,
+                info: "It visualizes search queries based on prepositions (How, Why, Which)."
+            },
+            {
+                q: "A 'Topic Cluster' strategy helps mostly with?",
+                a: ["SEO and Authority", "Video Audio Quality", "Thumbnail Design", "Short term viral hits"],
+                correct: 0,
+                info: "Linking clusters to a pillar page signals authority to search engines."
+            }
+        ]
+    },
+    {
+        id: 2,
+        title: "Level 3: Professional Planning",
+        desc: "Calendars, Pillars & Narrative",
+        content: `
+            <div class="concept-block">
+                <h3 class="concept-title"><span class="concept-tag">WORKFLOW</span>Content Calendars</h3>
+                <p>Amateurs wake up and ask 'What do I post?'. Pros plan 30 days ahead. Include: <em>Date, Format, Platform, Status, Pillar.</em></p>
+                <div class="static-visual-box">
+                    [ UI MOCKUP: NOTION BOARD WITH 'IDEA', 'SCRIPTING', 'FILMING', 'POSTED' ]
+                </div>
+            </div>
+
+            <div class="concept-block">
+                <h3 class="concept-title"><span class="concept-tag">SKILL</span>Storyboarding</h3>
+                <p>Before filming, visualize. A storyboard doesn't need art; it needs sequence. <strong>Hook -> Problem -> Agitation -> Solution -> CTA.</strong></p>
+            </div>
+
+            <div class="concept-block">
+                <h3 class="concept-title"><span class="concept-tag">INDUSTRY</span>HubSpot Model</h3>
+                <p>HubSpot suggests the 'Hub and Spoke' model. One comprehensive guide (Hub) supports dozens of blog posts (Spokes).</p>
+            </div>
+        `,
+        questions: [
+            {
+                q: "Which tool is standard for Kanban-style content planning?",
+                a: ["Notion / Trello", "MS Paint", "Spotify", "Uber"],
+                correct: 0,
+                info: "Notion/Trello use drag-and-drop cards to move ideas from 'ToDo' to 'Done'."
+            },
+            {
+                q: "In a narrative arc, what comes immediately after the 'Hook'?",
+                a: ["The Call to Action", "The Problem/Context", "The End Credits", "The Bloopers"],
+                correct: 1,
+                info: "Hook grabs them. Problem retains them by establishing relevance."
+            },
+            {
+                q: "What is a 'Content Pillar'?",
+                a: ["A physical pole", "A core theme your brand always talks about", "A viral video", "A hashtag"],
+                correct: 1,
+                info: "Pillars (e.g., 'Health', 'Wealth', 'Relationships') ensure brand consistency."
+            },
+            {
+                q: "Why use a 'Series' format (e.g., 'Marketing Mondays')?",
+                a: ["It saves money", "It builds habit and expectation", "It is easier to edit", "It requires no planning"],
+                correct: 1,
+                info: "Appointment viewing builds loyal communities who return at specific times."
+            },
+            {
+                q: "SEO integration in ideation means:",
+                a: ["Adding keywords after filming", "Researching keywords before topic selection", "Paying Google", "Using hashtags on Instagram"],
+                correct: 1,
+                info: "True SEO strategy begins at the ideation phase, ensuring people are actually searching for the topic."
+            }
+        ]
+    },
+    {
+        id: 3,
+        title: "Level 4: Expert Mastery",
+        desc: "Ecosystems, AI & Monetization",
+        content: `
+            <div class="concept-block">
+                <h3 class="concept-title"><span class="concept-tag">MASTERY</span>Cross-Platform Storytelling</h3>
+                <p>Recycle smart. 
+                <br>1. <strong>YouTube Video</strong> (Main Asset)
+                <br>2. Cut into 3 <strong>Reels</strong>.
+                <br>3. Transcribe for <strong>LinkedIn Post</strong>.
+                <br>4. Extract audio for <strong>Podcast</strong>.</p>
+                <p>This is the 'GaryVee Content Model'.</p>
+            </div>
+
+            <div class="concept-block">
+                <h3 class="concept-title"><span class="concept-tag">TECH</span>AI-Assisted Discovery</h3>
+                <p>Use ChatGPT not to write, but to <em>challenge</em>. Prompt: 'Act as my critic. Why will this video idea fail?' This creates robust strategies.</p>
+            </div>
+
+            <div class="concept-block">
+                <h3 class="concept-title"><span class="concept-tag">DATA</span>Predictive Analytics</h3>
+                <p>Using data from previous posts (Retention rate, CTR) to predict the success of future topics.</p>
+            </div>
+        `,
+        questions: [
+            {
+                q: "The 'GaryVee Model' refers to:",
+                a: ["Posting once a year", "Creating one pillar content and repurposing it 30x", "Only doing live streams", "Paying for likes"],
+                correct: 1,
+                info: "Maximize ROI on effort by turning one long video into dozens of smaller assets."
+            },
+            {
+                q: "When using AI for ideation, the best approach is:",
+                a: ["Copy paste directly", "Use it as a brainstorming partner/critic", "Let it handle the whole channel", "Ignore it"],
+                correct: 1,
+                info: "AI is a tool for leverage and refinement, not a replacement for human creativity."
+            },
+            {
+                q: "Monetization-led planning means:",
+                a: ["Begging for money in every video", "Aligning content topics with product offerings", "Putting ads everywhere", "Selling merchandise only"],
+                correct: 1,
+                info: "If you sell a camera course, plan content about 'camera settings', not 'cooking'."
+            },
+            {
+                q: "What is a 'Feedback Loop' in strategy?",
+                a: ["A sound error", "Using audience comments/data to refine next week's content", "Posting the same thing twice", "Asking friends to like"],
+                correct: 1,
+                info: "Continuous improvement based on real market data."
+            },
+            {
+                q: "Predictive Trend Analytics helps you:",
+                a: ["See the past", "Jump on trends before they peak", "Edit faster", "Get verified"],
+                correct: 1,
+                info: "Catching the wave early (e.g., 'AI Art' in 2022) yields the highest growth."
+            }
+        ]
+    }
+];
+
+// BOSS Level is handled separately in logic
+
+/* -------------------------------------------------------------------------
+   GAME LOGIC
+------------------------------------------------------------------------- */
+
+// State
+let currentState = {
+    level: 0,
+    xp: 0,
+    answersCorrect: 0,
+    answersWrong: 0,
+    unlocked: [0], // Level IDs unlocked
+    currentQuiz: [], // Current set of questions
+    quizIndex: 0
+};
+
+// DOM Elements
+const views = {
+    lobby: document.getElementById('view-lobby'),
+    map: document.getElementById('view-map'),
+    content: document.getElementById('view-content'),
+    quiz: document.getElementById('view-quiz'),
+    boss: document.getElementById('view-boss'),
+    revision: document.getElementById('view-revision'),
+    cert: document.getElementById('view-cert')
+};
+
+const ui = {
+    xp: document.getElementById('xp-display'),
+    scoreCorrect: document.getElementById('score-correct'),
+    scoreWrong: document.getElementById('score-wrong'),
+    scorePercent: document.getElementById('score-percent'),
+    contentDisplay: document.getElementById('content-display-area'),
+    grid: document.getElementById('level-grid')
+};
+
+// Core Functions
+function init() {
+    renderMap();
+}
+
+function switchView(viewName) {
+    Object.values(views).forEach(el => el.classList.add('hidden'));
+    views[viewName].classList.remove('hidden');
+    window.scrollTo(0, 0);
+}
+
+function updateStats() {
+    ui.xp.innerText = currentState.xp;
+    ui.scoreCorrect.innerText = currentState.answersCorrect;
+    ui.scoreWrong.innerText = currentState.answersWrong;
+    
+    const total = currentState.answersCorrect + currentState.answersWrong;
+    const percent = total === 0 ? 0 : Math.round((currentState.answersCorrect / total) * 100);
+    ui.scorePercent.innerText = percent + "%";
+}
+
+function startGame() {
+    switchView('map');
+}
+
+function renderMap() {
+    ui.grid.innerHTML = '';
+    
+    gameData.forEach((level, index) => {
+        const isUnlocked = currentState.unlocked.includes(index);
+        const isCompleted = currentState.unlocked.includes(index + 1) || (index === 3 && currentState.unlocked.includes('BOSS'));
+        
+        const node = document.createElement('div');
+        node.className = `level-node ${isUnlocked ? 'unlocked' : ''} ${isCompleted ? 'completed' : ''}`;
+        
+        let statusText = isUnlocked ? "▶ READY" : "🔒 LOCKED";
+        if (isCompleted) statusText = "✅ COMPLETED";
+
+        node.innerHTML = `
+            <div class="level-title">${level.title}</div>
+            <div class="level-status">${level.desc}</div>
+            <div style="font-size:0.8rem; margin-top:5px; color:var(--secondary)">${statusText}</div>
+        `;
+
+        if (isUnlocked) {
+            node.onclick = () => loadLevel(index);
+        }
+        
+        ui.grid.appendChild(node);
+    });
+
+    // Boss Node
+    const bossUnlocked = currentState.unlocked.includes(3) && currentState.unlocked.includes(4); // Logic to unlock boss after level 4
+    // Actually, let's unlock Boss after Level 4 (Index 3) is done.
+    const isBossUnlocked = currentState.unlocked.includes(4);
+    
+    const bossNode = document.createElement('div');
+    bossNode.className = `level-node ${isBossUnlocked ? 'unlocked' : ''}`;
+    bossNode.style.borderColor = "var(--warning)";
+    bossNode.innerHTML = `
+        <div class="level-title" style="color:var(--warning)">☠️ BOSS LEVEL</div>
+        <div class="level-status">Strategic Case Study</div>
+        <div style="font-size:0.8rem; margin-top:5px;">${isBossUnlocked ? "▶ CHALLENGE READY" : "🔒 LOCKED"}</div>
+    `;
+    if (isBossUnlocked) bossNode.onclick = () => startBoss();
+    ui.grid.appendChild(bossNode);
+}
+
+function showMap() {
+    renderMap();
+    switchView('map');
+}
+
+function loadLevel(index) {
+    currentState.level = index;
+    const data = gameData[index];
+    ui.contentDisplay.innerHTML = `
+        <h2>${data.title}</h2>
+        ${data.content}
+    `;
+    switchView('content');
+}
+
+// QUIZ ENGINE
+function startQuiz() {
+    const data = gameData[currentState.level];
+    currentState.currentQuiz = [...data.questions]; // Copy questions
+    currentState.quizIndex = 0;
+    
+    switchView('quiz');
+    loadQuestion();
+}
+
+function loadQuestion() {
+    const qData = currentState.currentQuiz[currentState.quizIndex];
+    document.getElementById('quiz-progress').innerText = `Challenge ${currentState.quizIndex + 1}/${currentState.currentQuiz.length}`;
+    document.getElementById('question-text').innerText = qData.q;
+    document.getElementById('feedback-box').classList.remove('show');
+    document.getElementById('next-btn').classList.add('hidden');
+    
+    const optsDiv = document.getElementById('options-container');
+    optsDiv.innerHTML = '';
+
+    qData.a.forEach((opt, idx) => {
+        const btn = document.createElement('div');
+        btn.className = 'quiz-option';
+        btn.innerText = opt;
+        btn.onclick = () => handleAnswer(idx, btn);
+        optsDiv.appendChild(btn);
+    });
+}
+
+function handleAnswer(selectedIndex, btnElement) {
+    // Disable clicks
+    const allOpts = document.querySelectorAll('.quiz-option');
+    allOpts.forEach(el => el.onclick = null);
+
+    const qData = currentState.currentQuiz[currentState.quizIndex];
+    const isCorrect = selectedIndex === qData.correct;
+    
+    // UI Update
+    if (isCorrect) {
+        btnElement.classList.add('correct');
+        currentState.xp += 100;
+        currentState.answersCorrect++;
+        showFeedback(true, "Excellent! " + qData.info);
+    } else {
+        btnElement.classList.add('wrong');
+        allOpts[qData.correct].classList.add('correct');
+        currentState.answersWrong++;
+        showFeedback(false, "Incorrect. Logic: " + qData.info);
+    }
+    
+    updateStats();
+    document.getElementById('next-btn').classList.remove('hidden');
+}
+
+function showFeedback(isGood, text) {
+    const box = document.getElementById('feedback-box');
+    box.className = `feedback-panel show ${isGood ? 'feedback-good' : 'feedback-bad'}`;
+    box.innerHTML = `<strong>${isGood ? '✅ CORRECT' : '❌ MISTAKE'}</strong><br>${text}`;
+}
+
+function nextQuestion() {
+    currentState.quizIndex++;
+    if (currentState.quizIndex < currentState.currentQuiz.length) {
+        loadQuestion();
+    } else {
+        // Level Complete
+        finishLevel();
+    }
+}
+
+function finishLevel() {
+    // Logic: Must unlock next level
+    const nextLvl = currentState.level + 1;
+    if (!currentState.unlocked.includes(nextLvl)) {
+        currentState.unlocked.push(nextLvl);
+    }
+    showMap();
+}
+
+function quitLevel() {
+    showMap();
+}
+
+/* -------------------------------------------------------------------------
+   BOSS LEVEL LOGIC
+------------------------------------------------------------------------- */
+function startBoss() {
+    switchView('boss');
+    document.getElementById('boss-feedback').innerHTML = '';
+    document.getElementById('boss-input').value = '';
+    document.getElementById('boss-finish-btn').classList.add('hidden');
+}
+
+function evaluateBoss() {
+    const text = document.getElementById('boss-input').value.toLowerCase();
+    
+    // Evaluation Logic
+    const keywords = [
+        ['awareness', 'reach', 'viral'], // Stage 1 concept
+        ['consideration', 'engagement', 'trust'], // Stage 2 concept
+        ['conversion', 'install', 'download', 'sale'], // Stage 3 concept
+        ['google trends', 'answerthepublic', 'semrush', 'ahrefs', 'chatgpt'] // Tool
+    ];
+
+    let score = 0;
+    let feedback = [];
+
+    if (keywords[0].some(k => text.includes(k))) { score++; feedback.push("✅ Awareness Strategy identified."); }
+    else { feedback.push("❌ Missing 'Awareness' phase logic."); }
+
+    if (keywords[1].some(k => text.includes(k))) { score++; feedback.push("✅ Consideration/Engagement logic found."); }
+    else { feedback.push("❌ Missing 'Engagement' phase."); }
+
+    if (keywords[2].some(k => text.includes(k))) { score++; feedback.push("✅ Conversion goal (Installs) mentioned."); }
+    else { feedback.push("❌ Missing 'Conversion' focus."); }
+
+    if (keywords[3].some(k => text.includes(k))) { score++; feedback.push("✅ Valid Research Tool cited."); }
+    else { feedback.push("❌ No valid research tool found (e.g., Google Trends)."); }
+
+    const box = document.getElementById('boss-feedback');
+    box.innerHTML = `<h3>ANALYSIS REPORT:</h3><ul>${feedback.map(f => `<li>${f}</li>`).join('')}</ul>`;
+    box.classList.add('show', score >= 3 ? 'feedback-good' : 'feedback-bad');
+
+    if (score >= 3) {
+        currentState.xp += 500;
+        updateStats();
+        document.getElementById('boss-finish-btn').classList.remove('hidden');
+    } else {
+        box.innerHTML += `<p><strong>RESULT:</strong> Strategy Weak. Revise and try again.</p>`;
+    }
+}
+
+function finishBoss() {
+    // Generate Stats
+    const total = currentState.answersCorrect + currentState.answersWrong;
+    const acc = total === 0 ? 0 : Math.round((currentState.answersCorrect / total) * 100);
+    
+    document.getElementById('final-score').innerText = currentState.xp;
+    document.getElementById('final-accuracy').innerText = acc + "%";
+    
+    switchView('cert');
+}
+
+/* -------------------------------------------------------------------------
+   REVISION MODE
+------------------------------------------------------------------------- */
+function toggleRevision() {
+    const rev = views.revision;
+    if (rev.classList.contains('hidden')) {
+        // Hide current, show revision overlay
+        rev.classList.remove('hidden');
+    } else {
+        rev.classList.add('hidden');
+    }
+}
+
+// Start
+init();
+
+</script>
+</body>
+</html>

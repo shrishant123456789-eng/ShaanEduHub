@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Mastery Game Lab</title>
+    <style>
+        /* GLOBAL DESIGN SYSTEM - Bright, Energetic, Welcoming */
+        :root {
+            --bg-base: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 100%);
+            --panel-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --accent: #3b82f6;
+            
+            /* Game specific colors */
+            --g1-theme: #0ea5e9; /* Cyan */
+            --g2-theme: #e11d48; /* Crimson */
+            --g3-theme: #8b5cf6; /* Purple */
+            --g4-theme: #d97706; /* Gold */
+            --g5-theme: #ea580c; /* Orange */
+            --g6-theme: #be123c; /* Dark Red/Pink */
+            --g7-theme: #059669; /* Emerald */
+            --g8-theme: #0d9488; /* Teal */
+            --g9-theme: #22c55e; /* Neon Green (softened) */
+            --g10-theme: #2563eb; /* Royal Blue */
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+        
+        body {
+            background: var(--bg-base);
+            color: var(--text-main);
+            overflow: hidden; /* Prevent scrolling, full app feel */
+            height: 100vh;
+            width: 100vw;
+        }
+
+        button { cursor: pointer; border: none; outline: none; transition: transform 0.1s, opacity 0.2s; }
+        button:active { transform: scale(0.95); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* SCREENS */
+        .screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.4s ease;
+        }
+        .screen.active { display: flex; opacity: 1; }
+
+        /* PORTAL */
+        #portal {
+            background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%);
+            text-align: center;
+        }
+        #portal h1 { font-size: 4rem; color: var(--accent); margin-bottom: 10px; font-weight: 800; letter-spacing: -1px; text-shadow: 2px 2px 10px rgba(59,130,246,0.2); }
+        #portal p { font-size: 1.5rem; color: var(--text-muted); margin-bottom: 40px; }
+        .btn-enter {
+            background: var(--accent); color: white; padding: 15px 40px; font-size: 1.5rem; font-weight: bold;
+            border-radius: 50px; box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        /* LOBBY */
+        #lobby { justify-content: flex-start; overflow-y: auto; padding-bottom: 50px; }
+        .top-bar {
+            width: 100%; background: var(--panel-bg); padding: 15px 30px; display: flex;
+            justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 10;
+        }
+        .stats-panel { display: flex; gap: 20px; align-items: center; }
+        .stat-badge { background: #f1f5f9; padding: 8px 15px; border-radius: 12px; font-weight: 600; display: flex; align-items: center; gap: 8px;}
+        .stat-badge span { color: var(--accent); }
+        
+        .grid-container {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px; width: 100%; max-width: 1200px; padding: 40px 20px;
+        }
+        .game-card {
+            background: var(--panel-bg); border-radius: 20px; padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: transform 0.3s, box-shadow 0.3s;
+            display: flex; flex-direction: column; gap: 15px; position: relative; overflow: hidden;
+        }
+        .game-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
+        .game-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px;
+            background: var(--theme-color, var(--accent));
+        }
+        .card-title { font-size: 1.4rem; font-weight: 700; color: var(--text-main); }
+        .card-desc { font-size: 0.9rem; color: var(--text-muted); flex-grow: 1; }
+        .progress-container { width: 100%; background: #e2e8f0; border-radius: 10px; height: 12px; overflow: hidden; }
+        .progress-bar { height: 100%; background: var(--theme-color, var(--accent)); width: 0%; transition: width 0.5s; }
+        .card-footer { display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; font-weight: 600; }
+        .btn-play { background: #f8fafc; color: var(--text-main); padding: 8px 20px; border-radius: 8px; font-weight: bold; border: 1px solid #e2e8f0;}
+        .game-card:hover .btn-play { background: var(--theme-color, var(--accent)); color: white; }
+
+        /* GAME ARENA */
+        #game-arena { background: #f8fafc; flex-direction: column; }
+        .arena-header {
+            width: 100%; background: var(--panel-bg); padding: 10px 20px; display: flex;
+            justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-bottom: 4px solid var(--current-theme);
+        }
+        .arena-main { flex-grow: 1; width: 100%; position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; }
+        .game-board {
+            width: 100%; max-width: 800px; height: 100%; max-height: 600px;
+            position: relative; background: white; border-radius: 16px; box-shadow: inset 0 0 20px rgba(0,0,0,0.02);
+            overflow: hidden; border: 1px solid #e2e8f0;
+        }
+        
+        .level-indicator { font-size: 1.5rem; font-weight: bold; color: var(--current-theme); }
+        .health-bar-container { width: 200px; height: 15px; background: #e2e8f0; border-radius: 10px; overflow: hidden; margin-left: 20px; }
+        .health-bar { height: 100%; background: var(--success); width: 100%; transition: width 0.2s, background-color 0.2s; }
+        .btn-exit { background: transparent; color: var(--text-muted); font-size: 1rem; font-weight: bold; }
+        .btn-exit:hover { color: var(--error); }
+
+        /* Overlays */
+        .overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.9); display: none; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 100; text-align: center;
+        }
+        .overlay.active { display: flex; animation: fadeIn 0.3s; }
+        .overlay h2 { font-size: 3rem; margin-bottom: 10px; }
+        .overlay.win h2 { color: var(--success); }
+        .overlay.lose h2 { color: var(--error); }
+        .overlay p { font-size: 1.2rem; color: var(--text-muted); margin-bottom: 20px; }
+        .btn-action { padding: 12px 30px; font-size: 1.2rem; border-radius: 50px; background: var(--current-theme); color: white; font-weight: bold; }
+
+        /* Specific Game Elements */
+        .g-item { position: absolute; display: flex; justify-content: center; align-items: center; font-weight: bold; user-select: none; }
+        .g1-block { width: 60px; height: 60px; border-radius: 12px; color: white; cursor: pointer; transition: top 0.1s linear; }
+        .g1-zone { position: absolute; bottom: 0; height: 80px; width: 33.33%; color: white; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 1.2rem; border-top-left-radius: 20px; border-top-right-radius: 20px; opacity: 0.8;}
+        .g2-orb { border-radius: 50%; background: var(--g2-theme); color: white; cursor: pointer; transition: transform 0.1s linear; }
+        .g3-node { width: 50px; height: 50px; border-radius: 25px; background: var(--g3-theme); color: white; cursor: pointer; box-shadow: 0 4px 10px rgba(139, 92, 246, 0.4); }
+        .g4-box { width: 100px; height: 100px; border-radius: 16px; background: #e2e8f0; cursor: pointer; transition: all 0.2s; }
+        .g4-box.active { background: var(--g4-theme); transform: scale(1.1); box-shadow: 0 0 20px var(--g4-theme); }
+        .g5-missile { width: 30px; height: 30px; background: var(--error); border-radius: 50%; cursor: pointer; }
+        .g5-reactor { width: 100px; height: 100px; background: var(--g5-theme); border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; justify-content: center; align-items: center; color: white; font-weight: bold; box-shadow: 0 0 30px rgba(234, 88, 12, 0.5); }
+        .g6-sec { flex: 1; margin: 10px; border-radius: 12px; background: #e2e8f0; position: relative; overflow: hidden; cursor: pointer; display:flex; align-items:flex-end;}
+        .g6-fill { width: 100%; background: var(--g6-theme); transition: height 0.1s; }
+        .g7-task { padding: 10px 20px; background: white; border: 2px solid var(--g7-theme); border-radius: 20px; cursor: grab; font-weight: bold; color: var(--text-main); }
+        .g7-quad { position: absolute; width: 50%; height: 50%; border: 1px dashed #cbd5e1; display:flex; justify-content:center; align-items:center; color: #94a3b8; font-size: 2rem; font-weight:bold; }
+        .g8-zone { position: absolute; width: 100%; height: 100px; background: rgba(13, 148, 136, 0.2); border-top: 2px solid var(--g8-theme); border-bottom: 2px solid var(--g8-theme); transition: top 0.1s; }
+        .g8-player { position: absolute; width: 50px; height: 50px; left: 50%; transform: translateX(-50%); background: var(--g8-theme); border-radius: 50%; transition: top 0.05s; }
+        .g9-dot { width: 20px; height: 20px; border-radius: 50%; position: absolute; }
+        .g9-player { background: var(--accent); z-index: 10; width: 30px; height: 30px;}
+        .g9-good { background: var(--g9-theme); }
+        .g9-bad { background: var(--error); }
+        .g10-arg { font-size: 1.5rem; font-weight: bold; color: var(--text-main); text-align: center; margin-bottom: 20px; padding: 20px; background: white; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);}
+        .g10-btn { padding: 15px 20px; background: #e2e8f0; border-radius: 12px; font-weight: bold; width: 100%; margin-bottom: 10px; transition: background 0.2s;}
+        .g10-btn:hover { background: var(--g10-theme); color: white; }
+
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Global end screen */
+        #global-summary { background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); }
+    </style>
+</head>
+<body>
+
+    <!-- PORTAL SCREEN -->
+    <div id="portal" class="screen active">
+        <h1>Academic Mastery Game Lab</h1>
+        <p>Enter the Cognitive Combat Arena</p>
+        <button class="btn-enter" onclick="UI.showLobby()">ENTER LAB</button>
+    </div>
+
+    <!-- LOBBY SCREEN -->
+    <div id="lobby" class="screen">
+        <div class="top-bar">
+            <h2>Command Dashboard</h2>
+            <div class="stats-panel">
+                <div class="stat-badge">XP: <span id="stat-xp">0</span></div>
+                <div class="stat-badge">Levels: <span id="stat-levels">0/500</span></div>
+                <div class="stat-badge">Rank: <span id="stat-rank">Rookie</span></div>
+            </div>
+        </div>
+        <div class="grid-container" id="game-grid">
+            <!-- Game cards injected by JS -->
+        </div>
+    </div>
+
+    <!-- GAME ARENA SCREEN -->
+    <div id="game-arena" class="screen">
+        <div class="arena-header">
+            <button class="btn-exit" onclick="GameEngine.exitGame()">◄ Back to Lobby</button>
+            <div style="display: flex; align-items: center;">
+                <div class="level-indicator">Level <span id="arena-level">1</span>/50</div>
+                <div class="health-bar-container" id="health-container">
+                    <div class="health-bar" id="arena-health"></div>
+                </div>
+            </div>
+            <div style="font-weight: bold; color: var(--text-muted)">Score: <span id="arena-score">0</span></div>
+        </div>
+        
+        <div class="arena-main">
+            <div class="game-board" id="board">
+                <!-- Dynamic game content -->
+            </div>
+            
+            <!-- Overlays -->
+            <div id="overlay-msg" class="overlay">
+                <h2 id="msg-title">Level Complete!</h2>
+                <p id="msg-desc">+10 XP Earned</p>
+                <button class="btn-action" id="msg-btn" onclick="GameEngine.nextAction()">Next Level</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- GLOBAL CONFIG & STATE ---
+        const GAMES = [
+            { id: 1, name: "Neuro Architect", desc: "Route blocks to Short/Long term memory.", theme: "var(--g1-theme)" },
+            { id: 2, name: "Recall Arena", desc: "Prevent memory decay. Click before zero.", theme: "var(--g2-theme)" },
+            { id: 3, name: "Note Hacker", desc: "Link structured nodes in correct order.", theme: "var(--g3-theme)" },
+            { id: 4, name: "Memory Heist", desc: "Chunk and recall visual sequences.", theme: "var(--g4-theme)" },
+            { id: 5, name: "Focus Commander", desc: "Defend the Focus Reactor from distractions.", theme: "var(--g5-theme)" },
+            { id: 6, name: "Exam Strike", desc: "Allocate focus, avoid negative traps.", theme: "var(--g6-theme)" },
+            { id: 7, name: "Time Empire", desc: "Sort tasks into the Eisenhower matrix.", theme: "var(--g7-theme)" },
+            { id: 8, name: "Stress Breaker", desc: "Keep the mental state in the optimal zone.", theme: "var(--g8-theme)" },
+            { id: 9, name: "Digital Scholar", desc: "Gather knowledge, evade deep-web traps.", theme: "var(--g9-theme)" },
+            { id: 10, name: "Research Dominion", desc: "Counter weak logic with solid evidence.", theme: "var(--g10-theme)" }
+        ];
+
+        let state = {
+            xp: 0,
+            levelsCleared: 0,
+            progress: { 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0 }
+        };
+
+        const ranks = [
+            { threshold: 0, name: "Rookie" },
+            { threshold: 1000, name: "Strategist" },
+            { threshold: 3000, name: "Tactician" },
+            { threshold: 6000, name: "Architect" },
+            { threshold: 10000, name: "Mastermind" },
+            { threshold: 15000, name: "Grand Scholar" }
+        ];
+
+        // --- UI MANAGER ---
+        const UI = {
+            showScreen(id) {
+                document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+                document.getElementById(id).classList.add('active');
+            },
+            showLobby() {
+                this.updateStats();
+                const grid = document.getElementById('game-grid');
+                grid.innerHTML = '';
+                GAMES.forEach(g => {
+                    const level = state.progress[g.id];
+                    const pct = (level / 50) * 100;
+                    grid.innerHTML += `
+                        <div class="game-card" style="--theme-color: ${g.theme}">
+                            <div class="card-title">${g.name}</div>
+                            <div class="card-desc">${g.desc}</div>
+                            <div class="progress-container">
+                                <div class="progress-bar" style="width: ${pct}%"></div>
+                            </div>
+                            <div class="card-footer">
+                                <span>Level ${level}/50</span>
+                                <button class="btn-play" onclick="GameEngine.initGame(${g.id})">${level === 50 ? 'Mastered' : 'Play'}</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                this.showScreen('lobby');
+            },
+            updateStats() {
+                document.getElementById('stat-xp').innerText = state.xp;
+                document.getElementById('stat-levels').innerText = Object.values(state.progress).reduce((a,b)=>a+b,0) + '/500';
+                let currentRank = ranks[0].name;
+                for(let r of ranks) if(state.xp >= r.threshold) currentRank = r.name;
+                document.getElementById('stat-rank').innerText = currentRank;
+            }
+        };
+
+        // --- GAME ENGINE ---
+        const GameEngine = {
+            activeGameId: null,
+            currentLevel: 1,
+            loopId: null,
+            isPlaying: false,
+            board: document.getElementById('board'),
+            health: 100,
+            score: 0,
+            targetScore: 0,
+            instance: null,
+
+            initGame(id) {
+                this.activeGameId = id;
+                this.currentLevel = state.progress[id] + 1;
+                if(this.currentLevel > 50) this.currentLevel = 50; // Replay 50
+                const gameData = GAMES.find(g => g.id === id);
+                document.documentElement.style.setProperty('--current-theme', gameData.theme);
+                
+                UI.showScreen('game-arena');
+                this.startLevel();
+            },
+
+            startLevel() {
+                this.board.innerHTML = '';
+                document.getElementById('overlay-msg').classList.remove('active');
+                this.isPlaying = true;
+                this.health = 100;
+                this.score = 0;
+                this.updateUI();
+                
+                // Calculate difficulty params
+                const diff = this.currentLevel / 50; // 0.0 to 1.0
+
+                switch(this.activeGameId) {
+                    case 1: this.instance = new G1_Neuro(diff); break;
+                    case 2: this.instance = new G2_Recall(diff); break;
+                    case 3: this.instance = new G3_Note(diff); break;
+                    case 4: this.instance = new G4_Heist(diff); break;
+                    case 5: this.instance = new G5_Focus(diff); break;
+                    case 6: this.instance = new G6_Exam(diff); break;
+                    case 7: this.instance = new G7_Time(diff); break;
+                    case 8: this.instance = new G8_Stress(diff); break;
+                    case 9: this.instance = new G9_Scholar(diff); break;
+                    case 10: this.instance = new G10_Research(diff); break;
+                }
+
+                if(this.loopId) cancelAnimationFrame(this.loopId);
+                this.lastTime = performance.now();
+                this.loop();
+            },
+
+            loop(time) {
+                if(!this.isPlaying) return;
+                const dt = (time - this.lastTime) / 1000 || 0;
+                this.lastTime = time;
+                
+                if(this.instance && this.instance.update) {
+                    this.instance.update(dt);
+                }
+                
+                this.loopId = requestAnimationFrame(t => this.loop(t));
+            },
+
+            updateUI() {
+                document.getElementById('arena-level').innerText = this.currentLevel;
+                document.getElementById('arena-health').style.width = Math.max(0, this.health) + '%';
+                document.getElementById('arena-score').innerText = this.score;
+                
+                const hb = document.getElementById('arena-health');
+                if(this.health > 50) hb.style.backgroundColor = 'var(--success)';
+                else if(this.health > 20) hb.style.backgroundColor = 'var(--warning)';
+                else hb.style.backgroundColor = 'var(--error)';
+            },
+
+            addScore(val) {
+                this.score += val;
+                this.updateUI();
+                if(this.instance && this.instance.checkWin && this.instance.checkWin()) {
+                    this.winLevel();
+                }
+            },
+
+            takeDamage(val) {
+                this.health -= val;
+                this.updateUI();
+                if(this.health <= 0) this.loseLevel();
+            },
+
+            winLevel() {
+                this.isPlaying = false;
+                let xpGain = this.currentLevel <= 10 ? 10 : this.currentLevel <= 20 ? 20 : this.currentLevel <= 35 ? 30 : 50;
+                state.xp += xpGain;
+                if(state.progress[this.activeGameId] < this.currentLevel) {
+                    state.progress[this.activeGameId] = this.currentLevel;
+                }
+                
+                const over = document.getElementById('overlay-msg');
+                over.className = 'overlay win active';
+                document.getElementById('msg-title').innerText = "Level Cleared!";
+                document.getElementById('msg-desc').innerText = `+${xpGain} XP Earned | Mastery improving.`;
+                document.getElementById('msg-btn').innerText = this.currentLevel < 50 ? "Next Level" : "Return to Lobby";
+            },
+
+            loseLevel() {
+                this.isPlaying = false;
+                const over = document.getElementById('overlay-msg');
+                over.className = 'overlay lose active';
+                document.getElementById('msg-title').innerText = "Cognitive Overload";
+                document.getElementById('msg-desc').innerText = "Focus broken. Re-calibrate and try again.";
+                document.getElementById('msg-btn').innerText = "Retry Level";
+            },
+
+            nextAction() {
+                if(this.health <= 0) {
+                    this.startLevel(); // Retry
+                } else {
+                    if(this.currentLevel < 50) {
+                        this.currentLevel++;
+                        this.startLevel();
+                    } else {
+                        this.exitGame(); // Finished 50
+                    }
+                }
+            },
+
+            exitGame() {
+                this.isPlaying = false;
+                if(this.loopId) cancelAnimationFrame(this.loopId);
+                if(this.instance && this.instance.cleanup) this.instance.cleanup();
+                UI.showLobby();
+            }
+        };
+
+        // --- UTILS ---
+        const U = {
+            create(classes, styles = {}) {
+                const el = document.createElement('div');
+                el.className = classes;
+                Object.assign(el.style, styles);
+                return el;
+            },
+            rnd(min, max) { return Math.random() * (max - min) + min; }
+        };
+
+        // ==========================================
+        // GAME 1: Neuro Architect
+        // Route falling blocks. Match color to zone.
+        // ==========================================
+        class G1_Neuro {
+            constructor(diff) {
+                this.blocks = [];
+                this.timer = 0;
+                this.spawnRate = 2 - (diff * 1.5); // Faster spawns
+                this.speed = 100 + (diff * 200); // px per sec
+                GameEngine.targetScore = 10 + Math.floor(diff * 30);
+                
+                this.zones = [
+                    { id: 0, color: '#94a3b8', label: 'Sensory (Discard)', left: '0%', key: 'ArrowLeft' },
+                    { id: 1, color: '#3b82f6', label: 'Working (Hold)', left: '33.3%', key: 'ArrowDown' },
+                    { id: 2, color: '#10b981', label: 'Long-Term (Save)', left: '66.6%', key: 'ArrowRight' }
+                ];
+
+                this.zones.forEach(z => {
+                    let el = U.create('g1-zone', { background: z.color, left: z.left });
+                    el.innerText = z.label;
+                    GameEngine.board.appendChild(el);
+                });
+
+                this.activeBlock = null;
+                this.handleInput = this.handleInput.bind(this);
+                window.addEventListener('keydown', this.handleInput);
+            }
+            update(dt) {
+                this.timer += dt;
+                if(this.timer > this.spawnRate && !this.activeBlock) {
+                    this.spawnBlock();
+                    this.timer = 0;
+                }
+
+                if(this.activeBlock) {
+                    this.activeBlock.y += this.speed * dt;
+                    this.activeBlock.el.style.top = this.activeBlock.y + 'px';
+                    
+                    if(this.activeBlock.y > GameEngine.board.offsetHeight - 140) {
+                        GameEngine.takeDamage(20);
+                        this.activeBlock.el.remove();
+                        this.activeBlock = null;
+                    }
+                }
+            }
+            spawnBlock() {
+                let targetZone = this.zones[Math.floor(Math.random() * 3)];
+                let el = U.create('g-item g1-block', { background: targetZone.color, left: 'calc(50% - 30px)', top: '0px' });
+                GameEngine.board.appendChild(el);
+                this.activeBlock = { el, y: 0, targetId: targetZone.id };
+            }
+            handleInput(e) {
+                if(!this.activeBlock) return;
+                let match = -1;
+                if(e.key === 'ArrowLeft') match = 0;
+                if(e.key === 'ArrowDown') match = 1;
+                if(e.key === 'ArrowRight') match = 2;
+
+                if(match !== -1) {
+                    if(match === this.activeBlock.targetId) {
+                        GameEngine.addScore(1);
+                        this.activeBlock.el.style.left = this.zones[match].left;
+                        this.activeBlock.el.style.top = 'calc(100% - 60px)';
+                        setTimeout(() => this.activeBlock && this.activeBlock.el.remove(), 200);
+                    } else {
+                        GameEngine.takeDamage(15);
+                        this.activeBlock.el.remove();
+                    }
+                    this.activeBlock = null;
+                }
+            }
+            checkWin() { return GameEngine.score >= GameEngine.targetScore; }
+            cleanup() { window.removeEventListener('keydown', this.handleInput); }
+        }
+
+        // ==========================================
+        // GAME 2: Recall Arena
+        // Orbs scale down. Click before they disappear.
+        // ==========================================
+        class G2_Recall {
+            constructor(diff) {
+                this.orbs = [];
+                this.timer = 0;
+                this.spawnRate = 1.5 - (diff * 1.0); 
+                this.decaySpeed = 0.5 + (diff * 1.5); // scale per sec
+                GameEngine.targetScore = 15 + Math.floor(diff * 40);
+            }
+            update(dt) {
+                this.timer += dt;
+                if(this.timer > this.spawnRate) {
+                    this.spawnOrb();
+                    this.timer = 0;
+                }
+                for(let i = this.orbs.length-1; i>=0; i--) {
+                    let o = this.orbs[i];
+                    o.scale -= this.decaySpeed * dt;
+                    if(o.scale <= 0) {
+                        GameEngine.takeDamage(10);
+                        o.el.remove();
+                        this.orbs.splice(i, 1);
+                    } else {
+                        o.el.style.transform = `scale(${o.scale})`;
+                    }
+                }
+            }
+            spawnOrb() {
+                let s = 60;
+                let x = U.rnd(0, GameEngine.board.offsetWidth - s);
+                let y = U.rnd(0, GameEngine.board.offsetHeight - s);
+                let el = U.create('g-item g2-orb', { width: s+'px', height: s+'px', left: x+'px', top: y+'px' });
+                let orb = { el, scale: 1 };
+                
+                el.onclick = () => {
+                    GameEngine.addScore(1);
+                    el.remove();
+                    this.orbs = this.orbs.filter(ob => ob !== orb);
+                };
+                GameEngine.board.appendChild(el);
+                this.orbs.push(orb);
+            }
+            checkWin() { return GameEngine.score >= GameEngine.targetScore; }
+            cleanup() {}
+        }
+
+        // ==========================================
+        // GAME 3: Note Hacker
+        // Click nodes in numerical order.
+        // ==========================================
+        class G3_Note {
+            constructor(diff) {
+                this.totalNodes = 4 + Math.floor(diff * 10);
+                this.currentExpected = 1;
+                this.nodes = [];
+                this.timeLimit = 10 + (diff * 10); // less time relative to node count
+                
+                for(let i=1; i<=this.totalNodes; i++) {
+                    let s = 50;
+                    let x = U.rnd(20, GameEngine.board.offsetWidth - 70);
+                    let y = U.rnd(20, GameEngine.board.offsetHeight - 70);
+                    let el = U.create('g-item g3-node', { left: x+'px', top: y+'px' });
+                    // Advanced levels hide numbers after 2 seconds
+                    el.innerText = i;
+                    el.dataset.val = i;
+                    el.onclick = () => this.clickNode(i, el);
+                    GameEngine.board.appendChild(el);
+                    this.nodes.push(el);
+                }
+
+                if(diff > 0.5) {
+                    setTimeout(() => {
+                        this.nodes.forEach(n => n.innerText = '?');
+                    }, 2000 - (diff * 1000));
+                }
+            }
+            update(dt) {
+                this.timeLimit -= dt;
+                if(this.timeLimit <= 0) GameEngine.takeDamage(100); // Fail
+            }
+            clickNode(val, el) {
+                if(val === this.currentExpected) {
+                    el.style.background = 'var(--success)';
+                    el.innerText = '✓';
+                    this.currentExpected++;
+                    GameEngine.addScore(1);
+                } else {
+                    GameEngine.takeDamage(20);
+                    el.style.background = 'var(--error)';
+                    setTimeout(() => el.style.background = 'var(--g3-theme)', 500);
+                }
+            }
+            checkWin() { return this.currentExpected > this.totalNodes; }
+            cleanup() {}
+        }
+
+        // ==========================================
+        // GAME 4: Memory Heist
+        // Simon says pattern matching.
+        // ==========================================
+        class G4_Heist {
+            constructor(diff) {
+                this.seqLength = 3 + Math.floor(diff * 5);
+                this.sequence = [];
+                this.playerStep = 0;
+                this.state = 'showing'; // showing, waiting
+                
+                let container = U.create('div', { display:'grid', gridTemplateColumns:'repeat(3, 1fr)', gap:'20px', padding:'50px', margin:'auto' });
+                this.boxes = [];
+                for(let i=0; i<9; i++) {
+                    let box = U.create('g-item g4-box');
+                    box.onclick = () => this.clickBox(i);
+                    container.appendChild(box);
+                    this.boxes.push(box);
+                }
+                GameEngine.board.style.display = 'flex';
+                GameEngine.board.appendChild(container);
+
+                for(let i=0; i<this.seqLength; i++) {
+                    this.sequence.push(Math.floor(Math.random() * 9));
+                }
+                
+                this.timer = 1;
+                this.showIdx = 0;
+                this.showSpeed = 0.8 - (diff * 0.4);
+            }
+            update(dt) {
+                if(this.state === 'showing') {
+                    this.timer -= dt;
+                    if(this.timer <= 0) {
+                        this.boxes.forEach(b => b.classList.remove('active'));
+                        if(this.showIdx < this.sequence.length) {
+                            this.boxes[this.sequence[this.showIdx]].classList.add('active');
+                            this.showIdx++;
+                            this.timer = this.showSpeed;
+                        } else {
+                            this.state = 'waiting';
+                        }
+                    }
+                }
+            }
+            clickBox(i) {
+                if(this.state !== 'waiting') return;
+                if(i === this.sequence[this.playerStep]) {
+                    this.playerStep++;
+                    GameEngine.addScore(1);
+                } else {
+                    GameEngine.takeDamage(30);
+                    this.playerStep = 0;
+                    this.state = 'showing';
+                    this.showIdx = 0;
+                    this.timer = 1;
+                }
+            }
+            checkWin() { return this.playerStep === this.sequence.length; }
+            cleanup() { GameEngine.board.style.display = 'block'; }
+        }
+
+        // ==========================================
+        // GAME 5: Focus Commander
+        // Defend center from incoming dots.
+        // ==========================================
+        class G5_Focus {
+            constructor(diff) {
+                this.reactor = U.create('g5-reactor');
+                this.reactor.innerText = "FOCUS";
+                GameEngine.board.appendChild(this.reactor);
+                
+                this.enemies = [];
+                this.timer = 0;
+                this.spawnRate = 1.2 - (diff * 0.8);
+                this.speed = 50 + (diff * 150);
+                GameEngine.targetScore = 20 + Math.floor(diff * 30);
+            }
+            update(dt) {
+                this.timer += dt;
+                if(this.timer > this.spawnRate) {
+                    this.spawnEnemy();
+                    this.timer = 0;
+                }
+                let cx = GameEngine.board.offsetWidth / 2;
+                let cy = GameEngine.board.offsetHeight / 2;
+
+                for(let i = this.enemies.length-1; i>=0; i--) {
+                    let e = this.enemies[i];
+                    let dx = cx - e.x;
+                    let dy = cy - e.y;
+                    let dist = Math.sqrt(dx*dx + dy*dy);
+                    if(dist < 50) {
+                        GameEngine.takeDamage(15);
+                        e.el.remove();
+                        this.enemies.splice(i, 1);
+                    } else {
+                        e.x += (dx / dist) * this.speed * dt;
+                        e.y += (dy / dist) * this.speed * dt;
+                        e.el.style.left = e.x + 'px';
+                        e.el.style.top = e.y + 'px';
+                    }
+                }
+            }
+            spawnEnemy() {
+                let angle = Math.random() * Math.PI * 2;
+                let r = Math.max(GameEngine.board.offsetWidth, GameEngine.board.offsetHeight);
+                let cx = GameEngine.board.offsetWidth / 2;
+                let cy = GameEngine.board.offsetHeight / 2;
+                let x = cx + Math.cos(angle) * r;
+                let y = cy + Math.sin(angle) * r;
+                
+                let el = U.create('g-item g5-missile', { left: x+'px', top: y+'px' });
+                let enemy = { el, x, y };
+                el.onclick = () => {
+                    GameEngine.addScore(1);
+                    el.remove();
+                    this.enemies = this.enemies.filter(en => en !== enemy);
+                };
+                GameEngine.board.appendChild(el);
+                this.enemies.push(enemy);
+            }
+            checkWin() { return GameEngine.score >= GameEngine.targetScore; }
+            cleanup() {}
+        }
+
+        // ==========================================
+        // GAME 6: Exam Strike
+        // Click bars to fill them, avoid red traps.
+        // ==========================================
+        class G6_Exam {
+            constructor(diff) {
+                GameEngine.board.style.display = 'flex';
+                this.sections = [];
+                this.trapTimer = 0;
+                this.trapInterval = 2 - (diff * 1);
+                
+                for(let i=0; i<3; i++) {
+                    let sec = U.create('g6-sec');
+                    let fill = U.create('g6-fill', { height: '0%' });
+                    sec.appendChild(fill);
+                    
+                    let label = U.create('div', { position:'absolute', top:'10px', left:'10px', fontWeight:'bold', zIndex:2 });
+                    label.innerText = ["Math", "Logic", "Verbal"][i];
+                    sec.appendChild(label);
+                    
+                    let data = { el: sec, fillEl: fill, val: 0, isTrap: false };
+                    sec.onmousedown = () => this.clickSec(data);
+                    
+                    this.sections.push(data);
+                    GameEngine.board.appendChild(sec);
+                }
+                this.drainRate = 5 + (diff * 15); // percent per sec
+            }
+            update(dt) {
+                this.trapTimer -= dt;
+                if(this.trapTimer <= 0) {
+                    this.sections.forEach(s => { s.isTrap = false; s.el.style.border = 'none'; });
+                    let trapIdx = Math.floor(Math.random() * 4); // 25% chance no trap
+                    if(trapIdx < 3) {
+                        this.sections[trapIdx].isTrap = true;
+                        this.sections[trapIdx].el.style.border = '4px solid var(--error)';
+                    }
+                    this.trapTimer = this.trapInterval;
+                }
+
+                let allFull = true;
+                this.sections.forEach(s => {
+                    s.val -= this.drainRate * dt;
+                    if(s.val < 0) s.val = 0;
+                    s.fillEl.style.height = s.val + '%';
+                    if(s.val < 100) allFull = false;
+                });
+
+                if(allFull) {
+                    GameEngine.addScore(100); // Trigger win
+                }
+            }
+            clickSec(s) {
+                if(s.isTrap) {
+                    GameEngine.takeDamage(20);
+                    s.val = Math.max(0, s.val - 20);
+                } else {
+                    s.val = Math.min(100, s.val + 15);
+                    GameEngine.addScore(1);
+                }
+            }
+            checkWin() { return GameEngine.score >= 100; }
+            cleanup() { GameEngine.board.style.display = 'block'; }
+        }
+
+        // ==========================================
+        // GAME 7: Time Empire
+        // Drag/Click tasks to correct quadrant.
+        // ==========================================
+        class G7_Time {
+            constructor(diff) {
+                let quads = [
+                    { t:0, l:0, bg:'#fca5a5', text:'Do' },
+                    { t:0, l:'50%', bg:'#fde047', text:'Schedule' },
+                    { t:'50%', l:0, bg:'#93c5fd', text:'Delegate' },
+                    { t:'50%', l:'50%', bg:'#d1d5db', text:'Delete' }
+                ];
+                quads.forEach((q, i) => {
+                    let el = U.create('g7-quad', { top: q.t, left: q.l, backgroundColor: q.bg });
+                    el.innerText = q.text;
+                    el.dataset.idx = i;
+                    GameEngine.board.appendChild(el);
+                });
+
+                this.tasks = [];
+                this.timer = 0;
+                this.spawnRate = 2 - (diff * 1);
+                GameEngine.targetScore = 15 + Math.floor(diff * 20);
+            }
+            update(dt) {
+                this.timer += dt;
+                if(this.timer > this.spawnRate) {
+                    this.spawnTask();
+                    this.timer = 0;
+                }
+            }
+            spawnTask() {
+                let types = [
+                    { text: "Exam Tomorrow!", target: 0 },
+                    { text: "Gym routine", target: 1 },
+                    { text: "Buy groceries", target: 2 },
+                    { text: "Scroll social media", target: 3 }
+                ];
+                let type = types[Math.floor(Math.random()*4)];
+                let el = U.create('g-item g7-task', { top: 'calc(50% - 20px)', left: 'calc(50% - 60px)' });
+                el.innerText = type.text;
+                
+                // Simple click mechanic instead of drag for reliability
+                el.onclick = () => {
+                    let dest = (type.target + 1) % 4; // Cycles through visually for user to sort
+                    el.dataset.current = dest;
+                    let q = document.querySelectorAll('.g7-quad')[dest];
+                    q.appendChild(el);
+                    el.style.position = 'relative'; el.style.top='0'; el.style.left='0'; el.style.margin='5px';
+                    
+                    if(dest === type.target) {
+                        GameEngine.addScore(1);
+                        setTimeout(() => el.remove(), 500);
+                    } else {
+                        GameEngine.takeDamage(5);
+                    }
+                };
+                GameEngine.board.appendChild(el);
+            }
+            checkWin() { return GameEngine.score >= GameEngine.targetScore; }
+            cleanup() {}
+        }
+
+        // ==========================================
+        // GAME 8: Stress Breaker
+        // Keep slider in moving zone.
+        // ==========================================
+        class G8_Stress {
+            constructor(diff) {
+                this.zone = U.create('g8-zone', { top: '40%' });
+                this.player = U.create('g8-player', { top: '50%' });
+                GameEngine.board.appendChild(this.zone);
+                GameEngine.board.appendChild(this.player);
+                
+                this.zoneY = 40;
+                this.playerY = 50;
+                this.time = 0;
+                this.volatility = 1 + (diff * 3);
+                
+                this.handleMove = (e) => {
+                    let rect = GameEngine.board.getBoundingClientRect();
+                    let y = e.clientY || (e.touches && e.touches[0].clientY);
+                    this.playerY = ((y - rect.top) / rect.height) * 100;
+                    this.playerY = Math.max(0, Math.min(100, this.playerY));
+                };
+                window.addEventListener('mousemove', this.handleMove);
+                window.addEventListener('touchmove', this.handleMove);
+                
+                GameEngine.targetScore = 100; // Survive/accumulate
+            }
+            update(dt) {
+                this.time += dt;
+                // Zone moves erratically
+                this.zoneY = 50 + Math.sin(this.time * this.volatility) * 30 + Math.cos(this.time * this.volatility * 0.5) * 10;
+                this.zone.style.top = this.zoneY + '%';
+                this.player.style.top = this.playerY + '%';
+
+                // Check overlap (zone is ~15% height)
+                let diff = Math.abs(this.playerY - this.zoneY);
+                if(diff < 15) {
+                    GameEngine.addScore(10 * dt); // gain score
+                    this.zone.style.backgroundColor = 'rgba(16, 185, 129, 0.4)'; // green tint
+                } else {
+                    GameEngine.takeDamage(15 * dt); // lose health
+                    this.zone.style.backgroundColor = 'rgba(239, 68, 68, 0.4)'; // red tint
+                }
+            }
+            checkWin() { return GameEngine.score >= GameEngine.targetScore; }
+            cleanup() {
+                window.removeEventListener('mousemove', this.handleMove);
+                window.removeEventListener('touchmove', this.handleMove);
+            }
+        }
+
+        // ==========================================
+        // GAME 9: Digital Scholar
+        // Collect green dots, avoid moving red dots.
+        // ==========================================
+        class G9_Scholar {
+            constructor(diff) {
+                this.p = { x: 400, y: 300, el: U.create('g-item g9-dot g9-player') };
+                GameEngine.board.appendChild(this.p.el);
+                
+                this.dots = [];
+                this.timer = 0;
+                this.speed = 150 + (diff * 150); // Enemy speed
+                GameEngine.targetScore = 15 + Math.floor(diff * 20);
+
+                this.target = { x: 400, y: 300 };
+                this.handleMove = (e) => {
+                    let rect = GameEngine.board.getBoundingClientRect();
+                    this.target.x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
+                    this.target.y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
+                };
+                GameEngine.board.addEventListener('mousemove', this.handleMove);
+                GameEngine.board.addEventListener('touchmove', this.handleMove);
+            }
+            update(dt) {
+                // Move player
+                let dx = this.target.x - this.p.x;
+                let dy = this.target.y - this.p.y;
+                this.p.x += dx * 5 * dt;
+                this.p.y += dy * 5 * dt;
+                this.p.el.style.left = (this.p.x - 15) + 'px';
+                this.p.el.style.top = (this.p.y - 15) + 'px';
+
+                this.timer -= dt;
+                if(this.timer <= 0) {
+                    this.spawnDot();
+                    this.timer = 0.5;
+                }
+
+                for(let i=this.dots.length-1; i>=0; i--) {
+                    let d = this.dots[i];
+                    if(d.bad) {
+                        d.x += d.vx * dt; d.y += d.vy * dt;
+                        if(d.x<0 || d.x>800) d.vx*=-1;
+                        if(d.y<0 || d.y>600) d.vy*=-1;
+                        d.el.style.left = d.x + 'px'; d.el.style.top = d.y + 'px';
+                    }
+                    
+                    let dist = Math.hypot(this.p.x - d.x, this.p.y - d.y);
+                    if(dist < 25) {
+                        if(d.bad) {
+                            GameEngine.takeDamage(25);
+                        } else {
+                            GameEngine.addScore(1);
+                        }
+                        d.el.remove();
+                        this.dots.splice(i, 1);
+                    }
+                }
+            }
+            spawnDot() {
+                let bad = Math.random() > 0.4;
+                let x = U.rnd(20, 780), y = U.rnd(20, 580);
+                let el = U.create(`g-item g9-dot ${bad ? 'g9-bad' : 'g9-good'}`, { left: x+'px', top: y+'px' });
+                GameEngine.board.appendChild(el);
+                let a = Math.random() * Math.PI * 2;
+                this.dots.push({ el, x, y, bad, vx: Math.cos(a)*this.speed, vy: Math.sin(a)*this.speed });
+            }
+            checkWin() { return GameEngine.score >= GameEngine.targetScore; }
+            cleanup() {
+                GameEngine.board.removeEventListener('mousemove', this.handleMove);
+                GameEngine.board.removeEventListener('touchmove', this.handleMove);
+            }
+        }
+
+        // ==========================================
+        // GAME 10: Research Dominion
+        // Logic counter-attacks.
+        // ==========================================
+        class G10_Research {
+            constructor(diff) {
+                this.args = [
+                    { type: 0, text: "Attack: Anecdotal Evidence!", counter: 1 },
+                    { type: 1, text: "Attack: Ad Hominem!", counter: 2 },
+                    { type: 2, text: "Attack: False Dichotomy!", counter: 0 }
+                ];
+                this.counters = [
+                    { id: 0, text: "Defend: Spectrum Analysis" },
+                    { id: 1, text: "Defend: Statistical Data" },
+                    { id: 2, text: "Defend: Address the Argument" }
+                ];
+
+                this.container = U.create('div', { width: '80%', margin: 'auto', marginTop: '50px' });
+                this.display = U.create('g10-arg');
+                this.container.appendChild(this.display);
+
+                this.counters.forEach(c => {
+                    let btn = U.create('button g10-btn');
+                    btn.innerText = c.text;
+                    btn.onclick = () => this.castDefend(c.id);
+                    this.container.appendChild(btn);
+                });
+
+                GameEngine.board.appendChild(this.container);
+                
+                this.timeLimit = 3 - (diff * 1.5); // reaction time
+                this.timer = this.timeLimit;
+                this.currentArg = null;
+                GameEngine.targetScore = 10 + Math.floor(diff * 15);
+                this.nextTurn();
+            }
+            update(dt) {
+                if(!this.currentArg) return;
+                this.timer -= dt;
+                // Visual timer on text
+                this.display.style.borderBottom = `5px solid ${this.timer < 1 ? 'red' : 'green'}`;
+                this.display.style.width = (this.timer / this.timeLimit) * 100 + '%';
+
+                if(this.timer <= 0) {
+                    GameEngine.takeDamage(20);
+                    this.nextTurn();
+                }
+            }
+            nextTurn() {
+                this.currentArg = this.args[Math.floor(Math.random()*3)];
+                this.display.innerText = this.currentArg.text;
+                this.display.style.width = '100%';
+                this.timer = this.timeLimit;
+            }
+            castDefend(id) {
+                if(id === this.currentArg.counter) {
+                    GameEngine.addScore(1);
+                } else {
+                    GameEngine.takeDamage(20);
+                }
+                this.nextTurn();
+            }
+            checkWin() { return GameEngine.score >= GameEngine.targetScore; }
+            cleanup() {}
+        }
+
+        // --- INIT ---
+        window.onload = () => {
+            UI.showScreen('portal');
+        };
+
+    </script>
+</body>
+</html>

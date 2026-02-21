@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cognitive Science Lab – Session 07: Time Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --font-main: 'Patrick Hand', cursive;
+            --bg-color: #ffffff;
+            --panel-blue: #e3f2fd;
+            --panel-yellow: #fff9c4;
+            --panel-green: #e8f5e9;
+            --panel-pink: #fce4ec;
+            --header-blue: #1565c0;
+            --text-dark: #2c3e50;
+            --success: #2e7d32;
+            --warning: #ef6c00;
+            --border-radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            font-weight: 700; /* ALL TEXT BOLD per requirement */
+        }
+
+        /* --- LAYOUT UTILS --- */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .hidden { display: none !important; }
+
+        h1, h2, h3 {
+            color: var(--header-blue);
+            margin-top: 0;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-bottom: 4px solid var(--header-blue);
+            margin-bottom: 20px;
+        }
+
+        .hero h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        .hero .subtitle { font-size: 1.5rem; color: #555; margin-bottom: 20px; display: block; }
+        
+        .start-btn {
+            background: var(--header-blue);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            font-family: var(--font-main);
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        
+        .start-btn:active { transform: scale(0.95); }
+
+        /* --- STICKY SCORE PANEL --- */
+        .score-panel {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: white;
+            border-bottom: 3px solid var(--header-blue);
+            padding: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            font-size: 1.1rem;
+        }
+
+        .score-item span { display: block; font-size: 0.9rem; color: #666; }
+        .score-val { font-size: 1.4rem; color: var(--header-blue); }
+
+        /* --- LECTURE SECTIONS --- */
+        .section-block {
+            margin: 40px 0;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            border: 2px solid #ddd;
+        }
+
+        .bg-blue { background-color: var(--panel-blue); }
+        .bg-yellow { background-color: var(--panel-yellow); }
+        .bg-green { background-color: var(--panel-green); }
+        .bg-pink { background-color: var(--panel-pink); }
+
+        .concept-tag {
+            background: var(--header-blue);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        /* --- VISUAL CONCEPT BOXES (CSS ART) --- */
+        .visual-box {
+            background: white;
+            border: 2px dashed #bbb;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Visual: Schedule */
+        .schedule-grid { display: grid; grid-template-columns: 60px 1fr; gap: 5px; width: 100%; max-width: 300px; font-size: 0.8rem; }
+        .time-slot { background: #eee; padding: 5px; text-align: right; }
+        .task-slot { background: #bbdefb; padding: 5px; border-radius: 4px; }
+        .task-slot.fixed { background: #ffccbc; }
+
+        /* Visual: Eisenhower */
+        .eisen-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; width: 100%; max-width: 300px; aspect-ratio: 1; }
+        .quad { padding: 10px; border-radius: 8px; font-size: 0.9rem; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .q1 { background: #ffcdd2; border: 2px solid #e57373; } /* Urgent/Imp */
+        .q2 { background: #c8e6c9; border: 2px solid #81c784; } /* Not Urgent/Imp */
+        .q3 { background: #ffe0b2; border: 2px solid #ffb74d; } /* Urgent/Not Imp */
+        .q4 { background: #e0e0e0; border: 2px solid #bdbdbd; } /* Not Urgent/Not Imp */
+
+        /* Visual: Batching */
+        .batch-row { display: flex; gap: 5px; margin-bottom: 5px; align-items: center; }
+        .batch-block { width: 30px; height: 30px; border-radius: 4px; display: grid; place-items: center; font-size: 0.7rem; color: white; }
+        .b-red { background: #e57373; }
+        .b-blue { background: #64b5f6; }
+        .b-green { background: #81c784; }
+
+        /* Visual: Habit Stack */
+        .habit-chain { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; justify-content: center; }
+        .habit-node { padding: 8px 15px; border-radius: 20px; background: #fff9c4; border: 2px solid #fbc02d; }
+        .arrow { font-size: 1.2rem; color: #555; }
+
+        /* --- QUESTION SYSTEM --- */
+        .question-card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-left: 5px solid #ccc;
+            transition: border-color 0.3s;
+        }
+
+        .question-card.answered-correct { border-left-color: var(--success); }
+        .question-card.answered-wrong { border-left-color: var(--warning); }
+
+        .q-text { font-size: 1.2rem; margin-bottom: 15px; }
+
+        .options-grid { display: grid; gap: 10px; }
+        
+        .option-btn {
+            background: #f5f5f5;
+            border: 2px solid #eee;
+            padding: 12px;
+            text-align: left;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: var(--font-main);
+            font-size: 1.1rem;
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover:not(.disabled) { background: #e3f2fd; }
+        
+        .option-btn.correct { background: #c8e6c9; border-color: var(--success); color: #1b5e20; }
+        .option-btn.wrong { background: #ffccbc; border-color: var(--warning); color: #bf360c; }
+        .disabled { pointer-events: none; opacity: 0.9; }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 6px;
+            font-size: 1rem;
+            display: none;
+        }
+
+        /* --- LONG ANSWER --- */
+        .long-q-area { width: 100%; height: 100px; padding: 10px; border: 2px solid #ccc; border-radius: 8px; font-family: var(--font-main); font-size: 1.1rem; margin: 10px 0; }
+        .check-btn { background: var(--header-blue); color: white; border: none; padding: 8px 20px; border-radius: 20px; cursor: pointer; font-family: var(--font-main); font-size: 1.1rem; }
+        
+        /* --- REVISION PANEL --- */
+        .revision-panel {
+            background: #37474f;
+            color: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-top: 50px;
+        }
+        .rev-list li { margin-bottom: 10px; }
+
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: #777;
+            font-size: 1.1rem;
+            border-top: 1px solid #eee;
+            margin-top: 40px;
+        }
+
+        /* --- UTILS --- */
+        .imp-q-section, .practice-q-section { margin-top: 40px; }
+        .section-header { 
+            background: var(--header-blue); 
+            color: white; 
+            padding: 15px; 
+            border-radius: var(--border-radius); 
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 2rem; }
+            .score-val { font-size: 1.1rem; }
+            .score-item span { font-size: 0.7rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HERO -->
+    <div class="hero">
+        <div class="container">
+            <h1>Cognitive Science Lab – Session 07</h1>
+            <span class="subtitle">Time Management Systems | Engineering Productivity</span>
+            <p><strong>MISSION:</strong> Replace "Busy" with "Strategic". Build a scalable time architecture.</p>
+            <p>Level: Basic &rarr; Medium &rarr; Advanced &rarr; Expert</p>
+            <button class="start-btn" onclick="document.getElementById('content-start').scrollIntoView({behavior: 'smooth'})">Start Time Engineering Lab</button>
+        </div>
+    </div>
+
+    <!-- STICKY SCORE PANEL -->
+    <div class="score-panel">
+        <div class="score-item">
+            <span>Score</span>
+            <div id="score-display" class="score-val">0</div>
+        </div>
+        <div class="score-item">
+            <span>Attempted</span>
+            <div id="attempted-display" class="score-val">0/110</div>
+        </div>
+        <div class="score-item">
+            <span>Accuracy</span>
+            <div id="accuracy-display" class="score-val">0%</div>
+        </div>
+    </div>
+
+    <div class="container" id="content-start">
+
+        <!-- ================= BASIC LEVEL ================= -->
+        <div class="section-block bg-blue">
+            <span class="concept-tag">BASIC LEVEL</span>
+            <h2>1. Scheduling & To-Do Lists</h2>
+            
+            <h3>Part A: Simple Scheduling</h3>
+            <p>Most students fail because they schedule <strong>Results</strong> ("Finish Chapter 5") instead of <strong>Time Allocations</strong> ("Study Chap 5: 2pm-4pm").</p>
+            <p><strong>The System:</strong> Use Fixed vs. Flexible blocks. Fixed blocks are non-negotiable (classes, sleep). Flexible blocks are for deep work.</p>
+            
+            <div class="visual-box">
+                <div class="schedule-grid">
+                    <div class="time-slot">08:00</div><div class="task-slot fixed">Math Class (Fixed)</div>
+                    <div class="time-slot">09:00</div><div class="task-slot">Study Gap (Flexible)</div>
+                    <div class="time-slot">10:00</div><div class="task-slot fixed">Lab Work (Fixed)</div>
+                    <div class="time-slot">11:00</div><div class="task-slot">Review Notes (Flexible)</div>
+                </div>
+            </div>
+
+            <h3>Part B: The MIT To-Do List</h3>
+            <p>Do not write 20 items. You will fail. Write 3 <strong>MITs (Most Important Tasks)</strong> per day.</p>
+            <p><strong>Rule:</strong> If you do nothing else but these 3, the day is a success. This combats "Execution Bias" (doing easy things to feel busy).</p>
+            
+            <div class="visual-box" style="flex-direction: column; align-items: flex-start;">
+                <div style="display:flex; gap:10px;"><input type="checkbox" checked> <span>MIT 1: Past Paper (Heavy)</span></div>
+                <div style="display:flex; gap:10px;"><input type="checkbox"> <span>MIT 2: Physics Derivation (Medium)</span></div>
+                <div style="display:flex; gap:10px;"><input type="checkbox"> <span>MIT 3: Vocab Review (Light)</span></div>
+                <div style="opacity:0.5; margin-top:10px; font-size:0.9rem;">...Everything else is a bonus.</div>
+            </div>
+        </div>
+
+        <!-- ================= MEDIUM LEVEL ================= -->
+        <div class="section-block bg-yellow">
+            <span class="concept-tag">MEDIUM LEVEL</span>
+            <h2>2. The Eisenhower Matrix & Batching</h2>
+            
+            <h3>Part A: Decision Architecture (Eisenhower)</h3>
+            <p>Separate URGENT from IMPORTANT. Most urgency is noise.</p>
+            <ul style="list-style:none; padding:0;">
+                <li><strong>Q1: Do First.</strong> Urgent + Important (Exam tomorrow).</li>
+                <li><strong>Q2: Schedule.</strong> Not Urgent + Important (Exercise, Long-term study). <span style="color:var(--success)">*The Winner's Zone*</span></li>
+                <li><strong>Q3: Delegate.</strong> Urgent + Not Important (Emails, Interruptions).</li>
+                <li><strong>Q4: Delete.</strong> Neither. (Doomscrolling).</li>
+            </ul>
+
+            <div class="visual-box">
+                <div class="eisen-grid">
+                    <div class="quad q1"><strong>Q1</strong><br>DO NOW<br>(Crisis)</div>
+                    <div class="quad q2"><strong>Q2</strong><br>PLAN<br>(Growth)</div>
+                    <div class="quad q3"><strong>Q3</strong><br>DELEGATE<br>(Noise)</div>
+                    <div class="quad q4"><strong>Q4</strong><br>ELIMINATE<br>(Waste)</div>
+                </div>
+            </div>
+
+            <h3>Part B: Task Batching</h3>
+            <p><strong>Context Switching Cost:</strong> It takes ~23 minutes to regain focus after interruption. Stop multitasking.</p>
+            <p><strong>Strategy:</strong> Group similar tasks. Answer all emails at once. Do all math problems at once.</p>
+
+            <div class="visual-box">
+                <div style="display:flex; flex-direction:column;">
+                    <small>Bad: A B A C B A</small>
+                    <div class="batch-row">
+                        <div class="batch-block b-red">A</div>
+                        <div class="batch-block b-blue">B</div>
+                        <div class="batch-block b-red">A</div>
+                        <div class="batch-block b-green">C</div>
+                    </div>
+                    <small>Good: A A A | B B | C</small>
+                    <div class="batch-row">
+                        <div class="batch-block b-red">A</div>
+                        <div class="batch-block b-red">A</div>
+                        <div class="batch-block b-red">A</div>
+                        <div style="width:10px;"></div>
+                        <div class="batch-block b-blue">B</div>
+                        <div class="batch-block b-blue">B</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= ADVANCED LEVEL ================= -->
+        <div class="section-block bg-green">
+            <span class="concept-tag">ADVANCED LEVEL</span>
+            <h2>3. Habit Stacking & Energy Management</h2>
+            
+            <h3>Part A: Habit Stacking</h3>
+            <p>Don't rely on willpower. Rely on triggers. Use the formula:</p>
+            <p style="background:white; padding:10px; text-align:center;">"After I [Current Habit], I will [New Habit]."</p>
+            
+            <div class="visual-box">
+                <div class="habit-chain">
+                    <div class="habit-node">Brush Teeth</div>
+                    <div class="arrow">&rarr;</div>
+                    <div class="habit-node">Drink Water</div>
+                    <div class="arrow">&rarr;</div>
+                    <div class="habit-node">Review Formulas</div>
+                </div>
+            </div>
+
+            <h3>Part B: Energy Mapping</h3>
+            <p>Time is static. Energy is dynamic. Are you a Morning Lark or Night Owl?</p>
+            <p><strong>Golden Rule:</strong> Protect your peak energy hours for your hardest task (The "One Thing"). Do admin/chores in low energy troughs.</p>
+            
+            <div class="visual-box">
+                <svg width="250" height="100" viewBox="0 0 250 100">
+                    <path d="M10,90 Q60,-10 125,50 T240,90" fill="none" stroke="#2e7d32" stroke-width="3" />
+                    <text x="10" y="95" font-size="10" font-family="sans-serif">8AM</text>
+                    <text x="60" y="20" font-size="10" font-family="sans-serif">PEAK</text>
+                    <text x="125" y="65" font-size="10" font-family="sans-serif">Dip</text>
+                    <text x="220" y="95" font-size="10" font-family="sans-serif">8PM</text>
+                </svg>
+            </div>
+        </div>
+
+        <!-- ================= EXPERT LEVEL ================= -->
+        <div class="section-block bg-pink">
+            <span class="concept-tag">EXPERT LEVEL</span>
+            <h2>4. Strategic Architecture & Life Balance</h2>
+            
+            <h3>Long Term Systems</h3>
+            <p>Expert students plan in layers: Annual (Direction) &rarr; Monthly (Milestones) &rarr; Weekly (Execution).</p>
+            <p><strong>The Weekly Review:</strong> Sunday night is for "Architecture". Design the week. If it's not on the calendar, it doesn't exist.</p>
+            
+            <h3>Sustainable Productivity</h3>
+            <p>You are a biological system, not a machine. You need recovery. "Burnout is not a badge of honor; it is a system failure."</p>
+
+            <div class="visual-box">
+                 <div style="width:100px; height:100px; border-radius:50%; background: conic-gradient(#4caf50 0% 25%, #2196f3 25% 60%, #ff9800 60% 85%, #9e9e9e 85% 100%); position:relative;"></div>
+                 <div style="margin-left:20px;">
+                     <div><span style="color:#4caf50">■</span> Health</div>
+                     <div><span style="color:#2196f3">■</span> Study</div>
+                     <div><span style="color:#ff9800">■</span> Social</div>
+                     <div><span style="color:#9e9e9e">■</span> Sleep</div>
+                 </div>
+            </div>
+        </div>
+
+        <!-- ================= QUIZ SECTION ================= -->
+        
+        <div class="section-header">IMPORTANT QUESTIONS (CONCEPTUAL)</div>
+        <div id="important-questions-container"></div>
+
+        <div class="section-header">PRACTICE QUESTIONS (DRILLS)</div>
+        <div id="practice-questions-container"></div>
+
+        <div class="section-header">ADVANCED SYSTEM DESIGN (LONG ANSWER)</div>
+        <div id="long-questions-container"></div>
+
+        <!-- ================= REVISION ================= -->
+        <div class="revision-panel">
+            <h3>Revise Fast: The Core System</h3>
+            <ul class="rev-list">
+                <li><strong>Scheduling:</strong> Focus on Time Blocks, not just Task Lists.</li>
+                <li><strong>Eisenhower:</strong> Focus on Q2 (Important, Not Urgent) for long-term success.</li>
+                <li><strong>Batching:</strong> Group low-focus tasks to save cognitive load.</li>
+                <li><strong>Habit Stacking:</strong> Anchor new habits to old ones.</li>
+                <li><strong>Energy:</strong> Match task difficulty to your biological clock.</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <footer>
+        Designed & Created by SHRISHANT YADAV<br>ShanEduHub
+    </footer>
+
+    <script>
+        // --- DATA STORE ---
+        const importantQuestions = [
+            { q: "What is the primary difference between a To-Do list and a Schedule?", a: "A schedule assigns specific time slots to tasks.", options: ["A schedule looks prettier.", "A schedule assigns specific time slots to tasks.", "A To-Do list is for weekends only.", "There is no difference."], type: "mcq" },
+            { q: "In the Eisenhower Matrix, which quadrant is for 'Important but Not Urgent'?", a: "Quadrant 2", options: ["Quadrant 1", "Quadrant 2", "Quadrant 3", "Quadrant 4"], type: "mcq" },
+            { q: "What is 'Execution Bias'?", a: "Doing easy tasks to feel productive while ignoring hard ones.", options: ["Planning too much.", "Doing easy tasks to feel productive while ignoring hard ones.", "Executing tasks too fast.", "Delegating everything."], type: "mcq" },
+            { q: "Why is multitasking scientifically inefficient?", a: "Context switching burns cognitive energy.", options: ["It is actually efficient.", "It makes you tired physically.", "Context switching burns cognitive energy.", "It requires too much paper."], type: "mcq" },
+            { q: "In Habit Stacking, what acts as the trigger?", a: "An existing habit.", options: ["An alarm clock.", "Willpower.", "An existing habit.", "A reward."], type: "mcq" },
+            { q: "What does MIT stand for in time management?", a: "Most Important Task", options: ["Most Interesting Task", "Most Immediate Time", "Most Important Task", "Many Individual Tasks"], type: "mcq" },
+            { q: "Which energy state is best for creative or difficult work?", a: "Peak Energy", options: ["Slump", "Recovery", "Peak Energy", "Exhaustion"], type: "mcq" },
+            { q: "What is the 'Pomodoro' technique primarily used for?", a: "Focus intervals with breaks.", options: ["Cooking pasta.", "Focus intervals with breaks.", "Sleeping better.", "Long term planning."], type: "mcq" },
+            { q: "In the Eisenhower Matrix, what should you do with Q3 tasks (Urgent, Not Important)?", a: "Delegate", options: ["Do immediately", "Schedule", "Delegate", "Delete"], type: "mcq" },
+            { q: "What is Parkinson's Law?", a: "Work expands to fill the time available.", options: ["Work is always hard.", "Work expands to fill the time available.", "Time is money.", "Scheduling is useless."], type: "mcq" },
+            { q: "Which activity belongs in Quadrant 4?", a: "Mindless scrolling.", options: ["Crisis management.", "Exercise.", "Email responses.", "Mindless scrolling."], type: "mcq" },
+            { q: "What is 'Time Blocking'?", a: "Dedicating chunks of time to a single task.", options: ["Stopping time.", "Dedicating chunks of time to a single task.", "Blocking distractions only.", "Using a stopwatch."], type: "mcq" },
+            { q: "Why should you plan your week on Sunday?", a: "To reduce decision fatigue during the week.", options: ["Because it's a holiday.", "To reduce decision fatigue during the week.", "Teachers say so.", "To sleep less."], type: "mcq" },
+            { q: "What is a 'Micro-habit'?", a: "A stupidly small version of a habit.", options: ["A bad habit.", "A stupidly small version of a habit.", "A habit for computers.", "A complex routine."], type: "mcq" },
+            { q: "Does 'being busy' mean 'being productive'?", a: "No", options: ["Yes", "No", "Always", "Usually"], type: "mcq" },
+            { q: "What is the 'Two Minute Rule'?", a: "If it takes < 2 mins, do it now.", options: ["Work for only 2 mins.", "If it takes < 2 mins, do it now.", "Take 2 min breaks.", "Plan for 2 mins."], type: "mcq" },
+            { q: "How long does it typically take to refocus after a distraction?", a: "~23 minutes", options: ["5 minutes", "10 minutes", "~23 minutes", "1 hour"], type: "mcq" },
+            { q: "What is 'Deep Work'?", a: "Distraction-free concentration on cognitive tasks.", options: ["Working in a basement.", "Distraction-free concentration on cognitive tasks.", "Sleeping.", "Easy repetitive work."], type: "mcq" },
+            { q: "Which serves as a 'Cue' in the habit loop?", a: "Time or Location", options: ["The Reward", "The Action", "Time or Location", "The Feeling"], type: "mcq" },
+            { q: "What is the danger of 'Overplanning'?", a: "Planning becomes procrastination.", options: ["You finish too early.", "Planning becomes procrastination.", "Paper waste.", "Too much success."], type: "mcq" },
+            { q: "Ideally, how many hours of Deep Work can a human sustain daily?", a: "4 hours", options: ["8 hours", "12 hours", "4 hours", "20 minutes"], type: "mcq" },
+            { q: "What is 'Eat That Frog'?", a: "Doing the hardest task first.", options: ["Eating lunch early.", "Doing the hardest task first.", "Studying biology.", "Ignoring hard tasks."], type: "mcq" },
+            { q: "Which tool visualizes tasks as 'To Do', 'Doing', 'Done'?", a: "Kanban Board", options: ["Pie Chart", "Kanban Board", "Histogram", "Scatter Plot"], type: "mcq" },
+            { q: "True or False: You should schedule rest time.", a: "True", options: ["True", "False"], type: "mcq" },
+            { q: "What is 'Batching' best used for?", a: "Shallow, repetitive tasks.", options: ["Deep creative work.", "Shallow, repetitive tasks.", "Emergency crises.", "Sleeping."], type: "mcq" },
+            { q: "If you miss a habit once, what is the rule?", a: "Never miss twice.", options: ["Give up.", "Never miss twice.", "Punish yourself.", "Double the workload."], type: "mcq" },
+            { q: "What is 'Decision Fatigue'?", a: "Quality of decisions deteriorates after a long session.", options: ["Being tired of walking.", "Quality of decisions deteriorates after a long session.", "Hating decisions.", "Planning too much."], type: "mcq" },
+            { q: "Why use a 'Not To-Do List'?", a: "To identify time wasters.", options: ["To be negative.", "To identify time wasters.", "To list chores.", "It is not useful."], type: "mcq" },
+            { q: "What represents 'Burnout'?", a: "Emotional and physical exhaustion.", options: ["Being bored.", "Emotional and physical exhaustion.", "Working hard.", "Studying late."], type: "mcq" },
+            { q: "Strategy > ______?", a: "Willpower", options: ["Effort", "Willpower", "Money", "Time"], type: "mcq" }
+        ];
+
+        const practiceQuestions = [];
+        // Generating 70 Practice Questions programmatically to ensure variety and load
+        const taskTypes = ["Email", "Study Math", "Social Media", "Exercise", "Project Due Tomorrow", "Cleaning Room", "Planning Year", "Netflix"];
+        const matrixQuads = ["Q3", "Q1", "Q4", "Q2", "Q1", "Q3", "Q2", "Q4"];
+        
+        // 1-10: Matrix Classification
+        for(let i=0; i<8; i++) {
+            practiceQuestions.push({
+                q: `Classify this task: ${taskTypes[i]}.`,
+                a: matrixQuads[i],
+                options: ["Q1", "Q2", "Q3", "Q4"],
+                type: "mcq"
+            });
+        }
+        
+        // 11-20: True/False Speed
+        const tfStatements = [
+            {t: "Multitasking increases IQ.", a: "False"},
+            {t: "You should schedule breaks.", a: "True"},
+            {t: "Q2 tasks are for crisis management.", a: "False"},
+            {t: "Batching reduces switch cost.", a: "True"},
+            {t: "Willpower is an unlimited resource.", a: "False"},
+            {t: "A messy environment helps focus.", a: "False"},
+            {t: "You should check email every 5 mins.", a: "False"},
+            {t: "Sleep consolidates memory.", a: "True"},
+            {t: "Saying 'No' is a time management skill.", a: "True"},
+            {t: "Busy people are always productive.", a: "False"}
+        ];
+        tfStatements.forEach(item => {
+            practiceQuestions.push({ q: `True/False: ${item.t}`, a: item.a, options: ["True", "False"], type: "mcq" });
+        });
+
+        // 21-40: Fill in Blanks / Short Concept
+        const definitions = [
+            {q: "The cost of changing tasks is called ______ cost.", a: "Switching"},
+            {q: "The technique of working 25 mins + 5 mins break is ______.", a: "Pomodoro"},
+            {q: "Tasks that are Urgent but Not Important go to ______.", a: "Delegate"},
+            {q: "Tasks that are Not Urgent and Not Important go to ______.", a: "Delete"},
+            {q: "Working on a single task without distraction is ______ Work.", a: "Deep"},
+            {q: "Grouping similar tasks is called ______.", a: "Batching"},
+            {q: "______ Law states work expands to fill time.", a: "Parkinson's"},
+            {q: "______ Principle states 80% results come from 20% efforts.", a: "Pareto"},
+            {q: "Q2 is the quadrant of ______.", a: "Quality/Planning"},
+            {q: "Checking phone immediately upon waking is a ______ habit.", a: "Reactive"},
+            {q: "A sequence of habits is a Habit ______.", a: "Chain"},
+            {q: "Energy is highest for most people in the ______.", a: "Morning"},
+            {q: "The opposite of Proactive is ______.", a: "Reactive"},
+            {q: "SMART goals: 'T' stands for ______.", a: "Time-bound"},
+            {q: "SMART goals: 'M' stands for ______.", a: "Measurable"},
+            {q: "Doing the hardest task first is Eating the ______.", a: "Frog"},
+            {q: "Visual tool for scheduling is a ______.", a: "Calendar"},
+            {q: "A list of tasks to complete is a ______ list.", a: "To-Do"},
+            {q: "The ability to say ______ protects your time.", a: "No"},
+            {q: "Consistency is better than ______.", a: "Intensity"}
+        ];
+        definitions.forEach(item => {
+            practiceQuestions.push({ q: item.q, a: item.a, options: [item.a, "Wrong Answer", "Another Wrong", "Incorrect"], type: "mcq" }); // Simplified for UI consistency, displayed as MCQ
+        });
+
+        // 41-70: Scenarios
+        for(let i=0; i<32; i++) {
+            let hour = 8 + (i % 12);
+            let context = i % 2 === 0 ? "Exam Prep" : "Relaxation";
+            practiceQuestions.push({
+                q: `Scenario ${i+1}: It is ${hour}:00. You have ${context}. Best action?`,
+                a: i % 2 === 0 ? "Deep Work" : "Guilt-free Rest",
+                options: ["Deep Work", "Scroll Phone", "Guilt-free Rest", "Panic"],
+                type: "mcq"
+            });
+        }
+
+        const longQuestionsData = [
+            { id: 1, q: "Design a Morning Routine (7AM-9AM) using Habit Stacking.", keywords: ["after", "before", "stack", "habit", "trigger"] },
+            { id: 2, q: "Explain why 'I will study more' is a bad goal. Convert it to a SMART goal.", keywords: ["specific", "measurable", "time", "smart", "hours"] },
+            { id: 3, q: "You have 3 exams next week. Create a high-level Q2 strategy.", keywords: ["plan", "schedule", "priority", "breaks", "review"] },
+            { id: 4, q: "Describe the 'Context Switching' penalty in your own words.", keywords: ["focus", "brain", "energy", "time", "reset"] },
+            { id: 5, q: "Create a Batching Rule for your digital communication (Email/WhatsApp).", keywords: ["once", "day", "notification", "off", "block"] },
+            { id: 6, q: "Map your personal energy curve. When is your 'Protected Time'?", keywords: ["morning", "evening", "peak", "high", "low"] },
+            { id: 7, q: "How would you handle a Q3 interruption (Urgent, Not Important) during Deep Work?", keywords: ["no", "later", "delegate", "ignore", "focus"] },
+            { id: 8, q: "Design a Sunday Weekly Review checklist (3 items).", keywords: ["calendar", "goals", "review", "plan", "next"] },
+            { id: 9, q: "Why does the Pomodoro technique prevent burnout?", keywords: ["break", "rest", "energy", "sustain", "pace"] },
+            { id: 10, q: "Construct a 'Failure Prevention' system for when you feel lazy.", keywords: ["small", "start", "5 minutes", "just", "one"] }
+        ];
+
+        // --- GAME ENGINE ---
+        let score = 0;
+        let attempted = 0;
+        let totalQuestions = importantQuestions.length + practiceQuestions.length + longQuestionsData.length;
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function updateScorePanel() {
+            document.getElementById('score-display').textContent = score;
+            document.getElementById('attempted-display').textContent = `${attempted}/${totalQuestions}`;
+            let acc = attempted === 0 ? 0 : Math.round((score / attempted) * 100);
+            document.getElementById('accuracy-display').textContent = `${acc}%`;
+        }
+
+        function createMCQElement(qData, index, section) {
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            card.id = `q-${section}-${index}`;
+
+            const qTitle = document.createElement('div');
+            qTitle.className = 'q-text';
+            qTitle.innerHTML = `<strong>${index + 1}.</strong> ${qData.q}`;
+            card.appendChild(qTitle);
+
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = 'options-grid';
+
+            // Shuffle options for display only
+            let displayOptions = [...qData.options];
+            displayOptions = shuffle(displayOptions);
+
+            displayOptions.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.textContent = opt;
+                btn.onclick = () => handleAnswer(btn, opt, qData.a, card);
+                optionsDiv.appendChild(btn);
+            });
+
+            card.appendChild(optionsDiv);
+
+            const feedback = document.createElement('div');
+            feedback.className = 'feedback';
+            card.appendChild(feedback);
+
+            return card;
+        }
+
+        function handleAnswer(btn, selected, correct, card) {
+            if (card.classList.contains('answered')) return;
+            
+            card.classList.add('answered');
+            attempted++;
+            const feedback = card.querySelector('.feedback');
+            const allBtns = card.querySelectorAll('.option-btn');
+
+            allBtns.forEach(b => b.classList.add('disabled'));
+
+            if (selected === correct) {
+                score += 1;
+                card.classList.add('answered-correct');
+                btn.classList.add('correct');
+                feedback.innerHTML = "<strong>Excellent.</strong> Correct Time Management Logic.";
+                feedback.style.color = "var(--success)";
+            } else {
+                card.classList.add('answered-wrong');
+                btn.classList.add('wrong');
+                // Highlight correct
+                allBtns.forEach(b => {
+                    if (b.textContent === correct) b.classList.add('correct');
+                });
+                feedback.innerHTML = `<strong>Correction:</strong> The right system is <em>${correct}</em>.`;
+                feedback.style.color = "var(--warning)";
+            }
+            feedback.style.display = 'block';
+            updateScorePanel();
+        }
+
+        function createLongQElement(qData) {
+            const container = document.createElement('div');
+            container.className = 'question-card';
+            
+            const label = document.createElement('div');
+            label.className = 'q-text';
+            label.textContent = `Design Task ${qData.id}: ${qData.q}`;
+            
+            const area = document.createElement('textarea');
+            area.className = 'long-q-area';
+            area.placeholder = "Type your system architecture here...";
+            
+            const btn = document.createElement('button');
+            btn.className = 'check-btn';
+            btn.textContent = "Submit System";
+            btn.onclick = () => {
+                if (btn.disabled) return;
+                const ans = area.value.toLowerCase();
+                const hits = qData.keywords.filter(k => ans.includes(k));
+                
+                attempted++;
+                btn.disabled = true;
+                area.disabled = true;
+                
+                const feedback = document.createElement('div');
+                feedback.className = 'feedback';
+                feedback.style.display = 'block';
+
+                if (hits.length >= 2) {
+                    score += 5; // Weighted more
+                    feedback.innerHTML = `<strong style="color:var(--success)">System Approved.</strong> Detected concepts: ${hits.join(", ")}.`;
+                    container.classList.add('answered-correct');
+                } else {
+                    feedback.innerHTML = `<strong style="color:var(--warning)">System Weak.</strong> Missing key components like: ${qData.keywords.join(", ")}.`;
+                    container.classList.add('answered-wrong');
+                }
+                container.appendChild(feedback);
+                updateScorePanel();
+            };
+
+            container.appendChild(label);
+            container.appendChild(area);
+            container.appendChild(btn);
+            return container;
+        }
+
+        // --- INITIALIZATION ---
+        window.addEventListener('DOMContentLoaded', () => {
+            const impContainer = document.getElementById('important-questions-container');
+            importantQuestions.forEach((q, i) => {
+                impContainer.appendChild(createMCQElement(q, i, 'imp'));
+            });
+
+            const pracContainer = document.getElementById('practice-questions-container');
+            practiceQuestions.forEach((q, i) => {
+                pracContainer.appendChild(createMCQElement(q, i, 'prac'));
+            });
+
+            const longContainer = document.getElementById('long-questions-container');
+            longQuestionsData.forEach(q => {
+                longContainer.appendChild(createLongQElement(q));
+            });
+
+            updateScorePanel();
+        });
+
+    </script>
+</body>
+</html>

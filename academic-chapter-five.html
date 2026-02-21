@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cognitive Science Lab – Session 05</title>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #2c3e50;
+            --accent-green: #27ae60;
+            --accent-orange: #e67e22;
+            --accent-red: #c0392b;
+            --bg-pastel-blue: #e8f4f8;
+            --bg-pastel-yellow: #fef9e7;
+            --bg-pastel-green: #e8f8f5;
+            --bg-white: #ffffff;
+            --border-color: #bdc3c7;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Patrick Hand', cursive;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 0;
+            color: #2c3e50;
+            font-weight: bold;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        /* --- STICKY SCORE PANEL --- */
+        #score-panel {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: var(--primary-blue);
+            color: white;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            font-size: 1.1rem;
+            flex-wrap: wrap;
+        }
+
+        .score-item {
+            margin: 0 5px;
+            text-align: center;
+        }
+        
+        .score-value {
+            color: #f1c40f;
+            font-size: 1.2rem;
+        }
+
+        /* --- LAYOUT & SECTIONS --- */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        section {
+            background: var(--bg-white);
+            margin-bottom: 30px;
+            padding: 25px;
+            border-radius: 8px;
+            border: 2px solid var(--primary-blue);
+            box-shadow: var(--shadow);
+        }
+
+        h1, h2, h3 {
+            color: var(--primary-blue);
+            margin-top: 0;
+            text-transform: uppercase;
+            border-bottom: 2px dashed var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        h1 { font-size: 2.5rem; text-align: center; border-bottom: none; }
+        h2 { font-size: 1.8rem; margin-top: 20px; }
+        h3 { font-size: 1.4rem; color: var(--accent-orange); }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            text-align: center;
+            background: var(--bg-pastel-blue);
+            padding: 40px 20px;
+            border: 3px solid var(--primary-blue);
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--accent-red);
+            margin-bottom: 20px;
+        }
+
+        .start-btn {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            font-family: 'Patrick Hand', cursive;
+            cursor: pointer;
+            border-radius: 50px;
+            transition: transform 0.2s;
+            box-shadow: 0 4px 0 #1a252f;
+        }
+
+        .start-btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        /* --- CONTENT BOXES --- */
+        .lecture-box {
+            background: var(--bg-pastel-yellow);
+            padding: 15px;
+            border-left: 5px solid var(--accent-orange);
+            margin: 15px 0;
+        }
+
+        .experiment-box {
+            background: var(--bg-pastel-green);
+            padding: 15px;
+            border-left: 5px solid var(--accent-green);
+            margin: 15px 0;
+        }
+
+        .static-img-box {
+            width: 100%;
+            height: 200px;
+            background: #dfe6e9;
+            border: 2px dashed #95a5a6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            color: #7f8c8d;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        /* --- QUESTIONS --- */
+        .question-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .options-grid { grid-template-columns: 1fr; }
+        }
+
+        .option-btn {
+            background: #f8f9fa;
+            border: 2px solid #bdc3c7;
+            padding: 10px;
+            text-align: left;
+            cursor: pointer;
+            font-family: 'Patrick Hand', cursive;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+
+        .option-btn:hover { background: #ecf0f1; }
+        .option-btn.correct { background: #d4edda; border-color: #28a745; color: #155724; }
+        .option-btn.wrong { background: #f8d7da; border-color: #dc3545; color: #721c24; }
+
+        .input-answer {
+            width: 100%;
+            padding: 10px;
+            font-family: 'Patrick Hand', cursive;
+            font-size: 1.1rem;
+            border: 2px solid #bdc3c7;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .check-btn {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            font-family: 'Patrick Hand', cursive;
+            font-size: 1.1rem;
+            border-radius: 5px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .feedback.show { display: block; }
+        .feedback.success { background: #d4edda; color: #155724; }
+        .feedback.error { background: #f8d7da; color: #721c24; }
+
+        /* --- IMPORTANT QUESTIONS LIST --- */
+        .imp-list {
+            list-style: none;
+            padding: 0;
+        }
+        .imp-list li {
+            background: #fff;
+            margin-bottom: 15px;
+            padding: 15px;
+            border-bottom: 3px solid var(--border-color);
+        }
+        .imp-q { color: var(--accent-red); margin-bottom: 5px; display: block; }
+        .imp-a { color: var(--primary-blue); }
+
+        /* --- LONG ANSWER --- */
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 10px;
+            font-family: 'Patrick Hand', cursive;
+            font-size: 1.1rem;
+            border: 2px solid #bdc3c7;
+            border-radius: 5px;
+            resize: vertical;
+            margin-top: 10px;
+        }
+
+        /* --- REVISION PANEL --- */
+        #revision-panel {
+            display: none;
+            background: var(--bg-pastel-green);
+            border: 3px solid var(--accent-green);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .toggle-rev-btn {
+            background: var(--accent-orange);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            width: 100%;
+            font-family: inherit;
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            padding: 30px;
+            background: var(--primary-blue);
+            color: white;
+            margin-top: 50px;
+            border-top: 5px solid var(--accent-orange);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SCORE PANEL -->
+    <div id="score-panel">
+        <div class="score-item">Correct: <span id="score-correct" class="score-value">0</span></div>
+        <div class="score-item">Wrong: <span id="score-wrong" class="score-value">0</span></div>
+        <div class="score-item">Attempted: <span id="score-attempted" class="score-value">0</span></div>
+        <div class="score-item">Score: <span id="score-percent" class="score-value">0%</span></div>
+    </div>
+
+    <div class="container">
+        
+        <!-- HERO SECTION -->
+        <section class="hero">
+            <h1>Cognitive Science Lab – Session 05</h1>
+            <div class="hero-subtitle">Deep Focus & Concentration Engineering</div>
+            <p><strong>Levels:</strong> Basic ➔ Medium ➔ Advanced ➔ Expert</p>
+            <p><strong>Duration:</strong> ~60 Minutes | <strong>Objective:</strong> Master Attention Architecture</p>
+            <button class="start-btn" onclick="document.getElementById('content-start').scrollIntoView({behavior: 'smooth'})">Start Focus Engineering Lab</button>
+        </section>
+
+        <div id="content-start"></div>
+
+        <!-- REVISION TOGGLE -->
+        <button class="toggle-rev-btn" onclick="toggleRevision()">▼ OPEN RAPID REVISION PANEL ▼</button>
+        <div id="revision-panel">
+            <h3>⚡ Rapid Recall Protocol</h3>
+            <ul>
+                <li><strong>Attention:</strong> A limited cognitive resource, not an infinite well.</li>
+                <li><strong>Flow State:</strong> High challenge + High skill = Deep immersion.</li>
+                <li><strong>Pomodoro:</strong> 25m Focus + 5m Break. Battles cognitive fatigue.</li>
+                <li><strong>Environment:</strong> External cues trigger internal states. Clean desk = Clean mind.</li>
+                <li><strong>Time-Blocking:</strong> Giving every minute a specific job. Zero ambiguity.</li>
+                <li><strong>Deep Work:</strong> Distraction-free concentration pushing cognitive capabilities.</li>
+                <li><strong>Brain Hacking:</strong> Batching tasks to reduce "Switching Cost" residue.</li>
+            </ul>
+        </div>
+
+        <!-- ================= BASIC LEVEL ================= -->
+        <section>
+            <h2>LEVEL 1: The Physics of Attention</h2>
+            
+            <div class="lecture-box">
+                <h3>5.1 What Focus Actually Is</h3>
+                <p>Focus is not just "staring hard." It is <strong>Selective Attention</strong>. Your brain receives 11 million bits of information per second but can only consciously process ~40 bits. Focus is the mechanism of <strong>Gating</strong>—blocking the 10,999,960 bits to process the 40 that matter.</p>
+                <div class="static-img-box">
+                    [DIAGRAM: Funnel showing millions of inputs narrowing down to a single "Attention Spotlight"]
+                </div>
+            </div>
+
+            <div class="experiment-box">
+                <h3>Cognitive Experiment: The Switching Cost</h3>
+                <p><strong>Concept:</strong> Every time you switch from studying to checking a phone notification, you pay a "Switching Cost." Your brain doesn't switch instantly; it leaves "Attention Residue" on the previous task.</p>
+                <p><strong>Impact:</strong> Checking a message takes 5 seconds, but re-engaging deep focus takes 15-20 minutes.</p>
+                <div class="static-img-box">
+                    [GRAPH: Sawtooth wave showing Focus Level dropping to zero with every interruption vs. Smooth high plateau of Flow]
+                </div>
+            </div>
+
+            <div class="lecture-box">
+                <h3>5.2 Flow State vs. Distraction</h3>
+                <p><strong>Internal Distractions:</strong> Hunger, worry, daydreaming.<br>
+                <strong>External Distractions:</strong> Noise, phone, movement.<br>
+                <strong>Flow State:</strong> A neurological state where the prefrontal cortex down-regulates "self-monitoring," creating a sense of effortlessness.</p>
+            </div>
+        </section>
+
+        <!-- ================= MEDIUM LEVEL ================= -->
+        <section>
+            <h2>LEVEL 2: Structural Mechanics</h2>
+
+            <div class="lecture-box">
+                <h3>5.3 The Pomodoro Technique (Scientific View)</h3>
+                <p>Why 25 minutes? It aligns with the brain's <strong>Ultradian Rhythm</strong> of high focus. The 5-minute break is for <strong>consolidation</strong>, not entertainment. It flushes metabolic waste (adenosine) from neural pathways.</p>
+                <div class="static-img-box">
+                    [TIMELINE: 25m Focus (Red) -> 5m Break (Green) -> 25m Focus (Red) -> Long Break after 4 cycles]
+                </div>
+            </div>
+
+            <div class="lecture-box">
+                <h3>5.4 Environment Optimization</h3>
+                <p><strong>The Doorway Effect:</strong> Changing rooms resets memory buffers.
+                <br><strong>Visual Field:</strong> Anything in your peripheral vision competes for visual cortex processing. A cluttered desk creates a "background hum" of cognitive load.</p>
+                <div class="static-img-box">
+                    [DIAGRAM: Ideal Study Desk - Light source, Singular focal point, No phone in visual field, Ergonomic chair]
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= ADVANCED LEVEL ================= -->
+        <section>
+            <h2>LEVEL 3: Temporal Engineering</h2>
+
+            <div class="lecture-box">
+                <h3>5.5 Time-Blocking & Energy Mapping</h3>
+                <p>Don't manage time; manage energy.
+                <br><strong>Time-Blocking:</strong> Assigning specific tasks to specific hours on a calendar.
+                <br><strong>Energy Mapping:</strong> Doing high-cognitive load tasks (Math/Physics) when alert, and low-load tasks (copying notes) when tired.</p>
+                <div class="static-img-box">
+                    [IMAGE: Calendar view showing solid blocks of color for "Deep Work" vs "Shallow Work"]
+                </div>
+            </div>
+
+            <div class="lecture-box">
+                <h3>5.6 Deep Work Frameworks</h3>
+                <p><strong>Deep Work:</strong> Professional activities performed in a state of distraction-free concentration that push your cognitive capabilities to their limit.
+                <br><strong>Monotasking:</strong> The refusal to split attention. The brain cannot multitask; it only "task-switches" rapidly, degrading quality by 40%.</p>
+            </div>
+        </section>
+
+        <!-- ================= EXPERT LEVEL ================= -->
+        <section>
+            <h2>LEVEL 4: Neuro-Optimization</h2>
+
+            <div class="lecture-box">
+                <h3>5.7 Brain State Hacking</h3>
+                <p><strong>Dopamine Discipline:</strong> Social media provides "cheap dopamine" (instant reward). Studying provides "delayed dopamine." You must fast from cheap dopamine to reset your baseline sensitivity.</p>
+                <div class="static-img-box">
+                    [CHART: Dopamine Baseline vs. Spikes. Showing crash after social media usage making studying feel "boring"]
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= IMPORTANT QUESTIONS (30) ================= -->
+        <section>
+            <h2>CRITICAL CONCEPT ANALYSIS (30 KEY QUESTIONS)</h2>
+            <ul class="imp-list">
+                <li><span class="imp-q">Q1. Define Attention Residue.</span> <span class="imp-a">The cognitive capacity left behind on a previous task when switching contexts, reducing performance on the current task.</span></li>
+                <li><span class="imp-q">Q2. What is the cognitive cost of multitasking?</span> <span class="imp-a">It increases error rates by up to 50% and takes 50% longer to complete tasks due to context switching.</span></li>
+                <li><span class="imp-q">Q3. Why is the Pomodoro break crucial?</span> <span class="imp-a">It prevents cognitive fatigue and allows the brain to consolidate information into long-term memory.</span></li>
+                <li><span class="imp-q">Q4. What is the Zeigarnik Effect in focus?</span> <span class="imp-a">Unfinished tasks dominate attention. Writing them down clears the "cognitive RAM."</span></li>
+                <li><span class="imp-q">Q5. Explain 'Selective Attention'.</span> <span class="imp-a">The process of focusing on a particular object in the environment for a certain period of time while ignoring irrelevant information.</span></li>
+                <li><span class="imp-q">Q6. What is 'Deep Work'?</span> <span class="imp-a">Activities performed in distraction-free concentration that push cognitive capabilities to their limit.</span></li>
+                <li><span class="imp-q">Q7. How does blue light affect focus?</span> <span class="imp-a">It suppresses melatonin, keeping you alert, but digital blue light can cause eye strain and disrupt circadian rhythm if used late.</span></li>
+                <li><span class="imp-q">Q8. What is 'Flow State'?</span> <span class="imp-a">A mental state of operation in which a person performing an activity is fully immersed in a feeling of energized focus.</span></li>
+                <li><span class="imp-q">Q9. Why is a clean desk important for focus?</span> <span class="imp-a">Reduces visual stimuli, lowering the background processing load on the visual cortex.</span></li>
+                <li><span class="imp-q">Q10. What is 'Time Boxing'?</span> <span class="imp-a">Allocating a fixed time period to a planned activity, stopping exactly when the time is up.</span></li>
+                <li><span class="imp-q">Q11. Difference between Deep and Shallow Work?</span> <span class="imp-a">Deep work creates new value/skill; shallow work is logistical (email, meetings) and easily replicated.</span></li>
+                <li><span class="imp-q">Q12. What is 'Task Batching'?</span> <span class="imp-a">Grouping similar tasks together to perform them in one time block to reduce switching costs.</span></li>
+                <li><span class="imp-q">Q13. How does dehydration affect focus?</span> <span class="imp-a">Even 2% dehydration can significantly impair attention, memory, and psychomotor skills.</span></li>
+                <li><span class="imp-q">Q14. What is the '20-20-20 Rule'?</span> <span class="imp-a">Every 20 mins, look at something 20 feet away for 20 seconds to reduce eye strain.</span></li>
+                <li><span class="imp-q">Q15. Why avoid phone in the morning?</span> <span class="imp-a">Preserves the 'proactive' brain state. Checking phone switches brain to 'reactive' mode immediately.</span></li>
+                <li><span class="imp-q">Q16. What is 'Decision Fatigue'?</span> <span class="imp-a">Deteriorating quality of decisions made by an individual after a long session of decision making.</span></li>
+                <li><span class="imp-q">Q17. How does posture affect concentration?</span> <span class="imp-a">Slouching compresses lungs reducing oxygen intake; upright posture promotes alertness and confidence.</span></li>
+                <li><span class="imp-q">Q18. What is 'White Noise'?</span> <span class="imp-a">A constant background sound that masks other distracting sounds, helping maintain focus.</span></li>
+                <li><span class="imp-q">Q19. Define 'Digital Minimalism'.</span> <span class="imp-a">A philosophy of using technology intentionally to support values, rather than letting it use you.</span></li>
+                <li><span class="imp-q">Q20. What is the '2 Minute Rule'?</span> <span class="imp-a">If a task takes less than 2 minutes, do it immediately to prevent it from cluttering your mental to-do list.</span></li>
+                <li><span class="imp-q">Q21. How does sugar affect focus?</span> <span class="imp-a">Causes a spike in energy followed by a crash (hypoglycemia) which creates brain fog.</span></li>
+                <li><span class="imp-q">Q22. What is 'Active Recall' in focus?</span> <span class="imp-a">Testing yourself forces the brain to retrieve information, which requires high focus and strengthens connections.</span></li>
+                <li><span class="imp-q">Q23. Why is multitasking a myth?</span> <span class="imp-a">The brain cannot process two high-cognitive tasks simultaneously; it switches rapidly between them.</span></li>
+                <li><span class="imp-q">Q24. What is 'Hyperfocus'?</span> <span class="imp-a">An intense form of mental concentration or visualization that focuses consciousness on a subject.</span></li>
+                <li><span class="imp-q">Q25. Effect of sleep deprivation on focus?</span> <span class="imp-a">Similar to intoxication; impairs reaction time, alertness, and working memory.</span></li>
+                <li><span class="imp-q">Q26. What is 'Pareto Principle' in study?</span> <span class="imp-a">80% of results come from 20% of the study material (the core concepts). Focus there first.</span></li>
+                <li><span class="imp-q">Q27. Why use pen and paper vs typing?</span> <span class="imp-a">Writing engages the Reticular Activating System (RAS) more effectively, aiding memory and focus.</span></li>
+                <li><span class="imp-q">Q28. What is 'Binaural Beats'?</span> <span class="imp-a">Auditory illusion perceived when two different pure-tone sine waves are presented to a listener, potentially aiding focus.</span></li>
+                <li><span class="imp-q">Q29. How does exercise aid focus?</span> <span class="imp-a">Increases blood flow to the brain and releases BDNF (Brain-Derived Neurotrophic Factor).</span></li>
+                <li><span class="imp-q">Q30. What is 'Structured Procrastination'?</span> <span class="imp-a">Doing useful small tasks to avoid doing the big scary task, still resulting in productivity.</span></li>
+            </ul>
+        </section>
+
+        <!-- ================= PRACTICE LAB (70 QUESTIONS) ================= -->
+        <section id="practice-lab">
+            <h2>PRACTICE LAB: FOCUS ENGINEERING</h2>
+            <div id="quiz-container">
+                <!-- Questions injected via JS -->
+            </div>
+        </section>
+
+        <!-- ================= ADVANCED LONG QUESTIONS ================= -->
+        <section>
+            <h2>ADVANCED ARCHITECTURAL DESIGN (10 SCENARIOS)</h2>
+            <div id="long-answer-container">
+                <!-- Long questions injected via JS -->
+            </div>
+        </section>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>Designed & Created by SHRISHANT YADAV</p>
+        <p>ShanEduHub</p>
+    </footer>
+
+    <script>
+        // --- DATA: 70 PRACTICE QUESTIONS ---
+        const practiceQuestions = [
+            // BASIC - 10
+            { q: "Focus is best defined as _______ attention.", type: "mcq", options: ["Selective", "Infinite", "Random", "Passive"], a: "Selective" },
+            { q: "The brain can consciously process about how many bits per second?", type: "mcq", options: ["11 million", "40-50", "1000", "Unlimited"], a: "40-50" },
+            { q: "True or False: Multitasking increases productivity for complex tasks.", type: "tf", a: "False" },
+            { q: "What is the cost paid when changing tasks called?", type: "text", a: "Switching Cost" },
+            { q: "Which part of the brain is responsible for executive control?", type: "mcq", options: ["Amygdala", "Prefrontal Cortex", "Cerebellum", "Brain Stem"], a: "Prefrontal Cortex" },
+            { q: "The state of being fully immersed in a task is called _______.", type: "text", a: "Flow" },
+            { q: "Internal distractions include thoughts and _______.", type: "mcq", options: ["Phone calls", "Noise", "Hunger", "Traffic"], a: "Hunger" },
+            { q: "True or False: Humans have a limited capacity for attention.", type: "tf", a: "True" },
+            { q: "Attention acts like a _______, filtering information.", type: "mcq", options: ["Funnel", "Sponge", "Bucket", "Mirror"], a: "Funnel" },
+            { q: "To focus better, you must _______ distractions.", type: "mcq", options: ["Ignore", "Eliminate", "Embrace", "Watch"], a: "Eliminate" },
+
+            // MEDIUM - 20
+            { q: "The standard Pomodoro work interval is ___ minutes.", type: "mcq", options: ["45", "60", "25", "10"], a: "25" },
+            { q: "The break after a Pomodoro session helps clear _______.", type: "mcq", options: ["Data", "Adenosine", "Blood", "Oxygen"], a: "Adenosine" },
+            { q: "True or False: You should check social media during your 5-minute break.", type: "tf", a: "False" },
+            { q: "How many Pomodoros before taking a long break?", type: "mcq", options: ["2", "4", "6", "8"], a: "4" },
+            { q: "The 'Doorway Effect' suggests that changing rooms can cause _______.", type: "mcq", options: ["Headache", "Forgetting", "Hunger", "Focus"], a: "Forgetting" },
+            { q: "Visual clutter on a desk increases cognitive _______.", type: "text", a: "Load" },
+            { q: "A study desk should ideally face a _______.", type: "mcq", options: ["TV", "Wall/Window", "Bed", "Corridor"], a: "Wall/Window" },
+            { q: "The best color light for studying is _______.", type: "mcq", options: ["Dim Yellow", "Bright White/Blue-Cool", "Red", "Green"], a: "Bright White/Blue-Cool" },
+            { q: "True or False: Your phone should be visible while studying.", type: "tf", a: "False" },
+            { q: "Checking a notification breaks flow for up to ___ minutes.", type: "mcq", options: ["2", "5", "20", "60"], a: "20" },
+            { q: "The Pomodoro technique fights against _______ law (work expands to fill time).", type: "text", a: "Parkinson's" },
+            { q: "Environmental cues trigger _______ states.", type: "mcq", options: ["Emotional", "Habitual", "Physical", "Sleep"], a: "Habitual" },
+            { q: "Ergonomics: Your monitor should be at _______ level.", type: "mcq", options: ["Chest", "Eye", "Knee", "Overhead"], a: "Eye" },
+            { q: "True or False: Listening to lyrical music is good for reading comprehension.", type: "tf", a: "False" },
+            { q: "The best position for deep focus is _______.", type: "mcq", options: ["Lying down", "Slouching", "Upright sitting", "Walking"], a: "Upright sitting" },
+            { q: "Noise canceling headphones help reduce _______ load.", type: "mcq", options: ["Auditory", "Visual", "Kinesthetic", "Taste"], a: "Auditory" },
+            { q: "When Pomodoro fails, it is usually because the _______ was too long.", type: "mcq", options: ["Break", "Task", "Day", "Sleep"], a: "Break" },
+            { q: "Cold water on the face triggers the _______ reflex, alerting the brain.", type: "mcq", options: ["Diving", "Sleeping", "Running", "Eating"], a: "Diving" },
+            { q: "A 'Focus Anchor' is a specific _______ or object used to trigger concentration.", type: "text", a: "Sound" },
+            { q: "True or False: You should eat heavy meals before deep work.", type: "tf", a: "False" },
+
+            // ADVANCED - 25
+            { q: "Time-blocking differs from a to-do list because it includes _______.", type: "mcq", options: ["Priorities", "Duration/When", "Colors", "Names"], a: "Duration/When" },
+            { q: "The concept of 'Deep Work' was popularized by Cal _______.", type: "text", a: "Newport" },
+            { q: "Shallow work is defined as _______ demanding tasks.", type: "mcq", options: ["Cognitively", "Non-cognitively", "Physically", "Emotionally"], a: "Non-cognitively" },
+            { q: "Monotasking significantly reduces _______ rates.", type: "mcq", options: ["Success", "Error", "Speed", "Learning"], a: "Error" },
+            { q: "Energy mapping involves matching task difficulty to _______ levels.", type: "mcq", options: ["Hunger", "Circadian", "Noise", "Light"], a: "Circadian" },
+            { q: "True or False: You should schedule your hardest task for your energy trough.", type: "tf", a: "False" },
+            { q: "The 'Eat That Frog' technique means doing the _______ task first.", type: "mcq", options: ["Easiest", "Hardest", "Smallest", "Funniest"], a: "Hardest" },
+            { q: "Grouping emails to answer all at once is called _______.", type: "mcq", options: ["Batching", "Blocking", "Deleting", "Ignoring"], a: "Batching" },
+            { q: "Attention residue is caused by incomplete _______.", type: "text", a: "Tasks" },
+            { q: "Isolation is often necessary for _______ work.", type: "mcq", options: ["Deep", "Shallow", "Team", "Fun"], a: "Deep" },
+            { q: "The 'Bimodal' philosophy implies alternating between deep work and _______.", type: "mcq", options: ["Sleep", "Normal life", "Partying", "Gaming"], a: "Normal life" },
+            { q: "Which is a 'Deep Work' activity?", type: "mcq", options: ["Answering email", "Writing a thesis", "Scheduling meetings", "Formatting slides"], a: "Writing a thesis" },
+            { q: "The key to flow is a balance between skill and _______.", type: "text", a: "Challenge" },
+            { q: "If a task is too hard and skill is low, the result is _______.", type: "mcq", options: ["Boredom", "Anxiety", "Flow", "Sleep"], a: "Anxiety" },
+            { q: "If a task is too easy and skill is high, the result is _______.", type: "mcq", options: ["Boredom", "Anxiety", "Flow", "Excitement"], a: "Boredom" },
+            { q: "Priority sequencing requires identifying the _______ path.", type: "mcq", options: ["Critical", "Easy", "Longest", "Fun"], a: "Critical" },
+            { q: "The 90-minute focus cycle is based on _______ rhythms.", type: "text", a: "Ultradian" },
+            { q: "True or False: Open office plans generally improve deep focus.", type: "tf", a: "False" },
+            { q: "Scheduled isolation means physically removing yourself from _______.", type: "mcq", options: ["Food", "People/Inputs", "Books", "Air"], a: "People/Inputs" },
+            { q: "Cognitive intensity is measured by _______ per hour.", type: "mcq", options: ["Focus", "Output", "Calories", "Steps"], a: "Focus" },
+            { q: "Digital minimalism advocates for _______ technology use.", type: "mcq", options: ["Zero", "Intentional", "Maximum", "Random"], a: "Intentional" },
+            { q: "The 'Rhythmic' philosophy suggests making deep work a _______.", type: "mcq", options: ["Surprise", "Habit", "Game", "Choice"], a: "Habit" },
+            { q: "Who controls your time in Time-Blocking?", type: "mcq", options: ["You", "Others", "Your Phone", "The Clock"], a: "You" },
+            { q: "A 'Shutdown Ritual' helps prevent _______ effect.", type: "mcq", options: ["Zeigarnik", "Doppler", "Placebo", "Mandela"], a: "Zeigarnik" },
+            { q: "Deep work is essentially a _______ activity.", type: "mcq", options: ["Social", "Solitary", "Passive", "Easy"], a: "Solitary" },
+
+            // EXPERT - 15
+            { q: "Brain State Hacking involves manipulating neurochemistry, specifically _______.", type: "mcq", options: ["Insulin", "Dopamine", "Calcium", "Iron"], a: "Dopamine" },
+            { q: "Social media likes provide _______ variable rewards.", type: "mcq", options: ["Intermittent", "Fixed", "Guaranteed", "Boring"], a: "Intermittent" },
+            { q: "The 'Monastic' approach to deep work involves _______ elimination of distractions.", type: "mcq", options: ["Partial", "Total", "Weekly", "Daily"], a: "Total" },
+            { q: "Context switching burns oxygenated _______ in the brain.", type: "mcq", options: ["Glucose", "Water", "Fat", "Protein"], a: "Glucose" },
+            { q: "Dopamine fasting is designed to reset reward _______.", type: "text", a: "Sensitivity" },
+            { q: "The 'Journalistic' approach requires switching into deep work _______.", type: "mcq", options: ["Slowly", "Instantly", "Never", "Weekly"], a: "Instantly" },
+            { q: "True or False: Willpower is an unlimited resource.", type: "tf", a: "False" },
+            { q: "Decision fatigue leads to _______ choices later in the day.", type: "mcq", options: ["Better", "Poorer", "Faster", "Slower"], a: "Poorer" },
+            { q: "The 'Hyper-correction Effect' states we learn best when we correct _______ errors.", type: "mcq", options: ["Small", "High-confidence", "Low-confidence", "No"], a: "High-confidence" },
+            { q: "Meditation increases gray matter in the _______ cortex.", type: "mcq", options: ["Visual", "Prefrontal", "Motor", "Auditory"], a: "Prefrontal" },
+            { q: "Alpha waves in the brain are associated with _______ alert states.", type: "mcq", options: ["Relaxed", "Panicked", "Sleeping", "Running"], a: "Relaxed" },
+            { q: "Beta waves are associated with _______ concentration.", type: "mcq", options: ["Active", "Passive", "Deep", "Dreaming"], a: "Active" },
+            { q: "Digital minimalism is not luddism, it is _______ engineering.", type: "mcq", options: ["Social", "Attention", "Mechanical", "Electrical"], a: "Attention" },
+            { q: "The 'Grandmother Rule' (Premack Principle) puts high probability behavior _______ low probability behavior.", type: "mcq", options: ["Before", "After", "During", "Instead of"], a: "After" },
+            { q: "Neuroplasticity means attention training physically _______ the brain.", type: "mcq", options: ["Rewires", "Melts", "Shrinks", "Hardens"], a: "Rewires" }
+        ];
+
+        // --- DATA: 10 LONG QUESTIONS ---
+        const longQuestions = [
+            { id: 1, q: "Design a 6-hour deep work study schedule including breaks. Specificity required.", keywords: ["block", "break", "pomodoro", "lunch", "review", "am", "pm"] },
+            { id: 2, q: "Compare Pomodoro vs Time-Blocking. When should you use which?", keywords: ["fatigue", "structure", "task", "length", "pomodoro", "calendar", "energy"] },
+            { id: 3, q: "Create a distraction-elimination protocol for your study room.", keywords: ["phone", "notification", "desk", "door", "noise", "clean", "visual"] },
+            { id: 4, q: "Analyze the 'Switching Cost' using a real-world student example.", keywords: ["residue", "time", "focus", "regain", "notification", "interrupt", "lag"] },
+            { id: 5, q: "Construct a plan to induce Flow State for a difficult subject.", keywords: ["challenge", "skill", "clear", "goal", "distraction", "feedback", "immersion"] },
+            { id: 6, q: "Design a digital minimalism framework for a competitive exam student.", keywords: ["limit", "app", "delete", "schedule", "notification", "batch", "purpose"] },
+            { id: 7, q: "Scientifically evaluate why multitasking is a myth.", keywords: ["switch", "process", "serial", "parallel", "error", "brain", "simultaneous"] },
+            { id: 8, q: "Create a system to optimize Context Switching if it is unavoidable.", keywords: ["batch", "theme", "day", "similar", "transition", "notes", "closure"] },
+            { id: 9, q: "Construct a Deep Work Blueprint for a UPSC/JEE aspirant.", keywords: ["isolation", "intensity", "hours", "routine", "subject", "revise", "monotask"] },
+            { id: 10, q: "Critically examine dopamine-driven distraction patterns.", keywords: ["reward", "loop", "instant", "delayed", "craving", "cycle", "fasting"] }
+        ];
+
+        // --- STATE MANAGEMENT ---
+        let state = {
+            correct: 0,
+            wrong: 0,
+            attempted: 0,
+            longAttempted: 0
+        };
+
+        // --- DOM ELEMENTS ---
+        const scoreCorrect = document.getElementById('score-correct');
+        const scoreWrong = document.getElementById('score-wrong');
+        const scoreAttempted = document.getElementById('score-attempted');
+        const scorePercent = document.getElementById('score-percent');
+        const quizContainer = document.getElementById('quiz-container');
+        const longContainer = document.getElementById('long-answer-container');
+        const revPanel = document.getElementById('revision-panel');
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderQuiz();
+            renderLongQuestions();
+            updateScoreUI();
+        });
+
+        // --- RENDER PRACTICE QUIZ ---
+        function renderQuiz() {
+            quizContainer.innerHTML = '';
+            practiceQuestions.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                
+                let content = `<p><strong>Q${index + 1}:</strong> ${item.q}</p>`;
+                
+                if (item.type === 'mcq') {
+                    content += `<div class="options-grid">`;
+                    item.options.forEach(opt => {
+                        content += `<button class="option-btn" onclick="checkMCQ(this, '${opt}', '${item.a}', ${index})">${opt}</button>`;
+                    });
+                    content += `</div>`;
+                } else if (item.type === 'tf') {
+                    content += `<div class="options-grid">`;
+                    content += `<button class="option-btn" onclick="checkMCQ(this, 'True', '${item.a}', ${index})">True</button>`;
+                    content += `<button class="option-btn" onclick="checkMCQ(this, 'False', '${item.a}', ${index})">False</button>`;
+                    content += `</div>`;
+                } else {
+                    content += `<input type="text" class="input-answer" placeholder="Type answer..." id="input-${index}">`;
+                    content += `<button class="check-btn" onclick="checkText(${index}, '${item.a}')">Check Answer</button>`;
+                }
+
+                content += `<div class="feedback" id="feed-${index}"></div>`;
+                card.innerHTML = content;
+                quizContainer.appendChild(card);
+            });
+        }
+
+        // --- RENDER LONG QUESTIONS ---
+        function renderLongQuestions() {
+            longContainer.innerHTML = '';
+            longQuestions.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.innerHTML = `
+                    <p><strong>Scenario ${item.id}:</strong> ${item.q}</p>
+                    <textarea id="long-${index}" placeholder="Write your engineered strategy here..."></textarea>
+                    <button class="check-btn" onclick="checkLong(${index})">Submit Analysis</button>
+                    <div class="feedback" id="long-feed-${index}"></div>
+                `;
+                longContainer.appendChild(card);
+            });
+        }
+
+        // --- CHECKING LOGIC ---
+        function checkMCQ(btn, userVal, correctVal, index) {
+            if (btn.parentElement.classList.contains('answered')) return;
+            
+            btn.parentElement.classList.add('answered');
+            const feedback = document.getElementById(`feed-${index}`);
+            state.attempted++;
+
+            if (userVal === correctVal) {
+                state.correct++;
+                btn.classList.add('correct');
+                feedback.innerHTML = "Excellent ⭐ Precision Focus.";
+                feedback.className = "feedback show success";
+            } else {
+                state.wrong++;
+                btn.classList.add('wrong');
+                feedback.innerHTML = `Incorrect. Correct Answer: <strong>${correctVal}</strong>`;
+                feedback.className = "feedback show error";
+                
+                // Highlight correct
+                const btns = btn.parentElement.children;
+                for(let b of btns) {
+                    if (b.innerText === correctVal) b.classList.add('correct');
+                }
+            }
+            updateScoreUI();
+        }
+
+        function checkText(index, correctVal) {
+            const input = document.getElementById(`input-${index}`);
+            if (input.disabled) return;
+            
+            const userVal = input.value.trim().toLowerCase();
+            const feedback = document.getElementById(`feed-${index}`);
+            state.attempted++;
+            input.disabled = true;
+
+            if (userVal === correctVal.toLowerCase()) {
+                state.correct++;
+                feedback.innerHTML = "Correct. Concept Mastered.";
+                feedback.className = "feedback show success";
+            } else {
+                state.wrong++;
+                feedback.innerHTML = `Missed. Correct Answer: <strong>${correctVal}</strong>`;
+                feedback.className = "feedback show error";
+            }
+            updateScoreUI();
+        }
+
+        function checkLong(index) {
+            const area = document.getElementById(`long-${index}`);
+            if (area.disabled) return;
+
+            const userText = area.value.toLowerCase();
+            if (userText.length < 20) {
+                alert("Please write a detailed analysis.");
+                return;
+            }
+
+            const qData = longQuestions[index];
+            const foundKeywords = qData.keywords.filter(k => userText.includes(k));
+            const score = foundKeywords.length;
+            const feedback = document.getElementById(`long-feed-${index}`);
+
+            area.disabled = true;
+            state.attempted++;
+
+            if (score >= 3) {
+                state.correct++;
+                feedback.innerHTML = `<strong>Engineering Successful.</strong><br>Detected Key Concepts: ${foundKeywords.join(", ")}.<br>Your strategy is structurally sound.`;
+                feedback.className = "feedback show success";
+            } else {
+                state.wrong++;
+                feedback.innerHTML = `<strong>Structural Weakness.</strong><br>Missing Key Concepts: ${qData.keywords.join(", ")}.<br>Refine your model answer.`;
+                feedback.className = "feedback show error";
+            }
+            updateScoreUI();
+        }
+
+        // --- UI UTILITIES ---
+        function updateScoreUI() {
+            scoreCorrect.innerText = state.correct;
+            scoreWrong.innerText = state.wrong;
+            scoreAttempted.innerText = state.attempted;
+            
+            const percent = state.attempted === 0 ? 0 : Math.round((state.correct / state.attempted) * 100);
+            scorePercent.innerText = percent + "%";
+            
+            if (percent >= 90) scorePercent.style.color = "#2ecc71";
+            else if (percent >= 70) scorePercent.style.color = "#f1c40f";
+            else scorePercent.style.color = "#e74c3c";
+        }
+
+        function toggleRevision() {
+            if (revPanel.style.display === 'block') {
+                revPanel.style.display = 'none';
+            } else {
+                revPanel.style.display = 'block';
+                revPanel.scrollIntoView({behavior: "smooth"});
+            }
+        }
+    </script>
+</body>
+</html>

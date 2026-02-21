@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Skills Mastery | ShanEduHub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4ECDC4; /* Mint */
+            --secondary: #FF6B6B; /* Coral */
+            --accent: #FFE66D; /* Lemon */
+            --dark: #292f36;
+            --light: #f7fff7;
+            --blue: #1A535C;
+            --card-bg: #ffffff;
+            --correct: #2ecc71;
+            --wrong: #e74c3c;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background-color: var(--light);
+            background-image: radial-gradient(var(--primary) 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: var(--dark);
+            overflow-x: hidden;
+            padding-bottom: 60px;
+        }
+
+        /* Header */
+        header {
+            background: var(--blue);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 10;
+        }
+
+        header h1 {
+            font-family: 'Patrick Hand', cursive;
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+        }
+
+        /* Sticky Score Panel */
+        #score-panel {
+            position: sticky;
+            top: 0;
+            background: var(--accent);
+            color: var(--dark);
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            z-index: 100;
+            font-size: 0.9rem;
+            border-bottom: 3px solid #e6ce4d;
+        }
+
+        .score-item span {
+            display: block;
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        .score-val {
+            font-size: 1.2rem;
+            font-family: 'Patrick Hand', cursive;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        /* Set Navigation */
+        .set-nav {
+            display: flex;
+            overflow-x: auto;
+            gap: 10px;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            scrollbar-width: none;
+        }
+
+        .set-nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .set-btn {
+            background: white;
+            border: 2px solid var(--primary);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-family: 'Patrick Hand', cursive;
+            font-size: 1.1rem;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+            color: var(--blue);
+        }
+
+        .set-btn.active {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 4px 0 var(--blue);
+        }
+
+        /* Question Card */
+        .question-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 0 rgba(0,0,0,0.05);
+            border: 2px solid #eee;
+            margin-bottom: 20px;
+            animation: popIn 0.3s ease-out;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .q-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .q-text {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        /* Input Types */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background: white;
+            border: 2px solid #ddd;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: left;
+            cursor: pointer;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1rem;
+            transition: 0.2s;
+        }
+
+        .option-btn:hover {
+            border-color: var(--primary);
+            background: #f0fffc;
+        }
+
+        .option-btn.selected {
+            border-color: var(--blue);
+            background: #e0f7fa;
+        }
+
+        .option-btn.correct {
+            background: var(--correct);
+            color: white;
+            border-color: var(--correct);
+        }
+
+        .option-btn.wrong {
+            background: var(--wrong);
+            color: white;
+            border-color: var(--wrong);
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1rem;
+            outline: none;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            border-color: var(--primary);
+        }
+
+        textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        .action-btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-family: 'Patrick Hand', cursive;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #c0392b;
+            margin-top: 15px;
+            transition: transform 0.1s;
+        }
+
+        .action-btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
+        }
+
+        /* Feedback Section */
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 12px;
+            background: #f8f9fa;
+            border-left: 5px solid #ccc;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.success {
+            border-left-color: var(--correct);
+            background: #eafff2;
+        }
+
+        .feedback.error {
+            border-left-color: var(--wrong);
+            background: #fff0f0;
+        }
+
+        .feedback-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .nav-btn {
+            background: var(--blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Patrick Hand', cursive;
+        }
+
+        /* Revision Section */
+        #revision-section {
+            background: white;
+            margin: 20px auto;
+            max-width: 800px;
+            padding: 20px;
+            border-radius: 20px;
+            border: 2px dashed var(--primary);
+            display: none;
+        }
+
+        .rev-toggle {
+            display: block;
+            margin: 20px auto;
+            background: var(--accent);
+            color: var(--dark);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            font-size: 0.8rem;
+            z-index: 99;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            .score-val { font-size: 1rem; }
+            .question-card { padding: 15px; }
+            .q-text { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>📘 Professional Skills Mastery</h1>
+    </header>
+
+    <!-- Sticky Score Panel -->
+    <div id="score-panel">
+        <div class="score-item">
+            <span>Correct</span>
+            <div class="score-val" style="color: var(--correct)" id="score-correct">0</div>
+        </div>
+        <div class="score-item">
+            <span>Wrong</span>
+            <div class="score-val" style="color: var(--wrong)" id="score-wrong">0</div>
+        </div>
+        <div class="score-item">
+            <span>Total</span>
+            <div class="score-val" id="score-total">0</div>
+        </div>
+        <div class="score-item">
+            <span>%</span>
+            <div class="score-val" id="score-percent">0%</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Set Navigation -->
+        <div class="set-nav" id="set-nav">
+            <!-- Generated via JS -->
+        </div>
+
+        <button class="rev-toggle" onclick="toggleRevision()">💡 Quick Revision Notes</button>
+        
+        <div id="revision-section">
+            <h3>🚀 Quick Tips</h3>
+            <ul style="margin-left: 20px; margin-top: 10px; line-height: 1.6;">
+                <li><strong>Communication:</strong> Always active listen. Email subject lines must be clear.</li>
+                <li><strong>Resume:</strong> Use Action Verbs. Optimize for ATS keywords. No photos in ATS resumes.</li>
+                <li><strong>Excel:</strong> Pivot Tables summarize data. VLOOKUP searches vertically.</li>
+                <li><strong>Remote:</strong> Trust is key. Over-communicate asynchronously.</li>
+                <li><strong>Ethics:</strong> Integrity over short-term gain. Protect data.</li>
+            </ul>
+        </div>
+
+        <!-- Question Area -->
+        <div id="question-container">
+            <!-- Injected via JS -->
+        </div>
+    </div>
+
+    <footer>
+        Designed & Created by SHRISHANT YADAV, ShanEduHub
+    </footer>
+
+    <script>
+        // --- DATA ENGINE ---
+        // Generating 10 Sets with mixed types based on the syllabus.
+        // Types: mcq, blank, truefalse, short, long, oneWord
+        
+        const syllabusData = [
+            // SET 1: Professional Communication Fundamentals (Ch 1.1 - 1.2)
+            {
+                id: 1,
+                title: "Set 1: Comm Basics",
+                questions: [
+                    { type: "mcq", q: "What is the primary goal of professional communication?", options: ["To entertain", "To convey information clearly and effectively", "To use complex words", "To hide emotions"], a: 1 },
+                    { type: "blank", q: "The 'Subject Line' in a business email should be concise and ______.", a: "clear" },
+                    { type: "truefalse", q: "In a formal meeting, it is acceptable to interrupt someone if you have a good idea.", a: false },
+                    { type: "oneWord", q: "What communication skill involves fully concentrating, understanding, responding, and remembering what is being said?", a: "listening" },
+                    { type: "mcq", q: "Which of these is a formal closing for a business email?", options: ["Cheers", "Later", "Sincerely", "Yours"], a: 2 },
+                    { type: "short", q: "Define 'Tone' in professional communication.", a: "The attitude or emotion conveyed through words." },
+                    { type: "mcq", q: "When sending a calendar invite, what is crucial to include?", options: ["Agenda", "Joke of the day", "Weather report", "Lunch menu"], a: 0 },
+                    { type: "long", q: "Explain the importance of 'Psychological Safety' in a team environment.", keywords: ["trust", "risk", "mistake", "fear", "innovation"] },
+                    { type: "mcq", q: "A Memo is typically used for?", options: ["Internal communication", "External sales", "Personal diary", "Legal contracts"], a: 0 },
+                    { type: "truefalse", q: "Slang is acceptable in professional emails if you know the person well.", a: false },
+                    { type: "blank", q: "Meeting ______ are the written record of what happened during a meeting.", a: "minutes" },
+                    { type: "mcq", q: "Which hierarchy level usually makes strategic long-term decisions?", options: ["Top Management", "Middle Management", "Operational Staff", "Interns"], a: 0 },
+                    { type: "oneWord", q: "The 'S' in SOP stands for?", a: "standard" },
+                    { type: "mcq", q: "Collaborative document editing (like Google Docs) allows for?", options: ["Version conflicts", "Real-time co-working", "Data loss", "Slower working"], a: 1 },
+                    { type: "long", q: "Draft a polite email response declining a meeting request due to a schedule conflict.", keywords: ["thank", "unavailable", "conflict", "reschedule", "regards"] },
+                    { type: "mcq", q: "Non-verbal communication includes?", options: ["Words", "Body language", "Emails", "Phone calls"], a: 1 },
+                    { type: "truefalse", q: "You should always 'Reply All' to every email to keep everyone in the loop.", a: false },
+                    { type: "blank", q: "In communication, the ______ is the person who transmits the message.", a: "sender" },
+                    { type: "mcq", q: "To ensure a message was understood, you should ask for?", options: ["Money", "Feedback", "Silence", "Compliments"], a: 1 },
+                    { type: "oneWord", q: "What creates a permanent record of business decisions?", a: "documentation" },
+                    { type: "short", q: "What is an 'Agenda'?", a: "A list of items to be discussed at a meeting." },
+                    { type: "mcq", q: "Which color is generally considered most professional for text in documents?", options: ["Red", "Blue", "Black", "Green"], a: 2 },
+                    { type: "truefalse", q: "It is professional to check your phone constantly during a presentation.", a: false },
+                    { type: "long", q: "Describe the difference between 'hearing' and 'active listening'.", keywords: ["process", "understanding", "engaging", "passive", "conscious"] },
+                    { type: "blank", q: "Formal communication usually follows the ______ of command.", a: "chain" }
+                ]
+            },
+            // SET 2: Workplace Culture & Ethics (Ch 1.3 - 1.4)
+            {
+                id: 2,
+                title: "Set 2: Culture & Ethics",
+                questions: [
+                    { type: "mcq", q: "Organizational Culture refers to?", options: ["Office layout", "Shared values and practices", "Salary structure", "Software used"], a: 1 },
+                    { type: "truefalse", q: "Whistleblowing is the act of exposing illegal or unethical activity.", a: true },
+                    { type: "blank", q: "______ implies being responsible for your actions and decisions.", a: "accountability" },
+                    { type: "mcq", q: "Which framework helps in Ethical decision making?", options: ["Utilitarianism", "Favoritism", "Guesswork", "Coin Toss"], a: 0 },
+                    { type: "oneWord", q: "Protecting sensitive company information is known as?", a: "confidentiality" },
+                    { type: "mcq", q: "A toxic work culture often lacks?", options: ["Stress", "Trust", "Deadlines", "Meetings"], a: 1 },
+                    { type: "long", q: "Why is 'Data Responsibility' critical in the modern workplace?", keywords: ["privacy", "security", "legal", "trust", "breach"] },
+                    { type: "mcq", q: "Code of Conduct determines?", options: ["Dress code only", "Behavioral expectations", "Lunch times", "Holiday list"], a: 1 },
+                    { type: "truefalse", q: "It is ethical to use company resources for a personal side business.", a: false },
+                    { type: "short", q: "What is a 'Compliance Officer'?", a: "Employee ensuring company follows laws and regulations." },
+                    { type: "blank", q: "______ structure defines how activities like task allocation are directed.", a: "organizational" },
+                    { type: "mcq", q: "Digital Literacy involves?", options: ["Typing fast", "Using technology effectively/safely", "Playing games", "Fixing computers"], a: 1 },
+                    { type: "mcq", q: "If you see a colleague stealing data, you should?", options: ["Ignore it", "Report it", "Join them", "Post on social media"], a: 1 },
+                    { type: "oneWord", q: "The moral principles that govern a person's behavior are called?", a: "ethics" },
+                    { type: "long", q: "Explain the concept of 'Conflict of Interest' with an example.", keywords: ["personal", "gain", "professional", "duty", "bias"] },
+                    { type: "mcq", q: "A flat organizational structure has?", options: ["Many managers", "Few levels between staff and execs", "No boss", "Only interns"], a: 1 },
+                    { type: "truefalse", q: "Cultural fit means everyone must think exactly the same way.", a: false },
+                    { type: "blank", q: "______ making is the process of making choices by identifying a decision.", a: "decision" },
+                    { type: "mcq", q: "Respecting diversity in the workplace is part of?", options: ["Ethics", "Marketing", "Finance", "IT"], a: 0 },
+                    { type: "short", q: "What is 'Integrity'?", a: "Doing the right thing even when no one is watching." },
+                    { type: "mcq", q: "GDPR relates to?", options: ["Data Protection", "General Production", "Global Design", "Good Planning"], a: 0 },
+                    { type: "truefalse", q: "You can share your login password with your best friend at work.", a: false },
+                    { type: "blank", q: "Workplace ______ refers to following laws and regulations.", a: "compliance" },
+                    { type: "oneWord", q: "A set of rules outlining the social norms of a group.", a: "etiquette" },
+                    { type: "long", q: "How does a positive corporate culture affect employee retention?", keywords: ["happiness", "loyalty", "turnover", "engagement", "productivity"] }
+                ]
+            },
+            // SET 3: Resume Engineering (Ch 2.1 - 2.2)
+            {
+                id: 3,
+                title: "Set 3: ATS & Resumes",
+                questions: [
+                    { type: "mcq", q: "What does ATS stand for?", options: ["Automatic Tech System", "Applicant Tracking System", "Applied Test Solution", "Auto Type Service"], a: 1 },
+                    { type: "blank", q: "Resumes should be saved in ______ format to ensure formatting stays consistent.", a: "pdf" },
+                    { type: "truefalse", q: "You should use graphics and columns in an ATS-friendly resume.", a: false },
+                    { type: "mcq", q: "Which section is NOT standard in a professional resume?", options: ["Education", "Experience", "Hobbies like sleeping", "Skills"], a: 2 },
+                    { type: "oneWord", q: "Words that describe specific tasks like 'Managed', 'Created', 'Led' are called?", a: "verbs" },
+                    { type: "long", q: "Why is it important to tailor your resume for every job application?", keywords: ["match", "keywords", "ats", "relevance", "specific"] },
+                    { type: "mcq", q: "The 'Summary' section of a resume should be?", options: ["3 pages long", "A short professional pitch", "A list of demands", "Your life story"], a: 1 },
+                    { type: "short", q: "What is a 'Reverse Chronological' resume?", a: "Listing most recent experience first." },
+                    { type: "truefalse", q: "Including a photo on a resume is standard practice in the US/UK.", a: false },
+                    { type: "blank", q: "Use ______ statements to show results (e.g., 'Increased sales by 20%').", a: "impact" },
+                    { type: "mcq", q: "Which font is safest for ATS scanning?", options: ["Comic Sans", "Arial/Calibri", "Papyrus", "Wingdings"], a: 1 },
+                    { type: "mcq", q: "A Cover Letter should address?", options: ["Why you need money", "Why you fit the specific company", "Your childhood", "Your complaints"], a: 1 },
+                    { type: "oneWord", q: "The process of checking a resume for errors.", a: "proofreading" },
+                    { type: "long", q: "Write a bullet point for a 'Sales Manager' role using the XYZ formula (Accomplished [X] as measured by [Y], by doing [Z]).", keywords: ["sales", "revenue", "percent", "team", "strategy"] },
+                    { type: "mcq", q: "Keyword alignment means?", options: ["Centering text", "Matching resume words to job description", "Using bold fonts", "Alphabetizing skills"], a: 1 },
+                    { type: "truefalse", q: "Your email address on a resume should be professional (e.g., name@gmail.com).", a: true },
+                    { type: "blank", q: "Focus on ______ rather than just duties in your experience section.", a: "achievements" },
+                    { type: "mcq", q: "How many pages should a standard entry-level resume be?", options: ["1", "5", "10", "0.5"], a: 0 },
+                    { type: "short", q: "What is a 'Soft Skill'?", a: "Interpersonal skills like communication or teamwork." },
+                    { type: "mcq", q: "Which file name is best for a resume?", options: ["Resume.pdf", "John_Doe_Resume.pdf", "MyStuff.pdf", "Doc1.pdf"], a: 1 },
+                    { type: "long", q: "Explain the structure of a high-impact Cover Letter.", keywords: ["hook", "body", "value", "call to action", "closing"] },
+                    { type: "truefalse", q: "Lying on a resume is a criminal offense in some regions and grounds for firing.", a: true },
+                    { type: "oneWord", q: "A collection of your best work samples.", a: "portfolio" },
+                    { type: "mcq", q: "Gaps in employment should be?", options: ["Lied about", "Explained honestly/strategically", "Deleted", "Highlighted in red"], a: 1 },
+                    { type: "blank", q: "Quantifying achievements involves using ______.", a: "numbers" }
+                ]
+            },
+            // SET 4: Branding & LinkedIn (Ch 2.3 - 2.4)
+            {
+                id: 4,
+                title: "Set 4: Digital Brand",
+                questions: [
+                    { type: "mcq", q: "Your LinkedIn Headline should contain?", options: ["Just 'Student'", "Job Title + Value Proposition", "Your address", "Nothing"], a: 1 },
+                    { type: "truefalse", q: "LinkedIn is primarily for sharing vacation photos.", a: false },
+                    { type: "blank", q: "Social ______ refers to endorsements and recommendations on your profile.", a: "proof" },
+                    { type: "mcq", q: "Personal Branding is about?", options: ["Being famous", "Building a professional reputation", "Selling products", "Boasting"], a: 1 },
+                    { type: "oneWord", q: "The image at the top of your LinkedIn profile is the ______ photo.", a: "banner" },
+                    { type: "long", q: "How can you build 'Thought Leadership' on LinkedIn?", keywords: ["content", "articles", "insights", "consistency", "value"] },
+                    { type: "mcq", q: "Which is a 'Digital Credibility Signal'?", options: ["A verified certification", "A selfie", "A meme", "A vague bio"], a: 0 },
+                    { type: "short", q: "What is a 'Call to Action' in a profile?", a: "Instruction for visitors, e.g., 'Contact me for...'" },
+                    { type: "truefalse", q: "You should customize your LinkedIn URL.", a: true },
+                    { type: "mcq", q: "Networking on LinkedIn involves?", options: ["Spamming requests", "Meaningful engagement", "Asking for money", "Ghosting"], a: 1 },
+                    { type: "blank", q: "______ management is monitoring what people find when they Google you.", a: "reputation" },
+                    { type: "mcq", q: "To increase profile visibility, you should use?", options: ["Keywords", "Invisible text", "Emojis only", "Dark mode"], a: 0 },
+                    { type: "long", q: "Describe a strategy for requesting a LinkedIn recommendation.", keywords: ["polite", "specific", "project", "relationship", "remind"] },
+                    { type: "oneWord", q: "A specific segment of the market you specialize in.", a: "niche" },
+                    { type: "mcq", q: "A professional headshot should be?", options: ["A group photo", "Clear, solo, professional attire", "A blurry selfie", "A cartoon"], a: 1 },
+                    { type: "truefalse", q: "It is okay to copy-paste someone else's 'About' section.", a: false },
+                    { type: "blank", q: "Your 'About' section is your digital ______ pitch.", a: "elevator" },
+                    { type: "mcq", q: "Which activity boosts engagement?", options: ["Commenting on posts", "Lurking", "Deactivating account", "Reporting everyone"], a: 0 },
+                    { type: "short", q: "What is 'Positioning' in branding?", a: "Defining how you want to be perceived in the market." },
+                    { type: "mcq", q: "Who views your LinkedIn profile most during job hunts?", options: ["Parents", "Recruiters", "Gamers", "Doctors"], a: 1 },
+                    { type: "long", q: "Why is consistency important across all digital platforms?", keywords: ["recognition", "trust", "brand", "confusion", "professionalism"] },
+                    { type: "truefalse", q: "You can add media (PDFs/Links) to the Featured section.", a: true },
+                    { type: "oneWord", q: "The platform used for professional networking.", a: "linkedin" },
+                    { type: "mcq", q: "Alumni tools on LinkedIn help you find?", options: ["Former classmates", "Lost keys", "Cheap flights", "Recipes"], a: 0 },
+                    { type: "blank", q: "Skill ______ are short quizzes LinkedIn uses to verify abilities.", a: "assessments" }
+                ]
+            },
+            // SET 5: Interview Mastery (Ch 3.1 - 3.4)
+            {
+                id: 5,
+                title: "Set 5: Interviews",
+                questions: [
+                    { type: "mcq", q: "The STAR method stands for?", options: ["Situation Task Action Result", "Stop Talk Act React", "Sit Think Ask Run", "Star Team Act Role"], a: 0 },
+                    { type: "truefalse", q: "You should research the company before the interview.", a: true },
+                    { type: "blank", q: "______ questions ask how you handled past situations.", a: "behavioral" },
+                    { type: "mcq", q: "In a virtual interview, look at the?", options: ["Screen", "Camera lens", "Floor", "Ceiling"], a: 1 },
+                    { type: "oneWord", q: "The discussion about salary and benefits is called?", a: "negotiation" },
+                    { type: "long", q: "How would you answer: 'Tell me about yourself'?", keywords: ["summary", "background", "relevant", "skills", "goals"] },
+                    { type: "mcq", q: "Which is a good question to ask the interviewer?", options: ["What does your company do?", "When is lunch?", "What is the team culture like?", "Can I leave now?"], a: 2 },
+                    { type: "short", q: "What is a 'Mock Interview'?", a: "A practice interview session." },
+                    { type: "truefalse", q: "Arriving 30 minutes late shows you are busy and important.", a: false },
+                    { type: "mcq", q: "Body language accounts for approximately what % of communication?", options: ["7%", "55%", "0%", "100%"], a: 1 },
+                    { type: "blank", q: "A ______ interview focuses on coding or specific job skills.", a: "technical" },
+                    { type: "mcq", q: "If you don't know an answer, you should?", options: ["Lie", "Admit it but offer to find out", "Cry", "Run away"], a: 1 },
+                    { type: "long", q: "Explain the importance of 'Cultural Fit' evaluation.", keywords: ["values", "team", "environment", "adaptation", "long-term"] },
+                    { type: "oneWord", q: "The follow-up note sent after an interview.", a: "thankyou" },
+                    { type: "mcq", q: "For a video interview, ensure your background is?", options: ["Cluttered", "Professional/Neutral", "Moving", "Dark"], a: 1 },
+                    { type: "truefalse", q: "It is okay to badmouth your previous boss.", a: false },
+                    { type: "blank", q: "______ impression is formed within the first few seconds.", a: "first" },
+                    { type: "mcq", q: "Competency mapping matches your skills to?", options: ["Job requirements", "Your hobbies", "Random facts", "Weather"], a: 0 },
+                    { type: "short", q: "What is 'Compensation Strategy'?", a: "Understanding the total value of salary, equity, and benefits." },
+                    { type: "mcq", q: "When asked about weaknesses, you should?", options: ["Say you have none", "Mention a real one and how you improve it", "Say you work too hard", "Refuse to answer"], a: 1 },
+                    { type: "long", q: "Draft a STAR response for 'Describe a time you solved a conflict'.", keywords: ["situation", "task", "action", "result", "resolution"] },
+                    { type: "truefalse", q: "Testing your audio/video before a call is mandatory.", a: true },
+                    { type: "oneWord", q: "The document detailing the job offer terms.", a: "offer letter" },
+                    { type: "mcq", q: "Active listening in an interview helps you?", options: ["Sleep", "Answer relevantly", "Interrupt", "Forget"], a: 1 },
+                    { type: "blank", q: "______ heat mapping tracks how often you display certain behaviors.", a: "behavioral" }
+                ]
+            },
+            // SET 6: Excel Foundations (Ch 4.1 - 4.2)
+            {
+                id: 6,
+                title: "Set 6: Excel Basics",
+                questions: [
+                    { type: "mcq", q: "What implies the intersection of a Row and Column?", options: ["Grid", "Cell", "Box", "Line"], a: 1 },
+                    { type: "blank", q: "All formulas in Excel must start with an ______ sign.", a: "=" },
+                    { type: "truefalse", q: "A Pivot Table is used to summarize large datasets.", a: true },
+                    { type: "mcq", q: "Which function adds up numbers?", options: ["ADD", "SUM", "PLUS", "TOTAL"], a: 1 },
+                    { type: "oneWord", q: "Visual representation of data (bars, lines, pies).", a: "chart" },
+                    { type: "long", q: "Explain the difference between Sorting and Filtering.", keywords: ["order", "arrange", "hide", "view", "criteria"] },
+                    { type: "mcq", q: "Ctrl + C is used for?", options: ["Cut", "Copy", "Paste", "Undo"], a: 1 },
+                    { type: "short", q: "What is 'Conditional Formatting'?", a: "Changing cell appearance based on its value." },
+                    { type: "truefalse", q: "CSV stands for Comma Separated Values.", a: true },
+                    { type: "mcq", q: "VLOOKUP looks for a value in the ______ column.", options: ["Rightmost", "Leftmost", "Center", "Bottom"], a: 1 },
+                    { type: "blank", q: "______ analysis allows you to test different scenarios.", a: "what-if" },
+                    { type: "mcq", q: "A collection of worksheets is called a?", options: ["Book", "Workbook", "Library", "Folder"], a: 1 },
+                    { type: "oneWord", q: "The feature that automatically fills data in a series.", a: "autofill" },
+                    { type: "long", q: "How does a Dashboard help in business decisions?", keywords: ["visual", "kpi", "summary", "quick", "overview"] },
+                    { type: "mcq", q: "To fix a cell reference (make it absolute), use?", options: ["%", "$", "#", "&"], a: 1 },
+                    { type: "truefalse", q: "You cannot undo an action in Excel.", a: false },
+                    { type: "blank", q: "KPI stands for Key ______ Indicator.", a: "performance" },
+                    { type: "mcq", q: "Which chart is best for showing trends over time?", options: ["Pie", "Line", "Scatter", "Radar"], a: 1 },
+                    { type: "short", q: "What is the 'Formula Bar'?", a: "The area where you edit cell contents." },
+                    { type: "mcq", q: "Merging cells does what?", options: ["Deletes data", "Combines cells into one", "Colors them", "Hides them"], a: 1 },
+                    { type: "long", q: "Describe how to clean 'dirty data' in Excel.", keywords: ["duplicates", "trim", "format", "blanks", "consistency"] },
+                    { type: "truefalse", q: "Excel can handle millions of rows efficiently.", a: false },
+                    { type: "oneWord", q: "The file extension for modern Excel files.", a: "xlsx" },
+                    { type: "mcq", q: "Slicers are used to filter?", options: ["Formulas", "Pivot Tables", "Pictures", "Text"], a: 1 },
+                    { type: "blank", q: "______ Logic uses IF, AND, OR functions.", a: "conditional" }
+                ]
+            },
+            // SET 7: Advanced Analytics & Workflow (Ch 4.3 - 5.4)
+            {
+                id: 7,
+                title: "Set 7: Analytics & Auto",
+                questions: [
+                    { type: "mcq", q: "Power BI is primarily used for?", options: ["Word processing", "Business Intelligence", "Gaming", "Email"], a: 1 },
+                    { type: "blank", q: "______ is identifying the 'slowest' part of a process.", a: "bottleneck" },
+                    { type: "truefalse", q: "Regression analysis helps in forecasting.", a: true },
+                    { type: "mcq", q: "Zapier is a tool for?", options: ["Cooking", "Automation", "Designing", "Sleeping"], a: 1 },
+                    { type: "oneWord", q: "The return on an investment calculation.", a: "roi" },
+                    { type: "long", q: "What is the benefit of 'Task Batching'?", keywords: ["focus", "efficiency", "context switching", "grouping", "time"] },
+                    { type: "mcq", q: "Nested Logic implies?", options: ["An IF inside an IF", "Bird homes", "Sorting A-Z", "Deleting data"], a: 0 },
+                    { type: "short", q: "Define 'Data Storytelling'.", a: "Communicating insights from data using narrative and visuals." },
+                    { type: "truefalse", q: "Automation aims to replace all humans.", a: false },
+                    { type: "mcq", q: "Which is a Low-Code platform?", options: ["Notepad", "Power Automate", "Paint", "Calculator"], a: 1 },
+                    { type: "blank", q: "An event that starts an automation is called a ______.", a: "trigger" },
+                    { type: "mcq", q: "Google Looker Studio is for?", options: ["Reporting/Visualization", "Video editing", "Music", "Coding"], a: 0 },
+                    { type: "oneWord", q: "Standard Operating Procedure acronym.", a: "sop" },
+                    { type: "long", q: "Explain the 'Hybrid Human + Automation' system.", keywords: ["balance", "efficiency", "judgment", "repetitive", "tasks"] },
+                    { type: "mcq", q: "Forecasting uses past data to?", options: ["Change the past", "Predict the future", "Delete files", "Format cells"], a: 1 },
+                    { type: "truefalse", q: "Process Mapping helps visualize workflows.", a: true },
+                    { type: "blank", q: "Statistical ______ helps analyze data trends.", a: "tools" },
+                    { type: "mcq", q: "Cost-Benefit evaluation checks if?", options: ["It's cheap", "Value exceeds cost", "It's expensive", "It's popular"], a: 1 },
+                    { type: "short", q: "What is a 'Decision Pipeline'?", a: "A structured process for making business choices." },
+                    { type: "mcq", q: "Power Pivot handles?", options: ["Small data", "Data Models", "Pictures", "Fonts"], a: 1 },
+                    { type: "long", q: "Why create an SOP for a business process?", keywords: ["consistency", "training", "quality", "standard", "reference"] },
+                    { type: "truefalse", q: "Scheduler automation runs tasks at specific times.", a: true },
+                    { type: "oneWord", q: "Automating report generation saves ______.", a: "time" },
+                    { type: "mcq", q: "Google Apps Script is based on?", options: ["Python", "JavaScript", "C++", "HTML"], a: 1 },
+                    { type: "blank", q: "______ analysis allows understanding complex relationships in data.", a: "regression" }
+                ]
+            },
+            // SET 8: Team Collaboration (Ch 6.1 - 6.4)
+            {
+                id: 8,
+                title: "Set 8: Teamwork",
+                questions: [
+                    { type: "mcq", q: "Role Clarity prevents?", options: ["Work", "Confusion/Overlap", "Success", "Meetings"], a: 1 },
+                    { type: "blank", q: "Feedback cycles should be continuous and ______.", a: "constructive" },
+                    { type: "truefalse", q: "Conflict is always bad in a team.", a: false },
+                    { type: "mcq", q: "Stakeholders are?", options: ["People holding steaks", "Anyone interested/affected by the project", "Only the CEO", "The cleaners"], a: 1 },
+                    { type: "oneWord", q: "Influencing others without having power over them.", a: "persuasion" },
+                    { type: "long", q: "How do you handle a team member not pulling their weight?", keywords: ["talk", "private", "expectations", "listen", "support"] },
+                    { type: "mcq", q: "Escalation channels are for?", options: ["Elevators", "Raising issues to higher levels", "Yelling", "Quitting"], a: 1 },
+                    { type: "short", q: "What is 'Cross-Functional Leadership'?", a: "Leading teams with members from different departments." },
+                    { type: "truefalse", q: "Documenting collaboration is unnecessary overhead.", a: false },
+                    { type: "mcq", q: "Which tool is for project tracking?", options: ["Trello", "Spotify", "Netflix", "Uber"], a: 0 },
+                    { type: "blank", q: "Facilitation skills help run effective ______.", a: "meetings" },
+                    { type: "mcq", q: "Alignment models ensure everyone works towards?", options: ["Different goals", "Same goals", "Lunch", "Home"], a: 1 },
+                    { type: "oneWord", q: "Mutual agreement among a group.", a: "consensus" },
+                    { type: "long", q: "Why is 'Psychological Safety' vital for collaboration?", keywords: ["safe", "risk", "ideas", "judgment", "innovation"] },
+                    { type: "mcq", q: "Reporting frameworks provide?", options: ["Structure updates", "Gossip", "News", "Ads"], a: 0 },
+                    { type: "truefalse", q: "You should tailor your communication style to the stakeholder.", a: true },
+                    { type: "blank", q: "Responsibility ______ assigns tasks to specific people.", a: "mapping" },
+                    { type: "mcq", q: "A performance dashboard shows?", options: ["Car speed", "Team metrics/progress", "Movies", "Games"], a: 1 },
+                    { type: "short", q: "Define 'Empathy' in leadership.", a: "Understanding and sharing the feelings of others." },
+                    { type: "mcq", q: "Strategic collaboration involves?", options: ["Working alone", "Partnering for long-term goals", "Fighting", "Guessing"], a: 1 },
+                    { type: "long", q: "Describe the 'Influence without Authority' concept.", keywords: ["respect", "expertise", "relationships", "trust", "guiding"] },
+                    { type: "truefalse", q: "Feedback should only be given once a year.", a: false },
+                    { type: "oneWord", q: "Resolving a dispute between parties.", a: "mediation" },
+                    { type: "mcq", q: "Expectation alignment happens at the ______ of a project.", options: ["Start", "End", "Never", "Middle"], a: 0 },
+                    { type: "blank", q: "______ resolution is finding a peaceful solution to a disagreement.", a: "conflict" }
+                ]
+            },
+            // SET 9: Remote Work (Ch 7.1 - 7.4)
+            {
+                id: 9,
+                title: "Set 9: Remote Work",
+                questions: [
+                    { type: "mcq", q: "Async communication means?", options: ["Immediate response", "Not happening at the same time", "Video calls", "In-person"], a: 1 },
+                    { type: "blank", q: "______ blocking is scheduling specific times for specific tasks.", a: "time" },
+                    { type: "truefalse", q: "In remote work, over-communication is often better than under-communication.", a: true },
+                    { type: "mcq", q: "Which is a technique for focus?", options: ["Pomodoro", "Pizza", "Pasta", "Party"], a: 0 },
+                    { type: "oneWord", q: "A shared online calendar helps in ______ management.", a: "time" },
+                    { type: "long", q: "What are the challenges of a Distributed Team?", keywords: ["timezone", "culture", "communication", "isolation", "coordination"] },
+                    { type: "mcq", q: "Deep Work implies?", options: ["Scuba diving", "Distraction-free concentration", "Sleeping", "Checking emails"], a: 1 },
+                    { type: "short", q: "What is 'Digital Workspace Norms'?", a: "Agreed rules for using online tools." },
+                    { type: "truefalse", q: "You should work in your pajamas to be productive.", a: false },
+                    { type: "mcq", q: "Notion is used for?", options: ["Knowledge management", "Music", "Dating", "Shopping"], a: 0 },
+                    { type: "blank", q: "______ readiness mindset involves being disciplined without supervision.", a: "remote" },
+                    { type: "mcq", q: "Task batching reduces?", options: ["Efficiency", "Context switching costs", "Focus", "Speed"], a: 1 },
+                    { type: "oneWord", q: "Working from home is also known as ______ work.", a: "remote" },
+                    { type: "long", q: "Design an ideal remote workspace setup.", keywords: ["ergonomic", "lighting", "quiet", "internet", "monitor"] },
+                    { type: "mcq", q: "Synchronous communication requires?", options: ["Real-time presence", "Email", "Letters", "Delay"], a: 0 },
+                    { type: "truefalse", q: "Trust is the foundation of remote teams.", a: true },
+                    { type: "blank", q: "______ document culture reduces the need for meetings.", a: "shared" },
+                    { type: "mcq", q: "Which tool is NOT for remote collaboration?", options: ["Slack", "Zoom", "Calculator", "Teams"], a: 2 },
+                    { type: "short", q: "What is the 'Pomodoro Technique'?", a: "Work 25 mins, break 5 mins." },
+                    { type: "mcq", q: "Focus engineering involves?", options: ["Building bridges", "Eliminating distractions", "Staring", "Buying glasses"], a: 1 },
+                    { type: "long", q: "Why is 'Work-Life Balance' harder in remote work?", keywords: ["boundaries", "separation", "always-on", "burnout", "schedule"] },
+                    { type: "truefalse", q: "Remote work means you are available 24/7.", a: false },
+                    { type: "oneWord", q: "A video conferencing tool starting with Z.", a: "zoom" },
+                    { type: "mcq", q: "Asana is primarily for?", options: ["Yoga", "Task Management", "Cooking", "Driving"], a: 1 },
+                    { type: "blank", q: "Distributed teams work across different ______ zones.", a: "time" }
+                ]
+            },
+            // SET 10: Career Architecture (Ch 8.1 - 8.4)
+            {
+                id: 10,
+                title: "Set 10: Career Strat",
+                questions: [
+                    { type: "mcq", q: "Career Roadmapping is?", options: ["Driving a car", "Planning long-term professional goals", "Drawing maps", "Retiring"], a: 1 },
+                    { type: "blank", q: "Skill ______ analysis identifies what you need to learn.", a: "gap" },
+                    { type: "truefalse", q: "Career growth is purely luck-based.", a: false },
+                    { type: "mcq", q: "Energy-based scheduling means?", options: ["Using electricity", "Working when your energy is highest", "Sleeping", "Running"], a: 1 },
+                    { type: "oneWord", q: "Comparing your performance against others/standards.", a: "benchmarking" },
+                    { type: "long", q: "What is 'Strategic Time Design'?", keywords: ["prioritize", "goals", "long-term", "value", "calendar"] },
+                    { type: "mcq", q: "Risk assessment frameworks help in?", options: ["Gambling", "Making safe decisions", "Falling", "Ignoring problems"], a: 1 },
+                    { type: "short", q: "Define 'Professional Maturity'.", a: "Handling situations with emotional intelligence and responsibility." },
+                    { type: "truefalse", q: "Life-work integration is different from balance.", a: true },
+                    { type: "mcq", q: "Senior-level thinking involves?", options: ["Micro-management", "Big picture strategy", "Doing nothing", "Complaining"], a: 1 },
+                    { type: "blank", q: "Professional ______ helps you stand out in the market.", a: "positioning" },
+                    { type: "mcq", q: "Self-performance tracking requires?", options: ["Honesty", "Lies", "A boss", "Money"], a: 0 },
+                    { type: "oneWord", q: "A person who guides your career.", a: "mentor" },
+                    { type: "long", q: "How do you identify a 'Skill Gap'?", keywords: ["audit", "goal", "current", "missing", "plan"] },
+                    { type: "mcq", q: "Corporate strategic thinking aligns actions with?", options: ["Lunch", "Company vision", "Weekend plans", "Trends"], a: 1 },
+                    { type: "truefalse", q: "You should review your career roadmap annually.", a: true },
+                    { type: "blank", q: "Decision ______ explains how decisions are structured.", a: "architecture" },
+                    { type: "mcq", q: "Which implies 'Continuous Learning'?", options: ["Upskilling", "Sleeping", "Quitting", "Stagnating"], a: 0 },
+                    { type: "short", q: "What is 'Networking'?", a: "Building professional relationships for mutual benefit." },
+                    { type: "mcq", q: "Competitive benchmarking helps you?", options: ["Lose", "Know where you stand in the industry", "Copy homework", "Steal"], a: 1 },
+                    { type: "long", q: "Why is 'Emotional Intelligence' key for senior roles?", keywords: ["leadership", "empathy", "pressure", "conflict", "influence"] },
+                    { type: "truefalse", q: "A 5-year plan is rigid and cannot change.", a: false },
+                    { type: "oneWord", q: "Moving up the corporate ladder.", a: "promotion" },
+                    { type: "mcq", q: "To stay relevant, you must adapt to?", options: ["Change", "Nothing", "The past", "Old rules"], a: 0 },
+                    { type: "blank", q: "______ assessment helps understand potential downsides of a choice.", a: "risk" }
+                ]
+            }
+        ];
+
+        // --- STATE MANAGEMENT ---
+        let currentSetIndex = 0;
+        let currentQuestionIndex = 0;
+        let scores = { correct: 0, wrong: 0, total: 0 };
+        
+        // --- DOM ELEMENTS ---
+        const setNav = document.getElementById('set-nav');
+        const questionContainer = document.getElementById('question-container');
+        const scoreCorrect = document.getElementById('score-correct');
+        const scoreWrong = document.getElementById('score-wrong');
+        const scoreTotal = document.getElementById('score-total');
+        const scorePercent = document.getElementById('score-percent');
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSetNav();
+            loadSet(0);
+        });
+
+        // --- RENDER NAV ---
+        function renderSetNav() {
+            setNav.innerHTML = '';
+            syllabusData.forEach((set, index) => {
+                const btn = document.createElement('button');
+                btn.className = `set-btn ${index === 0 ? 'active' : ''}`;
+                btn.innerText = set.title;
+                btn.onclick = () => loadSet(index);
+                setNav.appendChild(btn);
+            });
+        }
+
+        // --- LOAD SET ---
+        function loadSet(index) {
+            currentSetIndex = index;
+            currentQuestionIndex = 0; // Reset to first question of set
+            
+            // Update Nav UI
+            document.querySelectorAll('.set-btn').forEach((btn, i) => {
+                if (i === index) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+
+            renderQuestion();
+        }
+
+        // --- RENDER QUESTION ---
+        function renderQuestion() {
+            const set = syllabusData[currentSetIndex];
+            const qData = set.questions[currentQuestionIndex];
+            
+            if (!qData) {
+                questionContainer.innerHTML = `
+                    <div class="question-card" style="text-align: center;">
+                        <h2>🎉 Set Completed!</h2>
+                        <p>Great job practicing this topic.</p>
+                        <button class="action-btn" onclick="loadSet(${(currentSetIndex + 1) % syllabusData.length})">Next Set ➡️</button>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `
+                <div class="question-card">
+                    <div class="q-header">
+                        <span>${set.title}</span>
+                        <span>Q${currentQuestionIndex + 1} / ${set.questions.length}</span>
+                    </div>
+                    <div class="q-text">${qData.q}</div>
+            `;
+
+            // Render Input based on type
+            if (qData.type === 'mcq') {
+                html += `<div class="options-grid">`;
+                qData.options.forEach((opt, i) => {
+                    html += `<div class="option-btn" onclick="checkMCQ(this, ${i}, ${qData.a})">${opt}</div>`;
+                });
+                html += `</div>`;
+            } else if (qData.type === 'truefalse') {
+                html += `<div class="options-grid">
+                    <div class="option-btn" onclick="checkBool(this, true, ${qData.a})">True</div>
+                    <div class="option-btn" onclick="checkBool(this, false, ${qData.a})">False</div>
+                </div>`;
+            } else if (['blank', 'short', 'oneWord'].includes(qData.type)) {
+                html += `
+                    <input type="text" id="text-answer" placeholder="Type your answer here..." autocomplete="off">
+                    <button class="action-btn" onclick="checkText('${qData.a}')">Submit</button>
+                `;
+            } else if (qData.type === 'long') {
+                html += `
+                    <textarea id="long-answer" placeholder="Explain in detail..."></textarea>
+                    <button class="action-btn" onclick="checkLong('${qData.keywords.join(',')}')">Check Answer</button>
+                `;
+            }
+
+            // Feedback Container
+            html += `
+                <div id="feedback-box" class="feedback">
+                    <div class="feedback-title" id="fb-title"></div>
+                    <div id="fb-msg"></div>
+                </div>
+            `;
+
+            // Nav buttons
+            html += `
+                <div class="nav-buttons">
+                    <button class="nav-btn" onclick="prevQ()" ${currentQuestionIndex === 0 ? 'disabled' : ''}>⬅️ Prev</button>
+                    <button class="nav-btn" id="next-btn" onclick="nextQ()" style="display:none">Next ➡️</button>
+                </div>
+                </div>
+            `;
+
+            questionContainer.innerHTML = html;
+        }
+
+        // --- CHECKING LOGIC ---
+
+        function updateScore(isCorrect) {
+            scores.total++;
+            if (isCorrect) scores.correct++;
+            else scores.wrong++;
+
+            scoreCorrect.innerText = scores.correct;
+            scoreWrong.innerText = scores.wrong;
+            scoreTotal.innerText = scores.total;
+            scorePercent.innerText = Math.round((scores.correct / scores.total) * 100) + "%";
+        }
+
+        function showFeedback(correct, msg) {
+            const box = document.getElementById('feedback-box');
+            const title = document.getElementById('fb-title');
+            const txt = document.getElementById('fb-msg');
+            const nextBtn = document.getElementById('next-btn');
+
+            box.className = `feedback show ${correct ? 'success' : 'error'}`;
+            title.innerText = correct ? "बहुत बढ़िया ⭐" : "फिर से प्रयास करें";
+            txt.innerText = msg;
+            
+            if (correct) {
+                nextBtn.style.display = 'block';
+            }
+        }
+
+        function checkMCQ(btn, selectedIdx, correctIdx) {
+            // Prevent multiple clicks
+            if (btn.parentElement.classList.contains('locked')) return;
+            btn.parentElement.classList.add('locked');
+
+            const isCorrect = selectedIdx === correctIdx;
+            if (isCorrect) {
+                btn.classList.add('correct');
+                showFeedback(true, "Correct Answer!");
+            } else {
+                btn.classList.add('wrong');
+                // Highlight correct
+                const allOpts = document.querySelectorAll('.option-btn');
+                allOpts[correctIdx].classList.add('correct');
+                showFeedback(false, "Oops! The correct answer is highlighted.");
+                // Allow next anyway after wrong
+                document.getElementById('next-btn').style.display = 'block';
+            }
+            updateScore(isCorrect);
+        }
+
+        function checkBool(btn, selected, correct) {
+            if (btn.parentElement.classList.contains('locked')) return;
+            btn.parentElement.classList.add('locked');
+
+            const isCorrect = selected === correct;
+            if (isCorrect) {
+                btn.classList.add('correct');
+                showFeedback(true, "Correct!");
+            } else {
+                btn.classList.add('wrong');
+                showFeedback(false, `The answer is ${correct}.`);
+                document.getElementById('next-btn').style.display = 'block';
+            }
+            updateScore(isCorrect);
+        }
+
+        function checkText(correctAnswer) {
+            const input = document.getElementById('text-answer');
+            const val = input.value.trim().toLowerCase();
+            const correct = correctAnswer.toLowerCase();
+            
+            // Simple string matching
+            if (val === correct || val.includes(correct)) {
+                input.style.borderColor = 'var(--correct)';
+                showFeedback(true, "Spot on!");
+                updateScore(true);
+            } else {
+                input.style.borderColor = 'var(--wrong)';
+                showFeedback(false, `Expected: ${correctAnswer}`);
+                updateScore(false);
+                document.getElementById('next-btn').style.display = 'block';
+            }
+            input.disabled = true;
+        }
+
+        function checkLong(keywordsStr) {
+            const input = document.getElementById('long-answer');
+            const val = input.value.toLowerCase();
+            const keywords = keywordsStr.split(',');
+            
+            let hitCount = 0;
+            keywords.forEach(k => {
+                if (val.includes(k.trim())) hitCount++;
+            });
+
+            // If matched 50% of keywords
+            const passed = hitCount >= Math.ceil(keywords.length / 2);
+
+            if (passed) {
+                input.style.borderColor = 'var(--correct)';
+                showFeedback(true, `Good content! You covered key concepts: ${keywords.join(', ')}`);
+                updateScore(true);
+            } else {
+                input.style.borderColor = 'var(--wrong)';
+                showFeedback(false, `Try to include these concepts: ${keywords.join(', ')}`);
+                updateScore(false);
+                document.getElementById('next-btn').style.display = 'block';
+            }
+            input.disabled = true;
+        }
+
+        // --- NAVIGATION ---
+        function nextQ() {
+            if (currentQuestionIndex < syllabusData[currentSetIndex].questions.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion();
+            } else {
+                // End of set
+                questionContainer.innerHTML = `
+                    <div class="question-card" style="text-align: center;">
+                        <h2>🏆 Set Completed!</h2>
+                        <p>You finished Set ${currentSetIndex + 1}.</p>
+                        <button class="action-btn" onclick="loadSet(${(currentSetIndex + 1) % syllabusData.length})">Next Set ➡️</button>
+                    </div>
+                `;
+            }
+        }
+
+        function prevQ() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion();
+            }
+        }
+
+        function toggleRevision() {
+            const rev = document.getElementById('revision-section');
+            rev.style.display = rev.style.display === 'block' ? 'none' : 'block';
+        }
+
+    </script>
+</body>
+</html>

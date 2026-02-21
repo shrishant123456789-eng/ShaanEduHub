@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cognitive Science Lab – Session 03: Advanced Note-Making</title>
+    <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --paper-bg: #fdfbf7;
+            --ink-color: #2c3e50;
+            --accent-blue: #2980b9;
+            --accent-green: #27ae60;
+            --accent-orange: #d35400;
+            --highlight: #f1c40f;
+            --panel-bg: #ecf0f1;
+            --line-color: #bdc3c7;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Patrick Hand', cursive;
+            background-color: var(--paper-bg);
+            color: var(--ink-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            font-size: 18px;
+        }
+
+        /* --- STICKY SCORE PANEL --- */
+        #score-panel {
+            position: sticky;
+            top: 0;
+            background: #fff;
+            border-bottom: 3px solid var(--accent-blue);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .score-item {
+            text-align: center;
+        }
+
+        .score-label {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            display: block;
+            text-transform: uppercase;
+        }
+
+        .score-val {
+            font-size: 1.2rem;
+        }
+
+        .score-good { color: var(--accent-green); }
+        .score-bad { color: var(--accent-orange); }
+
+        /* --- HERO --- */
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: radial-gradient(circle at center, #fff 0%, #f0f0f0 100%);
+            border-bottom: 2px dashed var(--line-color);
+        }
+
+        h1 {
+            color: var(--accent-blue);
+            font-size: 2.5rem;
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: 1.4rem;
+            color: var(--accent-orange);
+            margin-bottom: 20px;
+        }
+
+        .progress-bar-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #ddd;
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent-blue);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .learning-objectives {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: left;
+            background: #fff;
+            padding: 15px;
+            border: 1px solid var(--line-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+        }
+
+        /* --- CONTENT CONTAINERS --- */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .section-level {
+            margin: 40px 0;
+            border: 2px solid var(--line-color);
+            border-radius: 10px;
+            background: #fff;
+            overflow: hidden;
+        }
+
+        .level-header {
+            background: var(--accent-blue);
+            color: #fff;
+            padding: 15px;
+            font-size: 1.3rem;
+            text-transform: uppercase;
+        }
+
+        .level-content {
+            padding: 20px;
+        }
+
+        .concept-block {
+            margin-bottom: 30px;
+            border-bottom: 1px dashed var(--line-color);
+            padding-bottom: 20px;
+        }
+
+        .concept-title {
+            color: var(--accent-orange);
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .indian-example {
+            background: #fff8e1;
+            padding: 15px;
+            border-left: 4px solid var(--highlight);
+            margin: 15px 0;
+            font-style: italic;
+        }
+
+        .static-image-box {
+            width: 100%;
+            height: 200px;
+            background: #ecf0f1;
+            border: 2px dashed #95a5a6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            color: #7f8c8d;
+            font-size: 1.1rem;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .experiment-box {
+            background: #e8f6f3;
+            border: 2px solid var(--accent-green);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .experiment-title {
+            color: var(--accent-green);
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        /* --- QUESTIONS UI --- */
+        .section-title {
+            text-align: center;
+            color: var(--accent-blue);
+            font-size: 2rem;
+            margin: 50px 0 30px 0;
+            text-decoration: underline;
+            text-decoration-style: wavy;
+        }
+
+        /* Important Questions Accordion */
+        .iq-item {
+            background: #fff;
+            border: 1px solid var(--line-color);
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .iq-question {
+            padding: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .iq-answer {
+            padding: 15px;
+            background: #f9f9f9;
+            border-top: 1px solid var(--line-color);
+            display: none;
+            color: var(--accent-blue);
+        }
+
+        /* Practice Questions (Single Card) */
+        #practice-area {
+            background: #fff;
+            border: 3px solid var(--accent-blue);
+            border-radius: 10px;
+            padding: 20px;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+        }
+
+        .pq-question-text {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .option-btn {
+            padding: 12px;
+            background: #fff;
+            border: 2px solid var(--line-color);
+            border-radius: 5px;
+            font-family: 'Patrick Hand', cursive;
+            font-size: 1.1rem;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .feedback-msg {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            font-weight: bold;
+        }
+
+        .feedback-correct { background: #d5f5e3; color: #1e8449; }
+        .feedback-wrong { background: #fadbd8; color: #c0392b; }
+
+        .next-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-family: 'Patrick Hand', cursive;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: none;
+            align-self: flex-start;
+        }
+
+        /* Long Answer */
+        .la-container {
+            background: #fff;
+            border: 2px solid var(--accent-orange);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .la-question {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            font-family: 'Patrick Hand', cursive;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: vertical;
+        }
+
+        .check-btn {
+            background: var(--accent-orange);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            margin-top: 10px;
+            cursor: pointer;
+            font-family: 'Patrick Hand', cursive;
+            font-size: 1rem;
+            border-radius: 4px;
+        }
+
+        .la-feedback {
+            margin-top: 10px;
+            font-size: 0.95rem;
+            white-space: pre-line;
+        }
+
+        /* Revision Toggle */
+        .revision-panel {
+            background: #2c3e50;
+            color: #fff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .toggle-rev-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: #34495e;
+            color: white;
+            border: none;
+            font-family: inherit;
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px;
+            background: #2c3e50;
+            color: #ecf0f1;
+            margin-top: 50px;
+            border-top: 4px solid var(--accent-orange);
+        }
+
+        @media (min-width: 600px) {
+            .options-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- STICKY SCORE PANEL -->
+    <div id="score-panel">
+        <div class="score-item">
+            <span class="score-label">Correct</span>
+            <span id="score-correct" class="score-val score-good">0</span>
+        </div>
+        <div class="score-item">
+            <span class="score-label">Wrong</span>
+            <span id="score-wrong" class="score-val score-bad">0</span>
+        </div>
+        <div class="score-item">
+            <span class="score-label">Total</span>
+            <span id="score-total" class="score-val">0</span>
+        </div>
+        <div class="score-item">
+            <span class="score-label">Accuracy</span>
+            <span id="score-percent" class="score-val">0%</span>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <header>
+        <h1>Cognitive Science Lab – Session 03</h1>
+        <div class="subtitle">Advanced Note-Making Frameworks</div>
+        
+        <div class="progress-bar-container">
+            <div id="page-progress" class="progress-fill"></div>
+        </div>
+
+        <div class="learning-objectives">
+            <strong>Session Objectives:</strong>
+            <ul>
+                <li>Understand Cognitive Encoding in Note-Taking</li>
+                <li>Master Hierarchical & Visual Methods (Outline/Mind Map)</li>
+                <li>Implement Advanced Systems (Cornell/Zettelkasten)</li>
+                <li>Design Digital & Meta-Cognitive Architectures</li>
+            </ul>
+        </div>
+        <br>
+        <button onclick="document.getElementById('content-start').scrollIntoView({behavior:'smooth'})" class="check-btn" style="background:var(--accent-blue); font-size:1.2rem;">Start Knowledge Structuring Lab</button>
+    </header>
+
+    <div class="container" id="content-start">
+
+        <!-- LEVEL 1: BASIC -->
+        <div class="section-level">
+            <div class="level-header">Level 1: Basic Principles – The "Why" of Notes</div>
+            <div class="level-content">
+                <div class="concept-block">
+                    <span class="concept-title">1. Cognitive Encoding Hypothesis</span>
+                    <p>Notes are not just storage; they are a thinking process. Writing notes forces the brain to process information (encoding) rather than just passively receiving it. This creates stronger neural pathways.</p>
+                    <div class="indian-example">
+                        <strong>Daily Life Example:</strong> Like making a grocery list. Even if you lose the list, you remember the items better because the act of writing them organized your thoughts. In UPSC prep, students who write summaries retain 40% more than those who just highlight books.
+                    </div>
+                </div>
+
+                <div class="concept-block">
+                    <span class="concept-title">2. Linear vs. Structured Notes</span>
+                    <p>Linear notes (copying verbatim) lead to low retention. Structured notes (using logic and grouping) utilize the brain's natural pattern recognition.</p>
+                    <div class="static-image-box">
+                        [VISUAL DEMO]<br>Left Side: Wall of Text (Linear)<br>Right Side: Grouped Bullet Points (Structured)<br>Visual Contrast emphasizes readability.
+                    </div>
+                </div>
+
+                <div class="experiment-box">
+                    <span class="experiment-title">Cognitive Experiment 3.1</span>
+                    <p>Read a paragraph of text. Try to rewrite it using only 5 key words. This forces "Active Selection," the core of good note-taking.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- LEVEL 2: MEDIUM -->
+        <div class="section-level">
+            <div class="level-header">Level 2: Medium – Visual & Hierarchical Systems</div>
+            <div class="level-content">
+                <div class="concept-block">
+                    <span class="concept-title">1. The Outline Method</span>
+                    <p>Uses indentation to show relationships. Main Topic → Sub-topic → Supporting Detail. Best for sequential lectures or textbooks.</p>
+                    <div class="indian-example">
+                        <strong>Context:</strong> Organizing a history timeline (Mughal Empire → Akbar → Policies). It creates a mental tree structure.
+                    </div>
+                    <div class="static-image-box">
+                        [DIAGRAM]<br>I. Main Topic<br>&nbsp;&nbsp;A. Sub-point<br>&nbsp;&nbsp;&nbsp;&nbsp;1. Detail<br>Shows clear indentation hierarchy.
+                    </div>
+                </div>
+
+                <div class="concept-block">
+                    <span class="concept-title">2. Mind Mapping</span>
+                    <p>A non-linear, radiant structure. Central idea in the middle, branches radiating out. Excellent for brainstorming or connecting disparate ideas.</p>
+                    <div class="static-image-box">
+                        [DIAGRAM]<br>Central Node (Core Concept)<br>Branches interacting with keywords and icons.<br>Demonstrates associative linking.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LEVEL 3: ADVANCED -->
+        <div class="section-level">
+            <div class="level-header">Level 3: Advanced – Systems for Retention</div>
+            <div class="level-content">
+                <div class="concept-block">
+                    <span class="concept-title">1. The Cornell Method</span>
+                    <p>Designed by Walter Pauk. Divides page into three: Cues (Left), Notes (Right), Summary (Bottom). Promotes active recall.</p>
+                    <div class="static-image-box">
+                        [TEMPLATE VIEW]<br>--------------------------<br>| Cue |      Notes       |<br>| Area|      Area        |<br>--------------------------<br>|      Summary           |<br>--------------------------
+                    </div>
+                    <div class="indian-example">
+                        <strong>Application:</strong> Perfect for revising specific chapters before exams like JEE/NEET. Cover the notes, look at cues, and recite.
+                    </div>
+                </div>
+
+                <div class="concept-block">
+                    <span class="concept-title">2. The Zettelkasten Method (Slip-Box)</span>
+                    <p>An atomic note system developed by Niklas Luhmann. Each note contains ONE idea and links to other notes. It builds a "web of thought" rather than a rigid archive.</p>
+                    <div class="static-image-box">
+                        [FLOWCHART]<br>Note A (Idea 1) <---> Note B (Idea 2)<br>Linked via ID numbers (1a, 1b).<br>Shows network, not hierarchy.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LEVEL 4: EXPERT -->
+        <div class="section-level">
+            <div class="level-header">Level 4: Expert – Meta-Cognitive Architectures</div>
+            <div class="level-content">
+                <div class="concept-block">
+                    <span class="concept-title">1. Digital Systems & Tagging</span>
+                    <p>Using tools (Obsidian/Notion) to tag concepts across domains. Example: Tagging #evolution in both Biology and Sociology notes.</p>
+                    <div class="static-image-box">
+                        [SCREENSHOT MOCKUP]<br>Search Query: #MentalModel<br>Results: Physics, Economics, Psychology notes.<br>Demonstrates cross-indexing.
+                    </div>
+                </div>
+
+                <div class="concept-block">
+                    <span class="concept-title">2. Meta-Notes</span>
+                    <p>Notes *about* your notes. Reflecting on gaps in your understanding. "I understand the 'what', but my notes lack the 'why'."</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- REVISION SECTION -->
+        <button class="toggle-rev-btn" onclick="toggleRevision()">▼ Open Rapid Revision Card</button>
+        <div id="revision-card" class="revision-panel">
+            <h3>Rapid Recall Framework</h3>
+            <ul>
+                <li><strong>Linear:</strong> Low effort, low retention. Avoid.</li>
+                <li><strong>Outline:</strong> Good for structure/hierarchy.</li>
+                <li><strong>Mind Map:</strong> Best for creative associations.</li>
+                <li><strong>Cornell:</strong> Best for review and self-quizzing.</li>
+                <li><strong>Zettelkasten:</strong> Best for idea generation and writing.</li>
+                <li><strong>Meta-Notes:</strong> Quality control for your knowledge.</li>
+            </ul>
+        </div>
+
+        <!-- IMPORTANT QUESTIONS (30) -->
+        <div class="section-title">30 Important Questions (Conceptual)</div>
+        <div id="iq-container">
+            <!-- Populated by JS -->
+        </div>
+
+        <!-- PRACTICE QUESTIONS (70) -->
+        <div class="section-title">70 Practice Questions (Interactive)</div>
+        <div id="practice-area">
+            <div id="pq-counter" style="color:#7f8c8d; font-size:0.9rem; margin-bottom:10px;">Question 1 of 70</div>
+            <div id="pq-question" class="pq-question-text">Loading...</div>
+            <div id="pq-options" class="options-grid"></div>
+            <div id="pq-feedback" class="feedback-msg"></div>
+            <button id="pq-next" class="next-btn" onclick="nextPracticeQuestion()">Next Question ➜</button>
+        </div>
+
+        <!-- LONG ANSWER QUESTIONS (10) -->
+        <div class="section-title">10 Advanced Long Questions (System Design)</div>
+        <div id="la-container-wrapper">
+            <!-- Populated by JS -->
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>Designed & Created by SHRISHANT YADAV</p>
+        <p>ShanEduHub | Cognitive Science Lab Series</p>
+    </footer>
+
+    <script>
+        // --- DATASETS ---
+
+        // 30 Important Questions
+        const importantQuestions = [
+            { q: "What is the primary cognitive benefit of note-making over note-taking?", a: "Note-making involves active processing and encoding (synthesis), whereas note-taking is often passive verbatim recording." },
+            { q: "Define the 'Generation Effect' in the context of notes.", a: "Information is better remembered if it is generated from one's own mind rather than simply read." },
+            { q: "In the Cornell method, what is the function of the left column?", a: "The left column is for 'Cues' or keywords/questions to trigger active recall of the main notes." },
+            { q: "What is the core principle of Zettelkasten?", a: "The principle of 'Atomicity': one note = one single idea, heavily linked to others." },
+            { q: "How does Mind Mapping utilize 'Dual Coding'?", a: "It uses both verbal (words) and visual (spatial/images) channels, enhancing memory traces." },
+            { q: "Why is the Outline method weak for critical thinking?", a: "It encourages a rigid linear hierarchy that may mask lateral connections between disparate ideas." },
+            { q: "What is 'Progressive Summarization'?", a: "A method of layering notes: raw text -> bolding -> highlighting -> executive summary." },
+            { q: "Explain 'Spaced Repetition' compatibility with Cornell Notes.", a: "The fold-and-test mechanism of Cornell notes makes them an ideal physical tool for spaced repetition intervals." },
+            { q: "What is a 'Permanent Note' in Luhmann's system?", a: "A self-contained, fully explained idea written in one's own words, ready for permanent storage." },
+            { q: "What is the 'Illusion of Competence' in highlighting?", a: "Re-reading highlights feels fluent, tricking the brain into thinking it knows the material when it merely recognizes it." },
+            { q: "How do digital tags differ from folders?", a: "Folders are exclusive (an item is in only one folder); tags are non-exclusive (an item can have infinite tags)." },
+            { q: "What is the role of the 'Summary' section in Cornell notes?", a: "To force synthesis of the entire page into a concise mental model." },
+            { q: "Why handwriting notes often beats typing for retention?", a: "Handwriting is slower, forcing the brain to summarize and process meaning in real-time." },
+            { q: "What is a 'Fleeting Note'?", a: "A temporary scratchpad note to capture an idea before it disappears, to be processed later." },
+            { q: "Define 'Metacognitive Notes'.", a: "Notes that reflect on the learning process itself (e.g., 'I didn't understand this connection')." },
+            { q: "What is 'Chunking' in outline notes?", a: "Grouping related bits of information into larger, meaningful units to bypass working memory limits." },
+            { q: "How does Zettelkasten prevent Writer's Block?", a: "Writing becomes a matter of assembling existing atomic notes rather than starting from a blank page." },
+            { q: "What is the 'Review' phase in the 5R system of Cornell?", a: "Reviewing notes weekly to prevent the forgetting curve from eroding the memory." },
+            { q: "Why are linear notes difficult to study from?", a: "They lack visual landmarks, making it hard for the eye to scan for specific information." },
+            { q: "What is 'Elaborative Interrogation'?", a: "Asking 'Why is this true?' while taking notes to deepen understanding." },
+            { q: "How can Mind Maps aid in essay planning?", a: "They allow a bird's-eye view of all arguments and evidence before committing to a linear structure." },
+            { q: "What is the main drawback of Mind Mapping?", a: "It can become messy and difficult to read if the topic is extremely dense or sequential." },
+            { q: "Define 'Knowledge Graph' in digital notes.", a: "A visual representation of how nodes (notes) are connected by edges (links)." },
+            { q: "What is 'Active Recall'?", a: "Testing yourself on the material without looking at the source." },
+            { q: "Why should you rewrite notes after class?", a: "To fill in gaps, clarify meaning, and consolidate the memory while it is fresh." },
+            { q: "What is the 'Sentence Method' of note-taking?", a: "Writing every new thought on a new line; faster than paragraph writing but less organized than outlines." },
+            { q: "How does color-coding affect note retention?", a: "It creates visual categories, allowing the brain to filter and retrieve information faster." },
+            { q: "What is the 'Charting Method'?", a: "Using columns/tables to organize information (e.g., comparing three historical periods)." },
+            { q: "Why is verbatim transcription discouraged?", a: "It bypasses the cognitive processing center; the hand moves but the brain disengages." },
+            { q: "What is the ultimate goal of a 'Second Brain'?", a: "To offload the task of remembering so the biological brain can focus on thinking and creating." }
+        ];
+
+        // 70 Practice Questions (Mixed Types)
+        // A mix of MCQs, True/False, Fill in Blanks
+        const practiceQuestions = [
+            // BASIC (1-10)
+            { t: "mcq", q: "Which method uses a 3-part layout (Cues, Notes, Summary)?", o: ["Outline", "Cornell", "Mind Map", "Flowchart"], a: 1, exp: "Cornell uses a specific grid layout." },
+            { t: "tf", q: "Linear notes are generally better for long-term retention than structured notes.", a: false, exp: "Linear notes promote passive recording, not active processing." },
+            { t: "mcq", q: "Handwriting notes helps primarily because:", o: ["It is faster", "It forces summarization", "It is neater", "It uses less paper"], a: 1, exp: "The slowness forces the brain to process and summarize." },
+            { t: "fill", q: "The process of grouping information to aid memory is called ______.", a: "chunking", exp: "Chunking breaks data into manageable units." },
+            { t: "mcq", q: "Which part of the Cornell note is written LAST?", o: ["Cues", "Main Notes", "Summary", "Date"], a: 2, exp: "Summary is written after reviewing the main notes." },
+            { t: "mcq", q: "Mind maps start with a ______ idea.", o: ["Corner", "Central", "Bottom", "Random"], a: 1, exp: "Mind maps radiate from a central core." },
+            { t: "tf", q: "You should try to write down 100% of what a lecturer says.", a: false, exp: "Verbatim recording prevents understanding." },
+            { t: "mcq", q: "The Outline method relies heavily on:", o: ["Colors", "Drawings", "Indentation", "Grids"], a: 2, exp: "Indentation shows the hierarchy of ideas." },
+            { t: "fill", q: "Notes taken on a loose piece of paper to be discarded later are called ______ notes.", a: "fleeting", exp: "Fleeting notes are temporary captures." },
+            { t: "mcq", q: "Reviewing notes is essential to combat the:", o: ["Learning Curve", "Forgetting Curve", "Focus Curve", "Bell Curve"], a: 1, exp: "Ebbinghaus Forgetting Curve dictates memory decay." },
+
+            // MEDIUM (11-30)
+            { t: "mcq", q: "Zettelkasten translates to:", o: ["Note Book", "Slip Box", "Mind Web", "Memory Palace"], a: 1, exp: "German for 'Slip Box' or card index." },
+            { t: "mcq", q: "Which method is best for comparing pros/cons of two items?", o: ["Cornell", "Charting/Table", "Sentence", "Linear"], a: 1, exp: "Charts provide direct visual comparison." },
+            { t: "tf", q: "In Zettelkasten, notes should be independent of each other.", a: false, exp: "They should be heavily linked but self-contained in meaning." },
+            { t: "mcq", q: "The 'Cue' column in Cornell is mainly used for:", o: ["Summaries", "Drawings", "Self-Test Questions", "References"], a: 2, exp: "Questions in cues trigger active recall." },
+            { t: "mcq", q: "A major advantage of digital notes is:", o: ["Tactile feel", "Searchability", "Battery life", "Smell"], a: 1, exp: "Instant search and retrieval is the key digital advantage." },
+            { t: "fill", q: "Linking one note to another creates a ______ of knowledge.", a: "network", exp: "Or 'web'. It creates associative paths." },
+            { t: "mcq", q: "Which color is best for highlighting key concepts (not everything)?", o: ["Black", "Yellow/Green", "White", "Brown"], a: 1, exp: "Bright colors draw attention to exceptions/keys." },
+            { t: "tf", q: "An atomic note should contain multiple different topics.", a: false, exp: "Atomic means ONE single idea per note." },
+            { t: "mcq", q: "Mind mapping was popularized by:", o: ["Tony Buzan", "Walter Pauk", "Niklas Luhmann", "Tiago Forte"], a: 0, exp: "Tony Buzan is the father of modern mind mapping." },
+            { t: "mcq", q: "Walter Pauk developed which system?", o: ["Zettelkasten", "Cornell", "Outline", "Boxing"], a: 1, exp: "At Cornell University." },
+            { t: "fill", q: "The ______ method puts main points at the top and subpoints below with indentation.", a: "outline", exp: "Classic hierarchical structure." },
+            { t: "mcq", q: "Visual learners benefit most from:", o: ["Sentences", "Mind Maps", "Lists", "Audio recordings"], a: 1, exp: "Spatial layout helps visual processing." },
+            { t: "tf", q: "Copying a textbook is an efficient study strategy.", a: false, exp: "It is passive and time-consuming with low yield." },
+            { t: "mcq", q: "When is the 'Review' step in Cornell recommended?", o: ["Immediately", "Weekly", "Never", "Yearly"], a: 1, exp: "Weekly review maintains the memory trace." },
+            { t: "mcq", q: "Using symbols (arrows, circles) helps to show:", o: ["Hierarchy", "Relationships", "Emphasis", "All of the above"], a: 3, exp: "Visual aids enhance all these aspects." },
+            { t: "fill", q: "______ is the ability to think about your own thinking.", a: "metacognition", exp: "Meta-notes are based on this." },
+            { t: "mcq", q: "A 'Permanent Note' is written for:", o: ["Your teacher", "Your future self", "The trash", "A test only"], a: 1, exp: "It is a long-term asset for your future self." },
+            { t: "tf", q: "You cannot mix note-taking methods.", a: false, exp: "Hybrid methods are often the most effective." },
+            { t: "mcq", q: "Which tool is known for bi-directional linking?", o: ["Notepad", "Obsidian/Roam", "Word", "Paint"], a: 1, exp: "These are networked thought tools." },
+            { t: "mcq", q: "The bottom section of a Cornell page is strictly for:", o: ["Doodles", "Summary", "References", "Date"], a: 1, exp: "2-3 sentence summary of the page." },
+
+            // ADVANCED (31-60)
+            { t: "mcq", q: "The 'Picture Superiority Effect' suggests:", o: ["Text is better", "Images are recalled better", "Audio is best", "Smell is best"], a: 1, exp: "Images are more likely to be remembered than words." },
+            { t: "mcq", q: "In Zettelkasten, an arbitrary alphanumerical code (e.g., 12a3) is a:", o: ["Secret", "UID (Unique Identifier)", "Mistake", "Page number"], a: 1, exp: "Allows linking regardless of physical location." },
+            { t: "fill", q: "______ load theory explains why messy notes hinder learning.", a: "cognitive", exp: "Extraneous cognitive load distracts the brain." },
+            { t: "mcq", q: "Which is a 'bottom-up' approach to knowledge?", o: ["Outline", "Zettelkasten", "Textbook", "Syllabus"], a: 1, exp: "Zettelkasten builds theories from small individual notes." },
+            { t: "tf", q: "Highlighting is a form of active recall.", a: false, exp: "Highlighting is recognition, not recall." },
+            { t: "mcq", q: "The 'Testing Effect' is best utilized by:", o: ["Re-reading", "Covering and Reciting", "Highlighting", "Typing"], a: 1, exp: "Testing yourself strengthens the memory." },
+            { t: "mcq", q: "Synthesis requires:", o: ["Repeating facts", "Combining sources into new insight", "Writing fast", "Using pens"], a: 1, exp: "Synthesis is the creation of new meaning." },
+            { t: "mcq", q: "What distinguishes a 'Literature Note' from a 'Permanent Note'?", o: ["Source vs Concept", "Length", "Color", "Paper"], a: 0, exp: "Literature notes capture a source; Permanent notes capture a concept." },
+            { t: "fill", q: "A ______ link connects two related notes in different locations.", a: "backlink", exp: "Or cross-reference." },
+            { t: "mcq", q: "Why avoid 'Collector's Fallacy'?", o: ["Collecting feels like learning but isn't", "Collecting is expensive", "It uses storage", "It's messy"], a: 0, exp: "Hoarding resources without processing them provides no benefit." },
+            { t: "mcq", q: "Dual Coding involves:", o: ["Two pens", "Verbal + Visual", "Hearing + Smell", "Reading + Writing"], a: 1, exp: "Combining text and visuals." },
+            { t: "mcq", q: "Structured notes reduce ______ load.", o: ["Extraneous", "Intrinsic", "Germane", "Physical"], a: 0, exp: "They remove clutter, allowing focus on the core material." },
+            { t: "tf", q: "Mind maps are hierarchical but radial.", a: true, exp: "They have a center (root) and children (branches)." },
+            { t: "mcq", q: "The best time to format your notes is:", o: ["During class", "Immediately after class", "Before the exam", "Never"], a: 1, exp: "While the context is fresh in working memory." },
+            { t: "mcq", q: "In a digital garden, notes are:", o: ["Final", "Living/Growing", "Deleted", "Hidden"], a: 1, exp: "They evolve over time (evergreen notes)." },
+            { t: "fill", q: "The ______ method is fastest for rapid fire lectures but hardest to review.", a: "sentence", exp: "Just writing lines down." },
+            { t: "mcq", q: "Cornell Cues act as:", o: ["Answers", "Retrieval Triggers", "Titles", "Decorations"], a: 1, exp: "They trigger the brain to fetch the info." },
+            { t: "mcq", q: "Which fosters 'Lateral Thinking'?", o: ["Lists", "Mind Mapping", "Outlines", "Tables"], a: 1, exp: "Connections across branches foster lateral jumps." },
+            { t: "mcq", q: "What is 'Progressive Summarization'?", o: ["Deleting notes", "Layering highlights", "Writing less", "Speaking"], a: 1, exp: "Tiago Forte's method of refining notes in layers." },
+            { t: "tf", q: "Digital notes are less flexible than paper.", a: false, exp: "Digital allow moving, editing, and searching." },
+            { t: "mcq", q: "To make a note 'Atomic', it must:", o: ["Be small", "Make one point only", "Be scientific", "Be explosive"], a: 1, exp: "One idea per note ensures modularity." },
+            { t: "mcq", q: "Cross-referencing is easier in:", o: ["Notebooks", "Digital Wikis", "Post-its", "Audio"], a: 1, exp: "Hyperlinks make cross-referencing instant." },
+            { t: "fill", q: "______ is the friction required to process information.", a: "desirable difficulty", exp: "Making it slightly hard (like rewriting) improves learning." },
+            { t: "mcq", q: "Using abbreviations in notes:", o: ["Is lazy", "Increases speed", "Confuses you", "Is bad"], a: 1, exp: "Standardized shorthand boosts capture speed." },
+            { t: "mcq", q: "A 'Hub Note' or 'MOC' (Map of Content) serves to:", o: ["Confuse", "Index related notes", "End the file", "Summarize"], a: 1, exp: "It acts as a table of contents for a topic." },
+            { t: "mcq", q: "Refactoring notes means:", o: ["Deleting them", "Improving structure/clarity", "Sharing them", "Printing"], a: 1, exp: "Cleaning up and reorganizing." },
+            { t: "tf", q: "You should capture every detail regardless of relevance.", a: false, exp: "Selectivity is key to cognitive load management." },
+            { t: "mcq", q: "The 'Spacing Effect' works because:", o: ["Brain gets bored", "Forgetting triggers strengthening", "It takes time", "Teachers say so"], a: 1, exp: "Retrieving a fading memory strengthens the path." },
+            { t: "mcq", q: "Which is a 'linear' structure?", o: ["Web", "Chronological list", "Network", "Matrix"], a: 1, exp: "A follows B follows C." },
+            { t: "mcq", q: "An 'Evergreen Note' is:", o: ["About trees", "Continually updated", "Temporary", "Draft"], a: 1, exp: "It grows and evolves over time." },
+
+            // EXPERT (61-70)
+            { t: "mcq", q: "Ontology in note-taking refers to:", o: ["Study of ants", "Classification structure", "Writing speed", "Pen type"], a: 1, exp: "How you categorize and relate concepts." },
+            { t: "mcq", q: "Serendipity in Zettelkasten occurs when:", o: ["You find money", "Unexpected connections appear", "You lose notes", "You finish"], a: 1, exp: "Stumbling upon a connection between two unrelated notes." },
+            { t: "fill", q: "The ______ effect states we remember unfinished tasks better.", a: "zeigarnik", exp: "Open loops in notes keep the brain processing." },
+            { t: "mcq", q: "Bloom's Taxonomy: Note-taking moves us from Remember to:", o: ["Sleep", "Create/Analyze", "Eat", "Run"], a: 1, exp: "Synthesizing notes is a higher-order skill." },
+            { t: "mcq", q: "The 'Graph View' in Obsidian visualizes:", o: ["Stock prices", "Neural network of notes", "Grades", "Time"], a: 1, exp: "Nodes and edges of your personal knowledge base." },
+            { t: "tf", q: "Frictionless capture is always best.", a: false, exp: "Some friction helps filter out noise." },
+            { t: "mcq", q: "Convergent thinking is ______ notes; Divergent is ______.", o: ["Making; Taking", "Organizing; Generating", "Bad; Good", "Fast; Slow"], a: 1, exp: "Organizing converges facts; Generating diverges ideas." },
+            { t: "mcq", q: "Which supports 'Interleaved Practice'?", o: ["Mixing topics in notes", "Blocking one topic", "Sleeping", "Eating"], a: 0, exp: "Studying different topics in parallel." },
+            { t: "fill", q: "Transfer of learning is easier with ______ notes.", a: "abstract", exp: "Abstracting principles allows applying them to new contexts." },
+            { t: "mcq", q: "The ultimate test of a note system is:", o: ["Neatness", "Retrieval speed", "Output generation", "Size"], a: 2, exp: "Does it help you create/solve (Output)?" }
+        ];
+
+        // 10 Advanced Long Questions
+        const longQuestions = [
+            { id: 1, q: "Design a Cornell note template specifically for Constitutional Law. What goes in the cues?", k: ["article", "case", "amendment", "precedent", "trigger", "question"], desc: "Should mention Articles, Case Law names as cues, and legal principles in notes." },
+            { id: 2, q: "Convert this linear sentence into an Outline: 'The water cycle consists of evaporation, which turns water to gas, condensation, forming clouds, and precipitation, which is rain.'", k: ["evaporation", "condensation", "precipitation", "gas", "cloud", "rain", "1", "a"], desc: "Must show hierarchy: 1. Water Cycle -> A. Evaporation -> B. Condensation..." },
+            { id: 3, q: "Explain how you would use Zettelkasten to connect Biology and Economics.", k: ["evolution", "competition", "scarcity", "selection", "link", "network"], desc: "Connect 'Natural Selection' in Bio to 'Market Competition' in Econ." },
+            { id: 4, q: "Critically evaluate: Why might a Mind Map fail for a Math textbook?", k: ["linear", "sequential", "step", "calculation", "derivation", "messy"], desc: "Math is often strictly sequential/linear logic; Mind maps are radial/associative." },
+            { id: 5, q: "Design a tagging system for a Digital Garden for a UPSC aspirant.", k: ["history", "geography", "polity", "theme", "interconnected", "revision"], desc: "Should use tags like #ModernHistory, #Policy, #Act, not just folders." },
+            { id: 6, q: "How does the 'Generation Effect' prove that copying slides is useless?", k: ["passive", "active", "create", "effort", "memory", "processing"], desc: "Copying is passive; Generation requires mental effort which builds memory." },
+            { id: 7, q: "Create a Meta-Note for a session where you felt confused.", k: ["gap", "why", "didn't understand", "review", "question", "concept"], desc: "Example: 'I don't get the link between A and B. Need to re-read Chapter 4.'" },
+            { id: 8, q: "Explain the cognitive load advantage of using symbols/abbreviations.", k: ["speed", "processing", "focus", "short", "visual"], desc: "Reduces time writing, increases time listening and processing." },
+            { id: 9, q: "Why is 'Atomicity' crucial for re-using notes in different contexts?", k: ["modular", "independent", "mix", "match", "context", "single"], desc: "Small, independent ideas can be combined like Lego blocks in new ways." },
+            { id: 10, q: "Formulate a strategy to move from 'Collector' (hoarding) to 'Creator' (making).", k: ["synthesis", "output", "writing", "blog", "summary", "own words"], desc: "Force output: Turn notes into essays, blogs, or summaries." }
+        ];
+
+        // --- STATE & DOM ---
+        let score = { correct: 0, wrong: 0, total: 0 };
+        let currentPQIndex = 0;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initImportantQuestions();
+            loadPracticeQuestion();
+            initLongQuestions();
+            updateScoreUI();
+            
+            // Intersection Observer for Progress Bar (Mockup logic for scroll)
+            window.onscroll = function() {
+                let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                let scrolled = (winScroll / height) * 100;
+                document.getElementById("page-progress").style.width = scrolled + "%";
+            };
+        });
+
+        // --- CORE FUNCTIONS ---
+
+        function updateScore(isCorrect) {
+            score.total++;
+            if (isCorrect) score.correct++;
+            else score.wrong++;
+            updateScoreUI();
+        }
+
+        function updateScoreUI() {
+            document.getElementById('score-correct').innerText = score.correct;
+            document.getElementById('score-wrong').innerText = score.wrong;
+            document.getElementById('score-total').innerText = score.total;
+            let percent = score.total === 0 ? 0 : Math.round((score.correct / score.total) * 100);
+            document.getElementById('score-percent').innerText = percent + "%";
+        }
+
+        // --- IMPORTANT QUESTIONS LOGIC ---
+        function initImportantQuestions() {
+            const container = document.getElementById('iq-container');
+            importantQuestions.forEach((item, index) => {
+                let div = document.createElement('div');
+                div.className = 'iq-item';
+                div.innerHTML = `
+                    <div class="iq-question" onclick="toggleIQ(this)">
+                        <span>Q${index+1}: ${item.q}</span>
+                        <span>▼</span>
+                    </div>
+                    <div class="iq-answer">${item.a}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function toggleIQ(el) {
+            let answer = el.nextElementSibling;
+            if (answer.style.display === "block") {
+                answer.style.display = "none";
+                el.children[1].innerText = "▼";
+            } else {
+                answer.style.display = "block";
+                el.children[1].innerText = "▲";
+            }
+        }
+
+        // --- PRACTICE QUESTIONS LOGIC ---
+        function loadPracticeQuestion() {
+            if (currentPQIndex >= practiceQuestions.length) {
+                document.getElementById('practice-area').innerHTML = `
+                    <h3 style="text-align:center; color:var(--accent-green)">Session Complete!</h3>
+                    <p style="text-align:center">You have completed all 70 Practice Questions.</p>
+                `;
+                return;
+            }
+
+            const q = practiceQuestions[currentPQIndex];
+            document.getElementById('pq-counter').innerText = `Question ${currentPQIndex + 1} of ${practiceQuestions.length}`;
+            document.getElementById('pq-question').innerText = q.q;
+            
+            const optsContainer = document.getElementById('pq-options');
+            optsContainer.innerHTML = '';
+            document.getElementById('pq-feedback').style.display = 'none';
+            document.getElementById('pq-next').style.display = 'none';
+
+            if (q.t === 'mcq') {
+                q.o.forEach((opt, idx) => {
+                    let btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerText = opt;
+                    btn.onclick = () => checkPQ(idx);
+                    optsContainer.appendChild(btn);
+                });
+            } else if (q.t === 'tf') {
+                ['True', 'False'].forEach((opt, idx) => {
+                    let btn = document.createElement('button');
+                    btn.className = 'option-btn';
+                    btn.innerText = opt;
+                    let val = (idx === 0);
+                    btn.onclick = () => checkPQ(val);
+                    optsContainer.appendChild(btn);
+                });
+            } else if (q.t === 'fill') {
+                let input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'option-btn';
+                input.placeholder = 'Type answer...';
+                input.style.cursor = 'text';
+                let btn = document.createElement('button');
+                btn.className = 'check-btn';
+                btn.innerText = 'Submit';
+                btn.style.marginTop = '10px';
+                btn.onclick = () => checkPQ(input.value.toLowerCase().trim());
+                optsContainer.appendChild(input);
+                optsContainer.appendChild(btn);
+            }
+        }
+
+        function checkPQ(userAnswer) {
+            const q = practiceQuestions[currentPQIndex];
+            const feedback = document.getElementById('pq-feedback');
+            const btns = document.querySelectorAll('.option-btn');
+            
+            // Disable buttons
+            btns.forEach(b => b.disabled = true);
+
+            let isCorrect = false;
+
+            if (q.t === 'mcq') {
+                isCorrect = (userAnswer === q.a);
+                // Highlight correct/wrong
+                btns[userAnswer].style.background = isCorrect ? '#d5f5e3' : '#fadbd8';
+                if (!isCorrect) btns[q.a].style.background = '#d5f5e3'; // Show correct
+            } else if (q.t === 'tf') {
+                isCorrect = (userAnswer === q.a);
+                let idx = userAnswer ? 0 : 1;
+                btns[idx].style.background = isCorrect ? '#d5f5e3' : '#fadbd8';
+            } else if (q.t === 'fill') {
+                isCorrect = (userAnswer === q.a.toLowerCase());
+            }
+
+            updateScore(isCorrect);
+
+            feedback.style.display = 'block';
+            feedback.className = isCorrect ? 'feedback-msg feedback-correct' : 'feedback-msg feedback-wrong';
+            feedback.innerHTML = isCorrect ? 
+                `Excellent! ⭐ ${q.exp}` : 
+                `Incorrect. The correct answer was <b>${q.t === 'fill' ? q.a : (q.t==='mcq'?q.o[q.a]:q.a)}</b>.<br>${q.exp}`;
+
+            document.getElementById('pq-next').style.display = 'block';
+        }
+
+        function nextPracticeQuestion() {
+            currentPQIndex++;
+            loadPracticeQuestion();
+        }
+
+        // --- LONG ANSWER LOGIC ---
+        function initLongQuestions() {
+            const container = document.getElementById('la-container-wrapper');
+            longQuestions.forEach((item, index) => {
+                let div = document.createElement('div');
+                div.className = 'la-container';
+                div.innerHTML = `
+                    <div class="la-question">Q${index+1}: ${item.q}</div>
+                    <textarea id="la-in-${index}" placeholder="Type your detailed answer here..."></textarea>
+                    <button class="check-btn" onclick="checkLA(${index})">Check Answer</button>
+                    <div id="la-fb-${index}" class="la-feedback"></div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function checkLA(index) {
+            const item = longQuestions[index];
+            const input = document.getElementById(`la-in-${index}`).value.toLowerCase();
+            const feedbackBox = document.getElementById(`la-fb-${index}`);
+            
+            if (input.length < 10) {
+                alert("Please write a more detailed answer.");
+                return;
+            }
+
+            let foundKeywords = item.k.filter(key => input.includes(key.toLowerCase()));
+            let scoreVal = foundKeywords.length;
+            let passed = scoreVal >= 2; // Threshold: needs at least 2 keywords
+
+            updateScore(passed);
+
+            if (passed) {
+                feedbackBox.innerHTML = `<span style="color:var(--accent-green)"><b>Correct!</b></span> You identified key concepts: ${foundKeywords.join(", ")}. <br><b>Expert Note:</b> ${item.desc}`;
+                feedbackBox.style.background = "#e8f6f3";
+            } else {
+                feedbackBox.innerHTML = `<span style="color:var(--accent-orange)"><b>Incomplete.</b></span> Try to include concepts like: ${item.k.slice(0,3).join(", ")}. <br><b>Ideal Answer:</b> ${item.desc}`;
+                feedbackBox.style.background = "#fdedec";
+            }
+            feedbackBox.style.padding = "10px";
+            feedbackBox.style.borderRadius = "5px";
+        }
+
+        // --- REVISION TOGGLE ---
+        function toggleRevision() {
+            const el = document.getElementById('revision-card');
+            if (el.style.display === 'block') {
+                el.style.display = 'none';
+            } else {
+                el.style.display = 'block';
+            }
+        }
+
+    </script>
+</body>
+</html>

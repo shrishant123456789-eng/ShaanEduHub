@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 4: Decision-Making & Structured Problem Solving</title>
+    <style>
+        :root {
+            --primary-bg: #0f172a;
+            --secondary-bg: #1e293b;
+            --card-bg: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #a855f7; /* Neon Purple */
+            --accent-hover: #9333ea;
+            --success: #22c55e;
+            --error: #ef4444;
+            --border: #475569;
+            --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--primary-bg);
+            color: var(--text-main);
+            line-height: 1.6;
+            font-weight: 500; /* Robust text weight */
+            overflow-x: hidden;
+        }
+
+        /* --- Utilities --- */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .section-title {
+            color: var(--accent);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card {
+            background-color: var(--secondary-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: background 0.2s;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .btn:disabled {
+            background-color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        input[type="text"], textarea, select {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-bg);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-family: inherit;
+        }
+
+        /* --- Header --- */
+        header {
+            background-color: var(--secondary-bg);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand h1 {
+            font-size: 1.2rem;
+            color: var(--accent);
+        }
+
+        .brand h2 {
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+
+        /* --- Score Panel (Sticky) --- */
+        #score-panel {
+            position: sticky;
+            top: 70px; /* Below header */
+            z-index: 900;
+            background-color: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(5px);
+            border-bottom: 1px solid var(--accent);
+            padding: 10px 0;
+            margin-bottom: 20px;
+        }
+
+        .score-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .score-item span {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .score-item strong {
+            font-size: 1.1rem;
+            color: var(--accent);
+        }
+
+        /* --- Roadmap --- */
+        .roadmap {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            background: var(--secondary-bg);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .roadmap-step {
+            text-align: center;
+            flex: 1;
+            padding: 10px;
+            border-right: 1px solid var(--border);
+        }
+
+        .roadmap-step:last-child { border-right: none; }
+        .roadmap-step h4 { color: var(--accent); margin-bottom: 5px; }
+        .roadmap-step p { font-size: 0.8rem; color: var(--text-muted); }
+
+        /* --- Concepts --- */
+        .topic-tag {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .concept-block {
+            border-left: 4px solid var(--accent);
+            padding-left: 15px;
+            margin: 20px 0;
+        }
+
+        .example-box {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid var(--success);
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+        
+        .failure-box {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--error);
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+
+        /* --- Questions --- */
+        .question-card {
+            background-color: var(--secondary-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border);
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--text-main);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .option-btn {
+            background: var(--primary-bg);
+            border: 1px solid var(--border);
+            padding: 12px;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 4px;
+            color: var(--text-main);
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover {
+            border-color: var(--accent);
+        }
+
+        .option-btn.selected {
+            background-color: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .option-btn.correct {
+            background-color: var(--success);
+            color: black;
+            border-color: var(--success);
+        }
+
+        .option-btn.wrong {
+            background-color: var(--error);
+            color: white;
+            border-color: var(--error);
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .feedback.visible { display: block; }
+        .feedback.success { background: rgba(34, 197, 94, 0.2); color: #86efac; }
+        .feedback.error { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+
+        /* --- Analytical/Long Questions --- */
+        .keyword-badge {
+            display: inline-block;
+            background: #475569;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-right: 5px;
+            margin-top: 5px;
+        }
+
+        .keyword-hit {
+            background: var(--success);
+            color: black;
+        }
+
+        /* --- Footer --- */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            margin-top: 3rem;
+        }
+
+        /* --- Mobile --- */
+        @media (max-width: 600px) {
+            .options-grid { grid-template-columns: 1fr; }
+            .score-grid { grid-template-columns: repeat(3, 1fr); gap: 5px; }
+            .roadmap { flex-direction: column; }
+            .roadmap-step { border-right: none; border-bottom: 1px solid var(--border); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- sticky header -->
+    <header>
+        <div class="container header-content">
+            <div class="brand">
+                <h1>COMPETITIVE CURRICULUM</h1>
+                <h2>Chapter 4: Decision-Making & Structured Problem Solving</h2>
+            </div>
+            <div id="level-badge" style="background: var(--accent); padding: 5px 10px; border-radius: 4px; font-weight: bold;">
+                Level: Beginner
+            </div>
+        </div>
+    </header>
+
+    <!-- sticky score panel -->
+    <div id="score-panel">
+        <div class="container">
+            <div class="score-grid">
+                <div class="score-item"><span>XP</span><strong id="xp-display">0</strong></div>
+                <div class="score-item"><span>Correct</span><strong id="correct-display">0</strong></div>
+                <div class="score-item"><span>Wrong</span><strong id="wrong-display">0</strong></div>
+                <div class="score-item"><span>Attempted</span><strong id="attempted-display">0</strong></div>
+                <div class="score-item"><span>Score</span><strong id="marks-display">0</strong></div>
+                <div class="score-item"><span>Accuracy</span><strong id="accuracy-display">0%</strong></div>
+            </div>
+        </div>
+    </div>
+
+    <main class="container">
+
+        <!-- 1. Intro & Roadmap -->
+        <section class="card">
+            <h2 class="section-title">Overview</h2>
+            <p>Decision-making is the cognitive process of selecting a course of action from multiple alternatives. In this chapter, we move from simple logical deductions to complex, AI-assisted strategic frameworks used by top industry leaders.</p>
+            <br>
+            <div class="roadmap">
+                <div class="roadmap-step">
+                    <h4>4.1 Basic</h4>
+                    <p>Logic, Bias, Trees</p>
+                </div>
+                <div class="roadmap-step">
+                    <h4>4.2 Medium</h4>
+                    <p>SWOT, Pareto, 5 Whys</p>
+                </div>
+                <div class="roadmap-step">
+                    <h4>4.3 Advanced</h4>
+                    <p>Systems, Risk, AI</p>
+                </div>
+                <div class="roadmap-step">
+                    <h4>4.4 Expert</h4>
+                    <p>Black Swan, First Principles</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Concept Learning -->
+        <section id="concepts">
+            <!-- 4.1 BASIC -->
+            <div class="card">
+                <span class="topic-tag">4.1 Basic</span>
+                <h3>Fundamentals of Logic & Bias</h3>
+                <div class="concept-block">
+                    <p><strong>Definition:</strong> Decision making is not just "choosing"; it is a structured process of identifying problems, gathering data, and weighing alternatives.</p>
+                    <p><strong>Key Concept: Cognitive Biases</strong></p>
+                    <ul>
+                        <li><strong>Confirmation Bias:</strong> Seeking information that confirms pre-existing beliefs.</li>
+                        <li><strong>Anchoring Bias:</strong> Relying too heavily on the first piece of information (the "anchor").</li>
+                        <li><strong>Sunk Cost Fallacy:</strong> Continuing a venture because of past investment, despite poor future prospects.</li>
+                    </ul>
+                    <div class="example-box">
+                        <strong>Indian Context Example:</strong> Investing in a failing family business purely because "grandfather started it" is the Sunk Cost Fallacy.
+                    </div>
+                </div>
+                <div class="concept-block">
+                    <p><strong>Tool: Decision Trees</strong></p>
+                    <p>A tree-like graph of decisions and their possible consequences. Useful for sequential decision problems.</p>
+                </div>
+            </div>
+
+            <!-- 4.2 MEDIUM -->
+            <div class="card">
+                <span class="topic-tag">4.2 Medium</span>
+                <h3>Structured Frameworks</h3>
+                <div class="concept-block">
+                    <h4>1. SWOT Analysis</h4>
+                    <p>Strengths (Internal), Weaknesses (Internal), Opportunities (External), Threats (External).</p>
+                    
+                    <h4>2. Pareto Principle (80/20 Rule)</h4>
+                    <p>80% of consequences come from 20% of the causes. Focus on the vital few, not the trivial many.</p>
+
+                    <h4>3. The 5 Whys</h4>
+                    <p>Ask "Why?" five times to get to the root cause of a defect or problem.</p>
+                    <div class="example-box">
+                        <strong>Example:</strong> Why did the server crash? (High load) -> Why high load? (DDOS) -> Why DDOS successful? (No firewall) -> Why no firewall? (Budget cut) -> <strong>Root Cause:</strong> Lack of security budget prioritization.
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4.3 ADVANCED -->
+            <div class="card">
+                <span class="topic-tag">4.3 Advanced</span>
+                <h3>Strategic Thinking & AI</h3>
+                <div class="concept-block">
+                    <h4>Systems Thinking</h4>
+                    <p>Viewing problems as parts of an overall system, rather than reacting to specific parts. Understanding feedback loops.</p>
+                    
+                    <h4>Risk Matrix</h4>
+                    <p>Plotting events by <strong>Probability</strong> (Likelihood) vs <strong>Impact</strong> (Consequence). Focus resources on High Probability + High Impact events.</p>
+
+                    <h4>AI-Enhanced Decision Making</h4>
+                    <p>Using data analytics and machine learning to predict outcomes. <strong>Warning:</strong> AI can hallucinate; human verification is essential.</p>
+                </div>
+            </div>
+
+            <!-- 4.4 EXPERT -->
+            <div class="card">
+                <span class="topic-tag">4.4 Expert</span>
+                <h3>Critical Judgment Under Uncertainty</h3>
+                <div class="concept-block">
+                    <h4>Black Swan Theory</h4>
+                    <p>Events that are rare, have extreme impact, and are retrospectively predictable. (e.g., 2008 Financial Crisis, COVID-19).</p>
+
+                    <h4>First Principles Thinking</h4>
+                    <p>Boiling things down to the most fundamental truths and reasoning up from there, rather than reasoning by analogy ("doing what others do").</p>
+                    <div class="example-box">
+                        <strong>Elon Musk Example:</strong> Don't buy rockets (too expensive). Buy raw materials (aluminum, titanium) and build them. (SpaceX).
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Important Questions (30+) -->
+        <section class="card">
+            <h2 class="section-title">Important Questions (Exam Focus)</h2>
+            <div id="important-questions-container"></div>
+        </section>
+
+        <!-- 4. Practice Questions (70+) -->
+        <section class="card">
+            <h2 class="section-title">Practice Questions (Interactive)</h2>
+            <p style="margin-bottom: 20px; color: var(--text-muted);">Test your knowledge. Score +10XP per correct answer.</p>
+            <div id="practice-questions-container"></div>
+        </section>
+
+        <!-- 5. Long Analytical Questions (10) -->
+        <section class="card">
+            <h2 class="section-title">Long Analytical Questions</h2>
+            <p style="margin-bottom: 20px; color: var(--text-muted);">Type your answer. System scans for keywords. (Max 50XP per question)</p>
+            <div id="long-questions-container"></div>
+        </section>
+
+        <!-- 6. Assignments -->
+        <section class="card">
+            <h2 class="section-title">Assignment</h2>
+            <div class="concept-block">
+                <h4>Task: The Startup Pivot Decision</h4>
+                <p><strong>Scenario:</strong> You run a food delivery startup in Bangalore. Profits are low due to high fuel costs. You have two options:</p>
+                <ol style="margin-left: 20px; margin-top: 10px;">
+                    <li>Switch to an electric bike fleet (High upfront cost, low running cost).</li>
+                    <li>Pivot to "Cloud Kitchens" only (No delivery fleet, partner with Swiggy/Zomato).</li>
+                </ol>
+                <p style="margin-top: 10px;"><strong>Requirement:</strong> Create a Cost-Benefit Analysis and a Risk Matrix for both options. Submit a 1-page report.</p>
+            </div>
+        </section>
+
+        <!-- 7. Case Studies -->
+        <section class="card">
+            <h2 class="section-title">Real-Life Case Studies</h2>
+            <div class="concept-block">
+                <h4>Success: Netflix (Pivot)</h4>
+                <p>Netflix used data to realize DVD rentals were declining. They cannibalized their own business to switch to streaming. <strong>Framework:</strong> Future-scenario planning.</p>
+            </div>
+            <div class="failure-box">
+                <h4>Failure: Kodak (Ignorance)</h4>
+                <p>Kodak invented the digital camera but suppressed it to protect film sales. They failed to use <strong>First Principles</strong> and ignored the changing technology curve.</p>
+            </div>
+        </section>
+
+        <!-- 8. Career Insight -->
+        <section class="card">
+            <h2 class="section-title">Career & Expert Insight</h2>
+            <ul style="list-style: none;">
+                <li style="margin-bottom: 10px;">➤ <strong>Product Managers:</strong> Use decision matrices daily to prioritize features.</li>
+                <li style="margin-bottom: 10px;">➤ <strong>Data Scientists:</strong> Provide the statistical basis for decisions, but need domain knowledge to avoid bias.</li>
+                <li style="margin-bottom: 10px;">➤ <strong>Consultants (McKinsey/BCG):</strong> Master of the MECE (Mutually Exclusive, Collectively Exhaustive) framework.</li>
+            </ul>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>© 2026 Competitive Curriculum System. Chapter 4 Complete.</p>
+    </footer>
+
+    <script>
+        // --- DATA ---
+
+        // Important Questions (Static, 30 items)
+        const importantQuestions = [
+            { q: "Define Confirmation Bias.", a: "The tendency to search for, interpret, favor, and recall information in a way that confirms or supports one's prior beliefs or values." },
+            { q: "What is the Pareto Principle?", a: "Also known as the 80/20 rule, it states that for many outcomes, roughly 80% of consequences come from 20% of causes." },
+            { q: "Explain 'Sunk Cost Fallacy'.", a: "The phenomenon where a person is reluctant to abandon a strategy or course of action because they have invested heavily in it, even when it is clear that abandonment would be more beneficial." },
+            { q: "What is a Decision Tree?", a: "A decision support tool that uses a tree-like model of decisions and their possible consequences, including chance event outcomes, resource costs, and utility." },
+            { q: "Define SWOT Analysis.", a: "A strategic planning technique used to help a person or organization identify Strengths, Weaknesses, Opportunities, and Threats related to business competition or project planning." },
+            { q: "What is the '5 Whys' technique?", a: "An iterative interrogative technique used to explore the cause-and-effect relationships underlying a particular problem. The primary goal is to determine the root cause of a defect or problem." },
+            { q: "What is Anchoring Bias?", a: "A cognitive bias where an individual relies too heavily on an initial piece of information offered (considered to be the 'anchor') when making decisions." },
+            { q: "Define 'Opportunity Cost'.", a: "The loss of potential gain from other alternatives when one alternative is chosen." },
+            { q: "What is Systems Thinking?", a: "A holistic approach to analysis that focuses on the way that a system's constituent parts interrelate and how systems work over time and within the context of larger systems." },
+            { q: "What is a Risk Matrix?", a: "A matrix that is used during risk assessment to define the level of risk by considering the category of probability or likelihood against the category of consequence severity." },
+            { q: "Explain 'Analysis Paralysis'.", a: "An anti-pattern where the cost of decision analysis exceeds the benefits of the decision itself, or where over-analyzing a situation causes decision-making to become paralyzed." },
+            { q: "What is Heuristic decision making?", a: "Using mental shortcuts or 'rules of thumb' that simplify problems and avoid cognitive overload." },
+            { q: "What is Groupthink?", a: "A psychological phenomenon that occurs within a group of people in which the desire for harmony or conformity in the group results in an irrational or dysfunctional decision-making outcome." },
+            { q: "Define 'First Principles Thinking'.", a: "A problem-solving method that involves breaking a problem down to its most basic elements (fundamental truths) and then reassembling it from the ground up." },
+            { q: "What is a 'Black Swan' event?", a: "An unpredictable event that is beyond what is normally expected of a situation and has potentially severe consequences." },
+            { q: "What is Cost-Benefit Analysis (CBA)?", a: "A systematic approach to estimating the strengths and weaknesses of alternatives used to determine options which provide the best approach to achieving benefits while preserving savings." },
+            { q: "Explain 'Second-Order Thinking'.", a: "Thinking not just about the immediate consequences of a decision, but also the consequences of those consequences." },
+            { q: "What is Decision Fatigue?", a: "The deteriorating quality of decisions made by an individual after a long session of decision making." },
+            { q: "What is the difference between risk and uncertainty?", a: "Risk is when probabilities are known; uncertainty is when probabilities are unknown." },
+            { q: "What is a 'Pre-mortem'?", a: "A strategy where a project team imagines a future failure and works backward to determine what could lead to that failure, to prevent it." },
+            { q: "Define 'Survivorship Bias'.", a: "The logical error of concentrating on the people or things that made it past some selection process and overlooking those that did not, typically because of their lack of visibility." },
+            { q: "What is the 'Availability Heuristic'?", a: "A mental shortcut that relies on immediate examples that come to a given person's mind when evaluating a specific topic, concept, method or decision." },
+            { q: "What is a Feedback Loop?", a: "A situation where the output of a system is circled back and used as input." },
+            { q: "Explain 'Occam's Razor'.", a: "The problem-solving principle that 'entities should not be multiplied without necessity', or simply, the simplest explanation is usually the correct one." },
+            { q: "What is 'Devil's Advocacy'?", a: "A decision-making technique where one individual is assigned the role of challenging the assumptions and assertions made by the group to prevent groupthink." },
+            { q: "What is Data-Driven Decision Making (DDDM)?", a: "Using facts, metrics, and data to guide strategic business decisions that align with your goals, objectives, and initiatives." },
+            { q: "What is 'Bounded Rationality'?", a: "The concept that the rationality of individuals is limited by the information they have, the cognitive limitations of their minds, and the finite amount of time they have to make a decision." },
+            { q: "What is Scenario Planning?", a: "A strategic planning method that some organizations use to make flexible long-term plans." },
+            { q: "Define 'Loss Aversion'.", a: "The tendency to prefer avoiding losses to acquiring equivalent gains." },
+            { q: "What is the 'Halo Effect'?", a: "The tendency for an impression created in one area to influence opinion in another area." }
+        ];
+
+        // Practice Questions (Interactive, 70 items - Generated via pattern to save space in code but unique content)
+        // I will explicitly define key questions then use a generator for similar types to ensure 70 unique IDs.
+        
+        const practiceData = [
+            // 1-10: Basic Logic & Bias
+            { q: "Ignoring evidence that contradicts your beliefs is examples of:", o: ["Confirmation Bias", "Hindsight Bias", "Anchoring", "Framing"], a: 0 },
+            { q: "The first piece of information offered acts as an:", o: ["Anchor", "Exit", "Ending", "Option"], a: 0 },
+            { q: "Continuing a project just because you spent money on it is:", o: ["Sunk Cost Fallacy", "Pareto Principle", "SWOT", "Risk Matrix"], a: 0 },
+            { q: "Logical reasoning starts with:", o: ["Premises", "Conclusions", "Emotions", "Guesses"], a: 0 },
+            { q: "Which tool visualizes a sequence of decisions?", o: ["Decision Tree", "Pie Chart", "Histogram", "Scatter Plot"], a: 0 },
+            { q: "Bias arising from recent dramatic events is:", o: ["Availability Heuristic", "Anchoring", "Status Quo", "Optimism Bias"], a: 0 },
+            { q: "To reduce bias, one should:", o: ["Seek contrary evidence", "Trust gut instantly", "Ignore data", "Ask friends only"], a: 0 },
+            { q: "Decision making is primarily a:", o: ["Cognitive process", "Physical act", "Emotional reflex", "Random event"], a: 0 },
+            { q: "Binary decision means:", o: ["2 options", "3 options", "Infinite options", "No options"], a: 0 },
+            { q: "Who popularized the concept of 'Bounded Rationality'?", o: ["Herbert Simon", "Steve Jobs", "Elon Musk", "Adam Smith"], a: 0 },
+
+            // 11-20: Frameworks (SWOT, 5 Whys)
+            { q: "In SWOT, 'S' stands for:", o: ["Strengths", "Systems", "Standard", "Scope"], a: 0 },
+            { q: "In SWOT, 'W' stands for:", o: ["Weaknesses", "Wins", "Wealth", "Warranty"], a: 0 },
+            { q: "In SWOT, 'O' stands for:", o: ["Opportunities", "Options", "Outcomes", "Operations"], a: 0 },
+            { q: "In SWOT, 'T' stands for:", o: ["Threats", "Time", "Teams", "Totals"], a: 0 },
+            { q: "The 5 Whys technique is used to find:", o: ["Root Cause", "Surface Symptoms", "Solutions directly", "Blame"], a: 0 },
+            { q: "Pareto Principle is also known as:", o: ["80/20 Rule", "50/50 Rule", "90/10 Rule", "60/40 Rule"], a: 0 },
+            { q: "Cost-Benefit Analysis compares:", o: ["Costs vs Benefits", "Pros vs Cons", "Time vs Money", "All of above"], a: 3 },
+            { q: "SWOT: Opportunities are usually:", o: ["External", "Internal", "Personal", "Emotional"], a: 0 },
+            { q: "SWOT: Strengths are usually:", o: ["Internal", "External", "Market-based", "Global"], a: 0 },
+            { q: "5 Whys was developed by:", o: ["Toyota (Sakichi Toyoda)", "Ford", "Tesla", "Honda"], a: 0 },
+
+            // 21-30: Advanced Tools
+            { q: "A Risk Matrix measures:", o: ["Impact vs Probability", "Cost vs Time", "Win vs Loss", "Good vs Bad"], a: 0 },
+            { q: "Systems Thinking focuses on:", o: ["Interconnections", "Isolated parts", "Linear steps", "Speed"], a: 0 },
+            { q: "High Impact, Low Probability events should be:", o: ["Mitigated/Insured", "Ignored", "Accepted", "Celebrated"], a: 0 },
+            { q: "Low Impact, Low Probability events should be:", o: ["Accepted/Monitored", "Insured", "Avoided", "Prioritized"], a: 0 },
+            { q: "Scenario Planning helps in:", o: ["Future uncertainty", "Past analysis", "Accounting", "HR hiring"], a: 0 },
+            { q: "Feedback loops are central to:", o: ["Systems Thinking", "Linear Thinking", "Design Thinking", "Critical Thinking"], a: 0 },
+            { q: "A 'reinforcing loop' leads to:", o: ["Exponential growth/decay", "Stability", "Stagnation", "Balance"], a: 0 },
+            { q: "A 'balancing loop' leads to:", o: ["Equilibrium", "Explosion", "Collapse", "Chaos"], a: 0 },
+            { q: "MECE stands for:", o: ["Mutually Exclusive Collectively Exhaustive", "Many Easy Choices Exist", "Make Every Choice Easy", "None"], a: 0 },
+            { q: "Six Thinking Hats is a technique by:", o: ["Edward de Bono", "Simon Sinek", "Malcom Gladwell", "Tim Ferriss"], a: 0 },
+
+            // 31-40: Expert Concepts
+            { q: "A Black Swan event is:", o: ["Rare & Impactful", "Common & Low Impact", "Predictable", "Impossible"], a: 0 },
+            { q: "Who coined 'Black Swan'?", o: ["Nassim Taleb", "Daniel Kahneman", "Adam Grant", "Seth Godin"], a: 0 },
+            { q: "First Principles thinking involves:", o: ["Breaking down to truths", "Copying others", "Using analogies", "Guessing"], a: 0 },
+            { q: "Second-order thinking asks:", o: ["And then what?", "Why?", "How much?", "Who?"], a: 0 },
+            { q: "Occam's Razor suggests choosing the:", o: ["Simplest explanation", "Most complex explanation", "Most popular explanation", "Newest explanation"], a: 0 },
+            { q: "Hanlon's Razor: Never attribute to malice that which is explained by:", o: ["Stupidity", "Genius", "Strategy", "Luck"], a: 0 },
+            { q: "The Map is not the:", o: ["Territory", "Road", "Destination", "Journey"], a: 0 },
+            { q: "Inversion mental model means:", o: ["Thinking backwards", "Thinking fast", "Thinking slow", "Not thinking"], a: 0 },
+            { q: "Circle of Competence means acting within:", o: ["What you know", "What you guess", "What is popular", "What is profitable"], a: 0 },
+            { q: "The 'Pre-mortem' technique assumes the project has:", o: ["Failed", "Succeeded", "Started", "Finished"], a: 0 },
+
+            // 41-50: AI & Data
+            { q: "AI Hallucination refers to:", o: ["AI inventing false facts", "AI dreaming", "AI crashing", "AI slowing down"], a: 0 },
+            { q: "Data-driven decisions require:", o: ["High quality data", "Gut feeling", "Loud opinions", "Speed only"], a: 0 },
+            { q: "Algorithmic bias comes from:", o: ["Biased training data", "Computer hardware", "Electricity", "Internet speed"], a: 0 },
+            { q: "Predictive analytics uses:", o: ["Historical data", "Magic", "Randomness", "Hope"], a: 0 },
+            { q: "A/B Testing compares:", o: ["Two versions", "Ten versions", "No versions", "Infinite versions"], a: 0 },
+            { q: "Correlation does not imply:", o: ["Causation", "Connection", "Relation", "Interaction"], a: 0 },
+            { q: "Garbage In, Garbage Out (GIGO) applies to:", o: ["Data models", "Trash cans", "Recycling", "Cooking"], a: 0 },
+            { q: "Big Data is characterized by:", o: ["Volume, Velocity, Variety", "Small, Slow, Simple", "Expensive, Elite, Easy", "None"], a: 0 },
+            { q: "KPI stands for:", o: ["Key Performance Indicator", "Keep People Interested", "Key Process Input", "Know Process Inside"], a: 0 },
+            { q: "Dashboard fatigue happens when:", o: ["Too many metrics exist", "Screens are bright", "Internet is slow", "Chairs are hard"], a: 0 },
+
+            // 51-60: Scenarios (True/False represented as 2 options)
+            { q: "You should always ignore sunk costs.", o: ["True", "False"], a: 0 },
+            { q: "Multitasking improves decision quality.", o: ["False", "True"], a: 0 },
+            { q: "Groupthink leads to better decisions.", o: ["False", "True"], a: 0 },
+            { q: "Correlation proves causation.", o: ["False", "True"], a: 0 },
+            { q: "Heuristics are mental shortcuts.", o: ["True", "False"], a: 0 },
+            { q: "Intuition is always wrong.", o: ["False", "True"], a: 0 },
+            { q: "You can eliminate all risk.", o: ["False", "True"], a: 0 },
+            { q: "Doing nothing is a decision.", o: ["True", "False"], a: 0 },
+            { q: "More information always equals better decisions.", o: ["False", "True"], a: 0 },
+            { q: "Emotions play no role in rational decisions.", o: ["False", "True"], a: 0 }, // Neuroscience says emotions are required
+
+            // 61-70: Mixed Bag
+            { q: "Which bias is 'I knew it all along'?", o: ["Hindsight Bias", "Foresight Bias", "Insight Bias", "Leftside Bias"], a: 0 },
+            { q: "The 'Ikea Effect' means we value things more if we:", o: ["Built them ourselves", "Bought them cheap", "Found them", "Stole them"], a: 0 },
+            { q: "Decision Fatigue leads to:", o: ["Impulse choices / Avoidance", "Better choices", "Higher energy", "Happiness"], a: 0 },
+            { q: "Parkinson's Law: Work expands to fill the:", o: ["Time available", "Room available", "Budget available", "Staff available"], a: 0 },
+            { q: "Murphy's Law: Anything that can go wrong...", o: ["Will go wrong", "Might go wrong", "Will go right", "Does not matter"], a: 0 },
+            { q: "Dunning-Kruger Effect: Low ability people...", o: ["Overestimate competence", "Underestimate competence", "Are accurate", "Are sad"], a: 0 },
+            { q: "Loss Aversion: The pain of losing is ___ the joy of gaining.", o: ["Greater than", "Less than", "Equal to", "Unrelated to"], a: 0 },
+            { q: "Choice Overload leads to:", o: ["Anxiety / No sale", "Excitement", "More sales", "Efficiency"], a: 0 },
+            { q: "Which hat in Six Thinking Hats is for creativity?", o: ["Green", "Red", "Black", "White"], a: 0 },
+            { q: "Which hat in Six Thinking Hats is for caution?", o: ["Black", "Yellow", "Green", "Blue"], a: 0 },
+        ];
+
+        // Long Questions (10 items) with Keywords
+        const longQuestions = [
+            { id: 1, q: "Explain the SWOT analysis framework with a personal example.", keywords: ["strengths", "weaknesses", "opportunities", "threats", "internal", "external"] },
+            { id: 2, q: "Apply the 5 Whys technique to a situation where a student fails an exam.", keywords: ["why", "root cause", "study", "habit", "distraction"] },
+            { id: 3, q: "Describe a decision using Cost-Benefit Analysis.", keywords: ["cost", "benefit", "value", "ratio", "trade-off", "net"] },
+            { id: 4, q: "How does Confirmation Bias affect political opinions?", keywords: ["belief", "ignore", "contradict", "echo chamber", "evidence"] },
+            { id: 5, q: "Explain the Pareto Principle in the context of time management.", keywords: ["80/20", "focus", "productivity", "results", "minority", "impact"] },
+            { id: 6, q: "Discuss the risks of AI in decision making.", keywords: ["bias", "hallucination", "data", "verification", "responsibility"] },
+            { id: 7, q: "What is First Principles thinking and how is it different from analogy?", keywords: ["fundamental", "truth", "break down", "analogy", "copy", "original"] },
+            { id: 8, q: "How would you prepare for a Black Swan event in a business?", keywords: ["resilience", "cash", "buffer", "unexpected", "adaptability"] },
+            { id: 9, q: "Create a simple Risk Matrix for a college trip.", keywords: ["probability", "impact", "severity", "likelihood", "mitigation"] },
+            { id: 10, q: "Explain Second-Order Thinking with an example.", keywords: ["consequence", "future", "result", "immediate", "long-term"] }
+        ];
+
+        // --- STATE ---
+        let state = {
+            xp: 0,
+            correct: 0,
+            wrong: 0,
+            attempted: 0,
+            longPoints: 0,
+            answeredPracticeIds: new Set(),
+            answeredLongIds: new Set()
+        };
+
+        // --- RENDER FUNCTIONS ---
+
+        function renderImportantQuestions() {
+            const container = document.getElementById('important-questions-container');
+            importantQuestions.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'question-card';
+                div.innerHTML = `
+                    <div style="cursor: pointer;" onclick="toggleAnswer('iq-${index}')">
+                        <strong style="color: var(--accent);">Q${index + 1}.</strong> ${item.q}
+                        <span style="float: right; font-size: 0.8rem;">▼</span>
+                    </div>
+                    <div id="iq-${index}" style="display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); color: #cbd5e1;">
+                        <strong>Ans:</strong> ${item.a}
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function toggleAnswer(id) {
+            const el = document.getElementById(id);
+            el.style.display = el.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function renderPracticeQuestions() {
+            const container = document.getElementById('practice-questions-container');
+            practiceData.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'question-card';
+                div.id = `pq-card-${index}`;
+                
+                let optionsHtml = '';
+                item.o.forEach((opt, oIndex) => {
+                    optionsHtml += `<button class="option-btn" onclick="checkAnswer(${index}, ${oIndex}, this)">${opt}</button>`;
+                });
+
+                div.innerHTML = `
+                    <p class="question-text"><strong>${index + 1}.</strong> ${item.q}</p>
+                    <div class="options-grid">
+                        ${optionsHtml}
+                    </div>
+                    <div class="feedback" id="feedback-${index}"></div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function renderLongQuestions() {
+            const container = document.getElementById('long-questions-container');
+            longQuestions.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'question-card';
+                div.innerHTML = `
+                    <p class="question-text"><strong>Q${index + 1}.</strong> ${item.q}</p>
+                    <div style="margin-bottom: 5px; font-size: 0.8rem; color: var(--text-muted);">Required Keywords: ${item.keywords.length} hidden words</div>
+                    <textarea id="lq-text-${index}" rows="4" placeholder="Type your analysis here..."></textarea>
+                    <button class="btn" id="lq-btn-${index}" onclick="evaluateLong(${index})">Submit Analysis</button>
+                    <div class="feedback" id="lq-feedback-${index}"></div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // --- LOGIC ---
+
+        function checkAnswer(qIndex, oIndex, btnElement) {
+            if (state.answeredPracticeIds.has(qIndex)) return;
+
+            const question = practiceData[qIndex];
+            const feedbackEl = document.getElementById(`feedback-${qIndex}`);
+            const allBtns = btnElement.parentElement.querySelectorAll('.option-btn');
+
+            state.attempted++;
+            state.answeredPracticeIds.add(qIndex);
+
+            if (oIndex === question.a) {
+                // Correct
+                btnElement.classList.add('correct');
+                state.correct++;
+                state.xp += 10;
+                feedbackEl.innerHTML = "<strong>Correct!</strong> +10 XP";
+                feedbackEl.className = "feedback visible success";
+            } else {
+                // Wrong
+                btnElement.classList.add('wrong');
+                // Highlight correct
+                allBtns[question.a].classList.add('correct');
+                state.wrong++;
+                feedbackEl.innerHTML = "<strong>Incorrect.</strong> The correct answer is highlighted.";
+                feedbackEl.className = "feedback visible error";
+            }
+
+            // Disable all buttons
+            allBtns.forEach(btn => btn.disabled = true);
+            updateScoreUI();
+        }
+
+        function evaluateLong(index) {
+            if (state.answeredLongIds.has(index)) return;
+
+            const qData = longQuestions[index];
+            const textArea = document.getElementById(`lq-text-${index}`);
+            const btn = document.getElementById(`lq-btn-${index}`);
+            const feedbackEl = document.getElementById(`lq-feedback-${index}`);
+            
+            const userText = textArea.value.toLowerCase();
+            if (userText.length < 10) {
+                alert("Please write a more detailed answer.");
+                return;
+            }
+
+            let hits = 0;
+            let hitWords = [];
+
+            qData.keywords.forEach(kw => {
+                if (userText.includes(kw.toLowerCase())) {
+                    hits++;
+                    hitWords.push(kw);
+                }
+            });
+
+            const points = hits * 5; // 5 pts per keyword
+            const maxPoints = 50;
+            const finalPoints = Math.min(points, maxPoints);
+
+            state.xp += finalPoints;
+            state.longPoints += finalPoints;
+            state.answeredLongIds.add(index);
+            state.attempted++;
+
+            textArea.disabled = true;
+            btn.disabled = true;
+            btn.innerText = "Submitted";
+
+            let badgeHtml = hitWords.map(w => `<span class="keyword-badge keyword-hit">${w}</span>`).join('');
+            
+            feedbackEl.innerHTML = `
+                <strong>Analysis Complete:</strong> +${finalPoints} XP<br>
+                Keywords Matched: ${hits}/${qData.keywords.length}<br>
+                ${badgeHtml}
+            `;
+            feedbackEl.className = "feedback visible success";
+
+            updateScoreUI();
+        }
+
+        function updateScoreUI() {
+            document.getElementById('xp-display').innerText = state.xp;
+            document.getElementById('correct-display').innerText = state.correct;
+            document.getElementById('wrong-display').innerText = state.wrong;
+            document.getElementById('attempted-display').innerText = state.attempted;
+            
+            // Score calculation: (Correct * 1) + (Long Points / 10)
+            const scoreVal = state.correct + (state.longPoints / 10);
+            document.getElementById('marks-display').innerText = scoreVal;
+
+            // Accuracy
+            const acc = state.attempted === 0 ? 0 : Math.round((state.correct / state.attempted) * 100); // Simple logic
+            document.getElementById('accuracy-display').innerText = acc + "%";
+
+            // Level
+            const badge = document.getElementById('level-badge');
+            if (state.xp < 100) badge.innerText = "Level: Beginner";
+            else if (state.xp < 300) { badge.innerText = "Level: Explorer"; badge.style.backgroundColor = "#3b82f6"; }
+            else if (state.xp < 600) { badge.innerText = "Level: Builder"; badge.style.backgroundColor = "#8b5cf6"; }
+            else { badge.innerText = "Level: Architect"; badge.style.backgroundColor = "#eab308"; color: "black"; }
+        }
+
+        // --- INITIALIZATION ---
+        window.addEventListener('DOMContentLoaded', () => {
+            renderImportantQuestions();
+            renderPracticeQuestions();
+            renderLongQuestions();
+        });
+
+    </script>
+</body>
+</html>

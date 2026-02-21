@@ -1,0 +1,2211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Ecosystem Architect - The Complete Tech Strategy Simulation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0e27;
+            --bg-secondary: #1a1f3a;
+            --bg-card: rgba(26, 31, 58, 0.7);
+            --text-primary: #e8eaf6;
+            --text-secondary: #9fa8da;
+            --accent-primary: #6366f1;
+            --accent-secondary: #8b5cf6;
+            --accent-success: #10b981;
+            --accent-warning: #f59e0b;
+            --accent-danger: #ef4444;
+            --accent-info: #06b6d4;
+            --border-color: rgba(139, 92, 246, 0.3);
+            --shadow-color: rgba(99, 102, 241, 0.2);
+            --glow-color: rgba(139, 92, 246, 0.4);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --bg-card: rgba(255, 255, 255, 0.9);
+            --text-primary: #1a1f3a;
+            --text-secondary: #4a5568;
+            --border-color: rgba(99, 102, 241, 0.2);
+            --shadow-color: rgba(99, 102, 241, 0.1);
+            --glow-color: rgba(139, 92, 246, 0.2);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            grid-template-rows: auto 1fr auto;
+            min-height: 100vh;
+            max-width: 1920px;
+            margin: 0 auto;
+        }
+
+        header {
+            grid-column: 1 / -1;
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--border-color);
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .game-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px var(--glow-color);
+        }
+
+        .score-panel {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .score-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .score-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+        }
+
+        .score-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+        }
+
+        .meter {
+            width: 80px;
+            height: 8px;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 0.25rem;
+        }
+
+        .meter-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px var(--glow-color);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px var(--shadow-color);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--glow-color);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+
+        .sidebar {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border-right: 2px solid var(--border-color);
+            padding: 1.5rem 1rem;
+            overflow-y: auto;
+            max-height: calc(100vh - 140px);
+        }
+
+        .zone-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .zone-btn {
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .zone-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--glow-color), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .zone-btn:hover::before {
+            left: 100%;
+        }
+
+        .zone-btn:hover {
+            border-color: var(--accent-primary);
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px var(--shadow-color);
+        }
+
+        .zone-btn.active {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 20px var(--glow-color);
+        }
+
+        .zone-badge {
+            display: inline-block;
+            margin-left: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            background: var(--accent-success);
+            color: white;
+            border-radius: 12px;
+            font-size: 0.7rem;
+        }
+
+        .main-panel {
+            padding: 2rem;
+            overflow-y: auto;
+            max-height: calc(100vh - 140px);
+        }
+
+        .game-screen {
+            display: none;
+        }
+
+        .game-screen.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px var(--shadow-color);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px var(--glow-color);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--accent-primary);
+        }
+
+        .mission-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .choices {
+            display: grid;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .choice-btn {
+            padding: 1.25rem;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            position: relative;
+        }
+
+        .choice-btn:hover {
+            border-color: var(--accent-primary);
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px var(--shadow-color);
+        }
+
+        .choice-btn.correct {
+            border-color: var(--accent-success);
+            background: rgba(16, 185, 129, 0.1);
+            animation: pulse 0.5s ease;
+        }
+
+        .choice-btn.incorrect {
+            border-color: var(--accent-danger);
+            background: rgba(239, 68, 68, 0.1);
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feedback.success {
+            background: rgba(16, 185, 129, 0.2);
+            border: 2px solid var(--accent-success);
+            color: var(--accent-success);
+        }
+
+        .feedback.error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 2px solid var(--accent-danger);
+            color: var(--accent-danger);
+        }
+
+        .builder-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .component-palette {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+        }
+
+        .component-tile {
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            background: var(--bg-secondary);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .component-tile:hover {
+            border-color: var(--accent-primary);
+            transform: scale(1.05);
+        }
+
+        .component-tile.selected {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            border-color: transparent;
+        }
+
+        .architecture-canvas {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            min-height: 300px;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-content: flex-start;
+        }
+
+        .placed-component {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .placed-component:hover {
+            transform: scale(1.1);
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent-danger);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: none;
+        }
+
+        .placed-component:hover .remove-btn {
+            display: block;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .metric-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px var(--glow-color);
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .metric-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            margin-top: 0.75rem;
+            overflow: hidden;
+        }
+
+        .metric-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            transition: width 0.5s ease;
+        }
+
+        .workflow-builder {
+            margin-top: 1.5rem;
+        }
+
+        .workflow-node {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .workflow-node::after {
+            content: '↓';
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+        }
+
+        .workflow-node:last-child::after {
+            display: none;
+        }
+
+        .node-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: var(--bg-secondary);
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 1rem 0;
+            border: 2px solid var(--border-color);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 0 20px var(--glow-color);
+        }
+
+        .achievement-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--accent-success), var(--accent-info));
+            color: white;
+            font-weight: 600;
+            margin: 0.5rem;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            animation: bounceIn 0.5s ease;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 20px 60px var(--glow-color);
+            text-align: center;
+        }
+
+        .modal-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        footer {
+            grid-column: 1 / -1;
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border-top: 2px solid var(--border-color);
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 -4px 20px var(--shadow-color);
+        }
+
+        .footer-text {
+            font-size: 1rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px var(--glow-color);
+            letter-spacing: 1px;
+        }
+
+        .start-screen {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .start-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 40px var(--glow-color);
+        }
+
+        .start-subtitle {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            line-height: 1.6;
+        }
+
+        .difficulty-selector {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .difficulty-card {
+            padding: 2rem;
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            background: var(--bg-card);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 180px;
+        }
+
+        .difficulty-card:hover {
+            border-color: var(--accent-primary);
+            transform: scale(1.05);
+            box-shadow: 0 8px 30px var(--glow-color);
+        }
+
+        .difficulty-card h3 {
+            margin-bottom: 0.5rem;
+            color: var(--accent-primary);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background: var(--bg-secondary);
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: var(--bg-card);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                border-right: none;
+                border-bottom: 2px solid var(--border-color);
+                max-height: none;
+            }
+
+            .zone-nav {
+                flex-direction: row;
+                overflow-x: auto;
+            }
+
+            .builder-area {
+                grid-template-columns: 1fr;
+            }
+
+            .score-panel {
+                justify-content: center;
+            }
+
+            .start-title {
+                font-size: 2rem;
+            }
+
+            .difficulty-selector {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            text-align: center;
+            border-radius: 6px;
+            padding: 0.5rem;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border: 1px solid var(--border-color);
+            font-size: 0.85rem;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 10px var(--glow-color);
+        }
+
+        textarea.input-field {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .quiz-container {
+            margin-top: 1.5rem;
+        }
+
+        .quiz-question {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .level-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .stats-label {
+            color: var(--text-secondary);
+        }
+
+        .stats-value {
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .glow-text {
+            text-shadow: 0 0 20px var(--glow-color);
+        }
+
+        .icon {
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="game-title">🚀 AI Ecosystem Architect</div>
+                <div class="score-panel">
+                    <div class="score-item">
+                        <div class="score-label">Level</div>
+                        <div class="score-value" id="level-display">1</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">XP</div>
+                        <div class="score-value" id="xp-display">0</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">Trust</div>
+                        <div class="score-value" id="trust-display">100</div>
+                        <div class="meter">
+                            <div class="meter-fill" id="trust-meter" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">Innovation</div>
+                        <div class="score-value" id="innovation-display">0</div>
+                        <div class="meter">
+                            <div class="meter-fill" id="innovation-meter" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">Ethics</div>
+                        <div class="score-value" id="ethics-display">100</div>
+                        <div class="meter">
+                            <div class="meter-fill" id="ethics-meter" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">Budget</div>
+                        <div class="score-value" id="budget-display">$100k</div>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary btn-small" onclick="toggleTheme()">🌓 Theme</button>
+                    <button class="btn btn-secondary btn-small" onclick="toggleSound()">🔊 Sound</button>
+                    <button class="btn btn-small" onclick="resetGame()">🔄 Reset</button>
+                </div>
+            </div>
+        </header>
+
+        <aside class="sidebar">
+            <div class="zone-nav">
+                <button class="zone-btn" onclick="showZone('start')">🏠 Start Game</button>
+                <button class="zone-btn" onclick="showZone('ecosystem')">🌐 Ecosystem Zone</button>
+                <button class="zone-btn" onclick="showZone('ai')">🧠 AI Core Zone</button>
+                <button class="zone-btn" onclick="showZone('automation')">⚡ Automation Zone</button>
+                <button class="zone-btn" onclick="showZone('nocode')">🛠️ No-Code Zone</button>
+                <button class="zone-btn" onclick="showZone('ethics')">⚖️ Ethics & Governance</button>
+                <button class="zone-btn" onclick="showZone('emerging')">🔮 Emerging Tech</button>
+                <button class="zone-btn" onclick="showZone('dashboard')">📊 Dashboard</button>
+            </div>
+        </aside>
+
+        <main class="main-panel">
+            <div id="start-zone" class="game-screen active">
+                <div class="start-screen">
+                    <h1 class="start-title">AI Ecosystem Architect</h1>
+                    <p class="start-subtitle">Master the complete technology ecosystem from cloud infrastructure to ethical AI deployment. Build, automate, and govern the future of intelligent systems.</p>
+                    
+                    <div class="card">
+                        <h2 class="card-title">🎯 Your Mission</h2>
+                        <p class="mission-text">As Chief Technology Architect, you'll navigate through 5 critical zones, making strategic decisions that shape your organization's digital transformation journey. Every choice impacts trust, innovation, ethics, and budget.</p>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="card-title">Select Your Difficulty</h3>
+                        <div class="difficulty-selector">
+                            <div class="difficulty-card" onclick="startGame('easy')">
+                                <h3>🌱 Beginner</h3>
+                                <p>More guidance, gentle learning curve</p>
+                            </div>
+                            <div class="difficulty-card" onclick="startGame('medium')">
+                                <h3>⚡ Intermediate</h3>
+                                <p>Balanced challenge, real-world scenarios</p>
+                            </div>
+                            <div class="difficulty-card" onclick="startGame('hard')">
+                                <h3>🔥 Expert</h3>
+                                <p>Maximum complexity, strategic depth</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="card-title">📚 What You'll Master</h3>
+                        <div class="dashboard-grid">
+                            <div class="metric-card">
+                                <div class="metric-label">Zone 1</div>
+                                <div class="metric-value">🌐</div>
+                                <p>Core Ecosystems</p>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-label">Zone 2</div>
+                                <div class="metric-value">🧠</div>
+                                <p>AI Foundations</p>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-label">Zone 3</div>
+                                <div class="metric-value">⚡</div>
+                                <p>Tools & Automation</p>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-label">Zone 4</div>
+                                <div class="metric-value">🛠️</div>
+                                <p>No-Code Platforms</p>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-label">Zone 5</div>
+                                <div class="metric-value">⚖️</div>
+                                <p>Ethics & Future</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="ecosystem-zone" class="game-screen">
+                <div class="level-badge">🌐 Level 1: Digital Ecosystem Architect</div>
+                <div class="card">
+                    <h2 class="card-title">Mission: Build Cloud-Native Architecture</h2>
+                    <p class="mission-text">Your startup needs a scalable food delivery platform. Design the architecture considering distributed systems, microservices, cloud infrastructure, and zero-trust security.</p>
+                    
+                    <div id="ecosystem-mission-1" class="quiz-container">
+                        <div class="quiz-question">Q1: Which platform layer provides infrastructure abstraction?</div>
+                        <div class="choices">
+                            <button class="choice-btn" onclick="checkAnswer('ecosystem', 1, 'a', false)">A) Hardware Layer - Physical servers and networking</button>
+                            <button class="choice-btn" onclick="checkAnswer('ecosystem', 1, 'b', false)">B) Application Layer - User-facing software</button>
+                            <button class="choice-btn" onclick="checkAnswer('ecosystem', 1, 'c', true)">C) Platform Layer - Cloud services (AWS, Azure, GCP) providing IaaS, PaaS</button>
+                            <button class="choice-btn" onclick="checkAnswer('ecosystem', 1, 'd', false)">D) Data Layer - Database storage</button>
+                        </div>
+                        <div class="feedback" id="feedback-ecosystem-1"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">Architecture Builder</h3>
+                    <p class="mission-text">Select components to build your distributed system:</p>
+                    <div class="builder-area">
+                        <div>
+                            <h4>Component Palette</h4>
+                            <div class="component-palette">
+                                <div class="component-tile" onclick="selectComponent('api-gateway')">API Gateway</div>
+                                <div class="component-tile" onclick="selectComponent('microservices')">Microservices</div>
+                                <div class="component-tile" onclick="selectComponent('kubernetes')">Kubernetes</div>
+                                <div class="component-tile" onclick="selectComponent('serverless')">Serverless Lambda</div>
+                                <div class="component-tile" onclick="selectComponent('database')">Database Cluster</div>
+                                <div class="component-tile" onclick="selectComponent('cache')">Redis Cache</div>
+                                <div class="component-tile" onclick="selectComponent('cdn')">CDN</div>
+                                <div class="component-tile" onclick="selectComponent('load-balancer')">Load Balancer</div>
+                                <div class="component-tile" onclick="selectComponent('message-queue')">Message Queue</div>
+                                <div class="component-tile" onclick="selectComponent('monitoring')">Monitoring</div>
+                                <div class="component-tile" onclick="selectComponent('terraform')">Terraform IaC</div>
+                                <div class="component-tile" onclick="selectComponent('zero-trust')">Zero Trust Security</div>
+                            </div>
+                        </div>
+                        <div>
+                            <h4>Your Architecture</h4>
+                            <div class="architecture-canvas" id="architecture-canvas">
+                                <p style="color: var(--text-secondary); width: 100%; text-align: center;">Click components to add them here</p>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="evaluateArchitecture()" style="margin-top: 1rem;">✅ Evaluate Architecture</button>
+                    <div class="feedback" id="feedback-architecture"></div>
+                </div>
+
+                <div class="card">
+                    <div class="quiz-question">Q2: For a food delivery app serving 1M+ users, what's the best approach?</div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="checkAnswer('ecosystem', 2, 'a', false)">A) Monolithic architecture on single server</button>
+                        <button class="choice-btn" onclick="checkAnswer('ecosystem', 2, 'b', true)">B) Microservices with Kubernetes orchestration, event-driven architecture</button>
+                        <button class="choice-btn" onclick="checkAnswer('ecosystem', 2, 'c', false)">C) Pure serverless with no containers</button>
+                        <button class="choice-btn" onclick="checkAnswer('ecosystem', 2, 'd', false)">D) Desktop application</button>
+                    </div>
+                    <div class="feedback" id="feedback-ecosystem-2"></div>
+                </div>
+
+                <div class="card">
+                    <div class="quiz-question">Q3: Which ecosystem is best for enterprise cloud infrastructure?</div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="checkAnswer('ecosystem', 3, 'a', false)">A) Apple ecosystem (iOS, macOS)</button>
+                        <button class="choice-btn" onclick="checkAnswer('ecosystem', 3, 'b', true)">B) AWS ecosystem (EC2, S3, Lambda, RDS) or Microsoft Azure</button>
+                        <button class="choice-btn" onclick="checkAnswer('ecosystem', 3, 'c', false)">C) Meta ecosystem (Facebook, Instagram)</button>
+                        <button class="choice-btn" onclick="checkAnswer('ecosystem', 3, 'd', false)">D) Google Search ecosystem only</button>
+                    </div>
+                    <div class="feedback" id="feedback-ecosystem-3"></div>
+                </div>
+
+                <div class="card">
+                    <div class="quiz-question">Q4: What is the primary benefit of DevOps practices?</div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="checkAnswer('ecosystem', 4, 'a', false)">A) Eliminating all testing</button>
+                        <button class="choice-btn" onclick="checkAnswer('ecosystem', 4, 'b', true)">B) Continuous Integration/Delivery, faster deployment, automation, collaboration</button>
+                        <button class="choice-btn" onclick="checkAnswer('ecosystem', 4, 'c', false)">C) Removing security requirements</button>
+                        <button class="choice-btn" onclick="checkAnswer('ecosystem', 4, 'd', false)">D) Manual deployment only</button>
+                    </div>
+                    <div class="feedback" id="feedback-ecosystem-4"></div>
+                </div>
+
+                <div class="card">
+                    <div class="quiz-question">Q5: Edge computing is most valuable for:</div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="checkAnswer('ecosystem', 5, 'a', false)">A) Storing all data centrally</button>
+                        <button class="choice-btn" onclick="checkAnswer('ecosystem', 5, 'b', true)">B) Low-latency applications (IoT, real-time processing, autonomous vehicles)</button>
+                        <button class="choice-btn" onclick="checkAnswer('ecosystem', 5, 'c', false)">C) Increasing network latency</button>
+                        <button class="choice-btn" onclick="checkAnswer('ecosystem', 5, 'd', false)">D) Email services only</button>
+                    </div>
+                    <div class="feedback" id="feedback-ecosystem-5"></div>
+                </div>
+
+                <button class="btn" onclick="completeZone('ecosystem')" style="margin-top: 1.5rem;">Complete Ecosystem Zone →</button>
+            </div>
+
+            <div id="ai-zone" class="game-screen">
+                <div class="level-badge">🧠 Level 2: AI Systems Designer</div>
+                <div class="card">
+                    <h2 class="card-title">Mission: Build AI-Powered Plant Disease Detection</h2>
+                    <p class="mission-text">Design an ML pipeline for farmers to detect crop diseases using computer vision. Consider data preparation, model selection, evaluation metrics, and responsible deployment.</p>
+                    
+                    <div class="quiz-question">Q1: Which AI approach is best for image-based disease detection?</div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="checkAnswer('ai', 1, 'a', false)">A) Rule-based expert system</button>
+                        <button class="choice-btn" onclick="checkAnswer('ai', 1, 'b', true)">B) Computer Vision with Convolutional Neural Networks (CNNs)</button>
+                        <button class="choice-btn" onclick="checkAnswer('ai', 1, 'c', false)">C) Natural Language Processing</button>
+                        <button class="choice-btn" onclick="checkAnswer('ai', 1, 'd', false)">D) Reinforcement Learning</button>
+                    </div>
+                    <div class="feedback" id="feedback-ai-1"></div>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">ML Pipeline Builder</h3>
+                    <p class="mission-text">Arrange the ML workflow steps in correct order:</p>
+                    <div class="workflow-builder">
+                        <div class="workflow-node">
+                            <strong>Step 1:</strong>
+                            <select class="node-select" id="ml-step-1">
+                                <option value="">Select step...</option>
+                                <option value="data-collection">Data Collection & Labeling</option>
+                                <option value="preprocessing">Data Preprocessing</option>
+                                <option value="model-selection">Model Selection</option>
+                                <option value="training">Model Training</option>
+                                <option value="evaluation">Evaluation</option>
+                                <option value="deployment">Deployment</option>
+                            </select>
+                        </div>
+                        <div class="workflow-node">
+                            <strong>Step 2:</strong>
+                            <select class="node-select" id="ml-step-2">
+                                <option value="">Select step...</option>
+                                <option value="data-collection">Data Collection & Labeling</option>
+                                <option value="preprocessing">Data Preprocessing</option>
+                                <option value="model-selection">Model Selection</option>
+                                <option value="training">Model Training</option>
+                                <option value="evaluation">Evaluation</option>
+                                <option value="deployment">Deployment</option>
+                            </select>
+                        </div>
+                        <div class="workflow-node">
+                            <strong>Step 3:</strong>
+                            <select class="node-select" id="ml-step-3">
+                                <option value="">Select step...</option>
+                                <option value="data-collection">Data Collection & Labeling</option>
+                                <option value="preprocessing">Data Preprocessing</option>
+                                <option value="model-selection">Model Selection</option>
+                                <option value="training">Model Training</option>
+                                <option value="evaluation">Evaluation</option>
+                                <option value="deployment">Deployment</option>
+                            </select>
+                        </div>
+                        <div class="workflow-node">
+                            <strong>Step 4:</strong>
+                            <select class="node-select" id="ml-step-4">
+                                <option value="">Select step...</option>
+                                <option value="data-collection">Data Collection & Labeling</option>
+                                <option value="preprocessing">Data Preprocessing</option>
+                                <option value="model-selection">Model Selection</option>
+                                <option value="training">Model Training</option>
+                                <option value="evaluation">Evaluation</option>
+                                <option value="deployment">Deployment</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="evaluateMLPipeline()" style="margin-top: 2rem;">✅ Validate Pipeline</button>
+                    <div class="feedback" id="feedback-ml-pipeline"></div>
+                </div>
+
+                <div class="card">
+                    <div class="quiz-question">Q2: What's the difference between supervised and unsupervised learning?</div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="checkAnswer('ai', 2, 'a', true)">A) Supervised uses labeled data; Unsupervised finds patterns in unlabeled data</button>
+                        <button class="choice-btn" onclick="checkAnswer('ai', 2, 'b', false)">B) They are the same thing</button>
+                        <button class="choice-btn" onclick="checkAnswer('ai', 2, 'c', false)">C) Supervised is faster always</button>
+                        <button class="choice-btn" onclick="checkAnswer('ai', 2, 'd', false)">D) Unsupervised requires more training data</button>
+                    </div>
+                    <div class="feedback" id="feedback-ai-2"></div>
+                </div>
+
+                <div class="card">
+                    <div class="quiz-question">Q3: For disease detection, which metric is MOST critical?</div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="checkAnswer('ai', 3, 'a', false)">A) Speed only</button>
+                        <button class="choice-btn" onclick="checkAnswer('ai', 3, 'b', true)">B) Recall (minimize false negatives - don't miss diseased plants)</button>
+                        <button class="choice-btn" onclick="checkAnswer('ai', 3, 'c', false)">C) Model size only</button>
+                        <button class="choice-btn" onclick="checkAnswer('ai', 3, 'd', false)">D) Training time</button>
+                    </div>
+                    <div class="feedback" id="feedback-ai-3"></div>
+                </div>
+
+                <div class="card">
+                    <div class="quiz-question">Q4: What is a Transformer architecture primarily used for?</div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="checkAnswer('ai', 4, 'a', false)">A) Image processing only</button>
+                        <button class="choice-btn" onclick="checkAnswer('ai', 4, 'b', true)">B) Sequence modeling, NLP, attention mechanisms (GPT, BERT, Claude)</button>
+                        <button class="choice-btn" onclick="checkAnswer('ai', 4, 'c', false)">C) Database management</button>
+                        <button class="choice-btn" onclick="checkAnswer('ai', 4, 'd', false)">D) Hardware acceleration</button>
+                    </div>
+                    <div class="feedback" id="feedback-ai-4"></div>
+                </div>
+
+                <div class="card">
+                    <div class="quiz-question">Q5: What is Transfer Learning?</div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="checkAnswer('ai', 5, 'a', false)">A) Moving data between servers</button>
+                        <button class="choice-btn" onclick="checkAnswer('ai', 5, 'b', true)">B) Reusing pre-trained model knowledge for new tasks (e.g., fine-tuning)</button>
+                        <button class="choice-btn" onclick="checkAnswer('ai', 5, 'c', false)">C) Transferring code between languages</button>
+                        <button class="choice-btn" onclick="checkAnswer('ai', 5, 'd', false)">D) Cloud data migration</button>
+                    </div>
+                    <div class="feedback" id="feedback-ai-5"></div>
+                </div>
+
+                <div class="card">
+                    <div class="quiz-question">Q6: What is the EU AI Act focused on?</div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="checkAnswer('ai', 6, 'a', false)">A) Banning all AI</button>
+                        <button class="choice-btn" onclick="checkAnswer('ai', 6, 'b', true)">B) Risk-based regulation of AI systems (high-risk require compliance)</button>
+                        <button class="choice-btn" onclick="checkAnswer('ai', 6, 'c', false)">C) Promoting AI companies only</button>
+                        <button class="choice-btn" onclick="checkAnswer('ai', 6, 'd', false)">D) Hardware standards</button>
+                    </div>
+                    <div class="feedback" id="feedback-ai-6"></div>
+                </div>
+
+                <button class="btn" onclick="completeZone('ai')" style="margin-top: 1.5rem;">Complete AI Zone →</button>
+            </div>
+
+            <div id="automation-zone" class="game-screen">
+                <div class="level-badge">⚡ Level 3: AI Automation Master</div>
+                <div class="card">
+                    <h2 class="card-title">Mission: Build Intelligent Content Pipeline</h2>
+                    <p class="mission-text">Create an automated workflow that uses AI to generate, review, and publish weekly content across multiple platforms.</p>
+                    
+                    <div class="quiz-question">Q1: What makes a good AI prompt?</div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="checkAnswer('automation', 1, 'a', false)">A) As short as possible</button>
+                        <button class="choice-btn" onclick="checkAnswer('automation', 1, 'b', true)">B) Clear, specific, contextual with examples and desired format</button>
+                        <button class="choice-btn" onclick="checkAnswer('automation', 1, 'c', false)">C) Using technical jargon only</button>
+                        <button class="choice-btn" onclick="checkAnswer('automation', 1, 'd', false)">D) Vague and open-ended</button>
+                    </div>
+                    <div class="feedback" id="feedback-automation-1"></div>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">Automation Workflow Builder</h3>
+                    <p class="mission-text">Design your content automation pipeline:</p>
+                    <div class="workflow-builder">
+                        <div class="workflow-node">
+                            <strong>Trigger:</strong>
+                            <select class="node-select" id="auto-trigger">
+                                <option value="">Select trigger...</option>
+                                <option value="schedule">Weekly Schedule (Monday 9 AM)</option>
+                                <option value="webhook">Webhook Event</option>
+                                <option value="email">Email Received</option>
+                                <option value="manual">Manual Start</option>
+                            </select>
+                        </div>
+                        <div class="workflow-node">
+                            <strong>AI Action:</strong>
+                            <select class="node-select" id="auto-ai-action">
+                                <option value="">Select AI tool...</option>
+                                <option value="chatgpt">ChatGPT - Generate content draft</option>
+                                <option value="claude">Claude - Review and refine</option>
+                                <option value="dalle">DALL-E - Create images</option>
+                                <option value="copilot">Microsoft Copilot - Summarize</option>
+                            </select>
+                        </div>
+                        <div class="workflow-node">
+                            <strong>Automation Platform:</strong>
+                            <select class="node-select" id="auto-platform">
+                                <option value="">Select platform...</option>
+                                <option value="zapier">Zapier - Multi-step workflow</option>
+                                <option value="power-automate">Power Automate - Microsoft integration</option>
+                                <option value="n8n">n8n - Open-source automation</option>
+                            </select>
+                        </div>
+                        <div class="workflow-node">
+                            <strong>Output Action:</strong>
+                            <select class="node-select" id="auto-output">
+                                <option value="">Select output...</option>
+                                <option value="notion">Save to Notion database</option>
+                                <option value="airtable">Update Airtable records</option>
+                                <option value="social">Post to social media</option>
+                                <option value="email">Send via email campaign</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="evaluateAutomation()" style="margin-top: 2rem;">✅ Test Workflow</button>
+                    <div class="feedback" id="feedback-automation-workflow"></div>
+                </div>
+
+                <div class="card">
+                    <div class="quiz-question">Q2: What is RAG (Retrieval Augmented Generation)?</div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="checkAnswer('automation', 2, 'a', false)">A) A new programming language</button>
+                        <button class="choice-btn" onclick="checkAnswer('automation', 2, 'b', true)">B) Enhancing LLM responses with retrieved relevant documents/context</button>
+                        <button class="choice-btn" onclick="checkAnswer('automation', 2, 'c', false)">C) A database type</button>
+                        <button class="choice-btn" onclick="checkAnswer('automation', 2, 'd', false)">D) A cloud service</button>
+                    </div>
+                    <div class="feedback" id="feedback-automation-2"></div>
+                </div>
+
+                <div class="card">
+                    <div class="quiz-question">Q3: AI Agents differ from simple prompts because they:</div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="checkAnswer('automation', 3, 'a', false)">A) Are slower always</button>
+                        <button class="choice-btn" onclick="checkAnswer('automation', 3, 'b', true)">B) Can plan, use tools, maintain memory, and execute multi-step tasks autonomously</button>
+                        <button class="choice-btn" onclick="checkAnswer('automation', 3, 'c', false)">C) Don't use language models</button>
+                        <button class="choice-btn" onclick="checkAnswer('automation', 3, 'd', false)">D) Only work offline</button>
+                    </div>
+                    <div class="feedback" id="feedback-automation-3"></div>
+                </div>
+
+                <div class="card">
+                    <div class="quiz-question">Q4: Which tool would you use for AI-powered note synthesis?</div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="checkAnswer('automation', 4, 'a', true)">A) Notion AI or Claude for summarizing and organizing notes</button>
+                        <button class="choice-btn" onclick="checkAnswer('automation', 4, 'b', false)">B) Excel only</button>
+                        <button class="choice-btn" onclick="checkAnswer('automation', 4, 'c', false)">C) Email client</button>
+                        <button class="choice-btn" onclick="checkAnswer('automation', 4, 'd', false)">D) FTP server</button>
+                    </div>
+                    <div class="feedback" id="feedback-automation-4"></div>
+                </div>
+
+                <div class="card">
+                    <div class="quiz-question">Q5: Vector search is used in AI for:</div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="checkAnswer('automation', 5, 'a', false)">A) Sorting numbers only</button>
+                        <button class="choice-btn" onclick="checkAnswer('automation', 5, 'b', true)">B) Finding semantically similar content using embeddings (RAG, recommendation)</button>
+                        <button class="choice-btn" onclick="checkAnswer('automation', 5, 'c', false)">C) Network routing</button>
+                        <button class="choice-btn" onclick="checkAnswer('automation', 5, 'd', false)">D) Image compression</button>
+                    </div>
+                    <div class="feedback" id="feedback-automation-5"></div>
+                </div>
+
+                <button class="btn" onclick="completeZone('automation')" style="margin-top: 1.5rem;">Complete Automation Zone →</button>
+            </div>
+
+            <div id="nocode-zone" class="game-screen">
+                <div class="level-badge">🛠️ Level 4: No-Code Empire Builder</div>
+                <div class="card">
+                    <h2 class="card-title">Mission: Build HR Onboarding App</h2>
+                    <p class="mission-text">Create an internal tool for employee onboarding using no-code platforms. Include forms, workflows, dashboards, and automation.</p>
+                    
+                    <div class="quiz-question">Q1: Which no-code platform is best for relational databases and workflows?</div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="checkAnswer('nocode', 1, 'a', true)">A) Airtable - Spreadsheet-database hybrid with automation</button>
+                        <button class="choice-btn" onclick="checkAnswer('nocode', 1, 'b', false)">B) Photoshop</button>
+                        <button class="choice-btn" onclick="checkAnswer('nocode', 1, 'c', false)">C) Visual Studio Code</button>
+                        <button class="choice-btn" onclick="checkAnswer('nocode', 1, 'd', false)">D) Terminal</button>
+                    </div>
+                    <div class="feedback" id="feedback-nocode-1"></div>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">No-Code App Builder</h3>
+                    <p class="mission-text">Design your onboarding app components:</p>
+                    <div class="component-palette">
+                        <div class="component-tile" onclick="toggleNoCodeComponent(this, 'form')">📝 Form Builder</div>
+                        <div class="component-tile" onclick="toggleNoCodeComponent(this, 'database')">🗄️ Database</div>
+                        <div class="component-tile" onclick="toggleNoCodeComponent(this, 'workflow')">⚙️ Workflow Automation</div>
+                        <div class="component-tile" onclick="toggleNoCodeComponent(this, 'dashboard')">📊 Dashboard</div>
+                        <div class="component-tile" onclick="toggleNoCodeComponent(this, 'auth')">🔐 Authentication</div>
+                        <div class="component-tile" onclick="toggleNoCodeComponent(this, 'email')">📧 Email Trigger</div>
+                        <div class="component-tile" onclick="toggleNoCodeComponent(this, 'approval')">✅ Approval Flow</div>
+                        <div class="component-tile" onclick="toggleNoCodeComponent(this, 'reports')">📈 Reports</div>
+                    </div>
+                    <button class="btn" onclick="evaluateNoCodeApp()" style="margin-top: 1.5rem;">✅ Deploy App</button>
+                    <div class="feedback" id="feedback-nocode-app"></div>
+                </div>
+
+                <div class="card">
+                    <div class="quiz-question">Q2: What platform would you use for building internal admin panels quickly?</div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="checkAnswer('nocode', 2, 'a', false)">A) Notepad</button>
+                        <button class="choice-btn" onclick="checkAnswer('nocode', 2, 'b', true)">B) Retool - Internal tool builder with database connectors</button>
+                        <button class="choice-btn" onclick="checkAnswer('nocode', 2, 'c', false)">C) Paint</button>
+                        <button class="choice-btn" onclick="checkAnswer('nocode', 2, 'd', false)">D) Calculator</button>
+                    </div>
+                    <div class="feedback" id="feedback-nocode-2"></div>
+                </div>
+
+                <div class="card">
+                    <div class="quiz-question">Q3: Bubble is primarily used for:</div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="checkAnswer('nocode', 3, 'a', false)">A) Video editing</button>
+                        <button class="choice-btn" onclick="checkAnswer('nocode', 3, 'b', true)">B) Building full-stack web applications without code</button>
+                        <button class="choice-btn" onclick="checkAnswer('nocode', 3, 'c', false)">C) 3D modeling</button>
+                        <button class="choice-btn" onclick="checkAnswer('nocode', 3, 'd', false)">D) Network configuration</button>
+                    </div>
+                    <div class="feedback" id="feedback-nocode-3"></div>
+                </div>
+
+                <div class="card">
+                    <div class="quiz-question">Q4: AppSheet is best for:</div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="checkAnswer('nocode', 4, 'a', false)">A) Desktop gaming</button>
+                        <button class="choice-btn" onclick="checkAnswer('nocode', 4, 'b', true)">B) Creating mobile apps from Google Sheets/Excel data</button>
+                        <button class="choice-btn" onclick="checkAnswer('nocode', 4, 'c', false)">C) Operating system development</button>
+                        <button class="choice-btn" onclick="checkAnswer('nocode', 4, 'd', false)">D) Hardware design</button>
+                    </div>
+                    <div class="feedback" id="feedback-nocode-4"></div>
+                </div>
+
+                <div class="card">
+                    <div class="quiz-question">Q5: What's essential for no-code app security?</div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="checkAnswer('nocode', 5, 'a', false)">A) Ignoring authentication</button>
+                        <button class="choice-btn" onclick="checkAnswer('nocode', 5, 'b', true)">B) Role-based access control, data validation, API security</button>
+                        <button class="choice-btn" onclick="checkAnswer('nocode', 5, 'c', false)">C) Making all data public</button>
+                        <button class="choice-btn" onclick="checkAnswer('nocode', 5, 'd', false)">D) Disabling all permissions</button>
+                    </div>
+                    <div class="feedback" id="feedback-nocode-5"></div>
+                </div>
+
+                <button class="btn" onclick="completeZone('nocode')" style="margin-top: 1.5rem;">Complete No-Code Zone →</button>
+            </div>
+
+            <div id="ethics-zone" class="game-screen">
+                <div class="level-badge">⚖️ Level 5: Ethical AI & Future Tech Leader</div>
+                <div class="card">
+                    <h2 class="card-title">Mission: Design Ethical Credit Scoring AI</h2>
+                    <p class="mission-text">Deploy an AI credit scoring system for Indian consumers. Ensure fairness, privacy, explainability, and regulatory compliance.</p>
+                    
+                    <div class="quiz-question">Q1: What is algorithmic bias?</div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="checkAnswer('ethics', 1, 'a', false)">A) A feature of all AI</button>
+                        <button class="choice-btn" onclick="checkAnswer('ethics', 1, 'b', true)">B) Unfair outcomes due to biased training data or model design</button>
+                        <button class="choice-btn" onclick="checkAnswer('ethics', 1, 'c', false)">C) A programming language error</button>
+                        <button class="choice-btn" onclick="checkAnswer('ethics', 1, 'd', false)">D) Network latency</button>
+                    </div>
+                    <div class="feedback" id="feedback-ethics-1"></div>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">AI Governance Framework Builder</h3>
+                    <p class="mission-text">Select governance measures for your credit AI:</p>
+                    <div class="component-palette">
+                        <div class="component-tile" onclick="toggleEthicsComponent(this, 'fairness')">⚖️ Fairness Testing</div>
+                        <div class="component-tile" onclick="toggleEthicsComponent(this, 'explainability')">🔍 Explainability</div>
+                        <div class="component-tile" onclick="toggleEthicsComponent(this, 'privacy')">🔒 Privacy Controls</div>
+                        <div class="component-tile" onclick="toggleEthicsComponent(this, 'consent')">✅ User Consent</div>
+                        <div class="component-tile" onclick="toggleEthicsComponent(this, 'audit')">📋 Audit Logs</div>
+                        <div class="component-tile" onclick="toggleEthicsComponent(this, 'redress')">🛡️ Redressal Process</div>
+                        <div class="component-tile" onclick="toggleEthicsComponent(this, 'monitoring')">📊 Continuous Monitoring</div>
+                        <div class="component-tile" onclick="toggleEthicsComponent(this, 'human-review')">👤 Human Review</div>
+                    </div>
+                    <button class="btn" onclick="evaluateEthicsFramework()" style="margin-top: 1.5rem;">✅ Validate Framework</button>
+                    <div class="feedback" id="feedback-ethics-framework"></div>
+                </div>
+
+                <div class="card">
+                    <div class="quiz-question">Q2: GDPR primarily ensures:</div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="checkAnswer('ethics', 2, 'a', false)">A) Faster internet</button>
+                        <button class="choice-btn" onclick="checkAnswer('ethics', 2, 'b', true)">B) Data privacy rights, consent, right to deletion, data portability</button>
+                        <button class="choice-btn" onclick="checkAnswer('ethics', 2, 'c', false)">C) Free software</button>
+                        <button class="choice-btn" onclick="checkAnswer('ethics', 2, 'd', false)">D) Cloud storage limits</button>
+                    </div>
+                    <div class="feedback" id="feedback-ethics-2"></div>
+                </div>
+
+                <div class="card">
+                    <div class="quiz-question">Q3: Explainable AI (XAI) is important because:</div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="checkAnswer('ethics', 3, 'a', false)">A) It makes models slower</button>
+                        <button class="choice-btn" onclick="checkAnswer('ethics', 3, 'b', true)">B) Users and regulators need to understand AI decisions (trust, accountability)</button>
+                        <button class="choice-btn" onclick="checkAnswer('ethics', 3, 'c', false)">C) It reduces accuracy</button>
+                        <button class="choice-btn" onclick="checkAnswer('ethics', 3, 'd', false)">D) It's optional always</button>
+                    </div>
+                    <div class="feedback" id="feedback-ethics-3"></div>
+                </div>
+
+                <div class="card">
+                    <div class="quiz-question">Q4: What is Web3 primarily about?</div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="checkAnswer('ethics', 4, 'a', false)">A) A new browser</button>
+                        <button class="choice-btn" onclick="checkAnswer('ethics', 4, 'b', true)">B) Decentralized internet using blockchain, smart contracts, token economics</button>
+                        <button class="choice-btn" onclick="checkAnswer('ethics', 4, 'c', false)">C) Website design trends</button>
+                        <button class="choice-btn" onclick="checkAnswer('ethics', 4, 'd', false)">D) SEO techniques</button>
+                    </div>
+                    <div class="feedback" id="feedback-ethics-4"></div>
+                </div>
+
+                <div class="card">
+                    <div class="quiz-question">Q5: Quantum computing could impact AI by:</div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="checkAnswer('ethics', 5, 'a', false)">A) Making it obsolete</button>
+                        <button class="choice-btn" onclick="checkAnswer('ethics', 5, 'b', true)">B) Dramatically accelerating certain computations (optimization, simulation)</button>
+                        <button class="choice-btn" onclick="checkAnswer('ethics', 5, 'c', false)">C) Slowing down processing</button>
+                        <button class="choice-btn" onclick="checkAnswer('ethics', 5, 'd', false)">D) Replacing all current computers immediately</button>
+                    </div>
+                    <div class="feedback" id="feedback-ethics-5"></div>
+                </div>
+
+                <div class="card">
+                    <div class="quiz-question">Q6: Edge AI refers to:</div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="checkAnswer('ethics', 6, 'a', false)">A) AI only in data centers</button>
+                        <button class="choice-btn" onclick="checkAnswer('ethics', 6, 'b', true)">B) Running AI models on local devices (IoT, mobile) for low latency and privacy</button>
+                        <button class="choice-btn" onclick="checkAnswer('ethics', 6, 'c', false)">C) Cloud-only AI</button>
+                        <button class="choice-btn" onclick="checkAnswer('ethics', 6, 'd', false)">D) Cutting-edge research only</button>
+                    </div>
+                    <div class="feedback" id="feedback-ethics-6"></div>
+                </div>
+
+                <button class="btn" onclick="completeZone('ethics')" style="margin-top: 1.5rem;">Complete Ethics Zone →</button>
+            </div>
+
+            <div id="emerging-zone" class="game-screen">
+                <div class="level-badge">🔮 Emerging Technologies Zone</div>
+                <div class="card">
+                    <h2 class="card-title">Future Tech Landscape</h2>
+                    <p class="mission-text">Explore emerging technologies shaping the next decade of AI and computing.</p>
+                    
+                    <div class="quiz-question">Q1: What is Federated Learning?</div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="checkAnswer('emerging', 1, 'a', false)">A) A government program</button>
+                        <button class="choice-btn" onclick="checkAnswer('emerging', 1, 'b', true)">B) Training ML models across decentralized devices without centralizing data</button>
+                        <button class="choice-btn" onclick="checkAnswer('emerging', 1, 'c', false)">C) A database type</button>
+                        <button class="choice-btn" onclick="checkAnswer('emerging', 1, 'd', false)">D) Cloud storage method</button>
+                    </div>
+                    <div class="feedback" id="feedback-emerging-1"></div>
+                </div>
+
+                <div class="card">
+                    <div class="quiz-question">Q2: Decentralized AI differs from traditional AI because:</div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="checkAnswer('emerging', 2, 'a', false)">A) It's slower always</button>
+                        <button class="choice-btn" onclick="checkAnswer('emerging', 2, 'b', true)">B) Control and computation are distributed, reducing single points of failure</button>
+                        <button class="choice-btn" onclick="checkAnswer('emerging', 2, 'c', false)">C) It doesn't use neural networks</button>
+                        <button class="choice-btn" onclick="checkAnswer('emerging', 2, 'd', false)">D) It's only for crypto</button>
+                    </div>
+                    <div class="feedback" id="feedback-emerging-2"></div>
+                </div>
+
+                <div class="card">
+                    <div class="quiz-question">Q3: What capability do Large Language Models (LLMs) like GPT, Claude possess?</div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="checkAnswer('emerging', 3, 'a', false)">A) Time travel</button>
+                        <button class="choice-btn" onclick="checkAnswer('emerging', 3, 'b', true)">B) Natural language understanding, generation, reasoning, and task completion</button>
+                        <button class="choice-btn" onclick="checkAnswer('emerging', 3, 'c', false)">C) Only translation</button>
+                        <button class="choice-btn" onclick="checkAnswer('emerging', 3, 'd', false)">D) Image creation only</button>
+                    </div>
+                    <div class="feedback" id="feedback-emerging-3"></div>
+                </div>
+
+                <div class="card">
+                    <div class="quiz-question">Q4: Hugging Face is primarily:</div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="checkAnswer('emerging', 4, 'a', false)">A) A social network</button>
+                        <button class="choice-btn" onclick="checkAnswer('emerging', 4, 'b', true)">B) A platform for sharing and deploying ML models and datasets</button>
+                        <button class="choice-btn" onclick="checkAnswer('emerging', 4, 'c', false)">C) A messaging app</button>
+                        <button class="choice-btn" onclick="checkAnswer('emerging', 4, 'd', false)">D) A cloud provider</button>
+                    </div>
+                    <div class="feedback" id="feedback-emerging-4"></div>
+                </div>
+
+                <div class="card">
+                    <div class="quiz-question">Q5: TensorFlow is:</div>
+                    <div class="choices">
+                        <button class="choice-btn" onclick="checkAnswer('emerging', 5, 'a', false)">A) A database</button>
+                        <button class="choice-btn" onclick="checkAnswer('emerging', 5, 'b', true)">B) An open-source ML framework by Google for building and training models</button>
+                        <button class="choice-btn" onclick="checkAnswer('emerging', 5, 'c', false)">C) An operating system</button>
+                        <button class="choice-btn" onclick="checkAnswer('emerging', 5, 'd', false)">D) A programming language</button>
+                    </div>
+                    <div class="feedback" id="feedback-emerging-5"></div>
+                </div>
+
+                <button class="btn" onclick="completeZone('emerging')" style="margin-top: 1.5rem;">View Final Dashboard →</button>
+            </div>
+
+            <div id="dashboard-zone" class="game-screen">
+                <div class="level-badge">📊 Performance Dashboard</div>
+                <div class="card">
+                    <h2 class="card-title">Your Tech Ecosystem Mastery</h2>
+                    <div class="dashboard-grid">
+                        <div class="metric-card">
+                            <div class="metric-label">Architecture Complexity</div>
+                            <div class="metric-value" id="dash-architecture">0</div>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill" id="bar-architecture" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">AI Maturity</div>
+                            <div class="metric-value" id="dash-ai">0</div>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill" id="bar-ai" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">Automation Coverage</div>
+                            <div class="metric-value" id="dash-automation">0</div>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill" id="bar-automation" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">Data Governance</div>
+                            <div class="metric-value" id="dash-governance">0</div>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill" id="bar-governance" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">Compliance Score</div>
+                            <div class="metric-value" id="dash-compliance">0%</div>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill" id="bar-compliance" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">Risk Exposure</div>
+                            <div class="metric-value" id="dash-risk">Low</div>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill" id="bar-risk" style="width: 20%"></div>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">System Scalability</div>
+                            <div class="metric-value" id="dash-scalability">0</div>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill" id="bar-scalability" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">Cost Efficiency</div>
+                            <div class="metric-value" id="dash-cost">0%</div>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill" id="bar-cost" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">User Satisfaction</div>
+                            <div class="metric-value" id="dash-satisfaction">0%</div>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill" id="bar-satisfaction" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">Performance Index</div>
+                            <div class="metric-value" id="dash-performance">0</div>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill" id="bar-performance" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">🏆 Your Achievements</h3>
+                    <div id="achievements-container">
+                        <p style="color: var(--text-secondary);">Complete zones to earn achievements!</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">📈 Zone Completion Status</h3>
+                    <div class="stats-row">
+                        <span class="stats-label">Ecosystem Zone</span>
+                        <span class="stats-value" id="status-ecosystem">Not Started</span>
+                    </div>
+                    <div class="stats-row">
+                        <span class="stats-label">AI Core Zone</span>
+                        <span class="stats-value" id="status-ai">Not Started</span>
+                    </div>
+                    <div class="stats-row">
+                        <span class="stats-label">Automation Zone</span>
+                        <span class="stats-value" id="status-automation">Not Started</span>
+                    </div>
+                    <div class="stats-row">
+                        <span class="stats-label">No-Code Zone</span>
+                        <span class="stats-value" id="status-nocode">Not Started</span>
+                    </div>
+                    <div class="stats-row">
+                        <span class="stats-label">Ethics & Governance Zone</span>
+                        <span class="stats-value" id="status-ethics">Not Started</span>
+                    </div>
+                    <div class="stats-row">
+                        <span class="stats-label">Emerging Tech Zone</span>
+                        <span class="stats-value" id="status-emerging">Not Started</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">🎓 Final Certification</h3>
+                    <div id="certification-status">
+                        <p style="color: var(--text-secondary);">Complete all zones to earn your certification!</p>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="overall-progress" style="width: 0%">0%</div>
+                    </div>
+                </div>
+
+                <button class="btn" onclick="generateCertificate()" style="margin-top: 1.5rem;">📜 Generate Certificate</button>
+            </div>
+        </main>
+
+        <footer>
+            <div class="footer-text">✨ Designed & Created by SHRISHANT YADAV ✨</div>
+        </footer>
+    </div>
+
+    <div class="modal" id="result-modal">
+        <div class="modal-content">
+            <h2 class="modal-title" id="modal-title">Great Job!</h2>
+            <p id="modal-message" style="font-size: 1.2rem; margin: 1.5rem 0;"></p>
+            <button class="btn" onclick="closeModal()">Continue</button>
+        </div>
+    </div>
+
+    <script>
+        const gameState = {
+            level: 1,
+            xp: 0,
+            trust: 100,
+            innovation: 0,
+            ethics: 100,
+            budget: 100000,
+            difficulty: 'medium',
+            soundEnabled: true,
+            completedZones: [],
+            selectedComponents: [],
+            noCodeComponents: [],
+            ethicsComponents: [],
+            zoneScores: {
+                ecosystem: 0,
+                ai: 0,
+                automation: 0,
+                nocode: 0,
+                ethics: 0,
+                emerging: 0
+            },
+            achievements: [],
+            architectureComponents: []
+        };
+
+        function updateDisplay() {
+            document.getElementById('level-display').textContent = gameState.level;
+            document.getElementById('xp-display').textContent = gameState.xp;
+            document.getElementById('trust-display').textContent = gameState.trust;
+            document.getElementById('innovation-display').textContent = gameState.innovation;
+            document.getElementById('ethics-display').textContent = gameState.ethics;
+            document.getElementById('budget-display').textContent = `$${Math.round(gameState.budget/1000)}k`;
+            
+            document.getElementById('trust-meter').style.width = `${gameState.trust}%`;
+            document.getElementById('innovation-meter').style.width = `${gameState.innovation}%`;
+            document.getElementById('ethics-meter').style.width = `${gameState.ethics}%`;
+            
+            saveGame();
+        }
+
+        function addXP(amount) {
+            gameState.xp += amount;
+            if (gameState.xp >= gameState.level * 100) {
+                gameState.level++;
+                showModal('Level Up! 🎉', `Congratulations! You've reached Level ${gameState.level}!`);
+            }
+            updateDisplay();
+        }
+
+        function modifyStat(stat, amount) {
+            gameState[stat] = Math.max(0, Math.min(100, gameState[stat] + amount));
+            updateDisplay();
+        }
+
+        function showZone(zoneName) {
+            document.querySelectorAll('.game-screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.querySelectorAll('.zone-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            const zoneElement = document.getElementById(`${zoneName}-zone`);
+            if (zoneElement) {
+                zoneElement.classList.add('active');
+            }
+            
+            event.target.classList.add('active');
+        }
+
+        function startGame(difficulty) {
+            gameState.difficulty = difficulty;
+            showZone('ecosystem');
+            addXP(10);
+            showModal('Game Started! 🚀', `Beginning your journey as ${difficulty} difficulty. Good luck, Architect!`);
+        }
+
+        function checkAnswer(zone, questionNum, choice, isCorrect) {
+            const feedback = document.getElementById(`feedback-${zone}-${questionNum}`);
+            const buttons = event.target.parentElement.querySelectorAll('.choice-btn');
+            
+            buttons.forEach(btn => btn.disabled = true);
+            
+            if (isCorrect) {
+                event.target.classList.add('correct');
+                feedback.className = 'feedback success show';
+                feedback.textContent = '✅ Correct! Excellent choice.';
+                addXP(20);
+                modifyStat('innovation', 5);
+                gameState.zoneScores[zone] += 20;
+                playSound('success');
+            } else {
+                event.target.classList.add('incorrect');
+                feedback.className = 'feedback error show';
+                feedback.textContent = '❌ Not quite. Review the concepts and try again in practice mode.';
+                modifyStat('trust', -5);
+                playSound('error');
+            }
+            
+            updateDisplay();
+        }
+
+        function selectComponent(componentName) {
+            const canvas = document.getElementById('architecture-canvas');
+            
+            if (gameState.architectureComponents.includes(componentName)) {
+                return;
+            }
+            
+            gameState.architectureComponents.push(componentName);
+            
+            if (canvas.querySelector('p')) {
+                canvas.innerHTML = '';
+            }
+            
+            const component = document.createElement('div');
+            component.className = 'placed-component';
+            component.textContent = componentName.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+            component.onclick = () => removeComponent(componentName);
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'remove-btn';
+            removeBtn.textContent = '×';
+            component.appendChild(removeBtn);
+            
+            canvas.appendChild(component);
+            event.target.classList.add('selected');
+        }
+
+        function removeComponent(componentName) {
+            gameState.architectureComponents = gameState.architectureComponents.filter(c => c !== componentName);
+            
+            const canvas = document.getElementById('architecture-canvas');
+            canvas.innerHTML = '';
+            
+            if (gameState.architectureComponents.length === 0) {
+                canvas.innerHTML = '<p style="color: var(--text-secondary); width: 100%; text-align: center;">Click components to add them here</p>';
+            } else {
+                gameState.architectureComponents.forEach(comp => {
+                    const component = document.createElement('div');
+                    component.className = 'placed-component';
+                    component.textContent = comp.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                    component.onclick = () => removeComponent(comp);
+                    
+                    const removeBtn = document.createElement('button');
+                    removeBtn.className = 'remove-btn';
+                    removeBtn.textContent = '×';
+                    component.appendChild(removeBtn);
+                    
+                    canvas.appendChild(component);
+                });
+            }
+            
+            document.querySelectorAll('.component-tile').forEach(tile => {
+                tile.classList.remove('selected');
+            });
+            
+            gameState.architectureComponents.forEach(comp => {
+                const tile = Array.from(document.querySelectorAll('.component-tile')).find(t => 
+                    t.textContent === comp.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+                );
+                if (tile) tile.classList.add('selected');
+            });
+        }
+
+        function evaluateArchitecture() {
+            const feedback = document.getElementById('feedback-architecture');
+            const required = ['api-gateway', 'microservices', 'database', 'kubernetes', 'zero-trust'];
+            const hasRequired = required.every(comp => gameState.architectureComponents.includes(comp));
+            
+            if (hasRequired) {
+                feedback.className = 'feedback success show';
+                feedback.textContent = '✅ Excellent architecture! You have all critical components for a scalable, secure system.';
+                addXP(50);
+                modifyStat('innovation', 10);
+                gameState.zoneScores.ecosystem += 50;
+                playSound('success');
+            } else {
+                feedback.className = 'feedback error show';
+                const missing = required.filter(comp => !gameState.architectureComponents.includes(comp));
+                feedback.textContent = `⚠️ Missing critical components: ${missing.join(', ')}. Add them for a complete architecture.`;
+                modifyStat('trust', -10);
+            }
+        }
+
+        function evaluateMLPipeline() {
+            const step1 = document.getElementById('ml-step-1').value;
+            const step2 = document.getElementById('ml-step-2').value;
+            const step3 = document.getElementById('ml-step-3').value;
+            const step4 = document.getElementById('ml-step-4').value;
+            
+            const correctOrder = ['data-collection', 'preprocessing', 'model-selection', 'training'];
+            const userOrder = [step1, step2, step3, step4];
+            
+            const feedback = document.getElementById('feedback-ml-pipeline');
+            
+            if (JSON.stringify(userOrder) === JSON.stringify(correctOrder)) {
+                feedback.className = 'feedback success show';
+                feedback.textContent = '✅ Perfect ML pipeline! This is the standard workflow for supervised learning.';
+                addXP(50);
+                modifyStat('innovation', 10);
+                gameState.zoneScores.ai += 50;
+                playSound('success');
+            } else {
+                feedback.className = 'feedback error show';
+                feedback.textContent = '❌ Incorrect order. ML workflow: Data Collection → Preprocessing → Model Selection → Training → Evaluation → Deployment';
+                modifyStat('trust', -10);
+            }
+        }
+
+        function evaluateAutomation() {
+            const trigger = document.getElementById('auto-trigger').value;
+            const aiAction = document.getElementById('auto-ai-action').value;
+            const platform = document.getElementById('auto-platform').value;
+            const output = document.getElementById('auto-output').value;
+            
+            const feedback = document.getElementById('feedback-automation-workflow');
+            
+            if (trigger && aiAction && platform && output) {
+                feedback.className = 'feedback success show';
+                feedback.textContent = '✅ Complete automation workflow! This will streamline your content pipeline.';
+                addXP(50);
+                modifyStat('innovation', 10);
+                modifyStat('ethics', 5);
+                gameState.zoneScores.automation += 50;
+                playSound('success');
+            } else {
+                feedback.className = 'feedback error show';
+                feedback.textContent = '⚠️ Incomplete workflow. Select all steps for a functional automation.';
+                modifyStat('trust', -5);
+            }
+        }
+
+        function toggleNoCodeComponent(element, componentName) {
+            element.classList.toggle('selected');
+            
+            if (gameState.noCodeComponents.includes(componentName)) {
+                gameState.noCodeComponents = gameState.noCodeComponents.filter(c => c !== componentName);
+            } else {
+                gameState.noCodeComponents.push(componentName);
+            }
+        }
+
+        function evaluateNoCodeApp() {
+            const feedback = document.getElementById('feedback-nocode-app');
+            const required = ['form', 'database', 'workflow', 'auth'];
+            const hasRequired = required.every(comp => gameState.noCodeComponents.includes(comp));
+            
+            if (hasRequired && gameState.noCodeComponents.length >= 5) {
+                feedback.className = 'feedback success show';
+                feedback.textContent = '✅ Comprehensive app design! You have all essential components for an HR onboarding system.';
+                addXP(50);
+                modifyStat('innovation', 10);
+                gameState.zoneScores.nocode += 50;
+                playSound('success');
+            } else {
+                feedback.className = 'feedback error show';
+                feedback.textContent = '⚠️ Add more components. Essential: Form Builder, Database, Workflow Automation, and Authentication.';
+                modifyStat('trust', -5);
+            }
+        }
+
+        function toggleEthicsComponent(element, componentName) {
+            element.classList.toggle('selected');
+            
+            if (gameState.ethicsComponents.includes(componentName)) {
+                gameState.ethicsComponents = gameState.ethicsComponents.filter(c => c !== componentName);
+            } else {
+                gameState.ethicsComponents.push(componentName);
+            }
+        }
+
+        function evaluateEthicsFramework() {
+            const feedback = document.getElementById('feedback-ethics-framework');
+            const required = ['fairness', 'explainability', 'privacy', 'consent', 'audit', 'redress'];
+            const hasRequired = required.every(comp => gameState.ethicsComponents.includes(comp));
+            
+            if (hasRequired) {
+                feedback.className = 'feedback success show';
+                feedback.textContent = '✅ Robust governance framework! Your AI system meets ethical and regulatory requirements.';
+                addXP(50);
+                modifyStat('ethics', 15);
+                modifyStat('innovation', 10);
+                gameState.zoneScores.ethics += 50;
+                playSound('success');
+            } else {
+                feedback.className = 'feedback error show';
+                const missing = required.filter(comp => !gameState.ethicsComponents.includes(comp));
+                feedback.textContent = `⚠️ Missing critical governance: ${missing.join(', ')}. Add these for compliance.`;
+                modifyStat('ethics', -15);
+                modifyStat('trust', -10);
+            }
+        }
+
+        function completeZone(zoneName) {
+            if (!gameState.completedZones.includes(zoneName)) {
+                gameState.completedZones.push(zoneName);
+                
+                const zoneNames = {
+                    ecosystem: 'Digital Ecosystem Architect',
+                    ai: 'AI Systems Designer',
+                    automation: 'AI Automation Master',
+                    nocode: 'No-Code Empire Builder',
+                    ethics: 'Ethical AI Leader',
+                    emerging: 'Future Tech Visionary'
+                };
+                
+                const achievement = `🏆 ${zoneNames[zoneName]}`;
+                if (!gameState.achievements.includes(achievement)) {
+                    gameState.achievements.push(achievement);
+                }
+                
+                addXP(100);
+                modifyStat('innovation', 10);
+                modifyStat('ethics', 5);
+                
+                showModal('Zone Completed! 🎉', `Congratulations! You've mastered ${zoneNames[zoneName]}!`);
+                
+                updateDashboard();
+            }
+            
+            showZone('dashboard');
+        }
+
+        function updateDashboard() {
+            const dashMetrics = {
+                architecture: Math.min(100, gameState.zoneScores.ecosystem / 2),
+                ai: Math.min(100, gameState.zoneScores.ai / 2),
+                automation: Math.min(100, gameState.zoneScores.automation / 2),
+                governance: Math.min(100, gameState.zoneScores.ethics / 2),
+                compliance: gameState.ethics,
+                risk: 100 - gameState.trust,
+                scalability: Math.min(100, (gameState.innovation + gameState.trust) / 2),
+                cost: Math.min(100, gameState.budget / 1000),
+                satisfaction: Math.min(100, (gameState.trust + gameState.innovation) / 2),
+                performance: Math.min(100, gameState.xp / 10)
+            };
+            
+            Object.keys(dashMetrics).forEach(metric => {
+                const valueEl = document.getElementById(`dash-${metric}`);
+                const barEl = document.getElementById(`bar-${metric}`);
+                
+                if (valueEl && barEl) {
+                    if (['compliance', 'cost', 'satisfaction'].includes(metric)) {
+                        valueEl.textContent = `${Math.round(dashMetrics[metric])}%`;
+                    } else if (metric === 'risk') {
+                        valueEl.textContent = dashMetrics[metric] < 30 ? 'Low' : dashMetrics[metric] < 60 ? 'Medium' : 'High';
+                    } else {
+                        valueEl.textContent = Math.round(dashMetrics[metric]);
+                    }
+                    
+                    barEl.style.width = `${dashMetrics[metric]}%`;
+                }
+            });
+            
+            const zones = ['ecosystem', 'ai', 'automation', 'nocode', 'ethics', 'emerging'];
+            zones.forEach(zone => {
+                const statusEl = document.getElementById(`status-${zone}`);
+                if (statusEl) {
+                    statusEl.textContent = gameState.completedZones.includes(zone) ? '✅ Completed' : 'In Progress';
+                    statusEl.style.color = gameState.completedZones.includes(zone) ? 'var(--accent-success)' : 'var(--accent-warning)';
+                }
+            });
+            
+            const achievementsContainer = document.getElementById('achievements-container');
+            if (gameState.achievements.length > 0) {
+                achievementsContainer.innerHTML = gameState.achievements.map(ach => 
+                    `<span class="achievement-badge">${ach}</span>`
+                ).join('');
+            }
+            
+            const overallProgress = (gameState.completedZones.length / 6) * 100;
+            const progressBar = document.getElementById('overall-progress');
+            if (progressBar) {
+                progressBar.style.width = `${overallProgress}%`;
+                progressBar.textContent = `${Math.round(overallProgress)}%`;
+            }
+            
+            const certStatus = document.getElementById('certification-status');
+            if (gameState.completedZones.length === 6) {
+                certStatus.innerHTML = '<p style="color: var(--accent-success); font-size: 1.2rem; font-weight: 600;">🎓 Congratulations! You are ready for certification!</p>';
+            }
+        }
+
+        function generateCertificate() {
+            if (gameState.completedZones.length < 6) {
+                showModal('Not Yet Ready', 'Complete all zones to earn your certification!');
+                return;
+            }
+            
+            const level = gameState.level >= 8 ? 'Future Tech Visionary' :
+                         gameState.level >= 6 ? 'Ethical AI Master' :
+                         gameState.level >= 4 ? 'Automation Leader' :
+                         gameState.level >= 2 ? 'AI Engineer' : 'Cloud Strategist';
+            
+            showModal('Certificate Earned! 🎓', 
+                `Congratulations! You've completed AI Ecosystem Architect as a ${level}! 
+                Total XP: ${gameState.xp} | Level: ${gameState.level} | 
+                Innovation: ${gameState.innovation} | Ethics: ${gameState.ethics}`);
+            
+            gameState.achievements.push('🏆 AI Ecosystem Architect - Master Certification');
+            updateDashboard();
+        }
+
+        function showModal(title, message) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-message').textContent = message;
+            document.getElementById('result-modal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('result-modal').classList.remove('show');
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        function toggleSound() {
+            gameState.soundEnabled = !gameState.soundEnabled;
+            event.target.textContent = gameState.soundEnabled ? '🔊 Sound' : '🔇 Sound';
+        }
+
+        function playSound(type) {
+            if (!gameState.soundEnabled) return;
+            
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            if (type === 'success') {
+                oscillator.frequency.value = 523.25;
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.3);
+            } else if (type === 'error') {
+                oscillator.frequency.value = 200;
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.2);
+            }
+        }
+
+        function saveGame() {
+            localStorage.setItem('aiEcosystemGame', JSON.stringify(gameState));
+        }
+
+        function loadGame() {
+            const saved = localStorage.getItem('aiEcosystemGame');
+            if (saved) {
+                const savedState = JSON.parse(saved);
+                Object.assign(gameState, savedState);
+                updateDisplay();
+                updateDashboard();
+            }
+            
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.body.setAttribute('data-theme', savedTheme);
+            }
+        }
+
+        function resetGame() {
+            if (confirm('Are you sure you want to reset all progress?')) {
+                localStorage.removeItem('aiEcosystemGame');
+                location.reload();
+            }
+        }
+
+        window.addEventListener('load', () => {
+            loadGame();
+            updateDisplay();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                saveGame();
+                showModal('Game Saved', 'Your progress has been saved!');
+            }
+        });
+    </script>
+</body>
+</html>
